@@ -1,6 +1,6 @@
 import { Raleway } from "next/font/google";
 import "./globals.css";
-import DynamicHeaderWrapper from "@/components/Header/DynamicHeaderWrapper";
+import DynamicHeaderWrapper from "@/components/Layout/Header/DynamicHeaderWrapper";
 
 // export const metadata = {
 //   title: {

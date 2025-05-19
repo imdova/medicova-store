@@ -23,6 +23,7 @@ export type gridLink = {
   subLinks: link[];
 };
 export type linksHeader = {
+  id: string;
   title: string;
   url: string;
   subLinks?: link[];
@@ -36,38 +37,18 @@ export type linksHeader = {
 };
 
 // Glopal types
-
 // Landing page Slider
 export type Slide = {
-  id: number;
-  image: string | StaticImageData;
   title: string;
-  subTitle: string;
+  subtitle: string;
+  buttonText: string;
   url: string;
-  label: string;
+  image: StaticImageData;
 };
-type information = {
-  label: string;
-  content: string;
-};
-// Products and card Product type
-export interface products {
-  id: string;
-  name: string;
-  categories: string[];
-  tags: string[];
-  sku: string;
-  brands: string[];
-  description: string;
-  details: string;
-  price: number;
-  priceDel?: number;
-  images: string[];
-  isNew?: boolean;
-  discount?: number;
-  rating?: number;
-  reviewCount?: number;
-  isOnSale?: boolean;
-  additional_information: information[];
-  link_preview?: string;
+// categories type
+export interface CategoryType {
+  id: number;
+  title: string;
+  url: string;
+  image: string;
 }

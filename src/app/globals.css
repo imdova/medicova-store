@@ -19,6 +19,18 @@
 :root {
   --main-color: #42a5f5;
   --foreground: #171717;
+  --primary: #2ba149;
+  --primary-100: #ecf7f3;
+  --primary-900: #31b151;
+  --primary-foreground: #ffffff;
+  --background: #ffffff25;
+  --light-primary: #82c341;
+  --light-primary-transparent: #82c341e5;
+  --primary-transparent: #2ba149e5;
+  --text-main: #161439;
+  --text-secondary: #6d6c80;
+  --warning: #ff9900;
+  --error: #ff0000;
 }
 
 @theme {
@@ -64,9 +76,17 @@ body {
   @apply rounded-md bg-white p-4 shadow;
 }
 .elementskit-dropdown {
-  @apply invisible absolute top-[100%] rounded-md bg-white p-4 opacity-0 shadow transition-all duration-500;
+  @apply invisible absolute top-[100%] rounded-md bg-white p-4 opacity-0 shadow transition-all duration-200;
 }
 
 .group:hover .elementskit-dropdown {
   @apply visible opacity-100;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
