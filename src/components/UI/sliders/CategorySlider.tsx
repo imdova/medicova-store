@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useRef, useEffect, useCallback, JSX } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, PanInfo, useAnimation } from "framer-motion";
 import { useSwipeable } from "react-swipeable";
 import Image from "next/image";
@@ -283,7 +283,7 @@ const CategorySlider = () => {
                           alt={category.title}
                         />
                       </motion.div>
-                      <motion.h3 className="hover:text-primary text-center text-sm font-semibold text-gray-800 transition">
+                      <motion.h3 className="text-center text-sm font-semibold text-gray-800 transition hover:text-primary">
                         {category.title}
                       </motion.h3>
                     </Link>

@@ -1,7 +1,6 @@
 "use client";
 
 import DynamicHeader from "@/components/Layout/Header/DynamicHeader";
-import useScrollDetection from "@/hooks/useScrollDetection";
 
 export default function DynamicHeaderWrapper({
   children,

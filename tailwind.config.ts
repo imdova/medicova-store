@@ -14,7 +14,6 @@ export default {
         "primary-transparent": "var(--primary-transparent)",
         "light-primary": "var(--light-primary)",
         "light-primary-transparent": "var(--light-primary-transparent)",
-        main: "var(--text-main)",
         secondary: "var(--text-secondary)",
       },
       animation: {

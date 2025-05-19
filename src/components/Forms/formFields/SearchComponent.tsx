@@ -83,10 +83,10 @@ const SearchComponent = () => {
   }, []);
 
   // Close search when clicking overlay
-  const handleOverlayClick = () => {
-    setIsFocused(false);
-    setSearchResults([]);
-  };
+  // const handleOverlayClick = () => {
+  //   setIsFocused(false);
+  //   setSearchResults([]);
+  // };
 
   // Group results by category for better display
   const groupedResults = searchResults.reduce<Record<string, SearchResult[]>>(
@@ -142,7 +142,7 @@ const SearchComponent = () => {
                   <div className="bg-gray-50 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
                     {category}
                   </div>
-                  {results.map((result, index) => {
+                  {results.map((result) => {
                     const globalIndex = searchResults.findIndex(
                       (r) => r.id === result.id,
                     );
@@ -153,7 +153,7 @@ const SearchComponent = () => {
                         key={result.id}
                         className={`cursor-pointer px-4 py-2 transition-colors duration-150 ${isSelected ? "bg-blue-50" : "hover:bg-gray-50"}`}
                         onClick={() => {
-                          console.log("Selected:", result);
+                          console.log("Selected", result);
                           setSearchQuery(result.title);
                           setSearchResults([]);
                           setIsFocused(false);
@@ -175,7 +175,7 @@ const SearchComponent = () => {
             </div>
           ) : searchQuery ? (
             <div className="absolute left-1/2 top-[105%] z-50 w-full max-w-xl -translate-x-1/2 rounded-sm border border-gray-200 bg-white p-4 text-center text-gray-500 shadow-sm">
-              No results found for "{searchQuery}"
+              No results found for {searchQuery}
             </div>
           ) : null}
         </>
