@@ -108,7 +108,7 @@ const SearchComponent = () => {
           ref={inputRef}
           type="text"
           placeholder="What are you looking for?"
-          className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-8 transition-all duration-200 focus:border-gray-500 focus:outline-none"
+          className="w-full rounded-md border border-gray-300 py-1 pl-10 pr-8 transition-all duration-200 focus:border-gray-500 focus:outline-none"
           value={searchQuery}
           onChange={handleSearchChange}
           onFocus={() => setIsFocused(true)}

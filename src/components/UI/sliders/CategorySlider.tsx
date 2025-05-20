@@ -5,26 +5,27 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, PanInfo, useAnimation } from "framer-motion";
 import { useSwipeable } from "react-swipeable";
 import Image from "next/image";
-import { Categories } from "@/constants/categouries";
+import { allCategories } from "@/constants/categouries";
 
 const CategorySlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [visibleCards, setVisibleCards] = useState(8);
+  const [visibleCards, setVisibleCards] = useState(4);
   const [isDragging, setIsDragging] = useState(false);
   const sliderRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const controls = useAnimation();
+  const autoPlayTimeoutRef = useRef<number | null>(null);
 
   // Calculate visible cards based on screen size
   const updateVisibleCards = useCallback(() => {
     const width = window.innerWidth;
     let cards = 4;
-    if (width < 500) cards = 2;
-    else if (width < 768) cards = 2;
-    else if (width < 1024) cards = 3;
+    if (width < 400) cards = 4;
+    else if (width < 640) cards = 4;
+    else if (width < 768) cards = 5;
+    else if (width < 1024) cards = 6;
     else if (width < 1280) cards = 8;
-    else cards = 8;
+    else cards = 12;
     setVisibleCards(cards);
   }, []);
 
@@ -32,62 +33,50 @@ const CategorySlider = () => {
     updateVisibleCards();
     const handleResize = () => {
       updateVisibleCards();
-      // Reset index on resize to prevent empty space
-      setCurrentIndex(0);
-      if (sliderRef.current) {
-        controls.start({ x: 0 });
-      }
     };
 
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [updateVisibleCards, controls]);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      if (autoPlayTimeoutRef.current) {
+        window.clearTimeout(autoPlayTimeoutRef.current);
+      }
+    };
+  }, [updateVisibleCards]);
 
-  const totalSlides = Math.ceil(Categories.length / visibleCards);
+  const totalSlides = Math.ceil(allCategories.length / visibleCards);
 
-  // Auto-play functionality
-  useEffect(() => {
-    if (!isAutoPlaying || isDragging) return;
-
-    const interval = setInterval(() => {
-      nextSlide();
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [currentIndex, isAutoPlaying, visibleCards, isDragging]);
-
-  // Scroll to specific index
+  // Scroll to specific index with boundary checks
   const scrollToIndex = useCallback(
     (index: number) => {
+      const clampedIndex = Math.max(0, Math.min(index, totalSlides - 1));
       if (!containerRef.current) return;
 
       const containerWidth = containerRef.current.clientWidth;
-      const newPosition = -index * containerWidth;
+      const newPosition = -clampedIndex * containerWidth;
 
       controls.start({
         x: newPosition,
-        transition: { duration: 0.5, ease: "easeOut" },
+        transition: { duration: 0.5, ease: [0.32, 0.72, 0, 1] },
       });
 
-      setCurrentIndex(index);
+      setCurrentIndex(clampedIndex);
     },
-    [controls],
+    [controls, totalSlides],
   );
 
   const nextSlide = useCallback(() => {
-    const newIndex = (currentIndex + 1) % totalSlides;
-    scrollToIndex(newIndex);
-  }, [currentIndex, totalSlides, scrollToIndex]);
+    scrollToIndex(currentIndex + 1);
+  }, [currentIndex, scrollToIndex]);
 
   const prevSlide = useCallback(() => {
-    const newIndex = (currentIndex - 1 + totalSlides) % totalSlides;
-    scrollToIndex(newIndex);
-  }, [currentIndex, totalSlides, scrollToIndex]);
+    scrollToIndex(currentIndex - 1);
+  }, [currentIndex, scrollToIndex]);
 
-  // Handle drag events
+  // Handle drag events with momentum
   const handleDragStart = () => {
     setIsDragging(true);
-    setIsAutoPlaying(false);
+    controls.stop(); // Stop any ongoing animations
   };
 
   const handleDragEnd = (
@@ -95,7 +84,6 @@ const CategorySlider = () => {
     info: PanInfo,
   ) => {
     setIsDragging(false);
-    setIsAutoPlaying(true);
 
     if (!containerRef.current) return;
 
@@ -103,21 +91,16 @@ const CategorySlider = () => {
     const dragDistance = info.offset.x;
     const dragVelocity = info.velocity.x;
 
-    // Determine if we should change slides based on drag distance and velocity
-    const threshold = containerWidth * 0.2;
-    const velocityThreshold = 500;
+    // Calculate target index based on drag momentum
+    const direction = dragVelocity < 0 ? 1 : -1;
+    const velocityFactor = Math.min(Math.abs(dragVelocity) / 1000, 2);
+    const distanceFactor = Math.abs(dragDistance) / containerWidth;
 
-    if (
-      Math.abs(dragDistance) > threshold ||
-      Math.abs(dragVelocity) > velocityThreshold
-    ) {
-      if (dragDistance > 0 || dragVelocity > 0) {
-        prevSlide();
-      } else {
-        nextSlide();
-      }
+    // Combine factors to determine slide change
+    if (velocityFactor + distanceFactor > 0.5) {
+      scrollToIndex(currentIndex + direction);
     } else {
-      // Return to current slide if drag wasn't significant enough
+      // Return to current slide
       controls.start({
         x: -currentIndex * containerWidth,
         transition: { duration: 0.3 },
@@ -125,14 +108,14 @@ const CategorySlider = () => {
     }
   };
 
-  // Swipe handlers
+  // Swipe handlers for touch devices
   const handlers = useSwipeable({
     onSwipedLeft: () => nextSlide(),
     onSwipedRight: () => prevSlide(),
     preventScrollOnSwipe: true,
-    trackMouse: true,
-    delta: 30,
-    swipeDuration: 300,
+    trackMouse: false,
+    delta: 50,
+    swipeDuration: 500,
   });
 
   // Animation variants
@@ -149,150 +132,159 @@ const CategorySlider = () => {
   const buttonVariants = {
     hidden: { opacity: 0, x: -20 },
     visible: { opacity: 1, x: 0 },
-    hover: { scale: 1.1, transition: { duration: 0.1 } },
+    hover: { scale: 1.1, backgroundColor: "rgba(255,255,255,0.9)" },
   };
 
   return (
     <div
-      className="relative overflow-hidden py-12"
-      onMouseEnter={() => setIsAutoPlaying(false)}
-      onMouseLeave={() => setIsAutoPlaying(true)}
+      className="relative mx-auto max-w-[1500px] overflow-hidden px-4 py-8"
       {...handlers}
     >
-      <div className="mx-auto max-w-[1400px] px-4">
-        {/* Navigation Arrows */}
-        <motion.button
-          onClick={prevSlide}
-          className="absolute left-4 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white hover:bg-gray-50 md:flex"
-          aria-label="Previous categories"
-          variants={buttonVariants}
-          initial="hidden"
-          animate="visible"
-          whileHover="hover"
+      {/* Navigation Arrows */}
+      <motion.button
+        onClick={prevSlide}
+        className="absolute left-2 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white/80 shadow-sm hover:bg-white/90 md:flex"
+        aria-label="Previous categories"
+        variants={buttonVariants}
+        initial="hidden"
+        animate="visible"
+        whileHover="hover"
+        style={{ backdropFilter: "blur(4px)" }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5 text-gray-700"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 text-gray-700"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-        </motion.button>
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
+      </motion.button>
 
-        <motion.button
-          onClick={nextSlide}
-          className="absolute right-4 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white hover:bg-gray-50 md:flex"
-          aria-label="Next categories"
-          variants={buttonVariants}
-          initial="hidden"
-          animate="visible"
-          whileHover="hover"
+      <motion.button
+        onClick={nextSlide}
+        className="absolute right-2 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white/80 shadow-sm hover:bg-white/90 md:flex"
+        aria-label="Next categories"
+        variants={buttonVariants}
+        initial="hidden"
+        animate="visible"
+        whileHover="hover"
+        style={{ backdropFilter: "blur(4px)" }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5 text-gray-700"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 text-gray-700"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </motion.button>
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 5l7 7-7 7"
+          />
+        </svg>
+      </motion.button>
 
-        {/* Slider container */}
-        <div
-          ref={containerRef}
-          className="relative overflow-hidden py-4"
+      {/* Slider container */}
+      <div
+        ref={containerRef}
+        className="relative w-full overflow-hidden py-4"
+        style={{
+          cursor: isDragging ? "grabbing" : "grab",
+        }}
+      >
+        <motion.div
+          ref={sliderRef}
+          className="flex touch-none select-none"
           style={{
-            width: "100%",
-            cursor: isDragging ? "grabbing" : "grab",
+            width: `${totalSlides * 100}%`,
           }}
+          drag="x"
+          dragConstraints={{
+            left: -(
+              (totalSlides - 1) *
+              (containerRef.current?.clientWidth || 0)
+            ),
+            right: 0,
+          }}
+          dragElastic={0.05}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          animate={controls}
+          initial={{ x: 0 }}
         >
-          <motion.div
-            ref={sliderRef}
-            className="flex"
-            style={{
-              width: `${totalSlides * 100}%`,
-            }}
-            drag="x"
-            dragConstraints={{
-              left: -(
-                (totalSlides - 1) *
-                (containerRef.current?.clientWidth || 0)
-              ),
-              right: 0,
-            }}
-            dragElastic={0.1}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            animate={controls}
-            initial={{ x: 0 }}
-          >
-            {Array.from({ length: totalSlides }).map((_, slideIndex) => (
-              <div
-                key={slideIndex}
-                className="flex w-full px-2"
-                style={{
-                  minWidth: `${100 / totalSlides}%`,
-                  flex: `0 0 ${100 / totalSlides}%`,
-                }}
-              >
-                {Categories.slice(
+          {Array.from({ length: totalSlides }).map((_, slideIndex) => (
+            <div
+              key={slideIndex}
+              className="flex w-full px-1"
+              style={{
+                minWidth: `${100 / totalSlides}%`,
+                flex: `0 0 ${100 / totalSlides}%`,
+              }}
+            >
+              {allCategories
+                .slice(
                   slideIndex * visibleCards,
                   (slideIndex + 1) * visibleCards,
-                ).map((category) => (
+                )
+                .map((category) => (
                   <motion.div
                     key={category.id}
                     variants={cardVariants}
                     initial="hidden"
                     animate="visible"
                     whileHover="hover"
-                    className="flex-shrink-0 px-2"
+                    className="flex-shrink-0 px-1.5"
                     style={{ width: `${100 / visibleCards}%` }}
                   >
                     <Link
                       href={category.url}
                       className="flex flex-col items-center transition-transform duration-300"
+                      prefetch={false}
                     >
-                      <motion.div
-                        className="mb-4 flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-[#42a4f522] sm:h-24 sm:w-24"
-                        whileHover={{ scale: 1.1 }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 400,
-                          damping: 10,
-                        }}
-                      >
-                        <Image
-                          className="h-full w-full object-cover"
-                          src={category.image}
-                          width={300}
-                          height={300}
-                          alt={category.title}
-                        />
-                      </motion.div>
-                      <motion.h3 className="text-center text-sm font-semibold text-gray-800 transition hover:text-primary">
+                      <div className="relative">
+                        <motion.div
+                          className="mb-3 flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-green-50 sm:h-16 sm:w-16 md:h-20 md:w-20"
+                          whileHover={{ scale: 1.1 }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 400,
+                            damping: 10,
+                          }}
+                        >
+                          <Image
+                            className="h-full w-full object-cover"
+                            src={category.image}
+                            width={80}
+                            height={80}
+                            alt={category.title}
+                            loading="lazy"
+                          />
+                        </motion.div>{" "}
+                        {category.isSale && (
+                          <div className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded-3xl bg-red-600 px-4 text-xs font-bold text-white">
+                            Sale
+                          </div>
+                        )}
+                      </div>
+
+                      <motion.h3 className="text-center text-[10px] font-medium text-gray-800 transition hover:text-primary sm:text-xs">
                         {category.title}
                       </motion.h3>
                     </Link>
                   </motion.div>
                 ))}
-              </div>
-            ))}
-          </motion.div>
-        </div>
+            </div>
+          ))}
+        </motion.div>
       </div>
     </div>
   );

@@ -12,7 +12,7 @@ const DynamicButton: React.FC<DynamicButtonProps> = ({
   href,
   label,
   variant = "primary",
-  className,
+  className = "",
 }) => {
   const baseStyles =
     "inline-block px-4 py-2 rounded-lg font-semibold transition-all duration-200 text-center";
@@ -24,11 +24,11 @@ const DynamicButton: React.FC<DynamicButtonProps> = ({
     white: "bg-white text-black shadow-sm hover:bg-gray-100",
   };
 
+  const combinedClasses = `${baseStyles} ${variants[variant]} ${className}`;
+
   return (
-    <Link className="w-fit" href={href}>
-      <div className={`${className} ${baseStyles} ${variants[variant]}`}>
-        {label}
-      </div>
+    <Link href={href} className={combinedClasses}>
+      {label}
     </Link>
   );
 };

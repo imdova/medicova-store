@@ -56,7 +56,7 @@ const SwipeableNav = ({ links }: SwipeableNavProps) => {
   });
 
   return (
-    <div className="relative shadow-sm" ref={containerRef}>
+    <div className="relative bg-white shadow-sm" ref={containerRef}>
       {showLeftArrow && (
         <button
           onClick={() => scrollNav("left")}
@@ -79,7 +79,7 @@ const SwipeableNav = ({ links }: SwipeableNavProps) => {
               <div className="group shrink-0" key={index}>
                 <Link
                   href={link.url}
-                  className="block whitespace-nowrap px-4 py-2 text-sm font-semibold capitalize text-gray-700 hover:text-main"
+                  className="block whitespace-nowrap px-4 py-2 text-sm font-semibold capitalize text-gray-700 hover:text-primary"
                 >
                   {link.title}
                 </Link>
@@ -95,7 +95,7 @@ const SwipeableNav = ({ links }: SwipeableNavProps) => {
                             {gridLink.subLinks.map((link, index) => (
                               <li key={index}>
                                 <Link
-                                  className="block p-2 text-xs font-semibold text-gray-600 transition hover:text-main"
+                                  className="block p-2 text-xs font-semibold text-gray-600 transition hover:text-primary hover:underline"
                                   href={link.url}
                                 >
                                   {link.title}

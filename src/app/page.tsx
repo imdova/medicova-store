@@ -1,42 +1,201 @@
 "use client";
-import LandingImg_1 from "@/assets/images/landing-1.jpeg";
-import LandingImg_2 from "@/assets/images/landing-2.jpeg";
 import LandingSlider from "@/components/UI/sliders/LandingSlider";
 import CategorySlider from "@/components/UI/sliders/CategorySlider";
-import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { slides } from "@/constants/sliders";
+import Image from "next/image";
+import Link from "next/link";
+import SectionHeader from "@/components/UI/headings/SectionHeader";
 
-const slides = [
+const MoreReasons = [
   {
-    title: "Summer Collection 2023",
-    subtitle: "Discover our latest fashion trends",
-    buttonText: "Shop Now",
-    url: "/summer-collection",
-    image: LandingImg_1,
+    id: "1",
+    title: "Local finds",
+    details: "Hand-picked brands, locally",
+    image: "/images/clothes.jpg",
+    url: "#",
   },
   {
-    title: "Limited Time Offer",
-    subtitle: "Get 30% off on selected items",
-    buttonText: "View Deals",
-    url: "/special-offers",
-    image: LandingImg_2,
+    id: "2",
+    title: "Bestsellers",
+    details: "Fill your basket",
+    image: "/images/electronics.avif",
+    url: "#",
   },
   {
-    title: "New Arrivals",
-    subtitle: "Fresh styles for every occasion",
-    buttonText: "Explore",
-    url: "/new-arrivals",
-    image: LandingImg_2,
+    id: "3",
+    title: "Top-rated Products",
+    details: "Stay in trend",
+    image: "/images/watchss.jpg",
+    url: "#",
+  },
+  {
+    id: "4",
+    title: "New arrivals",
+    details: "Fresh takes you need",
+    image: "/images/medical.jpg",
+    url: "#",
   },
 ];
+const megaDeals = [
+  {
+    category: "Fashion deals",
+    title: "summer outfits",
+    discountText: "Up to 70% off",
+    imageUrl: "/images/clothes.jpg",
+    price: null,
+    originalPrice: null,
+    url: "#",
+  },
+  {
+    category: "Accessories deals",
+    title: "Anker 5000 mAh Anker 621 Magnetic Battery (MagGo)...",
+    discountText: "899 EGP",
+    imageUrl: "/images/clothes.jpg",
+    price: "899 EGP",
+    originalPrice: "1799 EGP",
+    url: "#",
+  },
+  {
+    category: "Beauty deals",
+    title: "Trending perfumes",
+    discountText: "Starting from 108...",
+    imageUrl: "/images/clothes.jpg",
+    price: "108 EGP",
+    originalPrice: null,
+    url: "#",
+  },
+  {
+    category: "Book deals",
+    title: "Top deals",
+    discountText: "Up to 20% off",
+    imageUrl: "/images/clothes.jpg",
+    price: null,
+    originalPrice: null,
+    url: "#",
+  },
+];
+const inFocus = [
+  {
+    id: "1",
+    imageUrl: "/images/focus-1.avif",
+    url: "#",
+  },
+  {
+    id: "2",
+    imageUrl: "/images/focus-2.avif",
+    url: "#",
+  },
+];
+
 export default function Home() {
-  useScrollAnimation();
   return (
     <div className="relative">
-      <div className="container mx-auto px-6 lg:max-w-[1500px]">
-        {/* landing content  */}
+      {/* slider landing content  */}
+      <section className="container mx-auto px-6 lg:max-w-[1500px]">
         <LandingSlider slides={slides} />
-        <CategorySlider />
-      </div>
+      </section>
+      {/* slider Categories content  */}
+      <CategorySlider />
+      <section className="hidden pb-8 md:block">
+        <div className="container mx-auto px-6 lg:max-w-[1440px]">
+          <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-3">
+            <div className="bg-white p-3 shadow-sm">
+              <h2 className="mb-3 text-xl font-bold text-gray-700">
+                More reasons to shop
+              </h2>
+              <div className="grid grid-cols-2 gap-3">
+                {MoreReasons.map((reason) => (
+                  <Link
+                    href={reason.url}
+                    className="overflow-hidden rounded-xl bg-gray-100"
+                    key={reason.id}
+                  >
+                    <Image
+                      className="h-[140px] w-full object-cover"
+                      src={reason.image}
+                      width={200}
+                      height={200}
+                      alt={reason.title}
+                    />
+                    <div className="p-2">
+                      <h2 className="font-semibold">{reason.title}</h2>
+                      <p className="text-xs font-medium text-secondary">
+                        {reason.details}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+            <div className="bg-[#a8dabab1] p-4">
+              <h2 className="mb-3 text-xl font-bold text-gray-700">
+                Mega deals
+              </h2>
+              <div className="grid grid-cols-2 gap-3">
+                {megaDeals.map((deal, index) => (
+                  <Link
+                    href={deal.url}
+                    key={index}
+                    className="relative overflow-hidden rounded-xl bg-gray-100 shadow-sm"
+                  >
+                    <div className="absolute right-0 top-0 mb-2 w-fit rounded-sm bg-yellow-400 px-2 py-1 text-sm font-semibold text-black">
+                      {deal.category}
+                    </div>
+                    <Image
+                      src={deal.imageUrl}
+                      alt={deal.title}
+                      width={200}
+                      height={200}
+                      className="h-[140px] w-full object-cover"
+                    />
+                    <div className="p-2">
+                      <p className="truncate text-sm text-gray-700">
+                        {deal.title}
+                      </p>
+                      <p className="text-lg font-semibold">
+                        {deal.originalPrice && (
+                          <span className="mr-2 text-sm text-gray-400 line-through">
+                            {deal.originalPrice}
+                          </span>
+                        )}
+                        <span className="text-sm">
+                          {deal.price ?? deal.discountText}
+                        </span>
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+            <div className="bg-white p-4 shadow-sm">
+              <h2 className="mb-3 text-xl font-bold text-gray-700">In focus</h2>
+              <div className="flex flex-col space-y-4">
+                {inFocus.map((focus) => (
+                  <Link
+                    href={focus.url}
+                    key={focus.id}
+                    className="relative overflow-hidden rounded-xl bg-gray-100 shadow-sm"
+                  >
+                    <Image
+                      src={focus.imageUrl}
+                      alt={`${focus.id}-focus`}
+                      width={200}
+                      height={200}
+                      className="h-full w-full object-cover"
+                    />
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* recommended for you section  */}
+      <section>
+        <div className="container mx-auto px-6 lg:max-w-[1440px]">
+          <SectionHeader blackText="Recommended" greenText="for you" />
+        </div>
+      </section>
     </div>
   );
 }

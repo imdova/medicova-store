@@ -22,7 +22,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={raleway.variable}>
-      <body className="antialiased">
+      <body className="bg-gray-50 antialiased">
         <DynamicHeaderWrapper>{children}</DynamicHeaderWrapper>
       </body>
     </html>

@@ -13,7 +13,6 @@ export type UserProps = {
 };
 
 // header types
-
 export type link = {
   title: string;
   url: string;
@@ -35,15 +34,19 @@ export type linksHeader = {
     image: string | StaticImageData;
   };
 };
+// Navbar type
+export type NavLink = {
+  name: string;
+  path: string;
+  icon?: React.ElementType;
+};
 
 // Glopal types
 // Landing page Slider
 export type Slide = {
-  title: string;
-  subtitle: string;
-  buttonText: string;
-  url: string;
-  image: StaticImageData;
+  image: string | { src: string };
+  url?: string;
+  type: "slider" | "banner";
 };
 // categories type
 export interface CategoryType {
@@ -51,4 +54,5 @@ export interface CategoryType {
   title: string;
   url: string;
   image: string;
+  isSale?: boolean;
 }
