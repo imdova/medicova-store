@@ -1,6 +1,7 @@
 import { Raleway } from "next/font/google";
 import "./globals.css";
 import DynamicHeaderWrapper from "@/components/Layout/Header/DynamicHeaderWrapper";
+import Footer from "@/components/Layout/Footer/Footer";
 
 // export const metadata = {
 //   title: {
@@ -24,6 +25,7 @@ export default function RootLayout({
     <html lang="en" className={raleway.variable}>
       <body className="bg-gray-50 antialiased">
         <DynamicHeaderWrapper>{children}</DynamicHeaderWrapper>
+        <Footer />
       </body>
     </html>
   );

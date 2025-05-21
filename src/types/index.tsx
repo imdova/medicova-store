@@ -40,6 +40,35 @@ export type NavLink = {
   path: string;
   icon?: React.ElementType;
 };
+//footer types
+export interface FooterSection {
+  title: string;
+  links: {
+    name: string;
+    href: string;
+  }[];
+}
+
+export interface SocialMedia {
+  name: string;
+  icon: string;
+  href: string;
+}
+
+export interface PaymentMethod {
+  name: string;
+  icon: string;
+}
+export type LegalLink = {
+  name: string;
+  href: string;
+};
+
+export type AppLink = {
+  name: string;
+  icon: string;
+  href: string;
+};
 
 // Glopal types
 // Landing page Slider

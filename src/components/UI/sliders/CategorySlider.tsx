@@ -137,7 +137,7 @@ const CategorySlider = () => {
 
   return (
     <div
-      className="relative mx-auto max-w-[1500px] overflow-hidden px-4 py-8"
+      className="container relative mx-auto overflow-hidden px-6 pt-4 lg:max-w-[1440px]"
       {...handlers}
     >
       {/* Navigation Arrows */}

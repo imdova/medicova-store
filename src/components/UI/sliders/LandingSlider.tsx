@@ -142,18 +142,31 @@ const LandingSlider = ({
 
   return (
     <div className="">
-      {/* Banner Section */}
-      {bannerSlides.length > 0 && (
-        <div
-          className={`grid grid-cols-1 gap-4 md:grid-cols-${bannerSlides.length}`}
-        >
-          {bannerSlides.map((banner, index) => (
-            <div
-              key={index}
-              className={`relative ${bannerHeight} h-[20px] w-full overflow-hidden sm:h-[30px] md:h-[50px] lg:h-[70px]`}
-            >
-              {banner.url ? (
-                <Link href={banner.url} className="block h-full w-full">
+      <div className="sm:container sm:mx-auto sm:px-6 lg:max-w-[1440px]">
+        {/* Banner Section */}
+        {bannerSlides.length > 0 && (
+          <div
+            className={`grid grid-cols-1 gap-4 md:grid-cols-${bannerSlides.length}`}
+          >
+            {bannerSlides.map((banner, index) => (
+              <div
+                key={index}
+                className={`relative ${bannerHeight} mb-3 h-[30px] w-full overflow-hidden sm:mb-0 sm:h-[30px] md:h-[50px] lg:h-[70px]`}
+              >
+                {banner.url ? (
+                  <Link href={banner.url} className="block h-full w-full">
+                    <Image
+                      src={
+                        typeof banner.image === "string"
+                          ? banner.image
+                          : banner.image.src
+                      }
+                      alt={`Banner ${index + 1}`}
+                      fill
+                      className="h-full w-full object-cover"
+                    />
+                  </Link>
+                ) : (
                   <Image
                     src={
                       typeof banner.image === "string"
@@ -164,161 +177,151 @@ const LandingSlider = ({
                     fill
                     className="h-full w-full object-cover"
                   />
-                </Link>
-              ) : (
-                <Image
-                  src={
-                    typeof banner.image === "string"
-                      ? banner.image
-                      : banner.image.src
-                  }
-                  alt={`Banner ${index + 1}`}
-                  fill
-                  className="h-full w-full object-cover"
-                />
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-      {/* Slider Section */}
-      {sliderSlides.length > 0 && (
-        <section className="relative" {...handlers}>
-          <div
-            className={`relative h-[150px] w-full overflow-hidden md:h-[300px] ${
-              pageLoading ? "opacity-0" : "opacity-100"
-            }`}
-          >
-            <AnimatePresence custom={direction} initial={false}>
-              <motion.div
-                key={currentIndex}
-                custom={direction}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                className="absolute inset-0 h-full w-full"
-                onMouseEnter={() => setIsAutoPlaying(false)}
-                onMouseLeave={() => setIsAutoPlaying(autoPlay)}
-              >
-                {/* Background Image with overlay */}
-                <Link
-                  href={sliderSlides[currentIndex].url || ""}
-                  className="absolute inset-0 z-10 h-full w-full bg-cover bg-center"
-                  style={{
-                    backgroundImage: `url(${
-                      typeof sliderSlides[currentIndex].image === "string"
-                        ? sliderSlides[currentIndex].image
-                        : sliderSlides[currentIndex].image?.src
-                    })`,
-                  }}
-                >
-                  <div className="absolute inset-0 bg-black/30" />
-                </Link>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
-                {/* Text Content */}
+      <div className="container mx-auto px-6 lg:max-w-[1440px]">
+        {/* Slider Section */}
+        {sliderSlides.length > 0 && (
+          <section className="relative" {...handlers}>
+            <div
+              className={`relative h-[150px] w-full overflow-hidden rounded-lg sm:rounded-none md:h-[300px] ${
+                pageLoading ? "opacity-0" : "opacity-100"
+              }`}
+            >
+              <AnimatePresence custom={direction} initial={false}>
                 <motion.div
-                  initial="hidden"
-                  animate="visible"
-                  variants={textVariants}
-                  className="relative flex h-full w-full items-center justify-center text-white"
+                  key={currentIndex}
+                  custom={direction}
+                  variants={slideVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  className="absolute inset-0 h-full w-full"
+                  onMouseEnter={() => setIsAutoPlaying(false)}
+                  onMouseLeave={() => setIsAutoPlaying(autoPlay)}
                 >
-                  <div className="container mx-auto px-4"></div>
+                  {/* Background Image with overlay */}
+                  <Link
+                    href={sliderSlides[currentIndex].url || ""}
+                    className="absolute inset-0 z-10 h-full w-full bg-cover bg-center"
+                    style={{
+                      backgroundImage: `url(${
+                        typeof sliderSlides[currentIndex].image === "string"
+                          ? sliderSlides[currentIndex].image
+                          : sliderSlides[currentIndex].image?.src
+                      })`,
+                    }}
+                  ></Link>
+
+                  {/* Text Content */}
+                  <motion.div
+                    initial="hidden"
+                    animate="visible"
+                    variants={textVariants}
+                    className="relative flex h-full w-full items-center justify-center text-white"
+                  >
+                    <div className="container mx-auto px-4"></div>
+                  </motion.div>
                 </motion.div>
-              </motion.div>
-            </AnimatePresence>
+              </AnimatePresence>
 
-            {/* Navigation Arrows - only show if more than one slide */}
-            {showNavigation && sliderSlides.length > 1 && (
-              <>
-                <button
-                  onClick={prevSlide}
-                  className="group absolute -left-1 top-0 z-20 hidden h-full items-center md:flex"
-                >
-                  <svg
-                    width="44"
-                    height="502"
-                    viewBox="0 0 44 502"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="duration-400 inline-block h-full w-auto origin-left scale-x-0 transition-transform group-hover:scale-x-[2]"
+              {/* Navigation Arrows - only show if more than one slide */}
+              {showNavigation && sliderSlides.length > 1 && (
+                <>
+                  <button
+                    onClick={prevSlide}
+                    className="group absolute -left-1 top-0 z-20 hidden h-full items-center md:flex"
                   >
-                    <path
-                      className="fill-white/10 transition duration-200 group-hover:fill-white"
-                      d="M0.999973 501C32.9999 301.5 42.9999 308 42.9999 252.5C42.9999 197 29.4999 189 1.00002 0.999996L0.999973 501Z"
-                      fill="rgba(255,255,255,.4)"
-                    ></path>
-                  </svg>
-                  <div className="flex h-10 w-10 translate-x-7 items-center justify-center rounded-full bg-white/25 text-white transition duration-200 group-hover:visible group-hover:-translate-x-7 group-hover:bg-transparent group-hover:text-gray-600 group-hover:opacity-100">
-                    <ChevronsLeft size={25} />
-                  </div>
-                </button>
-                <button
-                  onClick={nextSlide}
-                  className="group absolute -right-1 top-0 z-20 hidden h-full items-center md:flex"
-                >
-                  <div className="z-10 flex h-10 w-10 -translate-x-7 items-center justify-center rounded-full bg-white/25 text-white transition duration-200 group-hover:visible group-hover:translate-x-7 group-hover:bg-transparent group-hover:text-gray-600 group-hover:opacity-100">
-                    <ChevronsRight size={25} />
-                  </div>
-                  <svg
-                    width="44"
-                    height="501"
-                    viewBox="0 0 44 501"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="duration-400 inline-block h-full w-auto origin-right scale-x-0 transition-transform group-hover:scale-x-[2]"
+                    <svg
+                      width="44"
+                      height="502"
+                      viewBox="0 0 44 502"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="duration-400 inline-block h-full w-auto origin-left scale-x-0 transition-transform group-hover:scale-x-[2]"
+                    >
+                      <path
+                        className="fill-white/10 transition duration-200 group-hover:fill-white"
+                        d="M0.999973 501C32.9999 301.5 42.9999 308 42.9999 252.5C42.9999 197 29.4999 189 1.00002 0.999996L0.999973 501Z"
+                        fill="rgba(255,255,255,.4)"
+                      ></path>
+                    </svg>
+                    <div className="flex h-10 w-10 translate-x-7 items-center justify-center rounded-full bg-white/25 text-white transition duration-200 group-hover:visible group-hover:-translate-x-7 group-hover:bg-transparent group-hover:text-gray-600 group-hover:opacity-100">
+                      <ChevronsLeft size={25} />
+                    </div>
+                  </button>
+                  <button
+                    onClick={nextSlide}
+                    className="group absolute -right-1 top-0 z-20 hidden h-full items-center md:flex"
                   >
-                    <path
-                      className="fill-white/10 transition duration-200 group-hover:fill-white"
-                      d="M42.9999 0.5C11 200 1 193.5 1 249C1 304.5 14.5 312.5 42.9999 500.5V0.5Z"
-                      fill="rgba(255,255,255,.4)"
-                    ></path>
-                  </svg>
+                    <div className="z-10 flex h-10 w-10 -translate-x-7 items-center justify-center rounded-full bg-white/25 text-white transition duration-200 group-hover:visible group-hover:translate-x-7 group-hover:bg-transparent group-hover:text-gray-600 group-hover:opacity-100">
+                      <ChevronsRight size={25} />
+                    </div>
+                    <svg
+                      width="44"
+                      height="501"
+                      viewBox="0 0 44 501"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="duration-400 inline-block h-full w-auto origin-right scale-x-0 transition-transform group-hover:scale-x-[2]"
+                    >
+                      <path
+                        className="fill-white/10 transition duration-200 group-hover:fill-white"
+                        d="M42.9999 0.5C11 200 1 193.5 1 249C1 304.5 14.5 312.5 42.9999 500.5V0.5Z"
+                        fill="rgba(255,255,255,.4)"
+                      ></path>
+                    </svg>
 
-                  {/* <ChevronRight
+                    {/* <ChevronRight
                     className="invisible -translate-x-24 text-black opacity-0 transition duration-200 group-hover:visible group-hover:-translate-x-6 group-hover:opacity-100"
                     size={25}
                   /> */}
-                </button>
-              </>
-            )}
-
-            {/* Progress Bar */}
-            {showProgressBar && isAutoPlaying && sliderSlides.length > 1 && (
-              <div className="absolute left-0 right-0 top-0 z-10 h-1 bg-white/20">
-                <motion.div
-                  className="h-full bg-white"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progress}%` }}
-                  transition={{ duration: 0.1 }}
-                />
-              </div>
-            )}
-
-            {/* Dots Navigation - only show if more than one slide */}
-            {showNavigation && sliderSlides.length > 1 && (
-              <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-2 space-x-2">
-                {sliderSlides.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => goToSlide(index)}
-                    className="group relative cursor-pointer rounded-full p-2"
-                    aria-label={`Go to slide ${index + 1}`}
-                  >
-                    <div
-                      className={`absolute inset-0 left-1/2 top-1/2 h-1 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all ${
-                        currentIndex === index
-                          ? "bg-primary"
-                          : "bg-white/50 group-hover:bg-white/70"
-                      }`}
-                    />
                   </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-      )}
+                </>
+              )}
+
+              {/* Progress Bar */}
+              {showProgressBar && isAutoPlaying && sliderSlides.length > 1 && (
+                <div className="absolute left-0 right-0 top-0 z-10 h-1 bg-white/20">
+                  <motion.div
+                    className="h-full bg-white"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progress}%` }}
+                    transition={{ duration: 0.1 }}
+                  />
+                </div>
+              )}
+
+              {/* Dots Navigation - only show if more than one slide */}
+              {showNavigation && sliderSlides.length > 1 && (
+                <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-2 space-x-2">
+                  {sliderSlides.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => goToSlide(index)}
+                      className="group relative cursor-pointer rounded-full p-2"
+                      aria-label={`Go to slide ${index + 1}`}
+                    >
+                      <div
+                        className={`absolute inset-0 left-1/2 top-1/2 h-1 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all ${
+                          currentIndex === index
+                            ? "bg-primary"
+                            : "bg-white/50 group-hover:bg-white/70"
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+      </div>
     </div>
   );
 };

@@ -5,6 +5,19 @@ import { slides } from "@/constants/sliders";
 import Image from "next/image";
 import Link from "next/link";
 import SectionHeader from "@/components/UI/headings/SectionHeader";
+import ProductCard from "@/components/UI/cards/ProductCard";
+import { products } from "@/constants/products";
+import { Banner } from "@/components/UI/Banner";
+import ProductsSlider from "@/components/UI/sliders/ProductsSlider";
+import BrandSlider from "@/components/UI/sliders/BrandSlider";
+import DynamicButton from "@/components/UI/Buttons/DynamicButton";
+import CategoryCard from "@/components/UI/cards/CategoryCard";
+import {
+  consumableCategories,
+  equipmentCategories,
+  lifestyleCategories,
+} from "@/constants/categouries";
+import PopularSearches from "@/components/UI/PopularSearches";
 
 const MoreReasons = [
   {
@@ -90,15 +103,15 @@ const inFocus = [
 export default function Home() {
   return (
     <div className="relative">
-      {/* slider landing content  */}
-      <section className="container mx-auto px-6 lg:max-w-[1500px]">
+      <section>
+        {/* slider landing content  */}
         <LandingSlider slides={slides} />
+        {/* slider Categories content  */}
+        <CategorySlider />
       </section>
-      {/* slider Categories content  */}
-      <CategorySlider />
-      <section className="hidden pb-8 md:block">
+      <section className="hidden pb-8 xl:block">
         <div className="container mx-auto px-6 lg:max-w-[1440px]">
-          <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-3 gap-3">
             <div className="bg-white p-3 shadow-sm">
               <h2 className="mb-3 text-xl font-bold text-gray-700">
                 More reasons to shop
@@ -113,8 +126,8 @@ export default function Home() {
                     <Image
                       className="h-[140px] w-full object-cover"
                       src={reason.image}
-                      width={200}
-                      height={200}
+                      width={600}
+                      height={600}
                       alt={reason.title}
                     />
                     <div className="p-2">
@@ -144,8 +157,8 @@ export default function Home() {
                     <Image
                       src={deal.imageUrl}
                       alt={deal.title}
-                      width={200}
-                      height={200}
+                      width={600}
+                      height={600}
                       className="h-[140px] w-full object-cover"
                     />
                     <div className="p-2">
@@ -179,8 +192,8 @@ export default function Home() {
                     <Image
                       src={focus.imageUrl}
                       alt={`${focus.id}-focus`}
-                      width={200}
-                      height={200}
+                      width={600}
+                      height={600}
                       className="h-full w-full object-cover"
                     />
                   </Link>
@@ -191,9 +204,170 @@ export default function Home() {
         </div>
       </section>
       {/* recommended for you section  */}
-      <section>
+      <section className="bg-white">
         <div className="container mx-auto px-6 lg:max-w-[1440px]">
           <SectionHeader blackText="Recommended" greenText="for you" />
+          <ProductsSlider>
+            {products.map((product) => (
+              <div
+                key={product.id}
+                className="flex-shrink-0"
+                style={{ width: "240px" }}
+              >
+                <ProductCard product={product} />
+              </div>
+            ))}
+          </ProductsSlider>
+          <div className="mt-6">
+            <Banner image="/images/banner-6.jpg" url="#" />
+          </div>
+        </div>
+      </section>
+      {/* Brands section  */}
+      <section className="bg-white py-6">
+        <div className="container mx-auto px-6 lg:max-w-[1440px]">
+          <SectionHeader
+            blackText="Explore"
+            greenText="official brands stores"
+          />
+          <BrandSlider />
+        </div>
+      </section>
+      {/* Consumable Category  */}
+      <section className="bg-white py-6">
+        <div className="container mx-auto px-6 lg:max-w-[1440px]">
+          <div className="mb-4 flex items-center justify-between gap-4">
+            <h2 className="text-lg font-bold sm:text-2xl">Consumable</h2>
+            <DynamicButton
+              size="sm"
+              variant="outline"
+              href={"#"}
+              label={"Shop All"}
+            />
+          </div>
+          <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-6">
+            {consumableCategories.slice(0, 6).map((category) => {
+              return <CategoryCard key={category.id} category={category} />;
+            })}
+          </div>
+          <div>
+            <div className="mb-4 flex items-center justify-between gap-4">
+              <h2 className="text-lg font-bold sm:text-2xl">
+                Consumable bestsellers
+              </h2>
+              <DynamicButton
+                size="sm"
+                variant="outline"
+                href={"#"}
+                label={"Shop Now"}
+              />
+            </div>
+            <ProductsSlider>
+              {products.map((product) => (
+                <div
+                  key={product.id}
+                  className="flex-shrink-0"
+                  style={{ width: "240px" }}
+                >
+                  <ProductCard product={product} />
+                </div>
+              ))}
+            </ProductsSlider>
+          </div>
+        </div>
+      </section>
+      {/* life style Category  */}
+      <section className="bg-white py-6">
+        <div className="container mx-auto px-6 lg:max-w-[1440px]">
+          <div className="mb-4 flex items-center justify-between gap-4">
+            <h2 className="text-lg font-bold sm:text-2xl">Life Style</h2>
+            <DynamicButton
+              size="sm"
+              variant="outline"
+              href={"#"}
+              label={"Shop All"}
+            />
+          </div>
+          <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-6">
+            {lifestyleCategories.slice(0, 6).map((category) => {
+              return <CategoryCard key={category.id} category={category} />;
+            })}
+          </div>
+          <div>
+            <div className="mb-4 flex items-center justify-between gap-4">
+              <h2 className="text-lg font-bold sm:text-2xl">
+                Life Style bestsellers
+              </h2>
+              <DynamicButton
+                size="sm"
+                variant="outline"
+                href={"#"}
+                label={"Shop Now"}
+              />
+            </div>
+            <ProductsSlider>
+              {products.map((product) => (
+                <div
+                  key={product.id}
+                  className="flex-shrink-0"
+                  style={{ width: "240px" }}
+                >
+                  <ProductCard product={product} />
+                </div>
+              ))}
+            </ProductsSlider>
+            <div className="mt-6">
+              <Banner image="/images/banner-7.avif" url="#" />
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* equipment Category  */}
+      <section className="bg-white py-6">
+        <div className="container mx-auto px-6 lg:max-w-[1440px]">
+          <div className="mb-4 flex items-center justify-between gap-4">
+            <h2 className="text-lg font-bold sm:text-2xl">Equipment</h2>
+            <DynamicButton
+              size="sm"
+              variant="outline"
+              href={"#"}
+              label={"Shop All"}
+            />
+          </div>
+          <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-6">
+            {equipmentCategories.slice(0, 6).map((category) => {
+              return <CategoryCard key={category.id} category={category} />;
+            })}
+          </div>
+          <div>
+            <div className="mb-4 flex items-center justify-between gap-4">
+              <h2 className="text-lg font-bold sm:text-2xl">
+                Equipment bestsellers
+              </h2>
+              <DynamicButton
+                size="sm"
+                variant="outline"
+                href={"#"}
+                label={"Shop Now"}
+              />
+            </div>
+            <ProductsSlider>
+              {products.map((product) => (
+                <div
+                  key={product.id}
+                  className="flex-shrink-0"
+                  style={{ width: "240px" }}
+                >
+                  <ProductCard product={product} />
+                </div>
+              ))}
+            </ProductsSlider>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div className="container mx-auto px-6 lg:max-w-[1440px]">
+          <PopularSearches />
         </div>
       </section>
     </div>
