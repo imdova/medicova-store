@@ -85,3 +85,51 @@ export interface CategoryType {
   image: string;
   isSale?: boolean;
 }
+// Brand type
+export interface Brand {
+  id: number;
+  title: string;
+  url: string;
+  image?: string;
+  isSale?: boolean;
+}
+// For subcategory
+export interface SubCategoryType {
+  title: string;
+  url: string;
+}
+
+export interface MultiCategory extends CategoryType {
+  subCategories?: SubCategoryType[];
+  featuredProducts?: SubCategoryType[];
+}
+
+// for colors and sizes
+export type SizeType = "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL";
+export type NumericSizeType = "28" | "30" | "32" | "34" | "36" | "38" | "40";
+export type LiquidSizeType =
+  | "50ml"
+  | "100ml"
+  | "150ml"
+  | "200ml"
+  | "300ml"
+  | "400ml"
+  | "500ml";
+
+export type ColorType =
+  | "Black"
+  | "White"
+  | "Red"
+  | "Blue"
+  | "Green"
+  | "Yellow"
+  | "Orange"
+  | "Purple"
+  | "Grey"
+  | "Brown"
+  | "Beige"
+  | "Pink"
+  | "Navy"
+  | "Maroon"
+  | "Olive"
+  | "Teal";

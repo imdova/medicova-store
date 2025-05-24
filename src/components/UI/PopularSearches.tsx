@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import LogoLoader from "./LogoLoader";
 
 interface PopularSearch {
   id: string;
@@ -188,13 +189,13 @@ const PopularSearches = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center py-12">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
+        <LogoLoader className="w-[40px] animate-pulse text-gray-400" />
       </div>
     );
   }
 
   return (
-    <section className="bg-white py-8">
+    <section className="bg-white px-2 py-8">
       <div>
         <h2 className="mb-6 text-lg font-bold text-gray-900 md:text-3xl">
           Popular Searches

@@ -70,6 +70,7 @@
 }
 body {
   font-family: var(--font-raleway);
+  scroll-behavior: smooth;
 }
 
 .box {

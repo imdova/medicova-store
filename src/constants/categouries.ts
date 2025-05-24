@@ -1,4 +1,4 @@
-import { CategoryType } from "@/types";
+import { CategoryType, MultiCategory } from "@/types";
 
 const medicalCategories: CategoryType[] = [
   {
@@ -185,18 +185,7 @@ const allCategories: CategoryType[] = [
   ...lifestyleCategories,
 ];
 
-// For subcategory navigation (mega menu)
-interface SubCategoryType {
-  title: string;
-  url: string;
-}
-
-interface MegaMenuCategory extends CategoryType {
-  subCategories?: SubCategoryType[];
-  featuredProducts?: SubCategoryType[];
-}
-
-const megaMenuCategories: MegaMenuCategory[] = [
+const megaMenuCategories: MultiCategory[] = [
   {
     id: 1,
     title: "Medical Wear",
@@ -216,7 +205,6 @@ const megaMenuCategories: MegaMenuCategory[] = [
       { title: "New Arrivals", url: "/medical-wear/new-arrivals" },
     ],
   },
-  // Add similar expanded data for other main categories
 ];
 
 export {

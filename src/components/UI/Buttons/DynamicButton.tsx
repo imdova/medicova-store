@@ -45,7 +45,7 @@ const DynamicButton: React.FC<DynamicButtonProps> = ({
     outline:
       "border border-gray-700 text-gray-700 hover:bg-gray-700 hover:text-white ",
     white:
-      "bg-white text-gray-700 shadow-sm hover:bg-gray-100 focus:ring-gray-300 rounded-lg",
+      "bg-white text-gray-700 shadow-md hover:bg-gray-100 focus:ring-gray-300 rounded-lg",
     danger:
       "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 rounded-lg",
     success:

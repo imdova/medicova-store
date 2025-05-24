@@ -9,6 +9,7 @@ import {
 import Image from "next/image";
 import LogoLoader from "../LogoLoader";
 import { Product } from "@/types/product";
+import Link from "next/link";
 
 interface ProductCardProps {
   loading?: boolean;
@@ -22,13 +23,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
   // Image navigation
   const nextImage = () => {
     setCurrentImageIndex((prev) =>
-      prev === product.images.length - 1 ? 0 : prev + 1,
+      prev === (product.images?.length ?? 1) - 1 ? 0 : prev + 1,
     );
   };
 
   const prevImage = () => {
     setCurrentImageIndex((prev) =>
-      prev === 0 ? product.images.length - 1 : prev - 1,
+      prev === 0 ? (product.images?.length ?? 1) - 1 : prev - 1,
     );
   };
 
@@ -37,17 +38,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
   };
 
   // Auto-rotate nudges every 3 seconds
+  const nudgeCount = product.nudges ? product.nudges.length : 0;
+
   useEffect(() => {
+    if (nudgeCount === 0) return;
+
     const interval = setInterval(() => {
-      setCurrentNudgeIndex((prev) =>
-        prev === product.nudges.length - 1 ? 0 : prev + 1,
-      );
+      setCurrentNudgeIndex((prev) => (prev === nudgeCount - 1 ? 0 : prev + 1));
     }, 3000);
+
     return () => clearInterval(interval);
-  }, [product.nudges.length]);
+  }, [nudgeCount]);
 
   return (
-    <div className="group relative mx-auto h-full min-h-[300px] w-full overflow-hidden rounded-xl border border-gray-300 bg-white p-2 shadow-sm">
+    <div className="group relative mx-auto h-full min-h-[300px] w-full cursor-pointer overflow-hidden rounded-xl border border-gray-300 bg-white p-2 shadow-sm">
       {loading ? (
         <div className="flex h-full w-full items-center justify-center">
           <LogoLoader className="w-[40px] animate-pulse text-gray-400" />
@@ -63,16 +67,21 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
           <div className="relative">
             {/* Main Image */}
             <div className="relative overflow-hidden rounded-lg bg-gray-100">
-              <Image
-                width={200}
-                height={200}
-                src={product.images[currentImageIndex]}
-                alt={product.title}
-                className="h-64 w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
-              />
+              <Link href={`/product-details/${product.id}`}>
+                <Image
+                  width={200}
+                  height={200}
+                  src={
+                    product.images?.[currentImageIndex] ||
+                    "/images/placeholder.jpg"
+                  }
+                  alt={product.title}
+                  className="h-64 w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
+                />
+              </Link>
 
               {/* Image Navigation Arrows */}
-              {product.images.length > 1 && (
+              {(product.images?.length ?? 0) > 1 && (
                 <>
                   <button
                     onClick={prevImage}
@@ -90,9 +99,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
               )}
             </div>
             {/* Thumbnail Navigation */}
-            {product.images.length > 1 && (
+            {(product.images?.length ?? 0) > 1 && (
               <div className="invisible absolute bottom-2 left-0 right-0 mx-auto flex w-fit justify-center gap-1 rounded-full bg-gray-100 px-2 py-1 opacity-0 transition duration-300 group-hover:visible group-hover:opacity-100">
-                {product.images.map((_, index) => (
+                {product.images?.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => {
@@ -108,7 +117,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
               <div className="flex items-center">
                 <Star className="h-3 w-3 fill-light-primary text-light-primary" />
                 <span className="ml-1 text-sm text-gray-500">
-                  {product.rating.toFixed(1)}
+                  {product.rating?.toFixed(1)}
                 </span>
               </div>
             </div>
@@ -120,7 +129,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
             </button>
           </div>
 
-          <div className="flex h-full flex-1 flex-col justify-between">
+          <Link
+            href={`/product-details/${product.id}`}
+            className="flex h-full flex-1 flex-col justify-between"
+          >
             {/* Product Info */}
             <div className="p-1">
               <h3 className="mt-2 text-sm font-semibold text-gray-700">
@@ -154,7 +166,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
                     transform: `translateY(-${currentNudgeIndex * 24}px)`,
                   }}
                 >
-                  {product.nudges.map((nudge, index) => (
+                  {product.nudges?.map((nudge, index) => (
                     <div
                       key={index}
                       className="flex h-6 items-center text-xs text-gray-600"
@@ -165,12 +177,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
                 </div>
               </div>
             </div>
-            <div className="mt-2 flex items-center text-xs font-semibold">
-              <span className="rounded bg-light-primary px-2 py-1 text-white">
-                Express
-              </span>
-            </div>
-          </div>
+            {product.deliveryDate && (
+              <div className="mt-2 flex items-center text-xs font-semibold">
+                <span className="rounded bg-light-primary px-2 py-1 text-white">
+                  Express
+                </span>
+              </div>
+            )}
+          </Link>
         </div>
       )}
     </div>

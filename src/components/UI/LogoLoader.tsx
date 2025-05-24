@@ -1,4 +1,3 @@
-// components/LogoLoader.tsx
 import React from "react";
 
 type LogoLoaderProps = React.SVGProps<SVGSVGElement>;

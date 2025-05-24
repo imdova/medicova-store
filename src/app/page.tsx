@@ -365,7 +365,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section>
+      <section className="bg-white">
         <div className="container mx-auto px-6 lg:max-w-[1440px]">
           <PopularSearches />
         </div>

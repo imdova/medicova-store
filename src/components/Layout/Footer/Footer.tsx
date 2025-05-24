@@ -86,7 +86,7 @@ const Footer = () => {
         </div>
 
         {/* App download section */}
-        <div className="mb-8 flex flex-col justify-between gap-4 border-t border-gray-200 pt-8 md:flex-row">
+        <div className="mb-8 flex flex-col justify-between gap-4 border-gray-200 pt-8 md:flex-row md:border-t">
           <div className="flex flex-col items-center">
             <h3 className="mb-4 text-sm font-bold uppercase">SHOP ON THE GO</h3>
             <div className="flex flex-wrap gap-4">
