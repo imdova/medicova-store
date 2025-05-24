@@ -518,7 +518,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
         </div>
 
         {/* Brand Products */}
-        <div className="mt-6 rounded-lg bg-white p-6 shadow-sm">
+        <div className="mt-6 rounded-lg bg-white shadow-sm">
           <h2 className="mb-2 text-2xl font-bold text-gray-600">
             More from {product.brand?.title}
           </h2>
@@ -536,7 +536,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
         </div>
 
         {/* Products related this Product */}
-        <div className="mt-6 rounded-lg bg-white p-6 shadow-sm">
+        <div className="mt-6 rounded-lg bg-white shadow-sm">
           <h2 className="mb-2 text-2xl font-bold text-gray-600">
             Products related to this
           </h2>
