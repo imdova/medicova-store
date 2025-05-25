@@ -68,8 +68,6 @@ const ProductPage = ({ params }: ProductPageProps) => {
     return () => clearInterval(interval);
   }, [nudgeCount]);
 
-  console.log(product);
-
   if (!product) return <NotFound />;
 
   return (
@@ -147,7 +145,11 @@ const ProductPage = ({ params }: ProductPageProps) => {
             <div className="sticky top-4 h-fit rounded-lg bg-white p-4">
               <ProductImagesSlider images={product.images} />
               <div className="mt-4 hidden gap-2 md:flex">
-                <QuantitySelector buttonSize="md" className="flex-1" />
+                <QuantitySelector
+                  buttonSize="md"
+                  className="flex-1"
+                  productId={""}
+                />
                 <button className="flex w-full items-center justify-center gap-1 rounded-sm bg-green-600 text-xs font-semibold uppercase text-white shadow-sm transition hover:bg-green-700 md:text-sm">
                   <ShoppingCart size={15} />
                   Add To Cart
@@ -301,18 +303,15 @@ const ProductPage = ({ params }: ProductPageProps) => {
                   {/* Colors */}
                   {product.colors && (
                     <div>
-                      <div className="font-medium">
-                        COLOR GUIDE: {selectedColor}
-                      </div>
+                      <div className="font-medium">COLOR GUIDE:</div>
                       <div className="mt-2 flex space-x-2">
                         {product.colors.map((color, index) => (
                           <button
                             key={index}
+                            style={{ background: color }}
                             onClick={() => setSelectedColor(color)}
-                            className={`rounded border px-3 py-1 ${selectedColor === color ? "border-green-500 bg-green-50 text-green-600" : "border-gray-300"}`}
-                          >
-                            {color}
-                          </button>
+                            className={`h-8 w-8 rounded-full border-2 border-white outline ${selectedColor === color ? "outline-1 outline-gray-800" : "outline-1 outline-gray-200"}`}
+                          ></button>
                         ))}
                       </div>
                     </div>
@@ -320,9 +319,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
                   {/* Sizes */}
                   {product.sizes && (
                     <div>
-                      <div className="font-medium">
-                        SIZE GUIDE: {selectedSize}
-                      </div>
+                      <div className="font-medium">SIZE GUIDE:</div>
                       <div className="mt-2 flex space-x-2">
                         {product.sizes.map((size, index) => (
                           <button
@@ -378,14 +375,13 @@ const ProductPage = ({ params }: ProductPageProps) => {
                           <div className="mb-1">
                             Sold by{" "}
                             <span className="text-xs text-primary underline">
-                              {product.sellers[0]?.name}
+                              {product.sellers?.name}
                             </span>
                           </div>
                         )}
                         {product.sellers && (
                           <div className="text-gray-600">
-                            {product.sellers[0].positiveRatings} Positive
-                            Ratings
+                            {product.sellers.positiveRatings} Positive Ratings
                           </div>
                         )}
                       </div>
@@ -403,7 +399,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
                       <span className="ml-1 text-sm font-semibold">
                         Item as shown
                         <ProgressLine
-                          progress={product.sellers[0].itemShown ?? 0}
+                          progress={product.sellers.itemShown ?? 0}
                           height="h-1"
                           showLabel
                         />
@@ -415,7 +411,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
                     {product.sellers && (
                       <div className="flex items-center gap-3 text-sm font-semibold">
                         <Handshake size={16} className="text-primary" />
-                        Partner since {product.sellers[0].partnerSince}
+                        Partner since {product.sellers.partnerSince}
                       </div>
                     )}
                   </div>
@@ -445,7 +441,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
                       >
                         <div className="flex items-center gap-2 text-xs">
                           <RefreshCcw size={16} className="text-primary" />
-                          {product.sellers[0].returnPolicy}
+                          {product.sellers.returnPolicy}
                         </div>
                         <ChevronRight className="text-secondary" size={15} />
                       </Link>
@@ -526,8 +522,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
             {products.map((product) => (
               <div
                 key={product.id}
-                className="flex-shrink-0"
-                style={{ width: "240px" }}
+                className="w-[200px] flex-shrink-0 md:w-[240px]"
               >
                 <ProductCard product={product} />
               </div>
@@ -544,8 +539,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
             {products.map((product) => (
               <div
                 key={product.id}
-                className="flex-shrink-0"
-                style={{ width: "240px" }}
+                className="w-[200px] flex-shrink-0 md:w-[240px]"
               >
                 <ProductCard product={product} />
               </div>

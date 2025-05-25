@@ -1,26 +1,29 @@
 "use client";
 
+import { decreaseQuantity, increaseQuantity } from "@/store/slices/cartSlice";
 import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 type QuantitySelectorProps = {
+  productId: string;
   initialQuantity?: number;
   min?: number;
   max?: number;
-  onQuantityChange?: (quantity: number) => void;
   className?: string;
   buttonSize?: "sm" | "md" | "lg";
   showLabel?: boolean;
 };
 
 const QuantitySelector = ({
+  productId,
   initialQuantity = 1,
   min = 1,
   max = 99,
-  onQuantityChange,
   className = "",
   buttonSize = "md",
   showLabel = false,
 }: QuantitySelectorProps) => {
+  const dispatch = useDispatch();
   const [quantity, setQuantity] = useState(initialQuantity);
 
   // Handle external quantity changes
@@ -28,39 +31,47 @@ const QuantitySelector = ({
     setQuantity(initialQuantity);
   }, [initialQuantity]);
 
-  // Notify parent when quantity changes
-  useEffect(() => {
-    onQuantityChange?.(quantity);
-  }, [quantity, onQuantityChange]);
+  const handleQuantityChange = (newQuantity: number) => {
+    // Ensure newQuantity is an integer
+    const validatedQuantity = Math.max(
+      min,
+      Math.min(Math.floor(newQuantity), max),
+    );
+
+    if (validatedQuantity > quantity) {
+      // Quantity increased
+      const increaseAmount = validatedQuantity - quantity;
+      dispatch(increaseQuantity({ id: productId, amount: increaseAmount }));
+    } else if (validatedQuantity < quantity) {
+      // Quantity decreased
+      const decreaseAmount = quantity - validatedQuantity;
+      dispatch(decreaseQuantity({ id: productId, amount: decreaseAmount }));
+    }
+
+    // Update local state only if the value changed
+    if (validatedQuantity !== quantity) {
+      setQuantity(validatedQuantity);
+    }
+  };
 
   const incrementQuantity = () => {
-    setQuantity((prev) => {
-      const newQuantity = prev + 1;
-      return newQuantity > max ? prev : newQuantity;
-    });
+    handleQuantityChange(quantity + 1);
   };
 
   const decrementQuantity = () => {
-    setQuantity((prev) => {
-      const newQuantity = prev - 1;
-      return newQuantity < min ? prev : newQuantity;
-    });
+    handleQuantityChange(quantity - 1);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
     if (!isNaN(value)) {
-      if (value >= min && value <= max) {
-        setQuantity(value);
-      } else if (value > max) {
-        setQuantity(max);
-      }
+      handleQuantityChange(value);
     }
   };
 
   const handleBlur = () => {
     if (isNaN(quantity) || quantity < min) {
-      setQuantity(min);
+      handleQuantityChange(min);
     }
   };
 

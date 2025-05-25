@@ -4,6 +4,7 @@ import DynamicHeaderWrapper from "@/components/Layout/Header/DynamicHeaderWrappe
 import Footer from "@/components/Layout/Footer/Footer";
 import { Suspense } from "react";
 import LoadingAnimation from "@/components/UI/LoadingAnimation";
+import StoreProvider from "@/store/StoreProvider";
 
 const raleway = Raleway({
   variable: "--font-raleway",
@@ -18,10 +19,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={raleway.variable}>
       <body className="bg-gray-50 antialiased">
-        <DynamicHeaderWrapper>
-          <Suspense fallback={<LoadingAnimation />}>{children}</Suspense>
-        </DynamicHeaderWrapper>
-        <Footer />
+        <StoreProvider>
+          <DynamicHeaderWrapper>
+            <Suspense fallback={<LoadingAnimation />}>{children}</Suspense>
+          </DynamicHeaderWrapper>
+          <Footer />
+        </StoreProvider>
       </body>
     </html>
   );

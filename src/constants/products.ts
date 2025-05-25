@@ -76,17 +76,16 @@ export const products: Product[] = [
       { title: "3 months installments at 0% interest", url: "#" },
       { title: "Free embroidery available", url: "#" },
     ],
-    sellers: [
-      {
-        id: "seller1",
-        name: "MediPro Official Store",
-        rating: 4.8,
-        positiveRatings: "94%",
-        partnerSince: "2018",
-        returnPolicy: "30 days return policy",
-        itemShown: 90,
-      },
-    ],
+    sellers: {
+      id: "seller1",
+      name: "MediPro Official Store",
+      rating: 4.8,
+      positiveRatings: "94%",
+      partnerSince: "2018",
+      returnPolicy: "30 days return policy",
+      itemShown: 90,
+    },
+
     overview_desc:
       "Professional-grade scrubs designed for healthcare workers with all-day comfort in mind. Made from durable, easy-care fabric that stands up to repeated washing.",
     highlights: [
@@ -101,6 +100,7 @@ export const products: Product[] = [
       { label: "Fit Type", content: "Regular Fit" },
       { label: "Closure Type", content: "Pull On" },
     ],
+    shipping_fee: 0,
   },
   {
     id: "2",
@@ -178,17 +178,16 @@ export const products: Product[] = [
       { title: "3 months installments at 0% interest", url: "#" },
       { title: "Free embroidery available", url: "#" },
     ],
-    sellers: [
-      {
-        id: "seller2",
-        name: "WhiteCoat Official Store",
-        rating: 4.9,
-        positiveRatings: "96%",
-        partnerSince: "2017",
-        returnPolicy: "30 days return policy",
-        itemShown: 90,
-      },
-    ],
+    sellers: {
+      id: "seller2",
+      name: "WhiteCoat Official Store",
+      rating: 4.9,
+      positiveRatings: "96%",
+      partnerSince: "2017",
+      returnPolicy: "30 days return policy",
+      itemShown: 90,
+    },
+
     overview_desc:
       "A professional lab coat designed for doctors, nurses, and medical students. Features a classic design with modern functionality and premium fabric that resists stains and wrinkles.",
     highlights: [
@@ -203,6 +202,7 @@ export const products: Product[] = [
       { label: "Fit Type", content: "Regular Fit" },
       { label: "Closure Type", content: "Button Front" },
     ],
+    shipping_fee: 0,
   },
   {
     id: "3",
@@ -279,17 +279,16 @@ export const products: Product[] = [
       { title: "3 months installments at 0% interest", url: "#" },
       { title: "Free shipping on all orders", url: "#" },
     ],
-    sellers: [
-      {
-        id: "seller3",
-        name: "NurseMates Official Store",
-        rating: 4.7,
-        positiveRatings: "92%",
-        partnerSince: "2019",
-        returnPolicy: "30 days return policy",
-        itemShown: 90,
-      },
-    ],
+    sellers: {
+      id: "seller3",
+      name: "NurseMates Official Store",
+      rating: 4.7,
+      positiveRatings: "92%",
+      partnerSince: "2019",
+      returnPolicy: "30 days return policy",
+      itemShown: 90,
+    },
+
     overview_desc:
       "The NurseMates Alicia shoes are designed specifically for healthcare professionals who spend long hours on their feet. Features slip-resistant soles and cushioned support for all-day comfort.",
     highlights: [
@@ -304,6 +303,7 @@ export const products: Product[] = [
       { label: "Closure Type", content: "Lace-up" },
       { label: "Heel Height", content: "1 inch" },
     ],
+    shipping_fee: 0,
   },
   {
     id: "4",
@@ -379,17 +379,16 @@ export const products: Product[] = [
       { title: "Free shipping on all orders", url: "#" },
       { title: "Bulk discounts available", url: "#" },
     ],
-    sellers: [
-      {
-        id: "seller4",
-        name: "MedSupply Direct",
-        rating: 4.6,
-        positiveRatings: "91%",
-        partnerSince: "2016",
-        returnPolicy: "30 days return policy",
-        itemShown: 90,
-      },
-    ],
+    sellers: {
+      id: "seller4",
+      name: "MedSupply Direct",
+      rating: 4.6,
+      positiveRatings: "91%",
+      partnerSince: "2016",
+      returnPolicy: "30 days return policy",
+      itemShown: 90,
+    },
+
     overview_desc:
       "Disposable bouffant surgical caps designed for comfort and functionality in medical environments. Latex-free material is gentle on skin while providing secure coverage.",
     highlights: [
@@ -404,6 +403,7 @@ export const products: Product[] = [
       { label: "Features", content: "Latex-free, breathable" },
       { label: "Size", content: "One size fits most" },
     ],
+    shipping_fee: 0,
   },
   {
     id: "5",
@@ -479,17 +479,16 @@ export const products: Product[] = [
       { title: "Free shipping on all orders", url: "#" },
       { title: "Subscribe & save 15%", url: "#" },
     ],
-    sellers: [
-      {
-        id: "seller5",
-        name: "HealingHands Medical",
-        rating: 4.8,
-        positiveRatings: "95%",
-        partnerSince: "2015",
-        returnPolicy: "30 days return policy",
-        itemShown: 90,
-      },
-    ],
+    sellers: {
+      id: "seller5",
+      name: "HealingHands Medical",
+      rating: 4.8,
+      positiveRatings: "95%",
+      partnerSince: "2015",
+      returnPolicy: "30 days return policy",
+      itemShown: 90,
+    },
+
     overview_desc:
       "Medical-grade compression socks designed specifically for healthcare professionals who spend long hours on their feet. Provides graduated compression to improve circulation and reduce fatigue.",
     highlights: [
@@ -507,6 +506,7 @@ export const products: Product[] = [
       },
       { label: "Features", content: "Graduated compression, moisture-wicking" },
     ],
+    shipping_fee: 0,
   },
   {
     id: "6",
@@ -582,17 +582,16 @@ export const products: Product[] = [
       { title: "Free scrub top with purchase", url: "#" },
       { title: "3 months installments at 0% interest", url: "#" },
     ],
-    sellers: [
-      {
-        id: "seller6",
-        name: "ScrubLife Official Store",
-        rating: 4.7,
-        positiveRatings: "93%",
-        partnerSince: "2018",
-        returnPolicy: "30 days return policy",
-        itemShown: 90,
-      },
-    ],
+    sellers: {
+      id: "seller6",
+      name: "ScrubLife Official Store",
+      rating: 4.7,
+      positiveRatings: "93%",
+      partnerSince: "2018",
+      returnPolicy: "30 days return policy",
+      itemShown: 90,
+    },
+
     overview_desc:
       "Modern jogger-style scrub pants designed for healthcare professionals who want both style and functionality. Features multiple pockets and stretch fabric for all-day comfort.",
     highlights: [
@@ -607,6 +606,7 @@ export const products: Product[] = [
       { label: "Fit Type", content: "Jogger Fit" },
       { label: "Closure Type", content: "Elastic Waist with Drawstring" },
     ],
+    shipping_fee: 0,
   },
   {
     id: "7",
@@ -681,17 +681,16 @@ export const products: Product[] = [
       { title: "Bulk discounts available", url: "#" },
       { title: "Free shipping on orders over ₹5000", url: "#" },
     ],
-    sellers: [
-      {
-        id: "seller7",
-        name: "MedEquip Supplies",
-        rating: 4.7,
-        positiveRatings: "94%",
-        partnerSince: "2017",
-        returnPolicy: "30 days return policy",
-        itemShown: 90,
-      },
-    ],
+    sellers: {
+      id: "seller7",
+      name: "MedEquip Supplies",
+      rating: 4.7,
+      positiveRatings: "94%",
+      partnerSince: "2017",
+      returnPolicy: "30 days return policy",
+      itemShown: 90,
+    },
+
     overview_desc:
       "Level 3 disposable surgical gowns that provide critical zone protection against fluid penetration. Designed for surgical procedures where moderate to high fluid protection is needed.",
     highlights: [
@@ -706,6 +705,7 @@ export const products: Product[] = [
       { label: "Size", content: "Regular, Large, X-Large" },
       { label: "Features", content: "Fluid-resistant, breathable" },
     ],
+    shipping_fee: 0,
   },
   {
     id: "8",
@@ -781,17 +781,16 @@ export const products: Product[] = [
       { title: "3 months installments at 0% interest", url: "#" },
       { title: "Free embroidery available", url: "#" },
     ],
-    sellers: [
-      {
-        id: "seller8",
-        name: "StethoStyle Apparel",
-        rating: 4.6,
-        positiveRatings: "92%",
-        partnerSince: "2019",
-        returnPolicy: "30 days return policy",
-        itemShown: 90,
-      },
-    ],
+    sellers: {
+      id: "seller8",
+      name: "StethoStyle Apparel",
+      rating: 4.6,
+      positiveRatings: "92%",
+      partnerSince: "2019",
+      returnPolicy: "30 days return policy",
+      itemShown: 90,
+    },
+
     overview_desc:
       "A comfortable fleece warm-up jacket designed specifically for healthcare professionals. Perfect for wearing over scrubs in cold environments or during breaks.",
     highlights: [
@@ -806,6 +805,7 @@ export const products: Product[] = [
       { label: "Fit Type", content: "Regular Fit" },
       { label: "Closure Type", content: "Full-zip" },
     ],
+    shipping_fee: 0,
   },
   {
     id: "9",
@@ -882,17 +882,16 @@ export const products: Product[] = [
       { title: "6 months installments at 0% interest", url: "#" },
       { title: "Free extended warranty", url: "#" },
     ],
-    sellers: [
-      {
-        id: "seller9",
-        name: "MediTech Official Store",
-        rating: 4.8,
-        positiveRatings: "95%",
-        partnerSince: "2020",
-        returnPolicy: "30 days return policy",
-        itemShown: 90,
-      },
-    ],
+    sellers: {
+      id: "seller9",
+      name: "MediTech Official Store",
+      rating: 4.8,
+      positiveRatings: "95%",
+      partnerSince: "2020",
+      returnPolicy: "30 days return policy",
+      itemShown: 90,
+    },
+
     overview_desc:
       "The VitalTrack Pro is designed specifically for medical professionals, featuring hospital-grade health monitoring and hygiene reminders to support clinical workflows.",
     highlights: [
@@ -907,6 +906,7 @@ export const products: Product[] = [
       { label: "Connectivity", content: "Bluetooth 5.0" },
       { label: "Compatibility", content: "iOS & Android" },
     ],
+    shipping_fee: 0,
   },
   {
     id: "10",
@@ -984,17 +984,16 @@ export const products: Product[] = [
       { title: "Free travel size with purchase", url: "#" },
       { title: "Subscribe & save 15%", url: "#" },
     ],
-    sellers: [
-      {
-        id: "seller10",
-        name: "Clinique Professional",
-        rating: 4.7,
-        positiveRatings: "93%",
-        partnerSince: "2018",
-        returnPolicy: "30 days return policy",
-        itemShown: 90,
-      },
-    ],
+    sellers: {
+      id: "seller10",
+      name: "Clinique Professional",
+      rating: 4.7,
+      positiveRatings: "93%",
+      partnerSince: "2018",
+      returnPolicy: "30 days return policy",
+      itemShown: 90,
+    },
+
     overview_desc:
       "A first-of-its-kind antimicrobial fragrance designed specifically for healthcare professionals. Provides long-lasting subtle scent without interfering with clinical protocols.",
     highlights: [
@@ -1009,6 +1008,7 @@ export const products: Product[] = [
       { label: "Alcohol Content", content: "0% (alcohol-free)" },
       { label: "Skin Type", content: "All skin types" },
     ],
+    shipping_fee: 0,
   },
   {
     id: "11",
@@ -1085,17 +1085,16 @@ export const products: Product[] = [
       { title: "Free shipping on all orders", url: "#" },
       { title: "Bulk discounts available", url: "#" },
     ],
-    sellers: [
-      {
-        id: "seller11",
-        name: "Medical Supply Depot",
-        rating: 4.9,
-        positiveRatings: "97%",
-        partnerSince: "2015",
-        returnPolicy: "30 days return policy",
-        itemShown: 90,
-      },
-    ],
+    sellers: {
+      id: "seller11",
+      name: "Medical Supply Depot",
+      rating: 4.9,
+      positiveRatings: "97%",
+      partnerSince: "2015",
+      returnPolicy: "30 days return policy",
+      itemShown: 90,
+    },
+
     overview_desc:
       "Professional-grade medical tape and dressing kit containing 100 essential pieces for clinical use. Designed for durability and patient comfort with hypoallergenic materials.",
     highlights: [
@@ -1114,5 +1113,6 @@ export const products: Product[] = [
       { label: "Water Resistance", content: "Some dressings water-resistant" },
       { label: "Latex Content", content: "Latex-free" },
     ],
+    shipping_fee: 0,
   },
 ];

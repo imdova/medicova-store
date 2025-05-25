@@ -211,8 +211,7 @@ export default function Home() {
             {products.map((product) => (
               <div
                 key={product.id}
-                className="flex-shrink-0"
-                style={{ width: "240px" }}
+                className="w-[200px] flex-shrink-0 md:w-[240px]"
               >
                 <ProductCard product={product} />
               </div>
@@ -266,8 +265,7 @@ export default function Home() {
               {products.map((product) => (
                 <div
                   key={product.id}
-                  className="flex-shrink-0"
-                  style={{ width: "240px" }}
+                  className="w-[200px] flex-shrink-0 md:w-[240px]"
                 >
                   <ProductCard product={product} />
                 </div>
@@ -309,8 +307,7 @@ export default function Home() {
               {products.map((product) => (
                 <div
                   key={product.id}
-                  className="flex-shrink-0"
-                  style={{ width: "240px" }}
+                  className="w-[200px] flex-shrink-0 md:w-[240px]"
                 >
                   <ProductCard product={product} />
                 </div>
@@ -355,8 +352,7 @@ export default function Home() {
               {products.map((product) => (
                 <div
                   key={product.id}
-                  className="flex-shrink-0"
-                  style={{ width: "240px" }}
+                  className="w-[200px] flex-shrink-0 md:w-[240px]"
                 >
                   <ProductCard product={product} />
                 </div>

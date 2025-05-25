@@ -82,7 +82,8 @@ const ProductImagesSlider = ({ images = [] }: ImagesSliderProps) => {
       {/* Main Image Slider */}
       <div
         {...swipeHandlers}
-        className="relative h-[450px] overflow-hidden rounded-lg"
+        className="relative h-[450px] touch-pan-y select-none overflow-hidden rounded-lg"
+        style={{ touchAction: "pan-y" }}
         ref={imageRef}
         onMouseEnter={() => !isMobile && setIsHovering(true)}
         onMouseLeave={() => !isMobile && setIsHovering(false)}
@@ -115,7 +116,8 @@ const ProductImagesSlider = ({ images = [] }: ImagesSliderProps) => {
                 height={600}
                 src={images[currentImageIndex] || "/images/placeholder.jpg"}
                 alt={`Product image ${currentImageIndex + 1}`}
-                className="h-full w-full object-contain"
+                className="h-full w-full select-none object-contain"
+                draggable={false}
                 priority
               />
 

@@ -1,5 +1,4 @@
 "use client";
-
 import { commonLinks } from "@/constants/header";
 import Link from "next/link";
 import {
@@ -12,8 +11,18 @@ import {
 import LogoIcon from "@/assets/icons/logo";
 import SearchComponent from "@/components/Forms/formFields/SearchComponent";
 import SwipeableNav from "./SwipeableNav";
+import { useAppSelector } from "@/store/hooks";
+import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
 
 const FullHeader: React.FC = () => {
+  const [productsCount, setProductsCount] = useState(0);
+  const { products } = useAppSelector((state) => state.cart);
+
+  useEffect(() => {
+    setProductsCount(products.length);
+  }, [products]);
+
   return (
     <header className="relative z-40">
       <div className="min-h-[70px] w-full bg-primary py-3 transition-all duration-700">
@@ -77,9 +86,32 @@ const FullHeader: React.FC = () => {
                   <button className="flex items-center gap-2 text-sm font-semibold text-white hover:text-gray-100">
                     <Heart size={20} />
                   </button>
-                  <button className="flex items-center gap-2 text-sm font-semibold text-white hover:text-gray-100">
+                  <Link
+                    href={`/cart`}
+                    className="relative flex items-center gap-2 text-sm font-semibold text-white hover:text-gray-100"
+                  >
                     <ShoppingCart size={20} />
-                  </button>
+
+                    {/* Animate cart badge */}
+                    <AnimatePresence>
+                      {productsCount > 0 && (
+                        <motion.span
+                          key="cart-badge"
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0, opacity: 0 }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 300,
+                            damping: 20,
+                          }}
+                          className="absolute -right-2 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-white text-xs text-primary"
+                        >
+                          {productsCount}
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                  </Link>
                 </div>
               </div>
             </div>

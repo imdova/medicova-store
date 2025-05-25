@@ -7,7 +7,7 @@ import {
   SizeType,
 } from ".";
 
-type Seller = {
+export type Seller = {
   id: string;
   name: string;
   rating: number;
@@ -64,11 +64,12 @@ export interface Product {
     title: string;
     url: string;
   }[];
-  sellers?: Seller[];
+  sellers?: Seller;
   sizes?: SizeType[] | NumericSizeType[] | LiquidSizeType[];
   colors?: ColorType[];
   highlights?: string[];
   overview_desc?: string;
   specifications?: { label: string; content: string }[];
   stock?: number;
+  shipping_fee: number;
 }

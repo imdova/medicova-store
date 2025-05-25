@@ -16,7 +16,8 @@ const MobileCartNavbar = () => {
     <div className="fixed bottom-16 left-0 right-0 z-50 block border-t bg-white shadow-lg md:hidden">
       <div className="flex items-center justify-between p-4">
         {/* Quantity Selector */}
-        <QuantitySelector buttonSize="md" /> {/* Add to Cart Button */}
+        <QuantitySelector buttonSize="md" productId={""} />{" "}
+        {/* Add to Cart Button */}
         <button
           onClick={addToCart}
           className="ml-4 flex flex-1 items-center justify-center gap-2 rounded-sm bg-primary px-4 py-3 text-xs font-medium text-white transition-colors hover:bg-green-800"
