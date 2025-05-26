@@ -46,12 +46,13 @@ const FullHeader: React.FC = () => {
     isDefault: false,
     location: { lat: 30.0444, lng: 31.2357 },
   });
-  // const [userSavedAddresses, setUserSavedAddresses] = useState<Address[]>([]);
+  const [userSavedAddresses, setUserSavedAddresses] = useState<Address[]>([]);
   const [productsCount, setProductsCount] = useState(0);
   const { products } = useAppSelector((state) => state.cart);
 
   useEffect(() => {
     setProductsCount(products.length);
+    setUserSavedAddresses([]);
   }, [products]);
 
   return (
@@ -194,7 +195,7 @@ const FullHeader: React.FC = () => {
           localStorage.setItem("userAddress", JSON.stringify(address));
         }}
         locale="en"
-        // savedAddresses={userSavedAddresses}
+        savedAddresses={userSavedAddresses}
       />
     </header>
   );

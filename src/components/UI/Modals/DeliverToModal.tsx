@@ -107,6 +107,7 @@ export default function DeliverToModal({
   const mapRef = useRef<L.Map | null>(null);
 
   // Initialize addresses
+  // Initialize addresses
   useEffect(() => {
     if (savedAddresses.length === 0) {
       setAddresses([
@@ -124,7 +125,7 @@ export default function DeliverToModal({
     } else {
       setAddresses(savedAddresses);
     }
-  }, [savedAddresses]);
+  }, [savedAddresses]); // Make sure all dependencies are listed
 
   // Set selected address and map center
   useEffect(() => {
@@ -141,25 +142,28 @@ export default function DeliverToModal({
   }, [currentAddress, addresses]);
 
   // Memoized reverse geocoding function
-  async function reverseGeocode(latitude: number, longitude: number) {
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&accept-language=en`,
-    );
+  const reverseGeocode = useCallback(
+    async (latitude: number, longitude: number) => {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&accept-language=en`,
+      );
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch location data");
-    }
+      if (!response.ok) {
+        throw new Error("Failed to fetch location data");
+      }
 
-    const data = await response.json();
+      const data = await response.json();
 
-    return {
-      details: data.display_name,
-      area: data.address.suburb || data.address.neighbourhood || "",
-      city:
-        data.address.city || data.address.town || data.address.village || "",
-      country: data.address.country || "",
-    };
-  }
+      return {
+        details: data.display_name,
+        area: data.address.suburb || data.address.neighbourhood || "",
+        city:
+          data.address.city || data.address.town || data.address.village || "",
+        country: data.address.country || "",
+      };
+    },
+    [],
+  );
 
   const handleLocateMe = useCallback(async () => {
     setIsLocating(true);

@@ -114,7 +114,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
     } else {
       setQuantity(1);
     }
-  }, [cartProduct]);
+  }, [cartProduct?.quantity]);
 
   const handleAddToCart = async () => {
     setLoading(true);

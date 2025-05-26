@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Star, ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import Image from "next/image";
 import LogoLoader from "../LogoLoader";
@@ -51,13 +51,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
     setCurrentImageIndex(index);
   };
 
+  // Fixed useEffect hooks
   useEffect(() => {
     if (cartProduct) {
       setQuantity(cartProduct.quantity);
     } else {
       setQuantity(1);
     }
-  }, [cartProduct]);
+  }, [cartProduct?.quantity]);
   // Auto-rotate nudges every 3 seconds
   const nudgeCount = product.nudges ? product.nudges.length : 0;
 
@@ -71,57 +72,58 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
     return () => clearInterval(interval);
   }, [nudgeCount]);
 
-  // Add to Cart Function
-  const addToCart = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  // Add useCallback to memoize functions
+  const addToCart = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-    if (!isInCart) {
-      dispatch(
-        addItem({
-          id: product.id,
-          title: product.title,
-          image: product.images?.[0] ?? "/images/placeholder.jpg",
-          description: product.description ?? "No description available",
-          del_price: product.del_price,
-          price: product.price,
-          shipping_fee: product.shipping_fee,
-          quantity: quantity,
-          brand: product.brand,
-          deliveryDate: product.deliveryDate,
-          sellers: product.sellers,
-          stock: product.stock,
-        }),
-      );
-      showAlert("Added to cart", "success");
-    } else {
-      showAlert("Product Already in cart!", "info");
-    }
-  };
+      if (!isInCart) {
+        dispatch(
+          addItem({
+            id: product.id,
+            title: product.title,
+            image: product.images?.[0] ?? "/images/placeholder.jpg",
+            description: product.description ?? "No description available",
+            del_price: product.del_price,
+            price: product.price,
+            shipping_fee: product.shipping_fee,
+            quantity: quantity,
+            brand: product.brand,
+            deliveryDate: product.deliveryDate,
+            sellers: product.sellers,
+            stock: product.stock,
+          }),
+        );
+        showAlert("Added to cart", "success");
+      } else {
+        showAlert("Product Already in cart!", "info");
+      }
+    },
+    [dispatch, isInCart, product, quantity],
+  );
 
-  const handleQuantityChange = (newQuantity: number) => {
-    // Ensure newQuantity is an integer
-    const validatedQuantity = Math.max(0, Math.floor(newQuantity));
+  const handleQuantityChange = useCallback(
+    (newQuantity: number) => {
+      const validatedQuantity = Math.max(0, Math.floor(newQuantity));
 
-    if (validatedQuantity === 0) {
-      // Quantity reached 0 - remove item
-      dispatch(removeItem(product.id));
-      showAlert("Deleted from cart", "error");
-    } else if (validatedQuantity > quantity) {
-      // Quantity increased
-      const increaseAmount = validatedQuantity - quantity;
-      dispatch(increaseQuantity({ id: product.id, amount: increaseAmount }));
-    } else {
-      // Quantity decreased but still above 0
-      const decreaseAmount = quantity - validatedQuantity;
-      dispatch(decreaseQuantity({ id: product.id, amount: decreaseAmount }));
-    }
+      if (validatedQuantity === 0) {
+        dispatch(removeItem(product.id));
+        showAlert("Deleted from cart", "error");
+      } else if (validatedQuantity > quantity) {
+        const increaseAmount = validatedQuantity - quantity;
+        dispatch(increaseQuantity({ id: product.id, amount: increaseAmount }));
+      } else {
+        const decreaseAmount = quantity - validatedQuantity;
+        dispatch(decreaseQuantity({ id: product.id, amount: decreaseAmount }));
+      }
 
-    // Update local state only if the value changed
-    if (validatedQuantity !== quantity) {
-      setQuantity(validatedQuantity);
-    }
-  };
+      if (validatedQuantity !== quantity) {
+        setQuantity(validatedQuantity);
+      }
+    },
+    [dispatch, product.id, quantity],
+  );
 
   // Show Alert Function
   const showAlert = (message: string, type: "success" | "error" | "info") => {
@@ -165,6 +167,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
                     }
                     alt={product.title}
                     className="h-64 w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
+                    priority={currentImageIndex === 0} // Only prioritize first image
                   />
                 </Link>
 
