@@ -3,9 +3,7 @@
 import { ShoppingCart } from "lucide-react";
 import QuantitySelector from "@/components/Forms/formFields/QuantitySelector";
 import { Product } from "@/types/product";
-import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { addItem, increaseQuantity } from "@/store/slices/cartSlice";
+import { useAppSelector } from "@/store/hooks";
 import { ColorType, LiquidSizeType, NumericSizeType, SizeType } from "@/types";
 
 type MobileCartNavbarProps = {
@@ -20,55 +18,44 @@ type MobileCartNavbarProps = {
 
 const MobileCartNavbar: React.FC<MobileCartNavbarProps> = ({
   product,
-  selectedColor,
-  selectedSize,
   quantity,
-  setQuantity,
   handleAddToCart,
   loading,
 }) => {
-  const dispatch = useAppDispatch();
   const { products: productData } = useAppSelector((state) => state.cart);
-  const cartProduct = productData.find((item) => item.id === product?.id);
   const isInCart = productData.some((item) => item.id === product?.id);
-
-  const handleQuantityChange = (value: number) => {
-    const newQuantity = Math.max(1, Math.min(value, product?.stock || 1));
-    setQuantity(newQuantity);
-
-    if (isInCart && cartProduct) {
-      dispatch(
-        increaseQuantity({
-          id: product.id,
-          amount: newQuantity - cartProduct.quantity,
-        }),
-      );
-    }
-  };
 
   return (
     <div className="fixed bottom-16 left-0 right-0 z-50 block border-t bg-white shadow-lg md:hidden">
       <div className="flex items-center justify-between p-4">
         <QuantitySelector
-          buttonSize="md"
           productId={product?.id ?? ""}
+          initialQuantity={quantity}
           min={1}
-          max={product?.stock}
+          max={product?.stock || 99}
+          buttonSize="md"
+          showLabel={false}
+          className="flex-1"
         />
+
         <button
           onClick={handleAddToCart}
-          disabled={loading}
-          className={`ml-4 flex flex-1 items-center justify-center gap-2 rounded-sm bg-primary px-4 py-3 text-xs font-medium text-white transition-colors ${
-            loading ? "bg-green-400" : "hover:bg-green-800"
-          }`}
+          disabled={loading || !product?.stock}
+          className={`ml-4 flex flex-1 items-center justify-center gap-2 rounded-sm px-4 py-3 text-xs font-medium text-white transition-colors ${
+            loading
+              ? "cursor-not-allowed bg-green-400"
+              : "bg-primary hover:bg-green-800"
+          } ${!product?.stock ? "cursor-not-allowed bg-gray-400" : ""}`}
         >
           {loading ? (
             "Adding..."
-          ) : (
+          ) : product?.stock ? (
             <>
               <ShoppingCart size={15} />
               {isInCart ? "Update Cart" : "Add to Cart"}
             </>
+          ) : (
+            "Out of Stock"
           )}
         </button>
       </div>

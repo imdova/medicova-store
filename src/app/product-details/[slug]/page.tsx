@@ -786,7 +786,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
           setQuantity={setQuantity}
           handleAddToCart={handleAddToCart}
           loading={loading}
-        />{" "}
+        />
       </main>
     </div>
   );
