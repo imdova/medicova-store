@@ -182,7 +182,7 @@ const FullHeader: React.FC = () => {
           </div>
         </div>
       </div>
-      {/* Categories Navigation */}
+      {/* Categories Navigation  */}
       <div className="hidden flex-1 md:block">
         <SwipeableNav links={commonLinks} />
       </div>
