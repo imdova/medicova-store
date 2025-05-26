@@ -264,20 +264,22 @@ const ProductPage = ({ params }: ProductPageProps) => {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
       >
-        <ul className="max-w-[270px]">
+        <ul className="max-h-[500px] max-w-[270px] overflow-y-auto">
           {productData.map((item) => {
             return (
-              <li key={item.id}>
+              <li className="mb-2" key={item.id}>
                 <Link href={`/product-details/${item.id}`}>
-                  <div className="flex gap-2">
-                    <Image
-                      className="h-[100px] w-[80px] object-cover"
-                      src={item.image}
-                      width={300}
-                      height={300}
-                      alt={item.title}
-                    />
+                  <div className="flex h-[100px] gap-2">
                     <div>
+                      <Image
+                        className="h-full w-[80px] object-cover"
+                        src={item.image}
+                        width={300}
+                        height={300}
+                        alt={item.title}
+                      />
+                    </div>
+                    <div className="flex-1">
                       <h2 className="mb-2 text-sm font-semibold">
                         {item.title}
                       </h2>
@@ -744,7 +746,6 @@ const ProductPage = ({ params }: ProductPageProps) => {
           </h1>
           <ProductReviews reviews={reviews} />
         </div>
-
         {/* Brand Products */}
         <div className="mt-6 rounded-lg bg-white shadow-sm">
           <h2 className="mb-2 text-2xl font-bold text-gray-600">
@@ -761,7 +762,6 @@ const ProductPage = ({ params }: ProductPageProps) => {
             ))}
           </ProductsSlider>
         </div>
-
         {/* Products related this Product */}
         <div className="mt-6 rounded-lg bg-white shadow-sm">
           <h2 className="mb-2 text-2xl font-bold text-gray-600">
@@ -778,8 +778,15 @@ const ProductPage = ({ params }: ProductPageProps) => {
             ))}
           </ProductsSlider>
         </div>
-
-        <MobileCartNavbar />
+        <MobileCartNavbar
+          product={product}
+          selectedColor={selectedColor}
+          selectedSize={selectedSize}
+          quantity={quantity}
+          setQuantity={setQuantity}
+          handleAddToCart={handleAddToCart}
+          loading={loading}
+        />{" "}
       </main>
     </div>
   );
