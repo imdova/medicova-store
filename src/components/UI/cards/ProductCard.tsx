@@ -25,10 +25,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
   const [quantity, setQuantity] = useState(1);
   const [alert, setAlert] = useState<{
     message: string;
-    type: "success" | "error";
+    type: "success" | "error" | "info";
   } | null>(null);
   const dispatch = useAppDispatch();
   const { products } = useAppSelector((state) => state.cart);
+  const cartProduct = products.find((item) => item.id === product.id);
+
   // Check if product is in cart
   const isInCart = products.some((item) => item.id === product.id);
 
@@ -50,8 +52,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
   };
 
   useEffect(() => {
-    console.log(products);
-  }, [quantity, products]);
+    if (cartProduct) {
+      setQuantity(cartProduct.quantity);
+    } else {
+      setQuantity(1);
+    }
+  }, [cartProduct]);
   // Auto-rotate nudges every 3 seconds
   const nudgeCount = product.nudges ? product.nudges.length : 0;
 
@@ -70,23 +76,27 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
     e.preventDefault();
     e.stopPropagation();
 
-    dispatch(
-      addItem({
-        id: product.id,
-        title: product.title,
-        image: product.images?.[0] ?? "/images/placeholder.jpg",
-        description: product.description ?? "No description available",
-        del_price: product.del_price,
-        price: product.price,
-        shipping_fee: product.shipping_fee,
-        quantity: quantity,
-        brand: product.brand,
-        deliveryDate: product.deliveryDate,
-        sellers: product.sellers,
-        stock: product.stock,
-      }),
-    );
-    showAlert("Added to cart", "success");
+    if (!isInCart) {
+      dispatch(
+        addItem({
+          id: product.id,
+          title: product.title,
+          image: product.images?.[0] ?? "/images/placeholder.jpg",
+          description: product.description ?? "No description available",
+          del_price: product.del_price,
+          price: product.price,
+          shipping_fee: product.shipping_fee,
+          quantity: quantity,
+          brand: product.brand,
+          deliveryDate: product.deliveryDate,
+          sellers: product.sellers,
+          stock: product.stock,
+        }),
+      );
+      showAlert("Added to cart", "success");
+    } else {
+      showAlert("Product Already in cart!", "info");
+    }
   };
 
   const handleQuantityChange = (newQuantity: number) => {
@@ -114,7 +124,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
   };
 
   // Show Alert Function
-  const showAlert = (message: string, type: "success" | "error") => {
+  const showAlert = (message: string, type: "success" | "error" | "info") => {
     setAlert({ message, type });
     setTimeout(() => setAlert(null), 3000); // Hide after 3 seconds
   };
@@ -204,6 +214,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
                 quantity={quantity}
                 addToCart={addToCart}
                 handleQuantityChange={handleQuantityChange}
+                maxStock={product.stock}
               />
 
               <button className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white text-sm font-medium text-gray-700 transition duration-150 hover:bg-light-primary hover:text-white">

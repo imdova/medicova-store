@@ -3,39 +3,25 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks"; // Import useApp
 import { useEffect, useState } from "react";
 import { removeItem, setCart } from "@/store/slices/cartSlice"; // Import CartState and setCart action
 import Image from "next/image";
-import { ChevronRight, Trash2, Truck } from "lucide-react";
+import { Trash2, Truck } from "lucide-react";
 import QuantitySelector from "@/components/Forms/formFields/QuantitySelector";
-import Link from "next/link";
 import CustomAlert from "@/components/UI/CustomAlert";
-
-const availableCoupons = [
-  {
-    code: "SAVE20",
-    discountType: "percentage",
-    discountValue: 20,
-    minPurchaseAmount: 0,
-    maxDiscountAmount: 50,
-  },
-  {
-    code: "FLAT10",
-    discountType: "fixed",
-    discountValue: 10,
-    minPurchaseAmount: 50,
-  },
-  {
-    code: "WELCOME50",
-    discountType: "fixed",
-    discountValue: 50,
-    minPurchaseAmount: 100,
-  },
-];
+import OrderSummary from "./components/OrderSummary";
+import { availableCoupons } from "@/constants/coupons";
+import LoadingAnimation from "@/components/UI/LoadingAnimation";
+import Link from "next/link";
+import ProductsSlider from "@/components/UI/sliders/ProductsSlider";
+import { products } from "@/constants/products";
+import ProductCard from "@/components/UI/cards/ProductCard";
 
 export default function CartPage() {
   const [appliedCoupon, setAppliedCoupon] = useState<string>("");
   const [discountAmount, setDiscountAmount] = useState(0);
   const [couponError, setCouponError] = useState<string | null>(null);
   const dispatch = useAppDispatch(); // Get the dispatch function
-  const { products, totalPrice } = useAppSelector((state) => state.cart);
+  const { products: productsData, totalPrice } = useAppSelector(
+    (state) => state.cart,
+  );
   const [alert, setAlert] = useState<{
     message: string;
     type: "success" | "error";
@@ -60,10 +46,10 @@ export default function CartPage() {
     }
   }, [dispatch]); // Add dispatch to dependency array
 
-  const productsCount = products.length;
+  const productsCount = productsData.length;
 
   // Calculate total shipping fee outside the JSX
-  const totalShippingFee = products.reduce(
+  const totalShippingFee = productsData.reduce(
     (sum, item) => sum + (item.shipping_fee || 0),
     0,
   );
@@ -117,10 +103,45 @@ export default function CartPage() {
   };
 
   if (!isClient) {
-    // Optionally render a loading state or nothing on the server/initial client render
+    return <LoadingAnimation />;
+  }
+
+  if (!productsData.length) {
     return (
-      <div className="container mx-auto h-screen px-6 py-3 lg:max-w-[1440px]">
-        Loading cart...
+      <div className="container mx-auto px-6 py-3 lg:max-w-[1440px]">
+        {/* Items you previously viewed */}
+        <div className="mt-6 rounded-lg bg-white shadow-sm">
+          <h2 className="mb-2 text-2xl font-bold text-gray-600">
+            Items you previously viewed
+          </h2>
+          <ProductsSlider>
+            {products.map((product) => (
+              <div
+                key={product.id}
+                className="w-[200px] flex-shrink-0 md:w-[240px]"
+              >
+                <ProductCard product={product} />
+              </div>
+            ))}
+          </ProductsSlider>
+        </div>
+
+        {/* Bestsellers for you */}
+        <div className="mt-6 rounded-lg bg-white shadow-sm">
+          <h2 className="mb-2 text-2xl font-bold text-gray-600">
+            Bestsellers for you
+          </h2>
+          <ProductsSlider>
+            {products.map((product) => (
+              <div
+                key={product.id}
+                className="w-[200px] flex-shrink-0 md:w-[240px]"
+              >
+                <ProductCard product={product} />
+              </div>
+            ))}
+          </ProductsSlider>
+        </div>
       </div>
     );
   }
@@ -143,17 +164,17 @@ export default function CartPage() {
         <div className="grid grid-cols-1 gap-4 md:gap-8 lg:grid-cols-8">
           {/* Cart Items */}
           <div className="col-span-1 lg:col-span-5">
-            {products.length === 0 ? (
+            {productsData.length === 0 ? (
               <p>Your cart is empty.</p>
             ) : (
-              products.map((item) => (
+              productsData.map((item) => (
                 <div
                   key={item.id}
                   className="mb-4 bg-white last:mb-0 last:border-0 last:pb-0"
                 >
                   <div className="p-2">
                     <div className="flex gap-2 md:gap-4">
-                      <div>
+                      <Link href={`/product-details/${item.id}`}>
                         <Image
                           className="h-[160px] w-[120px] object-cover"
                           src={item.image ?? "/images/placeholder.jpg"}
@@ -161,7 +182,7 @@ export default function CartPage() {
                           height={300}
                           alt={item.title}
                         />
-                      </div>
+                      </Link>
                       <div className="flex-1">
                         <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-center">
                           <div>
@@ -247,98 +268,17 @@ export default function CartPage() {
             )}
           </div>
           {/* Order Summary */}
-          <div className="sticky top-4 col-span-1 h-fit border border-gray-300 p-3 lg:col-span-3">
-            <h2 className="mb-4 text-xl font-bold">Order Summary</h2>
-            <div className="mb-4">
-              <div className="mb-2 flex items-center justify-between">
-                <div className="flex w-full">
-                  <input
-                    type="text"
-                    value={appliedCoupon}
-                    onChange={(e) => setAppliedCoupon(e.target.value)}
-                    className="w-full rounded-l border border-gray-300 px-3 py-2 text-sm outline-none"
-                    placeholder="Enter coupon"
-                  />
-                  <button
-                    onClick={applyCoupon}
-                    className="rounded-r bg-primary px-3 py-1 text-sm text-white transition hover:bg-green-800"
-                  >
-                    APPLY
-                  </button>
-                </div>
-              </div>
-              {couponError && (
-                <p className="mb-2 text-sm text-red-500">{couponError}</p>
-              )}
-
-              <Link
-                href={"#"}
-                className="flex cursor-pointer items-center justify-between rounded-md border bg-white p-2 text-sm text-primary"
-              >
-                <span>View Available Offers</span>
-                <ChevronRight size={15} />
-              </Link>
-            </div>
-
-            <div className="border-t border-gray-200 pt-4">
-              <div className="mb-2 flex justify-between">
-                <span className="text-sm text-secondary">
-                  Subtotal ({productsCount} Item)
-                </span>
-                <span className="text-sm text-gray-700">
-                  EGP {totalPrice.toFixed(2)}
-                </span>
-              </div>
-
-              {discountAmount > 0 && (
-                <div className="mb-2 flex justify-between">
-                  <span className="text-sm text-secondary">
-                    Discount ({appliedCoupon.toUpperCase()})
-                  </span>
-                  <span className="text-sm text-primary">
-                    - EGP {discountAmount.toFixed(2)}
-                  </span>
-                </div>
-              )}
-
-              <div className="mb-2 flex justify-between">
-                <span className="text-sm text-secondary">Shipping Fee</span>
-                <span
-                  className={`text-xs ${totalShippingFee === 0 ? "text-primary" : ""}`}
-                >
-                  {totalShippingFee === 0
-                    ? "FREE"
-                    : `EGP ${totalShippingFee.toFixed(2)}`}
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-4 border-t border-gray-200 pt-4">
-              <div className="flex justify-between text-lg font-bold">
-                <span className="text-sm text-gray-700">
-                  Total{" "}
-                  <span className="text-xs text-secondary">
-                    (inclusive of VAT)
-                  </span>
-                </span>
-                <span className="text-gray-700">
-                  EGP {(totalPrice - discountAmount).toFixed(2)}
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-4 text-xs text-gray-700">
-              <div>
-                Monthly payment plans from EGP 500.{" "}
-                <Link className="text-primary underline" href={"#"}>
-                  View more details
-                </Link>
-              </div>
-            </div>
-            <button className="mt-6 w-full rounded-lg bg-primary px-4 py-3 font-bold text-white transition hover:bg-green-700">
-              CHECKOUT
-            </button>
-          </div>
+          <OrderSummary
+            appliedCoupon={appliedCoupon}
+            setAppliedCoupon={setAppliedCoupon}
+            applyCoupon={applyCoupon}
+            couponError={couponError ?? ""}
+            productsCount={productsCount}
+            totalPrice={totalPrice}
+            discountAmount={discountAmount}
+            totalShippingFee={totalShippingFee}
+            onCheckout={() => console.log("")}
+          />
         </div>
       </div>
     </>

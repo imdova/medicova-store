@@ -8,8 +8,10 @@ import Image from "next/image";
 import ProductImagesSlider from "@/components/UI/sliders/ProductImagesSlider";
 import DynamicButton from "@/components/UI/Buttons/DynamicButton";
 import InfoCards from "@/components/UI/InfoCards";
+import { motion } from "framer-motion";
 import {
   Archive,
+  Check,
   ChevronRight,
   Handshake,
   Landmark,
@@ -28,6 +30,11 @@ import ProductReviews from "@/components/UI/ProductReviews";
 import { reviews } from "@/constants/reviews";
 import ProductsSlider from "@/components/UI/sliders/ProductsSlider";
 import ProductCard from "@/components/UI/cards/ProductCard";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { addItem, increaseQuantity, setCart } from "@/store/slices/cartSlice";
+import CustomAlert from "@/components/UI/CustomAlert";
+import { Drawer } from "@/components/UI/Drawer";
+import LoadingAnimation from "@/components/UI/LoadingAnimation";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -37,10 +44,43 @@ const ProductPage = ({ params }: ProductPageProps) => {
   const { slug } = React.use(params);
   const product = products.find((product) => product.id === slug);
   const [selectedSize, setSelectedSize] = useState<
-    SizeType | NumericSizeType | LiquidSizeType | null
-  >(null);
-  const [selectedColor, setSelectedColor] = useState<ColorType | null>(null);
+    SizeType | NumericSizeType | LiquidSizeType | undefined
+  >();
+  const [selectedColor, setSelectedColor] = useState<ColorType | undefined>();
+  const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [alert, setAlert] = useState<{
+    message: string;
+    type: "success" | "error" | "info";
+  } | null>(null);
   const [currentNudgeIndex, setCurrentNudgeIndex] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const dispatch = useAppDispatch();
+  const { products: productData, totalPrice } = useAppSelector(
+    (state) => state.cart,
+  );
+  const cartProduct = productData.find((item) => item.id === product?.id);
+  // Check if product is in cart
+  const isInCart = productData.some((item) => item.id === product?.id);
+
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+
+    // Load cart from localStorage only on the client
+    if (typeof window !== "undefined") {
+      try {
+        const savedCart = localStorage.getItem("cart");
+        if (savedCart) {
+          // Dispatch the setCart action to update the Redux store
+          dispatch(setCart(JSON.parse(savedCart)));
+        }
+      } catch (e) {
+        console.error("Failed to parse cart from localStorage", e);
+      }
+    }
+  }, [dispatch]); // Add dispatch to dependency array
 
   useEffect(() => {
     // Set the initial size
@@ -68,10 +108,110 @@ const ProductPage = ({ params }: ProductPageProps) => {
     return () => clearInterval(interval);
   }, [nudgeCount]);
 
+  useEffect(() => {
+    if (cartProduct) {
+      setQuantity(cartProduct.quantity);
+    } else {
+      setQuantity(1);
+    }
+  }, [cartProduct]);
+
+  const handleAddToCart = async () => {
+    setLoading(true);
+
+    // Simulate delay for loader effect (remove in production)
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    if (!product?.id) {
+      showAlert("Product information is missing", "error");
+      setLoading(false);
+      return;
+    }
+
+    if (!isInCart) {
+      // Add new item to cart
+      dispatch(
+        addItem({
+          id: product.id,
+          title: product.title ?? "",
+          image: product.images?.[0] ?? "/images/placeholder.jpg",
+          description: product.description ?? "No description available",
+          del_price: product.del_price,
+          price: product.price ?? 0,
+          shipping_fee: product.shipping_fee ?? 0,
+          quantity: Math.min(quantity, product.stock ?? 1), // Ensure we don't exceed stock
+          brand: product.brand,
+          deliveryDate: product.deliveryDate,
+          sellers: product.sellers,
+          stock: product.stock,
+          color: selectedColor,
+          size: selectedSize,
+        }),
+      );
+      showAlert("Added to cart", "success");
+    } else {
+      // Product is already in cart - handle quantity increase
+      const currentCartItem = productData.find(
+        (item) => item.id === product.id,
+      );
+      const currentQuantity = currentCartItem?.quantity ?? 0;
+      const availableStock = product.stock ?? 0;
+      const requestedTotal = currentQuantity + quantity;
+
+      if (requestedTotal > availableStock) {
+        const canAdd = availableStock - currentQuantity;
+        if (canAdd > 0) {
+          dispatch(
+            increaseQuantity({
+              id: product.id,
+              amount: canAdd,
+            }),
+          );
+          showAlert(
+            `Only ${canAdd} more available. Added to your existing quantity.`,
+            "info",
+          );
+        } else {
+          showAlert("No more items available in stock", "error");
+        }
+      } else {
+        dispatch(
+          increaseQuantity({
+            id: product.id,
+            amount: quantity,
+          }),
+        );
+        showAlert(`Added ${quantity} more to your cart`, "success");
+      }
+    }
+
+    setLoading(false);
+    setIsOpen(true);
+  };
+
+  // Show Alert Function
+  const showAlert = (message: string, type: "success" | "error" | "info") => {
+    setAlert({ message, type });
+    setTimeout(() => setAlert(null), 3000); // Hide after 3 seconds
+  };
+
+  if (!isClient) {
+    return <LoadingAnimation />;
+  }
+
   if (!product) return <NotFound />;
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Global Alert Display */}
+      {alert && (
+        <CustomAlert
+          message={alert.message}
+          type={alert.type}
+          onClose={() => setAlert(null)}
+        />
+      )}
+
       <Head>
         <title>{product.name} | Medicova</title>
         <meta name="description" content={product.description} />
@@ -118,7 +258,58 @@ const ProductPage = ({ params }: ProductPageProps) => {
           </div>
         </div>
       </nav>
-
+      <Drawer
+        hiddenCloseBtn
+        position="right"
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+      >
+        <ul className="max-w-[270px]">
+          {productData.map((item) => {
+            return (
+              <li key={item.id}>
+                <Link href={`/product-details/${item.id}`}>
+                  <div className="flex gap-2">
+                    <Image
+                      className="h-[100px] w-[80px] object-cover"
+                      src={item.image}
+                      width={300}
+                      height={300}
+                      alt={item.title}
+                    />
+                    <div>
+                      <h2 className="mb-2 text-sm font-semibold">
+                        {item.title}
+                      </h2>
+                      <div className="flex items-center gap-1 text-xs">
+                        Added to cart{" "}
+                        <span className="flex h-3 w-3 items-center justify-center rounded-full bg-primary text-white">
+                          <Check size={10} />
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+        <div className="mt-3 flex justify-between gap-2 font-semibold text-gray-700">
+          <span className="text-sm">Cart Total</span>
+          <p className="text-sm">EGP {totalPrice}</p>
+        </div>
+        <div>
+          <button className="mt-6 w-full rounded-lg bg-primary px-4 py-2 text-xs font-semibold uppercase text-white transition hover:bg-green-700">
+            CHECKOUT
+          </button>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="mt-2 w-full rounded-lg border border-gray-200 bg-white px-4 py-2 text-xs font-semibold uppercase text-primary"
+          >
+            Continue Shopping
+          </button>
+        </div>
+      </Drawer>
       {/* Main Product Section */}
       <main className="container mx-auto bg-white px-6 py-3 lg:max-w-[1440px]">
         <div className="grid grid-cols-1 gap-2 md:grid-cols-10 md:gap-6">
@@ -146,14 +337,55 @@ const ProductPage = ({ params }: ProductPageProps) => {
               <ProductImagesSlider images={product.images} />
               <div className="mt-4 hidden gap-2 md:flex">
                 <QuantitySelector
+                  productId={cartProduct?.id ?? ""}
+                  initialQuantity={cartProduct?.quantity}
+                  min={1}
+                  max={cartProduct?.stock}
                   buttonSize="md"
-                  className="flex-1"
-                  productId={""}
                 />
-                <button className="flex w-full items-center justify-center gap-1 rounded-sm bg-green-600 text-xs font-semibold uppercase text-white shadow-sm transition hover:bg-green-700 md:text-sm">
-                  <ShoppingCart size={15} />
-                  Add To Cart
-                </button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  disabled={loading}
+                  onClick={handleAddToCart}
+                  className={`flex w-full items-center justify-center gap-2 rounded-md ${
+                    loading
+                      ? "cursor-not-allowed bg-green-400"
+                      : "bg-green-600 hover:bg-green-700"
+                  } px-4 py-2 text-sm font-semibold uppercase text-white shadow-md transition-all duration-300 md:text-base`}
+                >
+                  {loading ? (
+                    <>
+                      <svg
+                        className="h-5 w-5 animate-spin text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v8H4z"
+                        ></path>
+                      </svg>
+                      Adding...
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart size={18} />
+                      Add To Cart
+                    </>
+                  )}
+                </motion.button>
               </div>
             </div>
           </div>

@@ -5,6 +5,7 @@ import IconButton from "./Buttons/IconButton";
 
 interface DrawerProps {
   isOpen: boolean;
+  hiddenCloseBtn?: boolean;
   onClose: () => void;
   children: React.ReactNode;
   width?: string;
@@ -16,18 +17,20 @@ export const Drawer: React.FC<DrawerProps> = ({
   isOpen,
   onClose,
   children,
+  hiddenCloseBtn = false,
   width = "w-70",
   hasOverlay = true,
   position = "left",
 }) => {
   return (
-    <div>
+    <div className="relative z-[2000]">
       {hasOverlay && (
         <div
           className={`fixed inset-0 bg-[#00000060] bg-opacity-50 transition-opacity ${
-            isOpen ? "opacity-100 visible" : "opacity-0 invisible"
+            isOpen ? "visible opacity-100" : "invisible opacity-0"
           }`}
-          onClick={onClose}></div>
+          onClick={onClose}
+        ></div>
       )}
       <div
         className={`fixed top-0 ${
@@ -36,18 +39,23 @@ export const Drawer: React.FC<DrawerProps> = ({
           isOpen
             ? "translate-x-0"
             : position === "right"
-            ? "translate-x-full"
-            : "-translate-x-full"
-        } ${width}`}>
-        <IconButton
-          className={`!absolute top-2  p-2 ${
-            position === "right" ? "left-2" : "right-2"
-          }`}
-          onClick={onClose}
-          Icon={X}
-        />
+              ? "translate-x-full"
+              : "-translate-x-full"
+        } ${width}`}
+      >
+        {!hiddenCloseBtn && (
+          <div className="mb-10">
+            <IconButton
+              className={`!absolute top-2 p-2 ${
+                position === "right" ? "left-2" : "right-2"
+              }`}
+              onClick={onClose}
+              Icon={X}
+            />
+          </div>
+        )}
 
-        <div className="mt-4 p-4">{children}</div>
+        <div className="mt-4 p-2">{children}</div>
       </div>
     </div>
   );

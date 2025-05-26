@@ -9,6 +9,7 @@ interface CartButtonProps {
   quantity: number;
   addToCart: (e: React.MouseEvent) => void;
   handleQuantityChange: (newQuantity: number) => void;
+  maxStock?: number;
 }
 
 const CartButton = ({
@@ -16,6 +17,7 @@ const CartButton = ({
   quantity,
   addToCart,
   handleQuantityChange,
+  maxStock,
 }: CartButtonProps) => {
   const [isHover, setIsHover] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -43,6 +45,7 @@ const CartButton = ({
             <QuantitySelectorRemove
               initialQuantity={quantity}
               onQuantityChange={handleQuantityChange}
+              maxStock={maxStock}
             />
           </div>
         ) : (
@@ -55,7 +58,7 @@ const CartButton = ({
             }`}
           >
             {quantity > 0 && (
-              <span className="absolute right-1 top-1 flex h-2 w-2 items-center justify-center rounded-full bg-white text-[9px] text-light-primary">
+              <span className="absolute right-1 top-1 flex h-3 w-3 items-center justify-center rounded-full bg-white text-[9px] text-light-primary">
                 {quantity}
               </span>
             )}

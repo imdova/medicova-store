@@ -33,6 +33,7 @@ export const products: Product[] = [
     title: "MediPro Professional V-Neck Scrub Top & Pants Set",
     price: 4599,
     del_price: 5999,
+    stock: 5,
     status: "Limited stock",
     rating: 4.7,
     sale: "23% OFF",
@@ -111,6 +112,7 @@ export const products: Product[] = [
       image: "/images/WhiteCoat.jpg",
     },
     model: "Lab Coat",
+    stock: 4,
     category: {
       id: 1,
       title: "Medical Wear",
@@ -134,7 +136,6 @@ export const products: Product[] = [
     price: 6899,
     del_price: 8999,
     status: "New arrival",
-    stock: 15,
     rating: 4.8,
     sale: "23% OFF",
     sizes: ["S", "M", "L", "XL"],

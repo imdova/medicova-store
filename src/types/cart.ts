@@ -27,3 +27,11 @@ export interface CartItem {
   brand?: Brand;
   stock?: number;
 }
+
+export type Coupon = {
+  code: string;
+  discountType: "percentage" | "fixed";
+  discountValue: number;
+  minPurchaseAmount: number;
+  maxDiscountAmount?: number; // Optional
+};

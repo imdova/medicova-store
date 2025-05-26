@@ -1,7 +1,6 @@
 "use client";
 import LandingSlider from "@/components/UI/sliders/LandingSlider";
 import CategorySlider from "@/components/UI/sliders/CategorySlider";
-import { slides } from "@/constants/sliders";
 import Image from "next/image";
 import Link from "next/link";
 import SectionHeader from "@/components/UI/headings/SectionHeader";
@@ -18,6 +17,7 @@ import {
   lifestyleCategories,
 } from "@/constants/categouries";
 import PopularSearches from "@/components/UI/PopularSearches";
+import { slides } from "@/constants/sliders";
 
 const MoreReasons = [
   {
