@@ -12,7 +12,7 @@ export default withAuth(
 
     // Block access to /checkout if not logged in
     if (checkoutPage && !token) {
-      return NextResponse.redirect(new URL("/NotFound", req.url));
+      return NextResponse.redirect(new URL("/login", req.url));
     }
 
     return NextResponse.next();
@@ -25,5 +25,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/checkout/:path*"],
+  matcher: ["/checkout"],
 };
