@@ -21,5 +21,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/checkout", "/checkout/:path*"], // Protect all checkout routes
+  matcher: ["/login", "/checkout/:path*"], // Protect all checkout routes
 };
