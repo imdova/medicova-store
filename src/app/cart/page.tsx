@@ -13,12 +13,18 @@ import Link from "next/link";
 import ProductsSlider from "@/components/UI/sliders/ProductsSlider";
 import { products } from "@/constants/products";
 import ProductCard from "@/components/UI/cards/ProductCard";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import Modal from "@/components/UI/Modals/DynamicModal";
+import AuthLogin from "@/components/UI/Modals/loginAuth";
 
 export default function CartPage() {
   const [appliedCoupon, setAppliedCoupon] = useState<string>("");
   const [discountAmount, setDiscountAmount] = useState(0);
   const [couponError, setCouponError] = useState<string | null>(null);
   const dispatch = useAppDispatch(); // Get the dispatch function
+  const session = useSession(); // Get the dispatch function
+  const router = useRouter(); // Get the dispatch function
   const { products: productsData, totalPrice } = useAppSelector(
     (state) => state.cart,
   );
@@ -28,6 +34,7 @@ export default function CartPage() {
   } | null>(null);
 
   const [isClient, setIsClient] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -100,6 +107,14 @@ export default function CartPage() {
   const showAlert = (message: string, type: "success" | "error") => {
     setAlert({ message, type });
     setTimeout(() => setAlert(null), 3000); // Hide after 3 seconds
+  };
+
+  const onCheckout = () => {
+    if (session.data?.user) {
+      router.push("/checkout");
+    } else {
+      setIsModalOpen(true);
+    }
   };
 
   if (!isClient) {
@@ -277,9 +292,19 @@ export default function CartPage() {
             totalPrice={totalPrice}
             discountAmount={discountAmount}
             totalShippingFee={totalShippingFee}
-            onCheckout={() => console.log("")}
+            onCheckout={onCheckout}
           />
         </div>
+      </div>
+
+      <div className="relative z-[1000]">
+        <Modal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          size="lg"
+        >
+          <AuthLogin redirect="/checkout" />
+        </Modal>
       </div>
     </>
   );

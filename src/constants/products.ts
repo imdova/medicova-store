@@ -5,14 +5,14 @@ export const products: Product[] = [
   {
     id: "1",
     brand: {
-      id: 1,
+      id: "1",
       title: "MediPro",
       url: "/MediPro",
       image: "/images/MediPro.jpg",
     },
     model: "Scrub Set",
     category: {
-      id: 1,
+      id: "1",
       title: "Medical Wear",
       url: "/medical-wear",
       image: "/images/medical-wear.jpg",
@@ -106,7 +106,7 @@ export const products: Product[] = [
   {
     id: "2",
     brand: {
-      id: 2,
+      id: "2",
       title: "WhiteCoat",
       url: "/WhiteCoat",
       image: "/images/WhiteCoat.jpg",
@@ -114,7 +114,7 @@ export const products: Product[] = [
     model: "Lab Coat",
     stock: 4,
     category: {
-      id: 1,
+      id: "1",
       title: "Medical Wear",
       url: "/medical-wear",
       image: "/images/medical-wear.jpg",
@@ -208,14 +208,14 @@ export const products: Product[] = [
   {
     id: "3",
     brand: {
-      id: 3,
+      id: "3",
       title: "NurseMates",
       url: "/NurseMates",
       image: "/images/NurseMates.jpg",
     },
     model: "Alicia",
     category: {
-      id: 1,
+      id: "1",
       title: "Medical Wear",
       url: "/medical-wear",
       image: "/images/medical-wear.jpg",
@@ -309,14 +309,14 @@ export const products: Product[] = [
   {
     id: "4",
     brand: {
-      id: 4,
+      id: "4",
       title: "SurgiCap",
       url: "/SurgiCap",
       image: "/images/SurgiCap.jpg",
     },
     model: "Bouffant",
     category: {
-      id: 1,
+      id: "1",
       title: "Medical Wear",
       url: "/medical-wear",
       image: "/images/medical-wear.jpg",
@@ -409,14 +409,14 @@ export const products: Product[] = [
   {
     id: "5",
     brand: {
-      id: 5,
+      id: "5",
       title: "HealingHands",
       url: "/HealingHands",
       image: "/images/HealingHands.jpg",
     },
     model: "Compression Socks",
     category: {
-      id: 1,
+      id: "1",
       title: "Medical Wear",
       url: "/medical-wear",
       image: "/images/medical-wear.jpg",
@@ -512,14 +512,14 @@ export const products: Product[] = [
   {
     id: "6",
     brand: {
-      id: 6,
+      id: "6",
       title: "ScrubLife",
       url: "/ScrubLife",
       image: "/images/ScrubLife.jpg",
     },
     model: "Jogger Scrubs",
     category: {
-      id: 1,
+      id: "1",
       title: "Medical Wear",
       url: "/medical-wear",
       image: "/images/medical-wear.jpg",
@@ -612,14 +612,14 @@ export const products: Product[] = [
   {
     id: "7",
     brand: {
-      id: 7,
+      id: "7",
       title: "ORReady",
       url: "/ORReady",
       image: "/images/ORReady.jpg",
     },
     model: "Surgical Gown",
     category: {
-      id: 1,
+      id: "1",
       title: "Medical Wear",
       url: "/medical-wear",
       image: "/images/medical-wear.jpg",
@@ -711,14 +711,14 @@ export const products: Product[] = [
   {
     id: "8",
     brand: {
-      id: 8,
+      id: "8",
       title: "StethoStyle",
       url: "/StethoStyle",
       image: "/images/StethoStyle.jpg",
     },
     model: "Warm-Up Jacket",
     category: {
-      id: 1,
+      id: "1",
       title: "Medical Wear",
       url: "/medical-wear",
       image: "/images/medical-wear.jpg",
@@ -811,14 +811,14 @@ export const products: Product[] = [
   {
     id: "9",
     brand: {
-      id: 9,
+      id: "9",
       title: "MediTech",
       url: "/MediTech",
       image: "/images/MediTech.jpg",
     },
     model: "VitalTrack Pro",
     category: {
-      id: 2,
+      id: "2",
       title: "Medical Accessories",
       url: "/medical-accessories",
       image: "/images/medical-accessories.jpg",
@@ -912,14 +912,14 @@ export const products: Product[] = [
   {
     id: "10",
     brand: {
-      id: 10,
+      id: "10",
       title: "Clinique",
       url: "/Clinique",
       image: "/images/Clinique.jpg",
     },
     model: "SteriScent",
     category: {
-      id: 3,
+      id: "3",
       title: "Medical Personal Care",
       url: "/medical-personal-care",
       image: "/images/medical-personal-care.jpg",
@@ -1014,14 +1014,14 @@ export const products: Product[] = [
   {
     id: "11",
     brand: {
-      id: 11,
+      id: "11",
       title: "DermaSeal",
       url: "/DermaSeal",
       image: "/images/DermaSeal.jpg",
     },
     model: "ProCare Kit",
     category: {
-      id: 4,
+      id: "4",
       title: "Medical Supplies",
       url: "/medical-supplies",
       image: "/images/medical-supplies.jpg",

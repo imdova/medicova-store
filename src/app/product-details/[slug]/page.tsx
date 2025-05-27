@@ -351,11 +351,11 @@ const ProductPage = ({ params }: ProductPageProps) => {
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   disabled={loading}
                   onClick={handleAddToCart}
-                  className={`flex w-full items-center justify-center gap-2 rounded-md ${
+                  className={`flex w-full items-center justify-center gap-2 rounded-sm ${
                     loading
                       ? "cursor-not-allowed bg-green-400"
                       : "bg-green-600 hover:bg-green-700"
-                  } px-4 py-2 text-sm font-semibold uppercase text-white shadow-md transition-all duration-300 md:text-base`}
+                  } px-4 py-2 text-sm font-semibold uppercase text-white transition-all duration-300`}
                 >
                   {loading ? (
                     <>

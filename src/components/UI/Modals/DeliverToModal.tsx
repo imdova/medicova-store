@@ -1,6 +1,15 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Loader2, MapPin, Home, Briefcase, Plus, X, Map } from "lucide-react";
+import {
+  Loader2,
+  MapPin,
+  Home,
+  Briefcase,
+  Plus,
+  X,
+  Map,
+  Trash2,
+} from "lucide-react";
 import dynamic from "next/dynamic";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -21,6 +30,32 @@ interface Address {
     lng: number;
   };
 }
+interface NominatimSearchResult {
+  place_id: number;
+  licence: string;
+  osm_type: string;
+  osm_id: number;
+  boundingbox: [string, string, string, string];
+  lat: string;
+  lon: string;
+  display_name: string;
+  class: string;
+  type: string;
+  importance: number;
+  icon?: string;
+  address?: {
+    house_number?: string;
+    road?: string;
+    neighbourhood?: string;
+    suburb?: string;
+    city?: string;
+    county?: string;
+    state?: string;
+    postcode?: string;
+    country?: string;
+    country_code?: string;
+  };
+}
 
 interface DeliverToModalProps {
   isOpen: boolean;
@@ -28,13 +63,12 @@ interface DeliverToModalProps {
   currentAddress?: Address | null;
   onAddressSelect: (address: Address) => void;
   locale?: string;
-  savedAddresses?: Address[];
 }
 
-// Default Cairo coordinates
 const DEFAULT_COORDS = { lat: 30.0444, lng: 31.2357 };
+const LOCAL_STORAGE_KEY = "savedAddresses";
 
-// Dynamic imports with proper typing
+// Dynamic imports
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
   {
@@ -51,12 +85,10 @@ const TileLayer = dynamic(
   () => import("react-leaflet").then((mod) => mod.TileLayer),
   { ssr: false },
 );
-
 const Marker = dynamic(
   () => import("react-leaflet").then((mod) => mod.Marker),
   { ssr: false },
 );
-
 const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
   ssr: false,
 });
@@ -76,10 +108,8 @@ export default function DeliverToModal({
   currentAddress,
   onAddressSelect,
   locale = "en",
-  savedAddresses = [],
 }: DeliverToModalProps) {
-  // State management
-  const [addresses, setAddresses] = useState<Address[]>(savedAddresses);
+  const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [showAddNew, setShowAddNew] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -96,70 +126,123 @@ export default function DeliverToModal({
       location?: { lat: number; lng: number };
     }
   >({
-    type: "home",
+    type: "home", // Default type
     name: "",
     details: "",
     area: "",
     city: "",
     isDefault: false,
   });
+  const [searchResults, setSearchResults] = useState<NominatimSearchResult[]>(
+    [],
+  );
 
   const mapRef = useRef<L.Map | null>(null);
 
-  // Initialize addresses
-  // Initialize addresses
+  // Load saved addresses from localStorage
   useEffect(() => {
-    if (savedAddresses.length === 0) {
-      setAddresses([
-        {
-          id: "1",
-          type: "home",
-          name: "Home",
-          details: "123 Main St, Apt 4B",
-          area: "Downtown",
-          city: "Cairo",
-          isDefault: true,
-          location: DEFAULT_COORDS,
-        },
-      ]);
-    } else {
-      setAddresses(savedAddresses);
-    }
-  }, [savedAddresses]); // Make sure all dependencies are listed
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      setAddresses(parsed);
 
-  // Set selected address and map center
-  useEffect(() => {
-    if (currentAddress) {
-      setSelectedAddress(currentAddress);
-      setMapCenter(currentAddress.location);
-    } else {
-      const defaultAddress = addresses.find((addr) => addr.isDefault);
-      if (defaultAddress) {
-        setSelectedAddress(defaultAddress);
-        setMapCenter(defaultAddress.location);
+      if (currentAddress) {
+        setSelectedAddress(currentAddress);
+        setMapCenter(currentAddress.location);
+      } else {
+        const defaultAddress = parsed.find((addr: Address) => addr.isDefault);
+        if (defaultAddress) {
+          setSelectedAddress(defaultAddress);
+          setMapCenter(defaultAddress.location);
+        }
       }
+    } else {
+      // Set default address if none exists
+      const defaultAddress: Address = {
+        id: "1",
+        type: "home",
+        name: "Home",
+        details: "123 Main St, Apt 4B",
+        area: "Downtown",
+        city: "Cairo",
+        isDefault: true,
+        location: DEFAULT_COORDS,
+      };
+      setAddresses([defaultAddress]);
+      setSelectedAddress(defaultAddress);
+      saveAddressesToLocalStorage([defaultAddress]);
     }
-  }, [currentAddress, addresses]);
+  }, [currentAddress]);
 
-  // Memoized reverse geocoding function
+  const saveAddressesToLocalStorage = (addresses: Address[]) => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(addresses));
+  };
+
+  const handleSearchLocation = useCallback(async () => {
+    if (!searchQuery.trim()) return;
+
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=5`,
+      );
+      const data = await response.json();
+      setSearchResults(data);
+    } catch (error) {
+      console.error("Search error:", error);
+      setLocationError(
+        locale === "ar" ? "خطأ في البحث عن الموقع" : "Location search error",
+      );
+    }
+  }, [searchQuery, locale]);
+
+  const handleSelectSearchResult = useCallback(
+    async (result: NominatimSearchResult) => {
+      const newLocation = {
+        lat: parseFloat(result.lat),
+        lng: parseFloat(result.lon),
+      };
+
+      setMapCenter(newLocation);
+      setSelectedPosition(newLocation);
+      setMapView(true);
+
+      try {
+        const addressDetails = await reverseGeocode(
+          newLocation.lat,
+          newLocation.lng,
+        );
+        setTempAddress((prev) => ({
+          ...prev,
+          details: addressDetails.details || result.display_name,
+          area: addressDetails.area || "",
+          city: addressDetails.city || result.address?.city || "Cairo",
+        }));
+        setSearchQuery("");
+        setSearchResults([]);
+      } catch (error) {
+        console.error("Geocode error:", error);
+      }
+    },
+    [],
+  );
+
+  const handdelCloseSearch = () => {
+    setSearchResults([]);
+    setSearchQuery("");
+  };
+
   const reverseGeocode = useCallback(
     async (latitude: number, longitude: number) => {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&accept-language=en`,
       );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch location data");
-      }
-
+      if (!response.ok) throw new Error("Failed to fetch location data");
       const data = await response.json();
-
       return {
         details: data.display_name,
         area: data.address.suburb || data.address.neighbourhood || "",
         city:
           data.address.city || data.address.town || data.address.village || "",
-        country: data.address.country || "",
       };
     },
     [],
@@ -168,12 +251,8 @@ export default function DeliverToModal({
   const handleLocateMe = useCallback(async () => {
     setIsLocating(true);
     setLocationError("");
-
     try {
-      if (!navigator.geolocation) {
-        throw new Error("Geolocation not supported");
-      }
-
+      if (!navigator.geolocation) throw new Error("Geolocation not supported");
       const position = await new Promise<GeolocationPosition>(
         (resolve, reject) => {
           navigator.geolocation.getCurrentPosition(resolve, reject, {
@@ -182,16 +261,13 @@ export default function DeliverToModal({
           });
         },
       );
-
       const newLocation = {
         lat: position.coords.latitude,
         lng: position.coords.longitude,
       };
-
       setMapCenter(newLocation);
       setSelectedPosition(newLocation);
       setMapView(true);
-
       const addressDetails = await reverseGeocode(
         newLocation.lat,
         newLocation.lng,
@@ -205,9 +281,7 @@ export default function DeliverToModal({
     } catch (error) {
       console.error("Location error:", error);
       setLocationError(
-        locale === "ar"
-          ? "تعذر الحصول على الموقع. يرجى التأكد من تفعيل خدمات الموقع."
-          : "Could not get location. Please ensure location services are enabled.",
+        locale === "ar" ? "تعذر الحصول على الموقع" : "Could not get location",
       );
     } finally {
       setIsLocating(false);
@@ -218,7 +292,6 @@ export default function DeliverToModal({
     async (e: L.LeafletMouseEvent) => {
       const { lat, lng } = e.latlng;
       setSelectedPosition({ lat, lng });
-
       const addressDetails = await reverseGeocode(lat, lng);
       setTempAddress((prev) => ({
         ...prev,
@@ -231,19 +304,22 @@ export default function DeliverToModal({
   );
 
   const saveMapLocation = useCallback(() => {
-    if (!selectedPosition || !tempAddress.name) {
+    if (!selectedPosition) {
       setLocationError(
         locale === "ar"
-          ? "الرجاء إدخال اسم العنوان وتحديد الموقع على الخريطة"
-          : "Please enter address name and select location on map",
+          ? "الرجاء تحديد موقع على الخريطة"
+          : "Please select a location on the map",
       );
       return;
     }
 
+    // Use a default name based on address type or coordinates
+    const defaultName = `${tempAddress.type === "home" ? "Home" : tempAddress.type === "work" ? "Work" : "Location"} ${selectedPosition.lat.toFixed(4)},${selectedPosition.lng.toFixed(4)}`;
+
     const newAddress: Address = {
-      id: `map-${Date.now()}`,
+      id: `addr-${Date.now()}`,
       type: tempAddress.type,
-      name: tempAddress.name,
+      name: defaultName, // Use the default name
       details: tempAddress.details || "",
       area: tempAddress.area || "",
       city: tempAddress.city || "Cairo",
@@ -255,7 +331,9 @@ export default function DeliverToModal({
       ? addresses.map((addr) => ({ ...addr, isDefault: false }))
       : [...addresses];
 
-    setAddresses([...updatedAddresses, newAddress]);
+    const finalAddresses = [...updatedAddresses, newAddress];
+    setAddresses(finalAddresses);
+    saveAddressesToLocalStorage(finalAddresses);
     setSelectedAddress(newAddress);
     onAddressSelect(newAddress);
     setMapView(false);
@@ -280,7 +358,20 @@ export default function DeliverToModal({
     [onAddressSelect, onClose],
   );
 
-  // Filter addresses based on search query
+  const handleDeleteAddress = useCallback(
+    (id: string, e: React.MouseEvent) => {
+      e.stopPropagation();
+      const updatedAddresses = addresses.filter((addr) => addr.id !== id);
+      setAddresses(updatedAddresses);
+      saveAddressesToLocalStorage(updatedAddresses);
+
+      if (selectedAddress?.id === id) {
+        setSelectedAddress(null);
+      }
+    },
+    [addresses, selectedAddress],
+  );
+
   const filteredAddresses = addresses.filter((addr) =>
     `${addr.name} ${addr.details} ${addr.area} ${addr.city}`
       .toLowerCase()
@@ -290,7 +381,7 @@ export default function DeliverToModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+    <div className="fixed inset-0 z-[3000] flex items-center justify-center bg-black bg-opacity-50 p-4">
       <div className="max-h-[90vh] w-full max-w-md overflow-hidden rounded-lg bg-white">
         {/* Header */}
         <div className="flex items-center justify-between border-b bg-gray-100 p-4">
@@ -312,40 +403,47 @@ export default function DeliverToModal({
             <input
               type="text"
               placeholder={locale === "ar" ? "ابحث عن موقع" : "Search location"}
-              className="w-full rounded-lg border p-3 pl-10 focus:outline-none"
+              className="w-full rounded-lg border p-3 pl-10 pr-10 focus:outline-none"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                handleSearchLocation();
+              }}
             />
             <MapPin
               className="absolute left-3 top-3.5 text-gray-400"
               size={18}
             />
+            {searchQuery && (
+              <button
+                onClick={handdelCloseSearch}
+                className="absolute right-2 top-3.5 text-gray-400"
+              >
+                <X size={18} />
+              </button>
+            )}
           </div>
+
+          {/* Search results */}
+          {searchResults.length > 0 && searchQuery.length > 0 && (
+            <div className="mt-2 max-h-40 overflow-y-auto rounded-lg border">
+              {searchResults.map((result) => (
+                <div
+                  key={result.place_id}
+                  className="cursor-pointer p-2 hover:bg-gray-100"
+                  onClick={() => handleSelectSearchResult(result)}
+                >
+                  <p className="text-sm">{result.display_name}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Content */}
         <div className="max-h-[60vh] overflow-y-auto">
           {mapView ? (
             <div className="flex flex-col">
-              <div className="p-4">
-                <h3 className="mb-2 font-medium">
-                  {locale === "ar"
-                    ? "حدد موقعك على الخريطة"
-                    : "Select your location"}
-                </h3>
-                <input
-                  type="text"
-                  placeholder={locale === "ar" ? "اسم العنوان" : "Address name"}
-                  className="mb-2 w-full rounded-lg border p-2 outline-none"
-                  value={tempAddress.name}
-                  onChange={(e) =>
-                    setTempAddress({ ...tempAddress, name: e.target.value })
-                  }
-                  required
-                />
-              </div>
-
-              {/* Optimized Map Container */}
               <div className="relative h-[300px] w-full">
                 <MapContainer
                   center={mapCenter}
@@ -392,8 +490,9 @@ export default function DeliverToModal({
                 const updatedAddresses = newAddress.isDefault
                   ? addresses.map((addr) => ({ ...addr, isDefault: false }))
                   : [...addresses];
-
-                setAddresses([...updatedAddresses, newAddress]);
+                const finalAddresses = [...updatedAddresses, newAddress];
+                setAddresses(finalAddresses);
+                saveAddressesToLocalStorage(finalAddresses);
                 setSelectedAddress(newAddress);
                 onAddressSelect(newAddress);
                 setShowAddNew(false);
@@ -441,7 +540,7 @@ export default function DeliverToModal({
                   {filteredAddresses.map((address) => (
                     <div
                       key={address.id}
-                      className={`flex cursor-pointer items-center p-4 hover:bg-gray-50 ${
+                      className={`group flex cursor-pointer items-center p-4 hover:bg-gray-50 ${
                         selectedAddress?.id === address.id ? "bg-green-50" : ""
                       }`}
                       onClick={() => handleSelectAddress(address)}
@@ -471,9 +570,12 @@ export default function DeliverToModal({
                           {address.area}, {address.city}
                         </p>
                       </div>
-                      {selectedAddress?.id === address.id && (
-                        <div className="ml-2 text-green-500">✓</div>
-                      )}
+                      <button
+                        onClick={(e) => handleDeleteAddress(address.id, e)}
+                        className="ml-2 text-gray-400 opacity-0 hover:text-red-500 group-hover:opacity-100"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
                   ))}
                 </div>

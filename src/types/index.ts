@@ -79,7 +79,7 @@ export type Slide = {
 };
 // categories type
 export interface CategoryType {
-  id: number;
+  id: string;
   title: string;
   url: string;
   image: string;
@@ -87,7 +87,7 @@ export interface CategoryType {
 }
 // Brand type
 export interface Brand {
-  id: number;
+  id: string;
   title: string;
   url: string;
   image?: string;
@@ -133,3 +133,10 @@ export type ColorType =
   | "Maroon"
   | "Olive"
   | "Teal";
+
+// type keywords search
+export interface SearchResult {
+  id: string;
+  title: string;
+  type: "recent";
+}
