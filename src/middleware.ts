@@ -1,29 +1,25 @@
-import { JWT } from "next-auth/jwt";
+// middleware.ts
 import { withAuth } from "next-auth/middleware";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 export default withAuth(
-  function middleware(req: NextRequest) {
-    const { pathname } = req.nextUrl;
-    const token = (req as NextRequest & { nextauth: { token: JWT } }).nextauth
-      .token;
-
-    const checkoutPage = pathname.startsWith("/checkout");
-
-    // Block access to /checkout if not logged in
-    if (checkoutPage && !token) {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
-
+  function middleware() {
     return NextResponse.next();
   },
   {
+    callbacks: {
+      authorized: ({ token }) => {
+        // Only allow access if token exists (user is authenticated)
+        return !!token;
+      },
+    },
     pages: {
-      signIn: "/login",
+      signIn: "/login", // Redirect to this page if not authenticated
+      error: "/auth/error", // Error page for auth failures
     },
   },
 );
 
 export const config = {
-  matcher: ["/checkout"],
+  matcher: ["/checkout", "/checkout/:path*"], // Protect all checkout routes
 };
