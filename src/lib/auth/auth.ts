@@ -10,7 +10,6 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         try {
-          // Replace this with your actual authentication logic
           if (
             credentials?.email === "user@medicova.com" &&
             credentials?.password === "12345678"
@@ -19,7 +18,6 @@ export const authOptions: AuthOptions = {
               id: "1",
               name: "Mohamed Sayed",
               email: "user@medicova.com",
-              isAdmin: false, // Add this field
             };
           }
           return null;
@@ -39,14 +37,14 @@ export const authOptions: AuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.isAdmin = user.isAdmin || false;
+        token.email = user.email;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id;
-        session.user.isAdmin = token.isAdmin;
+        session.user.email = token.email;
       }
       return session;
     },
