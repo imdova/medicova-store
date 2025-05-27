@@ -1,5 +1,8 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { JWT } from "next-auth/jwt";
+
+export const runtime = "nodejs"; // 🔥 Ensure Node.js runtime for Vercel
 
 const handler = NextAuth({
   providers: [
@@ -10,17 +13,22 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (
-          credentials?.email === "user@medicova.com" &&
-          credentials?.password === "12345678"
-        ) {
-          return {
-            id: "1",
-            name: "Mohamed sayed",
-            email: "user@medicova.com",
-          };
+        try {
+          if (
+            credentials?.email === "user@medicova.com" &&
+            credentials?.password === "12345678"
+          ) {
+            return {
+              id: "1",
+              name: "Mohamed Sayed",
+              email: "user@medicova.com",
+            };
+          }
+          return null; // Unauthorized
+        } catch (error) {
+          console.error("Authorize error:", error);
+          return null;
         }
-        return null;
       },
     }),
   ],
