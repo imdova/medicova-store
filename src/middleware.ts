@@ -5,26 +5,28 @@ import { NextResponse } from "next/server";
 export default withAuth(
   function middleware(req) {
     const token = req.nextauth.token;
-    // const path = req.nextUrl.pathname;
+
+    // If no token (not authenticated), redirect to login
     if (!token) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
+
     return NextResponse.next();
   },
   {
     callbacks: {
       authorized: ({ token }) => {
-        // Only allow access if token exists (user is authenticated)
-        return !!token;
+        // This is where you can add additional authorization logic
+        return !!token; // Just check if token exists for basic auth
       },
     },
     pages: {
-      signIn: "/login", // Redirect to this page if not authenticated
-      error: "/auth/error", // Error page for auth failures
+      signIn: "/login",
+      error: "/auth/error",
     },
   },
 );
 
 export const config = {
-  matcher: ["/login", "/checkout/:path*"], // Protect all checkout routes
+  matcher: ["/checkout", "/checkout/:path*"],
 };
