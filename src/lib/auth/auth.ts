@@ -28,7 +28,7 @@ export const authOptions: AuthOptions = {
       },
     }),
   ],
-  secret: "dafdfdsfsd",
+  secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -37,15 +37,20 @@ export const authOptions: AuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.name = user.name;
         token.email = user.email;
       }
+      console.log(token);
+
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id;
+        session.user.name = token.name;
         session.user.email = token.email;
       }
+      console.log(session);
       return session;
     },
   },

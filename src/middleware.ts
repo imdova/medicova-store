@@ -5,10 +5,15 @@ import { NextResponse } from "next/server";
 export default withAuth(
   function middleware(req) {
     const token = req.nextauth.token;
+    const pathname = req.nextUrl.pathname;
 
-    // If no token (not authenticated), redirect to login
-    if (!token) {
-      return NextResponse.redirect(new URL("/login", req.url));
+    // If no token (not authenticated) and trying to access checkout
+    if (!token && pathname.startsWith("/checkout")) {
+      // Redirect to login with a callback URL to return after login
+      const callbackUrl = encodeURIComponent(req.nextUrl.href);
+      return NextResponse.redirect(
+        new URL(`/login?callbackUrl=${callbackUrl}`, req.url),
+      );
     }
 
     return NextResponse.next();
@@ -16,17 +21,15 @@ export default withAuth(
   {
     callbacks: {
       authorized: ({ token }) => {
-        // This is where you can add additional authorization logic
-        return !!token; // Just check if token exists for basic auth
+        return !!token;
       },
     },
     pages: {
-      signIn: "/login",
       error: "/auth/error",
     },
   },
 );
 
 export const config = {
-  matcher: ["/login", "/login/:path*"],
+  matcher: ["/checkout", "/checkout/:path*"],
 };
