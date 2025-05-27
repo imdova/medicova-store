@@ -1,8 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { JWT } from "next-auth/jwt";
 
-export const runtime = "nodejs"; // 🔥 Ensure Node.js runtime for Vercel
+export const runtime = "nodejs";
 
 const handler = NextAuth({
   providers: [
