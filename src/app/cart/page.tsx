@@ -17,6 +17,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/UI/Modals/DynamicModal";
 import AuthLogin from "@/components/UI/Modals/loginAuth";
+import { getExecuteDateFormatted } from "@/util";
 
 export default function CartPage() {
   const [appliedCoupon, setAppliedCoupon] = useState<string>("");
@@ -54,12 +55,6 @@ export default function CartPage() {
   }, [dispatch]); // Add dispatch to dependency array
 
   const productsCount = productsData.length;
-
-  // Calculate total shipping fee outside the JSX
-  const totalShippingFee = productsData.reduce(
-    (sum, item) => sum + (item.shipping_fee || 0),
-    0,
-  );
 
   const applyCoupon = () => {
     setCouponError(null);
@@ -116,6 +111,34 @@ export default function CartPage() {
       setIsModalOpen(true);
     }
   };
+
+  const getAddress = () => {
+    if (typeof window === "undefined") {
+      // Server-side: localStorage is not available
+      return null;
+    }
+
+    const userAddressString = localStorage.getItem("userAddress");
+    const savedAddressesString = localStorage.getItem("savedAddresses");
+
+    try {
+      if (userAddressString) {
+        const data = JSON.parse(userAddressString);
+        return data.country_code;
+      } else if (savedAddressesString) {
+        const data = JSON.parse(savedAddressesString);
+        return data[0].country_code;
+      } else {
+        console.warn("No address found in localStorage");
+        return null; // Or return a default object
+      }
+    } catch (error) {
+      console.error("Failed to parse address from localStorage:", error);
+      return null;
+    }
+  };
+
+  console.log(getAddress());
 
   if (!isClient) {
     return <LoadingAnimation />;
@@ -226,15 +249,18 @@ export default function CartPage() {
                           </div>
                         </div>
                         <div className="my-2 flex flex-col justify-between gap-2 md:flex-row md:items-center">
-                          {item.deliveryDate && (
+                          {item.deliveryTime && (
                             <p className="whitespace-pre-line text-xs text-gray-600">
                               Get it{" "}
                               <span className="text-xs text-primary">
-                                {item.deliveryDate}
+                                {getExecuteDateFormatted(
+                                  item.deliveryTime ?? "",
+                                  "EEE, MMM d",
+                                )}
                               </span>
                             </p>
                           )}
-                          {item.deliveryDate && (
+                          {item.deliveryTime && (
                             <div className="flex items-center text-xs font-semibold">
                               <span className="rounded bg-light-primary px-2 py-1 text-white">
                                 Express
@@ -291,8 +317,9 @@ export default function CartPage() {
             productsCount={productsCount}
             totalPrice={totalPrice}
             discountAmount={discountAmount}
-            totalShippingFee={totalShippingFee}
             onCheckout={onCheckout}
+            productCart={productsData}
+            destinationCountry={getAddress()}
           />
         </div>
       </div>

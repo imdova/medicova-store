@@ -1,7 +1,7 @@
 // store/slices/cartSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { CartItem } from "@/types/cart";
-import { Seller } from "@/types/product";
+import { Seller, shippingMethod } from "@/types/product";
 import {
   Brand,
   ColorType,
@@ -45,7 +45,7 @@ const cartSlice = createSlice({
         price: number;
         del_price?: number;
         description: string;
-        deliveryDate?: string;
+        deliveryTime?: string;
         sellers?: Seller;
         shipping_fee: number;
         size?: SizeType | NumericSizeType | LiquidSizeType;
@@ -53,6 +53,8 @@ const cartSlice = createSlice({
         quantity: number;
         brand?: Brand;
         stock?: number;
+        shippingMethod: shippingMethod;
+        weightKg: number;
       }>,
     ) => {
       const {
@@ -66,10 +68,12 @@ const cartSlice = createSlice({
         size,
         color,
         quantity = 1,
-        deliveryDate,
+        deliveryTime,
         brand,
         sellers,
         stock,
+        shippingMethod,
+        weightKg,
       } = action.payload;
       const existingItem = state.products.find(
         (item) => item.id === id && item.size === size && item.color === color,
@@ -91,10 +95,12 @@ const cartSlice = createSlice({
           del_price,
           size,
           color,
-          deliveryDate,
+          deliveryTime,
           brand,
           sellers,
           stock,
+          shippingMethod,
+          weightKg,
         });
       }
 

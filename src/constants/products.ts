@@ -60,7 +60,7 @@ export const products: Product[] = [
       "Wrinkle-resistant fabric",
       "Multiple pockets for utility",
     ],
-    deliveryDate: "Tomorrow",
+    deliveryTime: "5-7 days",
     installmentOptions: [
       {
         months: 3,
@@ -102,6 +102,8 @@ export const products: Product[] = [
       { label: "Closure Type", content: "Pull On" },
     ],
     shipping_fee: 0,
+    shippingMethod: "standard",
+    weightKg: 2,
   },
   {
     id: "2",
@@ -162,7 +164,7 @@ export const products: Product[] = [
       "Side slits for ease of movement",
       "Optional embroidery service",
     ],
-    deliveryDate: "2-3 days",
+    deliveryTime: "5-7 days",
     installmentOptions: [
       {
         months: 3,
@@ -204,6 +206,8 @@ export const products: Product[] = [
       { label: "Closure Type", content: "Button Front" },
     ],
     shipping_fee: 0,
+    shippingMethod: "free",
+    weightKg: 0,
   },
   {
     id: "3",
@@ -263,7 +267,7 @@ export const products: Product[] = [
       "Breathable mesh upper",
       "Easy to clean",
     ],
-    deliveryDate: "Tomorrow",
+    deliveryTime: "5-10 days",
     installmentOptions: [
       {
         months: 3,
@@ -305,6 +309,8 @@ export const products: Product[] = [
       { label: "Heel Height", content: "1 inch" },
     ],
     shipping_fee: 0,
+    shippingMethod: "standard",
+    weightKg: 0,
   },
   {
     id: "4",
@@ -363,7 +369,7 @@ export const products: Product[] = [
       "One-size-fits-all design",
       "Comfortable elastic band",
     ],
-    deliveryDate: "Tomorrow",
+    deliveryTime: "6-12 days",
     installmentOptions: [
       {
         months: 3,
@@ -405,6 +411,8 @@ export const products: Product[] = [
       { label: "Size", content: "One size fits most" },
     ],
     shipping_fee: 0,
+    shippingMethod: "free",
+    weightKg: 0,
   },
   {
     id: "5",
@@ -463,7 +471,7 @@ export const products: Product[] = [
       "Non-binding top band",
       "3-pack with assorted colors",
     ],
-    deliveryDate: "Tomorrow",
+    deliveryTime: "3 days",
     installmentOptions: [
       {
         months: 3,
@@ -508,6 +516,8 @@ export const products: Product[] = [
       { label: "Features", content: "Graduated compression, moisture-wicking" },
     ],
     shipping_fee: 0,
+    shippingMethod: "express",
+    weightKg: 0,
   },
   {
     id: "6",
@@ -566,7 +576,7 @@ export const products: Product[] = [
       "Stretch fabric for mobility",
       "Wrinkle and stain resistant",
     ],
-    deliveryDate: "24 May",
+    deliveryTime: "5-7 days",
     installmentOptions: [
       {
         months: 3,
@@ -608,6 +618,8 @@ export const products: Product[] = [
       { label: "Closure Type", content: "Elastic Waist with Drawstring" },
     ],
     shipping_fee: 0,
+    shippingMethod: "standard",
+    weightKg: 0,
   },
   {
     id: "7",
@@ -665,7 +677,7 @@ export const products: Product[] = [
       "Thumb hooks for secure fit",
       "Latex-free",
     ],
-    deliveryDate: "Tomorrow",
+    deliveryTime: "2-3 days",
     installmentOptions: [
       {
         months: 3,
@@ -707,6 +719,8 @@ export const products: Product[] = [
       { label: "Features", content: "Fluid-resistant, breathable" },
     ],
     shipping_fee: 0,
+    shippingMethod: "express",
+    weightKg: 0,
   },
   {
     id: "8",
@@ -765,7 +779,7 @@ export const products: Product[] = [
       "Embroidered logo option",
       "Machine washable",
     ],
-    deliveryDate: "24 May",
+    deliveryTime: "5-7 days",
     installmentOptions: [
       {
         months: 3,
@@ -807,6 +821,8 @@ export const products: Product[] = [
       { label: "Closure Type", content: "Full-zip" },
     ],
     shipping_fee: 0,
+    shippingMethod: "express",
+    weightKg: 0,
   },
   {
     id: "9",
@@ -866,7 +882,7 @@ export const products: Product[] = [
       "7-day battery life",
       "Water resistant for clinical washing",
     ],
-    deliveryDate: "Tomorrow",
+    deliveryTime: "5-9 days",
     installmentOptions: [
       {
         months: 6,
@@ -908,6 +924,8 @@ export const products: Product[] = [
       { label: "Compatibility", content: "iOS & Android" },
     ],
     shipping_fee: 0,
+    shippingMethod: "express",
+    weightKg: 0,
   },
   {
     id: "10",
@@ -968,7 +986,7 @@ export const products: Product[] = [
       "pH balanced for skin",
       "Compatible with frequent hand washing",
     ],
-    deliveryDate: "Tomorrow",
+    deliveryTime: "5-7 days",
     installmentOptions: [
       {
         months: 3,
@@ -1010,6 +1028,8 @@ export const products: Product[] = [
       { label: "Skin Type", content: "All skin types" },
     ],
     shipping_fee: 0,
+    shippingMethod: "express",
+    weightKg: 2,
   },
   {
     id: "11",
@@ -1069,7 +1089,7 @@ export const products: Product[] = [
       "Water-resistant options",
       "Variety of sizes included",
     ],
-    deliveryDate: "Tomorrow",
+    deliveryTime: "5-8 days",
     installmentOptions: [
       {
         months: 3,
@@ -1115,5 +1135,7 @@ export const products: Product[] = [
       { label: "Latex Content", content: "Latex-free" },
     ],
     shipping_fee: 0,
+    shippingMethod: "standard",
+    weightKg: 2,
   },
 ];

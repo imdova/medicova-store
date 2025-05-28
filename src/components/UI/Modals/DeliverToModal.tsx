@@ -14,47 +14,19 @@ import dynamic from "next/dynamic";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useMapEvent } from "react-leaflet";
+import { Address } from "@/types";
+import { cities } from "@/constants/cities";
 
-type AddressType = "home" | "work" | "other";
-
-interface Address {
-  id: string;
-  type: AddressType;
-  name: string;
-  details: string;
-  area: string;
+interface CityData {
   city: string;
-  isDefault: boolean;
-  location: {
-    lat: number;
-    lng: number;
-  };
-}
-interface NominatimSearchResult {
-  place_id: number;
-  licence: string;
-  osm_type: string;
-  osm_id: number;
-  boundingbox: [string, string, string, string];
   lat: string;
-  lon: string;
-  display_name: string;
-  class: string;
-  type: string;
-  importance: number;
-  icon?: string;
-  address?: {
-    house_number?: string;
-    road?: string;
-    neighbourhood?: string;
-    suburb?: string;
-    city?: string;
-    county?: string;
-    state?: string;
-    postcode?: string;
-    country?: string;
-    country_code?: string;
-  };
+  lng: string;
+  country: string;
+  iso2: string;
+  admin_name: string;
+  capital: string;
+  population: string;
+  population_proper: string;
 }
 
 interface DeliverToModalProps {
@@ -131,11 +103,11 @@ export default function DeliverToModal({
     details: "",
     area: "",
     city: "",
+    country: "",
+    country_code: "",
     isDefault: false,
   });
-  const [searchResults, setSearchResults] = useState<NominatimSearchResult[]>(
-    [],
-  );
+  const [searchResults, setSearchResults] = useState<CityData[]>([]);
 
   const mapRef = useRef<L.Map | null>(null);
 
@@ -165,6 +137,8 @@ export default function DeliverToModal({
         details: "123 Main St, Apt 4B",
         area: "Downtown",
         city: "Cairo",
+        country: "egypt",
+        country_code: "EG",
         isDefault: true,
         location: DEFAULT_COORDS,
       };
@@ -182,11 +156,11 @@ export default function DeliverToModal({
     if (!searchQuery.trim()) return;
 
     try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=5`,
+      // Search in our local cities data
+      const results = cities.filter((city) =>
+        city.city.toLowerCase().includes(searchQuery.toLowerCase()),
       );
-      const data = await response.json();
-      setSearchResults(data);
+      setSearchResults(results);
     } catch (error) {
       console.error("Search error:", error);
       setLocationError(
@@ -195,58 +169,83 @@ export default function DeliverToModal({
     }
   }, [searchQuery, locale]);
 
-  const handleSelectSearchResult = useCallback(
-    async (result: NominatimSearchResult) => {
-      const newLocation = {
-        lat: parseFloat(result.lat),
-        lng: parseFloat(result.lon),
-      };
-
-      setMapCenter(newLocation);
-      setSelectedPosition(newLocation);
-      setMapView(true);
-
+  const reverseGeocode = useCallback(
+    async (latitude: number, longitude: number) => {
       try {
-        const addressDetails = await reverseGeocode(
-          newLocation.lat,
-          newLocation.lng,
-        );
-        setTempAddress((prev) => ({
-          ...prev,
-          details: addressDetails.details || result.display_name,
-          area: addressDetails.area || "",
-          city: addressDetails.city || result.address?.city || "Cairo",
-        }));
-        setSearchQuery("");
-        setSearchResults([]);
+        // Find the nearest city in our local data
+        let nearestCity: CityData | null = null;
+        let minDistance = Infinity;
+
+        for (const city of cities) {
+          const cityLat = parseFloat(city.lat);
+          const cityLng = parseFloat(city.lng);
+          const distance = Math.sqrt(
+            Math.pow(cityLat - latitude, 2) + Math.pow(cityLng - longitude, 2),
+          );
+
+          if (distance < minDistance) {
+            minDistance = distance;
+            nearestCity = city;
+          }
+        }
+
+        if (nearestCity) {
+          return {
+            details: nearestCity.city,
+            area: nearestCity.admin_name || "",
+            city: nearestCity.city,
+            country: nearestCity.country,
+            country_code: nearestCity.iso2,
+          };
+        }
+
+        return {
+          details: "",
+          area: "",
+          city: "",
+          country: "",
+          country_code: "",
+        };
       } catch (error) {
-        console.error("Geocode error:", error);
+        console.error("Reverse geocode error:", error);
+        return {
+          details: "",
+          area: "",
+          city: "",
+          country: "",
+          country_code: "",
+        };
       }
     },
     [],
   );
 
+  const handleSelectSearchResult = useCallback(async (result: CityData) => {
+    const newLocation = {
+      lat: parseFloat(result.lat),
+      lng: parseFloat(result.lng),
+    };
+
+    setMapCenter(newLocation);
+    setSelectedPosition(newLocation);
+    setMapView(true);
+
+    setTempAddress((prev) => ({
+      ...prev,
+      details: result.city,
+      area: result.admin_name || "",
+      city: result.city,
+      country: result.country,
+      country_code: result.iso2,
+    }));
+    setSearchQuery("");
+    setSearchResults([]);
+  }, []);
+
   const handdelCloseSearch = () => {
     setSearchResults([]);
     setSearchQuery("");
   };
-
-  const reverseGeocode = useCallback(
-    async (latitude: number, longitude: number) => {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&accept-language=en`,
-      );
-      if (!response.ok) throw new Error("Failed to fetch location data");
-      const data = await response.json();
-      return {
-        details: data.display_name,
-        area: data.address.suburb || data.address.neighbourhood || "",
-        city:
-          data.address.city || data.address.town || data.address.village || "",
-      };
-    },
-    [],
-  );
 
   const handleLocateMe = useCallback(async () => {
     setIsLocating(true);
@@ -277,6 +276,8 @@ export default function DeliverToModal({
         details: addressDetails.details || "",
         area: addressDetails.area || "",
         city: addressDetails.city || "Cairo",
+        country: addressDetails.country || "egypt",
+        country_code: addressDetails.country_code || "EG",
       }));
     } catch (error) {
       console.error("Location error:", error);
@@ -298,6 +299,8 @@ export default function DeliverToModal({
         details: addressDetails.details || "Detected location",
         area: addressDetails.area || "Auto-detected",
         city: addressDetails.city || "Cairo",
+        country: addressDetails.country || "egypt",
+        country_code: addressDetails.country_code || "EG",
       }));
     },
     [reverseGeocode],
@@ -323,6 +326,8 @@ export default function DeliverToModal({
       details: tempAddress.details || "",
       area: tempAddress.area || "",
       city: tempAddress.city || "Cairo",
+      country: tempAddress.country || "egypt",
+      country_code: tempAddress.country_code || "EG",
       isDefault: tempAddress.isDefault || false,
       location: selectedPosition,
     };
@@ -429,11 +434,15 @@ export default function DeliverToModal({
             <div className="mt-2 max-h-40 overflow-y-auto rounded-lg border">
               {searchResults.map((result) => (
                 <div
-                  key={result.place_id}
+                  key={`${result.lat}-${result.lng}`}
                   className="cursor-pointer p-2 hover:bg-gray-100"
                   onClick={() => handleSelectSearchResult(result)}
                 >
-                  <p className="text-sm">{result.display_name}</p>
+                  <p className="text-sm">{result.city}</p>
+                  <p className="text-xs text-gray-500">
+                    {result.admin_name ? `${result.admin_name}, ` : ""}
+                    {result.country}
+                  </p>
                 </div>
               ))}
             </div>
@@ -607,6 +616,7 @@ type AddNewAddressFormProps = {
   onUseMap: () => void;
   locale?: string;
 };
+export type AddressType = "home" | "work" | "other";
 
 function AddNewAddressForm({
   onSave,
@@ -615,7 +625,7 @@ function AddNewAddressForm({
   locale = "en",
 }: AddNewAddressFormProps) {
   const [formData, setFormData] = useState({
-    type: "home" as const,
+    type: "home" as AddressType,
     name: "",
     details: "",
     area: "",
@@ -653,7 +663,12 @@ function AddNewAddressForm({
                     ? "border-green-500 bg-green-100"
                     : "border-gray-300 bg-white"
                 }`}
-                onClick={() => setFormData({ ...formData })}
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    type: type as AddressType,
+                  })
+                }
               >
                 {type === "home"
                   ? locale === "ar"

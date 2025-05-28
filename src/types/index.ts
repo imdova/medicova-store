@@ -1,3 +1,4 @@
+import { destinationSurcharges } from "@/constants";
 import { StaticImageData } from "next/image";
 
 export interface BaseHeaderProps {
@@ -139,4 +140,33 @@ export interface SearchResult {
   id: string;
   title: string;
   type: "recent";
+}
+
+// Shipping Fee type
+export type ShippingOptions = {
+  shippingMethod: "standard" | "express" | "free";
+  destination: DestinationKey; // e.g., country code
+  cartTotal: number; // total cart value
+  weightKg?: number; // optional weight
+};
+export type DestinationKey = keyof typeof destinationSurcharges;
+
+// locations type
+
+export type AddressType = "home" | "work" | "other";
+
+export interface Address {
+  id: string;
+  type: AddressType;
+  name: string;
+  details: string;
+  area: string;
+  city: string;
+  isDefault: boolean;
+  country?: string;
+  country_code?: string;
+  location: {
+    lat: number;
+    lng: number;
+  };
 }

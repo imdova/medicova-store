@@ -8,26 +8,13 @@ import { setCart } from "@/store/slices/cartSlice";
 import LoadingAnimation from "@/components/UI/LoadingAnimation";
 import Image from "next/image";
 import CreditCardModal from "@/components/UI/Modals/CreditCardModal";
+import { calculateShippingFee, getExecuteDateFormatted } from "@/util";
+import { Address, DestinationKey } from "@/types";
 
 type FormData = {
   shippingAddress: string;
   paymentMethod: "card" | "cod";
 };
-type AddressType = "home" | "work" | "other";
-
-interface Address {
-  id: string;
-  type: AddressType;
-  name: string;
-  details: string;
-  area: string;
-  city: string;
-  isDefault: boolean;
-  location: {
-    lat: number;
-    lng: number;
-  };
-}
 
 export default function CheckoutPage() {
   const [showAddressModal, setShowAddressModal] = useState(false);
@@ -76,16 +63,6 @@ export default function CheckoutPage() {
     setSelectedAddress(address);
     setShowAddressModal(false);
   };
-
-  const onSubmit = (data: FormData) => {
-    console.log("Checkout submitted:", data);
-    // Process checkout logic here
-  };
-  // Calculate total shipping fee outside the JSX
-  const totalShippingFee = productData.reduce(
-    (sum, item) => sum + (item.shipping_fee || 0),
-    0,
-  );
   const handdleSelectMethod = (method: "card" | "cod") => {
     if (method === "card") {
       setPaymentMethod("card");
@@ -95,15 +72,53 @@ export default function CheckoutPage() {
     }
   };
 
+  const onSubmit = (data: FormData) => {
+    console.log("Checkout submitted:", data);
+    // Process checkout logic here
+  };
+
+  // Calculate shipping fees for each product
+  const calculateProductShippingFees = () => {
+    const destination =
+      (selectedAddress?.country_code as DestinationKey) || "EG"; // Default to EG if no address selected
+
+    return productData.map((item) => {
+      const shippingMethod = item.shippingMethod || "standard";
+      const itemWeight = item.weightKg && item.weightKg > 0 ? item.weightKg : 1;
+      const itemPrice = item.price && item.price > 0 ? item.price : 0;
+
+      const feeInput = {
+        shippingMethod,
+        destination,
+        cartTotal: itemPrice * item.quantity,
+        weightKg: itemWeight * item.quantity,
+      };
+
+      return {
+        productId: item.id,
+        shippingMethod,
+        fee: calculateShippingFee(feeInput),
+        quantity: item.quantity,
+      };
+    });
+  };
+
+  const productShippingFees = calculateProductShippingFees();
+  const totalShippingFee = productShippingFees.reduce(
+    (total, item) => total + item.fee,
+    0,
+  );
+
   // Calculate order summary
   const subtotal = totalPrice;
   const shippingFee = totalShippingFee;
-  const paymentFee = 9.0;
+  const paymentFee = paymentMethod === "cod" ? 9.0 : 0; // Only charge payment fee for COD
   const total = subtotal + shippingFee + paymentFee;
 
   if (!isClient) {
     return <LoadingAnimation />;
   }
+
   return (
     <div className="container mx-auto px-6 py-3 lg:max-w-[1200px]">
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -160,46 +175,65 @@ export default function CheckoutPage() {
             <div className="">
               {productData.length > 0 ? (
                 <>
-                  {productData.map((item, index) => (
-                    <div
-                      key={item.id}
-                      className="mb-3 rounded-lg border bg-white p-6 shadow-sm"
-                    >
-                      <div className="mb-2 text-lg font-semibold">
-                        Shipment {index + 1} of {productData.length}{" "}
-                        <span className="ml-2 text-sm text-secondary">
-                          ({item.quantity} item)
-                        </span>
-                      </div>
-                      <div className="flex gap-3">
-                        <div className="relative">
-                          <Image
-                            className="h-20 w-20 rounded-md object-cover"
-                            src={item.image}
-                            alt={item.title}
-                            width={200}
-                            height={200}
-                          />
-                          <div className="absolute right-1 top-1 rounded-md bg-gray-400 px-2.5 py-0.5 text-[9px] text-white">
-                            X{item.quantity}
+                  {productData.map((item, index) => {
+                    const shippingInfo = productShippingFees.find(
+                      (fee) => fee.productId === item.id,
+                    );
+
+                    return (
+                      <div
+                        key={item.id}
+                        className="mb-3 rounded-lg border bg-white p-6 shadow-sm"
+                      >
+                        <div className="mb-2 text-sm font-semibold md:text-lg">
+                          Shipment {index + 1} of {productData.length}{" "}
+                          <span className="ml-2 text-sm text-secondary">
+                            ({item.quantity} item)
+                          </span>
+                        </div>
+                        <div className="flex gap-3">
+                          <div className="relative min-w-20">
+                            <Image
+                              className="h-20 w-20 rounded-md object-cover"
+                              src={item.image}
+                              alt={item.title}
+                              width={200}
+                              height={200}
+                            />
+                            <div className="absolute right-1 top-1 rounded-md bg-gray-400 px-2.5 py-0.5 text-[9px] text-white">
+                              X{item.quantity}
+                            </div>
+                          </div>
+                          <div className="space-y-1 text-xs font-semibold md:text-sm">
+                            <p className="text-gray-500">
+                              {item.brand?.title || "Generic Brand"}
+                            </p>
+                            <p className="text-xs text-gray-700 md:text-sm">
+                              {item.title}
+                            </p>
+                            <p className="text-gray-700">
+                              EGP {item.price.toFixed(2)}
+                            </p>
+                            {shippingInfo && (
+                              <p className="text-xs text-gray-500">
+                                Shipping: EGP {shippingInfo.fee.toFixed(2)} (
+                                {shippingInfo.shippingMethod})
+                              </p>
+                            )}
                           </div>
                         </div>
-                        <div className="space-y-1 text-sm font-semibold">
-                          <p className="text-gray-500">
-                            {item.brand?.title || "Generic Brand"}
-                          </p>
-                          <p className="text-gray-700">{item.title}</p>
-                          <p className="text-gray-700">
-                            EGP {item.price.toFixed(2)}
-                          </p>
-                        </div>
+                        <p className="mt-2 text-xs text-gray-500 md:text-sm">
+                          Get it by{" "}
+                          <span className="text-xs text-primary md:text-sm">
+                            {getExecuteDateFormatted(
+                              item.deliveryTime ?? "",
+                              "EEE, MMM d",
+                            )}
+                          </span>
+                        </p>
                       </div>
-                      <p className="mt-2 text-sm text-gray-500">
-                        Get it by{" "}
-                        {index === 0 ? "Sun, Jun 1" : "Sun, Jun 1 - Thu, Jun 5"}
-                      </p>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </>
               ) : (
                 <p className="text-gray-500">Your cart is empty</p>
@@ -260,7 +294,8 @@ export default function CheckoutPage() {
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-xs text-gray-600 md:text-sm">
-                    Subtotal
+                    Subtotal ({productData.length} item
+                    {productData.length !== 1 ? "s" : ""})
                   </span>
                   <span className="text-xs text-gray-600 md:text-sm">
                     EGP {subtotal.toFixed(2)}
@@ -280,14 +315,16 @@ export default function CheckoutPage() {
                     </span>
                   )}
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-xs text-gray-600 md:text-sm">
-                    Payment Fee
-                  </span>
-                  <span className="text-xs text-gray-600 md:text-sm">
-                    EGP {paymentFee.toFixed(2)}
-                  </span>
-                </div>
+                {paymentFee > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-xs text-gray-600 md:text-sm">
+                      Payment Fee (COD)
+                    </span>
+                    <span className="text-xs text-gray-600 md:text-sm">
+                      EGP {paymentFee.toFixed(2)}
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between border-t pt-3 font-medium">
                   <span className="text-sm text-gray-600">Total Inc.: VAT</span>
                   <span className="text-sm text-gray-600">

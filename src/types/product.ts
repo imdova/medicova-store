@@ -36,6 +36,8 @@ export type Review = {
   date: string;
 };
 
+export type shippingMethod = "standard" | "express" | "free";
+
 export interface Product {
   id: string;
   brand?: Brand;
@@ -54,7 +56,9 @@ export interface Product {
   reviewCount?: number;
   description?: string;
   features?: string[];
-  deliveryDate?: string;
+  deliveryTime?: string;
+  shippingMethod: shippingMethod;
+  weightKg: number;
   installmentOptions?: {
     methodType: methodType;
     months: number;

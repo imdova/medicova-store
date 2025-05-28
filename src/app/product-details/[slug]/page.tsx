@@ -35,6 +35,7 @@ import { addItem, increaseQuantity, setCart } from "@/store/slices/cartSlice";
 import CustomAlert from "@/components/UI/CustomAlert";
 import { Drawer } from "@/components/UI/Drawer";
 import LoadingAnimation from "@/components/UI/LoadingAnimation";
+import { getExecuteDateFormatted } from "@/util";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -141,11 +142,13 @@ const ProductPage = ({ params }: ProductPageProps) => {
           shipping_fee: product.shipping_fee ?? 0,
           quantity: Math.min(quantity, product.stock ?? 1), // Ensure we don't exceed stock
           brand: product.brand,
-          deliveryDate: product.deliveryDate,
+          deliveryTime: product.deliveryTime,
           sellers: product.sellers,
           stock: product.stock,
           color: selectedColor,
           size: selectedSize,
+          shippingMethod: product.shippingMethod,
+          weightKg: product.weightKg,
         }),
       );
       showAlert("Added to cart", "success");
@@ -492,7 +495,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
                 {/* Delivery */}
                 <div className="mt-4 rounded-lg p-3">
                   <div className="flex items-center gap-2">
-                    {product.deliveryDate && (
+                    {product.deliveryTime && (
                       <div className="flex items-center text-xs font-semibold">
                         <span className="rounded bg-light-primary px-2 py-1 text-white">
                           Express
@@ -500,7 +503,12 @@ const ProductPage = ({ params }: ProductPageProps) => {
                       </div>
                     )}
                     <span className="text-sm font-bold text-gray-700">
-                      Get it by {product.deliveryDate}
+                      Get it by {product.deliveryTime} (
+                      {getExecuteDateFormatted(
+                        product.deliveryTime ?? "",
+                        "EEE, MMM d",
+                      )}
+                      )
                     </span>
                   </div>
                 </div>

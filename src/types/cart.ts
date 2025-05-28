@@ -1,5 +1,5 @@
 import { Brand, ColorType, LiquidSizeType, NumericSizeType, SizeType } from ".";
-import { Seller } from "./product";
+import { Seller, shippingMethod } from "./product";
 
 export type CartFormValues = {
   payment: string;
@@ -18,7 +18,7 @@ export interface CartItem {
   del_price?: number;
   totalPrice: number;
   description: string;
-  deliveryDate?: string;
+  deliveryTime?: string;
   sellers?: Seller;
   shipping_fee: number;
   size?: SizeType | NumericSizeType | LiquidSizeType;
@@ -26,6 +26,8 @@ export interface CartItem {
   quantity: number;
   brand?: Brand;
   stock?: number;
+  shippingMethod: shippingMethod;
+  weightKg: number;
 }
 
 export type Coupon = {

@@ -82,17 +82,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
         dispatch(
           addItem({
             id: product.id,
-            title: product.title,
+            title: product.title ?? "",
             image: product.images?.[0] ?? "/images/placeholder.jpg",
             description: product.description ?? "No description available",
             del_price: product.del_price,
-            price: product.price,
-            shipping_fee: product.shipping_fee,
-            quantity: quantity,
+            price: product.price ?? 0,
+            shipping_fee: product.shipping_fee ?? 0,
+            quantity: Math.min(quantity, product.stock ?? 1), // Ensure we don't exceed stock
             brand: product.brand,
-            deliveryDate: product.deliveryDate,
+            deliveryTime: product.deliveryTime,
             sellers: product.sellers,
             stock: product.stock,
+            shippingMethod: product.shippingMethod,
+            weightKg: product.weightKg,
           }),
         );
         showAlert("Added to cart", "success");
@@ -273,7 +275,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
                   </div>
                 </div>
               </div>
-              {product.deliveryDate && (
+              {product.shippingMethod === "express" && (
                 <div className="mt-2 flex items-center text-xs font-semibold">
                   <span className="rounded bg-light-primary px-2 py-1 text-white">
                     Express
