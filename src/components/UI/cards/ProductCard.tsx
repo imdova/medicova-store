@@ -168,7 +168,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
                       "/images/placeholder.jpg"
                     }
                     alt={product.title}
-                    className="h-64 w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
+                    className="h-48 w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105 sm:h-64"
                     priority={currentImageIndex === 0} // Only prioritize first image
                   />
                 </Link>
@@ -220,6 +220,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
                 addToCart={addToCart}
                 handleQuantityChange={handleQuantityChange}
                 maxStock={product.stock}
+                productId={product.id}
               />
 
               <button className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white text-sm font-medium text-gray-700 transition duration-150 hover:bg-light-primary hover:text-white">

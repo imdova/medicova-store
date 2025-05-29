@@ -1,100 +1,301 @@
 "use client";
 
-import { ChevronDown, ChevronUp, Search } from "lucide-react";
-import { useState } from "react";
-
-type FilterOption = {
-  id: string;
-  name: string;
-  count?: number;
-};
-
-type FilterGroup = {
-  id: string;
-  name: string;
-  options: FilterOption[];
-};
+import {
+  ChevronDown,
+  ChevronUp,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { useSwipeable } from "react-swipeable";
+import MobileDropdown from "../MobileDropdown";
+import { useRouter, useSearchParams } from "next/navigation";
+import { FilterGroup, FilterOption } from "@/types";
 
 type TapFilterProps = {
   filterGroups: FilterGroup[];
   currentFilters: Record<string, string[]>;
   onFilterToggle: (filterKey: string, filterValue: string) => void;
+  onPriceRangeSubmit?: (min: string, max: string) => void;
 };
 
 export default function TapFilter({
   filterGroups,
   currentFilters,
   onFilterToggle,
+  onPriceRangeSubmit,
 }: TapFilterProps) {
   const [openTapDropdown, setOpenTapDropdown] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredTapOptions, setFilteredTapOptions] = useState<
-    Record<string, FilterOption[]>
-  >({});
+  const [filteredOptions, setFilteredOptions] = useState<FilterOption[]>([]);
+  const navRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState<{
+    left: number;
+    top: number;
+  } | null>(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  // Initialize filtered tap options
-  useState(() => {
-    const initialFilteredOptions: Record<string, FilterOption[]> = {};
-    filterGroups.forEach((group) => {
-      initialFilteredOptions[group.id] = group.options;
-    });
-    setFilteredTapOptions(initialFilteredOptions);
+  const [priceRange, setPriceRange] = useState({
+    min: searchParams.get("min_price") || "",
+    max: searchParams.get("max_price") || "",
   });
 
-  const toggleTapDropdown = (groupId: string) => {
-    setOpenTapDropdown((prev) => (prev === groupId ? null : groupId));
-    // Reset search when opening
-    if (openTapDropdown !== groupId) {
-      setSearchTerm("");
-      const group = filterGroups.find((g) => g.id === groupId);
-      if (group) {
-        setFilteredTapOptions((prev) => ({
-          ...prev,
-          [groupId]: group.options,
-        }));
+  // Initialize price range from URL
+  useEffect(() => {
+    setPriceRange({
+      min: searchParams.get("min_price") || "",
+      max: searchParams.get("max_price") || "",
+    });
+  }, [searchParams]);
+
+  const handleToggleDropdown = (
+    group: FilterGroup,
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    const button = event.currentTarget;
+    if (openTapDropdown === group.id) {
+      setOpenTapDropdown(null);
+      setDropdownPosition(null);
+    } else {
+      const rect = button.getBoundingClientRect();
+      const containerRect = containerRef.current?.getBoundingClientRect();
+      if (containerRect) {
+        setDropdownPosition({
+          left: rect.left - containerRect.left,
+          top: rect.bottom - containerRect.top,
+        });
       }
+      setOpenTapDropdown(group.id);
+      setFilteredOptions(group.options || []);
+      setSearchTerm("");
+      setIsDrawerOpen(true);
     }
   };
 
-  const filterTapOptions = (groupId: string, term: string) => {
-    const group = filterGroups.find((g) => g.id === groupId);
-    if (group) {
+  // Click outside handler
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        openTapDropdown &&
+        containerRef.current &&
+        dropdownRef.current &&
+        !containerRef.current.contains(event.target as Node) &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setOpenTapDropdown(null);
+        setDropdownPosition(null);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openTapDropdown]);
+
+  // Navigation handlers
+  const handleScroll = () => {
+    if (navRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = navRef.current;
+      setShowLeftArrow(scrollLeft > 0);
+      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 1);
+    }
+  };
+
+  const scrollNav = (direction: "left" | "right") => {
+    if (navRef.current) {
+      const scrollAmount = 200;
+      navRef.current.scrollBy({
+        left: direction === "right" ? scrollAmount : -scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const handlers = useSwipeable({
+    onSwipedLeft: () => scrollNav("right"),
+    onSwipedRight: () => scrollNav("left"),
+    trackMouse: true,
+  });
+
+  // Responsive handling
+  useEffect(() => {
+    const handleResize = () => {
+      if (navRef.current) {
+        navRef.current.scrollLeft = 0;
+        setTimeout(handleScroll, 100);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    handleScroll();
+  }, []);
+
+  const isFilterActive = (filterKey: string, filterValue: string): boolean => {
+    // Special case for price range filter
+    if (filterKey === "price" && typeof searchParams !== "undefined") {
+      if (searchParams.has("min_price") || searchParams.has("max_price")) {
+        // You can refine this to check filterValue matches price range criteria if needed
+        return true;
+      }
+    }
+
+    const groups = filterGroups.filter((g) => g.id === filterKey);
+    if (groups.length === 0) return false;
+
+    return groups.some((group) => {
+      if (group.options && group.options.length > 0) {
+        // Check if filterValue is among selected filter values for this key
+        return currentFilters[filterKey]?.includes(filterValue) ?? false;
+      } else if (group.option) {
+        // For single option groups (like brand with option="apple")
+        return (
+          group.option === filterValue &&
+          (currentFilters[filterKey]?.includes(filterValue) ?? false)
+        );
+      } else {
+        // fallback: check if filterValue is present in currentFilters[filterKey]
+        return currentFilters[filterKey]?.includes(filterValue) ?? false;
+      }
+    });
+  };
+
+  // Search functionality
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    const group = filterGroups.find((g) => g.id === openTapDropdown);
+    if (group?.options) {
       const filtered = group.options.filter((option) =>
         option.name.toLowerCase().includes(term.toLowerCase()),
       );
-      setFilteredTapOptions((prev) => ({
-        ...prev,
-        [groupId]: filtered,
-      }));
+      setFilteredOptions(filtered);
     }
   };
 
-  const isFilterActive = (filterKey: string) => {
-    return Object.keys(currentFilters).includes(filterKey);
+  // Price range handlers
+  const handlePriceRangeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setPriceRange((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  return (
-    <div className="flex flex-wrap gap-2">
-      {filterGroups.map((group) => (
-        <div key={group.id} className="relative">
-          <button
-            onClick={() => toggleTapDropdown(group.id)}
-            className={`flex items-center rounded-full px-3 py-1 text-sm ${
-              isFilterActive(group.id)
-                ? "border border-indigo-300 bg-indigo-100 text-indigo-800"
-                : "border border-gray-200 bg-gray-100 text-gray-800"
-            }`}
-          >
-            {group.name}
-            {openTapDropdown === group.id ? (
-              <ChevronUp className="ml-1 h-4 w-4" />
-            ) : (
-              <ChevronDown className="ml-1 h-4 w-4" />
-            )}
-          </button>
+  const handlePriceRangeSubmit = () => {
+    const params = new URLSearchParams(searchParams.toString());
 
-          {openTapDropdown === group.id && (
-            <div className="absolute z-10 mt-1 w-56 rounded-md border border-gray-200 bg-white shadow-lg">
+    // Clear any existing price filters
+    ["under-1000", "1000-2000", "2000-5000", "over-5000"].forEach((id) => {
+      params.delete("price", id);
+    });
+
+    // Set new price range
+    if (priceRange.min) {
+      params.set("min_price", priceRange.min);
+    } else {
+      params.delete("min_price");
+    }
+
+    if (priceRange.max) {
+      params.set("max_price", priceRange.max);
+    } else {
+      params.delete("max_price");
+    }
+
+    // Reset to first page
+    params.delete("page");
+
+    router.push(`?${params.toString()}`);
+
+    if (onPriceRangeSubmit) {
+      onPriceRangeSubmit(priceRange.min, priceRange.max);
+    }
+
+    // Close the dropdown
+    setOpenTapDropdown(null);
+  };
+
+  const selectedGroup = filterGroups.find((g) => g.id === openTapDropdown);
+
+  return (
+    <div className="relative" ref={containerRef}>
+      {/* Navigation arrows */}
+      {showLeftArrow && (
+        <button
+          onClick={() => scrollNav("left")}
+          className="absolute left-0 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white"
+        >
+          <ChevronLeft className="h-5 w-5 text-gray-700" />
+        </button>
+      )}
+
+      {/* Main filter buttons */}
+      <div
+        {...handlers}
+        ref={navRef}
+        onScroll={handleScroll}
+        className="no-scrollbar relative flex overflow-x-auto py-2 pl-2"
+      >
+        <div className="flex items-center gap-2">
+          {filterGroups.map((group) => (
+            <div key={group.name} className="relative shrink-0">
+              <button
+                onClick={(e) =>
+                  group.options?.length
+                    ? handleToggleDropdown(group, e)
+                    : onFilterToggle(group.id, group.option ?? "")
+                }
+                className={`flex items-center rounded-md px-3 py-1 text-sm ${
+                  isFilterActive(group.id, group.option ?? "")
+                    ? "border border-green-300 bg-green-100 text-green-800"
+                    : "border border-gray-200 bg-gray-100 text-gray-800"
+                }`}
+              >
+                {group.name}
+                {group.options?.length &&
+                  group.options.length > 0 &&
+                  (openTapDropdown === group.id ? (
+                    <ChevronUp className="ml-1 h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  ))}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {showRightArrow && (
+        <button
+          onClick={() => scrollNav("right")}
+          className="absolute right-0 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white"
+        >
+          <ChevronRight className="h-5 w-5 text-gray-700" />
+        </button>
+      )}
+
+      {/* Desktop dropdown */}
+      {selectedGroup && openTapDropdown && (
+        <>
+          <div
+            ref={dropdownRef}
+            style={{
+              left: dropdownPosition?.left ?? 0,
+              top: dropdownPosition?.top ?? 0,
+            }}
+            className="absolute z-10 mt-1 hidden w-56 rounded-md border border-gray-200 bg-white shadow-lg md:block"
+          >
+            {selectedGroup.id !== "price" && (
               <div className="border-b p-2">
                 <div className="relative">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -102,45 +303,152 @@ export default function TapFilter({
                   </div>
                   <input
                     type="text"
-                    placeholder={`Search ${group.name}`}
-                    className="block w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 leading-5 placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                    placeholder={`Search ${selectedGroup.name}`}
                     value={searchTerm}
-                    onChange={(e) => {
-                      setSearchTerm(e.target.value);
-                      filterTapOptions(group.id, e.target.value);
-                    }}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    className="block w-full rounded-md border border-gray-300 py-2 pl-10 pr-3 leading-5 placeholder-gray-500 focus:outline-none sm:text-sm"
                   />
                 </div>
               </div>
-              <div className="max-h-60 overflow-y-auto">
-                {filteredTapOptions[group.id]?.length > 0 ? (
-                  filteredTapOptions[group.id].map((option) => (
-                    <div
-                      key={option.id}
-                      className="flex cursor-pointer items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={() => {
-                        onFilterToggle(group.id, option.id);
-                        setOpenTapDropdown(null);
-                      }}
-                    >
-                      <span>{option.name}</span>
-                      {option.count && (
-                        <span className="text-xs text-gray-500">
-                          {option.count}
-                        </span>
-                      )}
+            )}
+            <div className="max-h-60 overflow-y-auto">
+              {selectedGroup.id === "price" ? (
+                <div className="space-y-2 p-3">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      name="min"
+                      placeholder="Min"
+                      value={priceRange.min}
+                      onChange={handlePriceRangeChange}
+                      className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                    />
+                    <span className="text-gray-500">to</span>
+                    <input
+                      type="number"
+                      name="max"
+                      placeholder="Max"
+                      value={priceRange.max}
+                      onChange={handlePriceRangeChange}
+                      className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                    />
+                  </div>
+                  <button
+                    onClick={handlePriceRangeSubmit}
+                    className="w-full rounded bg-green-600 px-3 py-1 text-sm font-medium text-white hover:bg-green-800"
+                  >
+                    Apply
+                  </button>
+                </div>
+              ) : filteredOptions.length > 0 ? (
+                filteredOptions.map((option) => (
+                  <div
+                    key={option.id}
+                    className="flex cursor-pointer items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={() => {
+                      onFilterToggle(selectedGroup.id, option.id);
+                      setOpenTapDropdown(null);
+                    }}
+                  >
+                    <span>{option.name}</span>
+                    {option.count && (
+                      <span className="text-xs text-gray-500">
+                        {option.count}
+                      </span>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div className="px-4 py-2 text-sm text-gray-500">
+                  No options found
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Mobile dropdown */}
+          <div className="md:hidden">
+            <MobileDropdown
+              label={selectedGroup.name}
+              isOpen={isDrawerOpen}
+              setIsOpen={setIsDrawerOpen}
+            >
+              <div className="w-full">
+                {selectedGroup.id !== "price" && (
+                  <div className="border-b p-2">
+                    <div className="relative">
+                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <Search className="h-4 w-4 text-gray-400" />
+                      </div>
+                      <input
+                        type="text"
+                        placeholder={`Search ${selectedGroup.name}`}
+                        value={searchTerm}
+                        onChange={(e) => handleSearch(e.target.value)}
+                        className="block w-full rounded-md border border-gray-300 py-2 pl-10 pr-3 leading-5 placeholder-gray-500 focus:outline-none sm:text-sm"
+                      />
                     </div>
-                  ))
-                ) : (
-                  <div className="px-4 py-2 text-sm text-gray-500">
-                    No options found
                   </div>
                 )}
+                <div className="max-h-60 overflow-y-auto">
+                  {selectedGroup.id === "price" ? (
+                    <div className="space-y-2 p-3">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          name="min"
+                          placeholder="Min"
+                          value={priceRange.min}
+                          onChange={handlePriceRangeChange}
+                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                        />
+                        <span className="text-gray-500">to</span>
+                        <input
+                          type="number"
+                          name="max"
+                          placeholder="Max"
+                          value={priceRange.max}
+                          onChange={handlePriceRangeChange}
+                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                        />
+                      </div>
+                      <button
+                        onClick={handlePriceRangeSubmit}
+                        className="w-full rounded bg-green-600 px-3 py-1 text-sm font-medium text-white hover:bg-green-800"
+                      >
+                        Apply
+                      </button>
+                    </div>
+                  ) : filteredOptions.length > 0 ? (
+                    filteredOptions.map((option) => (
+                      <div
+                        key={option.id}
+                        className="flex cursor-pointer items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => {
+                          onFilterToggle(selectedGroup.id, option.id);
+                          setOpenTapDropdown(null);
+                          setIsDrawerOpen(false);
+                        }}
+                      >
+                        <span>{option.name}</span>
+                        {option.count && (
+                          <span className="text-xs text-gray-500">
+                            {option.count}
+                          </span>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="px-4 py-2 text-sm text-gray-500">
+                      No options found
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-      ))}
+            </MobileDropdown>
+          </div>
+        </>
+      )}
     </div>
   );
 }

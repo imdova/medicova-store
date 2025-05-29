@@ -33,7 +33,7 @@ export const Drawer: React.FC<DrawerProps> = ({
         ></div>
       )}
       <div
-        className={`fixed top-0 ${
+        className={`no-scrollbar fixed top-0 overflow-y-auto ${
           position === "right" ? "right-0" : "left-0"
         } h-full bg-white shadow-lg transition-transform ${
           isOpen

@@ -1,0 +1,79 @@
+import { useState, useEffect, useRef } from "react";
+import { ChevronDown, Check } from "lucide-react";
+
+interface DropdownOption {
+  id: string;
+  name: string;
+}
+interface DropdownProps {
+  label?: string;
+  icon?: React.ReactNode;
+  options: DropdownOption[];
+  selected: string | number;
+  onSelect: (value: string | number) => void;
+}
+
+export default function Dropdown({
+  label = "Select",
+  icon,
+  options,
+  selected,
+  onSelect,
+}: DropdownProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const selectedOption = options.find((opt) => opt.id === selected);
+
+  return (
+    <div ref={dropdownRef} className="relative inline-block text-left">
+      <button
+        type="button"
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="flex items-center gap-1 rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 focus:outline-none"
+      >
+        {icon}
+        <span>
+          {label}: {selectedOption?.name}
+        </span>
+        <ChevronDown size={16} />
+      </button>
+
+      {isOpen && (
+        <div className="absolute z-10 mt-1 w-48 rounded-md border border-gray-200 bg-white shadow-lg">
+          <ul className="py-1">
+            {options.map((option) => (
+              <li
+                key={option.id}
+                onClick={() => {
+                  onSelect(option.id);
+                  setIsOpen(false);
+                }}
+                className={`flex cursor-pointer items-center gap-2 px-4 py-2 text-sm hover:bg-green-100 ${
+                  option.id === selected ? "font-semibold text-green-600" : ""
+                }`}
+              >
+                {option.id === selected && <Check size={16} />}
+                {option.name}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}

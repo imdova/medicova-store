@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { ShoppingCart } from "lucide-react";
 import QuantitySelectorRemove from "@/components/Forms/formFields/QuantitySelectorwithRemove";
+import { useAppDispatch } from "@/store/hooks";
+import { removeItem } from "@/store/slices/cartSlice";
 
 interface CartButtonProps {
   isInCart: boolean;
@@ -10,6 +12,7 @@ interface CartButtonProps {
   addToCart: (e: React.MouseEvent) => void;
   handleQuantityChange: (newQuantity: number) => void;
   maxStock?: number;
+  productId: string;
 }
 
 const CartButton = ({
@@ -18,13 +21,19 @@ const CartButton = ({
   addToCart,
   handleQuantityChange,
   maxStock,
+  productId,
 }: CartButtonProps) => {
   const [isHover, setIsHover] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+  const handleRemove = () => {
+    dispatch(removeItem(productId));
+    // Optionally show alert or toast here
+  };
 
   if (!isMounted) {
     return (
@@ -46,6 +55,7 @@ const CartButton = ({
               initialQuantity={quantity}
               onQuantityChange={handleQuantityChange}
               maxStock={maxStock}
+              onRemove={handleRemove}
             />
           </div>
         ) : (

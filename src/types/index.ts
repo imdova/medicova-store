@@ -170,3 +170,19 @@ export interface Address {
     lng: number;
   };
 }
+
+// filters type
+export type FilterOption = {
+  id: string;
+  name: string;
+  count?: number;
+  subcategories?: FilterOption[];
+  isRange?: boolean;
+};
+
+export type FilterGroup = {
+  id: string;
+  name: string;
+  options?: FilterOption[];
+  option?: string;
+};
