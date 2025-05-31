@@ -12,6 +12,7 @@ import BrandSlider from "@/components/UI/sliders/BrandSlider";
 import DynamicButton from "@/components/UI/Buttons/DynamicButton";
 import CategoryCard from "@/components/UI/cards/CategoryCard";
 import {
+  allCategories,
   consumableCategories,
   equipmentCategories,
   lifestyleCategories,
@@ -107,7 +108,7 @@ export default function Home() {
         {/* slider landing content  */}
         <LandingSlider slides={slides} />
         {/* slider Categories content  */}
-        <CategorySlider />
+        <CategorySlider categories={allCategories} />
       </section>
       <section className="hidden pb-8 xl:block">
         <div className="container mx-auto px-6 lg:max-w-[1440px]">

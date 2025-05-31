@@ -232,12 +232,12 @@ const ListProductCard: React.FC<ListCardProps> = ({ loading, product }) => {
               <div className="mt-2 flex items-center justify-between">
                 <div>
                   <div className="flex items-baseline gap-3 text-gray-900">
-                    <span className="text-lg font-bold">
+                    <span className="text-sm font-bold">
                       EGP {product.price.toLocaleString()}
                     </span>
                     {product.del_price && (
-                      <del className="text-sm text-gray-500">
-                        {product.del_price.toLocaleString()}
+                      <del className="text-xs text-gray-500">
+                        {product.del_price.toLocaleString()} EGP
                       </del>
                     )}
                   </div>

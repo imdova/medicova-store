@@ -49,7 +49,7 @@ const Footer = () => {
                 aria-expanded={expandedSections[section.title] || false}
                 aria-controls={`footer-section-${index}`}
               >
-                <h3 className="text-lg">{section.title}</h3>
+                <h3 className="text-sm">{section.title}</h3>
                 <span className="md:hidden">
                   {expandedSections[section.title] ? (
                     <ChevronUp size={17} />
@@ -73,7 +73,7 @@ const Footer = () => {
                     <li key={linkIndex}>
                       <Link
                         href={link.href}
-                        className="block py-1 text-sm text-gray-600 transition-colors hover:text-green-600"
+                        className="block py-1 text-xs text-gray-600 transition-colors hover:text-green-600"
                       >
                         {link.name}
                       </Link>
@@ -89,7 +89,7 @@ const Footer = () => {
         <div className="mb-8 flex flex-col justify-between gap-4 border-gray-200 pt-8 md:flex-row md:border-t">
           <div className="flex flex-col items-center">
             <h3 className="mb-4 text-sm font-bold uppercase">SHOP ON THE GO</h3>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap justify-center gap-4">
               {appLinks.map((app, index) => (
                 <Link
                   key={index}

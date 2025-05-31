@@ -6,6 +6,7 @@ import {
   CirclePercent,
   Heart,
   MapPin,
+  Menu,
   RotateCcw,
   ShoppingCart,
   User,
@@ -18,6 +19,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Suspense, useEffect, useState } from "react";
 import DeliverToModal from "@/components/UI/Modals/DeliverToModal";
 import AuthButton from "@/components/UI/Buttons/AuthButton";
+import { Drawer } from "@/components/UI/Drawer";
+import Collapse from "@/components/UI/Collapse";
 
 type Address = {
   id: string;
@@ -48,6 +51,7 @@ const FullHeader: React.FC = () => {
     location: { lat: 30.0444, lng: 31.2357 },
   });
   const [productsCount, setProductsCount] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
   const { products } = useAppSelector((state) => state.cart);
 
   useEffect(() => {
@@ -99,7 +103,10 @@ const FullHeader: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setIsOpen(true)}>
+                    <Menu size={18} className="text-gray-600 md:hidden" />
+                  </button>
                   {/* Logo */}
                   <div className="flex items-center">
                     <Link
@@ -199,6 +206,97 @@ const FullHeader: React.FC = () => {
           locale="en"
         />
       </div>
+      {/* Mobile Navigation */}
+      <Drawer
+        logo={
+          <Link className="block w-fit p-3" href={"/"}>
+            <LogoIcon className="h-14 w-28 text-primary md:text-white" />
+          </Link>
+        }
+        position="left"
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+      >
+        <nav>
+          <div className="flex flex-col p-2">
+            {commonLinks.map((link, index) => (
+              <div
+                className="border-b border-gray-100 last-of-type:border-none"
+                key={index}
+              >
+                {/* sublinks links */}
+                {link.subLinks && link.subLinks.length > 0 && (
+                  <Collapse url={link.url} key={link.title} title={link.title}>
+                    <ul>
+                      {link.subLinks.map((subLink, subIndex) => (
+                        <li
+                          className="text-gray-600 transition hover:text-primary"
+                          key={subIndex}
+                        >
+                          <Link
+                            className="block p-1 text-xs"
+                            href={subLink.url}
+                          >
+                            {subLink.title}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </Collapse>
+                )}
+                {/* grid list links */}
+                {link.gridLinks && link.gridLinks.length > 0 && (
+                  <Collapse url={link.url} key={link.title} title={link.title}>
+                    <div>
+                      <ul className="text-xs">
+                        {link.gridLinks.map((gridLink, gridIndex) => (
+                          <Collapse
+                            url={link.url}
+                            title={gridLink.heading}
+                            key={gridIndex}
+                            size="sm"
+                            fontSize="sm"
+                          >
+                            <li>
+                              <ul>
+                                {gridLink.subLinks.map((link, index) => {
+                                  return (
+                                    <li key={index}>
+                                      <Link
+                                        className="block p-2 text-xs text-gray-600 transition hover:text-primary"
+                                        href={link.url}
+                                      >
+                                        {link.title}
+                                      </Link>
+                                    </li>
+                                  );
+                                })}
+                              </ul>
+                            </li>
+                          </Collapse>
+                        ))}
+                      </ul>
+                    </div>
+                  </Collapse>
+                )}
+                {/* Normal links */}
+                {!link.gridLinks && !link.subLinks && (
+                  <ul>
+                    <li className="text-gray-600 transition hover:text-main">
+                      <Link
+                        className="block p-2 text-xs font-semibold text-gray-800"
+                        href={link.url}
+                      >
+                        {link.title}
+                      </Link>
+                    </li>
+                  </ul>
+                )}
+              </div>
+            ))}
+          </div>
+        </nav>
+      </Drawer>
     </>
   );
 };

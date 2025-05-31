@@ -143,13 +143,13 @@ const SearchComponent = () => {
   };
 
   return (
-    <div className="relative w-full max-w-xl" ref={searchRef}>
+    <div className="static w-full md:relative" ref={searchRef}>
       <div className="relative">
         <input
           ref={inputRef}
           type="text"
           placeholder="What are you looking for?"
-          className="w-full rounded-sm border border-gray-300 py-1.5 pl-10 pr-8 outline-none transition-all duration-200 placeholder:text-sm focus:outline-none"
+          className="w-full rounded-sm border border-gray-300 py-1 pl-10 pr-8 outline-none transition-all duration-200 placeholder:text-sm focus:outline-none"
           value={searchQuery}
           onChange={handleSearchChange}
           onFocus={() => setIsFocused(true)}
@@ -174,7 +174,7 @@ const SearchComponent = () => {
 
       {/* Search results dropdown */}
       {isFocused && (
-        <div className="absolute left-0 top-full z-50 mt-1 w-full">
+        <div className="absolute left-0 right-0 top-full z-50 mt-1 w-full">
           {/* Show recent searches and keyword suggestions when there's no query */}
           {!searchQuery && recentSearches.length > 0 && (
             <div className="rounded-sm border border-gray-200 bg-white p-2 shadow-lg">

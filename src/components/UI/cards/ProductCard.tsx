@@ -151,7 +151,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
         ) : (
           <div className="flex h-full flex-col">
             {product.isBestSaller && (
-              <span className="absolute left-3 top-3 z-[2] rounded-full bg-gray-800 px-3 py-1 text-xs font-semibold text-white">
+              <span className="absolute left-3 top-3 z-[2] rounded-full bg-gray-800 px-3 py-1 text-[10px] font-semibold text-white">
                 Best Saller
               </span>
             )}
@@ -238,7 +238,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
                   {product.title}
                 </h3>
 
-                <div className="mt-1 flex items-center gap-3 text-sm">
+                <div className="m-2 flex flex-wrap items-center gap-1 text-sm sm:gap-3">
                   <p>
                     EGP{" "}
                     <span className="text-lg font-bold">
@@ -247,7 +247,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
                   </p>
                   {product.del_price && (
                     <del className="text-sm text-gray-600">
-                      {product.del_price.toLocaleString()}
+                      {product.del_price.toLocaleString()} EGP
                     </del>
                   )}
                   {product.sale && (

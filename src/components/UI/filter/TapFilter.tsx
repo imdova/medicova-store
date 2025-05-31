@@ -233,9 +233,10 @@ export default function TapFilter({
       {showLeftArrow && (
         <button
           onClick={() => scrollNav("left")}
-          className="absolute left-0 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white"
+          className="absolute left-0 top-1/2 z-10 flex h-8 w-14 -translate-y-1/2 items-center justify-center bg-gradient-to-r from-white via-white to-white/25"
+          aria-label="Scroll left"
         >
-          <ChevronLeft className="h-5 w-5 text-gray-700" />
+          <ChevronLeft className="h-full w-5 text-gray-700" />
         </button>
       )}
 
@@ -278,9 +279,10 @@ export default function TapFilter({
       {showRightArrow && (
         <button
           onClick={() => scrollNav("right")}
-          className="absolute right-0 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white"
+          className="absolute right-0 top-1/2 z-10 flex h-8 w-14 -translate-y-1/2 items-center justify-center bg-gradient-to-l from-white via-white to-white/25"
+          aria-label="Scroll right"
         >
-          <ChevronRight className="h-5 w-5 text-gray-700" />
+          <ChevronRight className="w-5 text-gray-700" />
         </button>
       )}
 
@@ -400,7 +402,7 @@ export default function TapFilter({
                           placeholder="Min"
                           value={priceRange.min}
                           onChange={handlePriceRangeChange}
-                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm outline-none"
                         />
                         <span className="text-gray-500">to</span>
                         <input
@@ -409,7 +411,7 @@ export default function TapFilter({
                           placeholder="Max"
                           value={priceRange.max}
                           onChange={handlePriceRangeChange}
-                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm outline-none"
                         />
                       </div>
                       <button

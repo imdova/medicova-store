@@ -9,16 +9,24 @@ import {
   Star,
   X,
 } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { FilterGroup } from "@/types";
+import { useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { FilterGroup, FilterOption } from "@/types";
 
 type LeftFilterProps = {
   filterGroups: FilterGroup[];
   currentFilters: Record<string, string[]>;
-  onFilterToggle: (filterKey: string, filterValue: string) => void;
+  onFilterToggle: (
+    filterKey: string,
+    filterValue: string,
+    isSubcategory?: boolean,
+    parentCategory?: string,
+    isNestedSubcategory?: boolean,
+    grandparentCategory?: string,
+  ) => void;
   onClearFilters: () => void;
   onPriceRangeSubmit?: (min: string, max: string) => void;
+  currentCategoryPath?: string[];
 };
 
 export default function LeftFilter({
@@ -27,6 +35,7 @@ export default function LeftFilter({
   onFilterToggle,
   onClearFilters,
   onPriceRangeSubmit,
+  currentCategoryPath = [],
 }: LeftFilterProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -36,7 +45,7 @@ export default function LeftFilter({
 
   const [openSubcategories, setOpenSubcategories] = useState<
     Record<string, boolean>
-  >({});
+  >(currentCategoryPath.reduce((acc, id) => ({ ...acc, [id]: true }), {}));
 
   const [priceRange, setPriceRange] = useState({
     min: searchParams.get("min_price") || "",
@@ -58,12 +67,17 @@ export default function LeftFilter({
   };
 
   const isFilterActive = (filterKey: string, filterValue: string) => {
+    if (filterKey === "category") {
+      return (
+        currentCategoryPath[currentCategoryPath.length - 1] === filterValue
+      );
+    }
     return currentFilters[filterKey]?.includes(filterValue) || false;
   };
 
-  const hasActiveFilters = Object.values(currentFilters).some(
-    (filters) => filters.length > 0,
-  );
+  const hasActiveFilters =
+    Object.values(currentFilters).some((filters) => filters.length > 0) ||
+    currentCategoryPath.length > 0;
 
   const handlePriceRangeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -88,7 +102,6 @@ export default function LeftFilter({
       params.delete("max_price");
     }
 
-    // Remove the predefined price filters when custom range is used
     ["under-1000", "1000-2000", "2000-5000", "over-5000"].forEach((id) => {
       if (params.has("price", id)) {
         params.delete("price", id);
@@ -121,20 +134,73 @@ export default function LeftFilter({
     );
   };
 
-  // Update URL when rating filter changes
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString());
-    const ratingFilters = currentFilters.rating || [];
-
-    if (ratingFilters.length > 0) {
-      params.set("rating", ratingFilters.join(","));
-    } else {
-      params.delete("rating");
-    }
-
-    // Don't push immediately to avoid infinite loops
-    // Instead, we'll let the parent component handle URL updates through onFilterToggle
-  }, [currentFilters.rating, searchParams]);
+  const renderSubcategories = (
+    subcategories: FilterOption[],
+    groupId: string,
+    parentCategoryId: string,
+    grandparentCategoryId?: string,
+    level = 0,
+  ) => {
+    return (
+      <div className={`${level > 0 ? "ml-6" : ""} my-2 space-y-2`}>
+        {subcategories.map((sub) => (
+          <div key={sub.id} className="relative cursor-pointer">
+            <div className="flex items-center justify-between">
+              <label className="flex cursor-pointer items-center">
+                <div className="relative h-5 w-5 cursor-pointer">
+                  <input
+                    id={`subcategory-${sub.id}`}
+                    name="subcategory"
+                    type="checkbox"
+                    checked={isFilterActive(groupId, sub.id)}
+                    onChange={() =>
+                      onFilterToggle(
+                        groupId,
+                        sub.id,
+                        true,
+                        parentCategoryId,
+                        level > 0,
+                        grandparentCategoryId,
+                      )
+                    }
+                    className="peer relative h-full w-full cursor-pointer appearance-none rounded border border-gray-300 transition-all checked:border-green-500 checked:bg-green-500"
+                  />
+                  <span className="pointer-events-none absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity peer-checked:opacity-100">
+                    <Check className="text-white" size={13} />
+                  </span>
+                </div>
+                <span className="ml-3 text-sm text-gray-600">{sub.name}</span>
+              </label>
+              {sub.subcategories && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleSubcategory(sub.id);
+                  }}
+                  className="text-xs text-gray-500 hover:text-gray-700"
+                >
+                  {openSubcategories[sub.id] ? (
+                    <Minus className="text-gray-700" size={13} />
+                  ) : (
+                    <Plus className="text-gray-700" size={13} />
+                  )}
+                </button>
+              )}
+            </div>
+            {sub.subcategories &&
+              openSubcategories[sub.id] &&
+              renderSubcategories(
+                sub.subcategories,
+                groupId,
+                sub.id,
+                parentCategoryId,
+                level + 1,
+              )}
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="w-full flex-shrink-0 md:w-72">
@@ -143,8 +209,7 @@ export default function LeftFilter({
           <div className="mb-4 flex justify-end">
             <button
               onClick={() => {
-                const params = new URLSearchParams();
-                router.push(`?${params.toString()}`);
+                router.push(`/search`);
                 onClearFilters();
                 setPriceRange({ min: "", max: "" });
               }}
@@ -183,7 +248,7 @@ export default function LeftFilter({
                             placeholder="Min"
                             value={priceRange.min}
                             onChange={handlePriceRangeChange}
-                            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                            className="w-full rounded border border-gray-300 px-2 py-1 text-sm outline-none"
                           />
                           <span className="text-gray-500">to</span>
                           <input
@@ -192,7 +257,7 @@ export default function LeftFilter({
                             placeholder="Max"
                             value={priceRange.max}
                             onChange={handlePriceRangeChange}
-                            className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                            className="w-full rounded border border-gray-300 px-2 py-1 text-sm outline-none"
                           />
                         </div>
                         <button
@@ -241,14 +306,9 @@ export default function LeftFilter({
                             className="text-xs text-gray-500 hover:text-gray-700"
                           >
                             {openSubcategories[option.id] ? (
-                              <span>
-                                {" "}
-                                <Minus className="text-gray-700" size={13} />
-                              </span>
+                              <Minus className="text-gray-700" size={13} />
                             ) : (
-                              <span>
-                                <Plus className="text-gray-700" size={13} />
-                              </span>
+                              <Plus className="text-gray-700" size={13} />
                             )}
                           </button>
                         ) : option.count ? (
@@ -257,37 +317,13 @@ export default function LeftFilter({
                           </span>
                         ) : null}
                       </div>
-                      {option.subcategories && openSubcategories[option.id] && (
-                        <div className="my-4 ml-6 mt-3 space-y-2">
-                          {option.subcategories.map((sub) => (
-                            <div
-                              key={sub.id}
-                              className="relative cursor-pointer"
-                            >
-                              <label className="flex cursor-pointer items-center">
-                                <div className="relative h-5 w-5 cursor-pointer">
-                                  <input
-                                    id={`subcategory-${sub.id}`}
-                                    name="subcategory"
-                                    type="checkbox"
-                                    checked={isFilterActive(group.id, sub.id)}
-                                    onChange={() =>
-                                      onFilterToggle(group.id, sub.id)
-                                    }
-                                    className="peer relative h-full w-full cursor-pointer appearance-none rounded border border-gray-300 transition-all checked:border-green-500 checked:bg-green-500"
-                                  />
-                                  <span className="pointer-events-none absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity peer-checked:opacity-100">
-                                    <Check className="text-white" size={13} />
-                                  </span>
-                                </div>
-                                <span className="ml-3 text-sm text-gray-600">
-                                  {sub.name}
-                                </span>
-                              </label>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                      {option.subcategories &&
+                        openSubcategories[option.id] &&
+                        renderSubcategories(
+                          option.subcategories,
+                          group.id,
+                          option.id,
+                        )}
                     </div>
                   );
                 })}

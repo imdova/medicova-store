@@ -8,6 +8,7 @@ interface DrawerProps {
   hiddenCloseBtn?: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  logo?: React.ReactNode;
   width?: string;
   hasOverlay?: boolean;
   position?: "left" | "right";
@@ -17,6 +18,7 @@ export const Drawer: React.FC<DrawerProps> = ({
   isOpen,
   onClose,
   children,
+  logo,
   hiddenCloseBtn = false,
   width = "w-70",
   hasOverlay = true,
@@ -43,8 +45,8 @@ export const Drawer: React.FC<DrawerProps> = ({
               : "-translate-x-full"
         } ${width}`}
       >
-        {!hiddenCloseBtn && (
-          <div className="mb-10">
+        <div>
+          {!hiddenCloseBtn && (
             <IconButton
               className={`!absolute top-2 p-2 ${
                 position === "right" ? "left-2" : "right-2"
@@ -52,10 +54,11 @@ export const Drawer: React.FC<DrawerProps> = ({
               onClick={onClose}
               Icon={X}
             />
-          </div>
-        )}
+          )}
+          <div className="w-fit"> {logo}</div>
+        </div>
 
-        <div className="mt-4 p-2">{children}</div>
+        <div className="p-2">{children}</div>
       </div>
     </div>
   );

@@ -44,7 +44,7 @@ const Modal: React.FC<ModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex h-full w-full items-center justify-center overflow-y-auto">
+    <div className="fixed inset-0 z-[5000] flex h-full w-full items-center justify-center overflow-y-auto">
       <div className="flex h-full w-full items-center justify-center p-4 text-center sm:p-0">
         {/* Background overlay */}
         <div

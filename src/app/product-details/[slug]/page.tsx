@@ -36,6 +36,10 @@ import CustomAlert from "@/components/UI/CustomAlert";
 import { Drawer } from "@/components/UI/Drawer";
 import LoadingAnimation from "@/components/UI/LoadingAnimation";
 import { getExecuteDateFormatted } from "@/util";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import Modal from "@/components/UI/Modals/DynamicModal";
+import AuthLogin from "@/components/UI/Modals/loginAuth";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -44,12 +48,15 @@ interface ProductPageProps {
 const ProductPage = ({ params }: ProductPageProps) => {
   const { slug } = React.use(params);
   const product = products.find((product) => product.id === slug);
+  const session = useSession();
+  const router = useRouter();
   const [selectedSize, setSelectedSize] = useState<
     SizeType | NumericSizeType | LiquidSizeType | undefined
   >();
   const [selectedColor, setSelectedColor] = useState<ColorType | undefined>();
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [alert, setAlert] = useState<{
     message: string;
     type: "success" | "error" | "info";
@@ -65,6 +72,14 @@ const ProductPage = ({ params }: ProductPageProps) => {
   const isInCart = productData.some((item) => item.id === product?.id);
 
   const [isClient, setIsClient] = useState(false);
+
+  const onCheckout = () => {
+    if (session.data?.user) {
+      router.push("/checkout");
+    } else {
+      setIsModalOpen(true);
+    }
+  };
 
   useEffect(() => {
     setIsClient(true);
@@ -233,7 +248,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
 
             <div className="flex items-center gap-1">
               <Link
-                href={product.category?.url ?? "#"}
+                href={product.category?.slug ?? "#"}
                 className="whitespace-nowrap hover:text-primary"
               >
                 {product.category?.title}
@@ -304,7 +319,10 @@ const ProductPage = ({ params }: ProductPageProps) => {
           <p className="text-sm">EGP {totalPrice}</p>
         </div>
         <div>
-          <button className="mt-6 w-full rounded-lg bg-primary px-4 py-2 text-xs font-semibold uppercase text-white transition hover:bg-green-700">
+          <button
+            onClick={onCheckout}
+            className="mt-6 w-full rounded-lg bg-primary px-4 py-2 text-xs font-semibold uppercase text-white transition hover:bg-green-700"
+          >
             CHECKOUT
           </button>
           <button
@@ -397,7 +415,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
           {/* Product Details - Right Side */}
           <div className="col-span-1 grid grid-cols-1 gap-3 md:col-span-5 lg:col-span-7 lg:grid-cols-7">
             <div className="col-span-1 lg:col-span-4">
-              <div className="rounded-lg bg-white shadow-sm">
+              <div className="bg-white">
                 <div className="hidden md:block">
                   <Link
                     href={product.brand?.url ?? "#"}
@@ -795,6 +813,15 @@ const ProductPage = ({ params }: ProductPageProps) => {
           handleAddToCart={handleAddToCart}
           loading={loading}
         />
+        <div className="relative z-[5000]">
+          <Modal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            size="lg"
+          >
+            <AuthLogin redirect="/checkout" />
+          </Modal>
+        </div>
       </main>
     </div>
   );

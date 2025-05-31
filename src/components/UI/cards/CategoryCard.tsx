@@ -17,7 +17,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ loading, category }) => {
     );
   }
   return (
-    <Link href={category.url} className="p-2">
+    <Link href={category.slug} className="p-2">
       <Image
         className="mb-3 h-[80px] w-full rounded-xl object-cover md:h-[150px] lg:h-[250px]"
         src={category.image}
@@ -25,7 +25,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ loading, category }) => {
         height={300}
         alt={category.title}
       />
-      <h1 className="text-sm font-bold text-gray-700 md:text-lg">
+      <h1 className="text-xs font-bold text-gray-700 md:text-sm">
         {category.title}
       </h1>
     </Link>

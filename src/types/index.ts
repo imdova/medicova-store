@@ -81,10 +81,11 @@ export type Slide = {
 // categories type
 export interface CategoryType {
   id: string;
+  slug: string;
   title: string;
-  url: string;
   image: string;
   isSale?: boolean;
+  subCategories?: CategoryType[];
 }
 // Brand type
 export interface Brand {
@@ -94,15 +95,9 @@ export interface Brand {
   image?: string;
   isSale?: boolean;
 }
-// For subcategory
-export interface SubCategoryType {
-  title: string;
-  url: string;
-}
 
 export interface MultiCategory extends CategoryType {
-  subCategories?: SubCategoryType[];
-  featuredProducts?: SubCategoryType[];
+  subCategories?: CategoryType[];
 }
 
 // for colors and sizes

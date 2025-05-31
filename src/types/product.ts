@@ -1,11 +1,4 @@
-import {
-  Brand,
-  ColorType,
-  LiquidSizeType,
-  MultiCategory,
-  NumericSizeType,
-  SizeType,
-} from ".";
+import { Brand, ColorType, LiquidSizeType, NumericSizeType, SizeType } from ".";
 
 export type Seller = {
   id: string;
@@ -37,7 +30,18 @@ export type Review = {
 };
 
 export type shippingMethod = "standard" | "express" | "free";
-
+interface CategoryType {
+  id: string;
+  slug?: string;
+  url?: string;
+  title: string;
+  image: string;
+  isSale?: boolean;
+  subCategories?: { title: string; url?: string }[]; // url optional here
+}
+interface MultiCategory extends CategoryType {
+  subCategories?: { title: string; url?: string }[]; // now compatible
+}
 export interface Product {
   id: string;
   brand?: Brand;

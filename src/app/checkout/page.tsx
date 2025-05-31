@@ -254,8 +254,8 @@ export default function CheckoutPage() {
                   onClick={() => handdleSelectMethod("card")}
                 >
                   <div>
-                    <p className="font-medium">Debit/Credit Card</p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm font-medium">Debit/Credit Card</p>
+                    <p className="text-xs text-gray-600">
                       Monthly installments plans available
                     </p>
                   </div>
@@ -273,8 +273,8 @@ export default function CheckoutPage() {
                   onClick={() => handdleSelectMethod("cod")}
                 >
                   <div>
-                    <p className="font-medium">Cash On Delivery</p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm font-medium">Cash On Delivery</p>
+                    <p className="text-xs text-gray-600">
                       Extra charges may be applied
                     </p>
                   </div>

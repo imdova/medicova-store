@@ -5,9 +5,17 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, PanInfo, useAnimation } from "framer-motion";
 import { useSwipeable } from "react-swipeable";
 import Image from "next/image";
-import { allCategories } from "@/constants/categouries";
+import { MultiCategory } from "@/types";
 
-const CategorySlider = () => {
+type CategorySliderProps = {
+  categories?: MultiCategory[];
+  singleCategory?: boolean;
+};
+
+const CategorySlider: React.FC<CategorySliderProps> = ({
+  categories,
+  singleCategory = false,
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [visibleCards, setVisibleCards] = useState(4);
   const [isDragging, setIsDragging] = useState(false);
@@ -44,7 +52,7 @@ const CategorySlider = () => {
     };
   }, [updateVisibleCards]);
 
-  const totalSlides = Math.ceil(allCategories.length / visibleCards);
+  const totalSlides = Math.ceil((categories?.length ?? 0) / visibleCards);
 
   // Scroll to specific index with boundary checks
   const scrollToIndex = useCallback(
@@ -230,8 +238,8 @@ const CategorySlider = () => {
                 flex: `0 0 ${100 / totalSlides}%`,
               }}
             >
-              {allCategories
-                .slice(
+              {categories
+                ?.slice(
                   slideIndex * visibleCards,
                   (slideIndex + 1) * visibleCards,
                 )
@@ -246,7 +254,11 @@ const CategorySlider = () => {
                     style={{ width: `${100 / visibleCards}%` }}
                   >
                     <Link
-                      href={category.url}
+                      href={
+                        singleCategory
+                          ? `/search?category=${category.slug}`
+                          : category.slug
+                      }
                       className="flex flex-col items-center transition-transform duration-300"
                       prefetch={false}
                     >

@@ -15,7 +15,7 @@ export const Banner: React.FC<BannerProps> = ({ image, url }) => {
         height={800}
         alt="Banner Ad"
       />
-      <span className="absolute bottom-0 right-0 rounded-lg bg-white/75 px-2 py-1 text-[8px] text-gray-500 md:text-xs">
+      <span className="absolute bottom-0 right-0 rounded-sm bg-white/75 px-2 py-0.5 text-[7px] text-gray-500 md:text-xs">
         Ad
       </span>
     </Link>

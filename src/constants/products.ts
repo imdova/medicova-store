@@ -22,13 +22,6 @@ export const products: Product[] = [
         { title: "Medical Shoes", url: "/medical-wear/shoes" },
         { title: "Surgical Caps", url: "/medical-wear/surgical-caps" },
       ],
-      featuredProducts: [
-        {
-          title: "Best Selling Scrubs",
-          url: "/medical-wear/scrubs/best-selling",
-        },
-        { title: "New Arrivals", url: "/medical-wear/new-arrivals" },
-      ],
     },
     title: "MediPro Professional V-Neck Scrub Top & Pants Set",
     price: 4599,
@@ -126,13 +119,6 @@ export const products: Product[] = [
         { title: "Medical Shoes", url: "/medical-wear/shoes" },
         { title: "Surgical Caps", url: "/medical-wear/surgical-caps" },
       ],
-      featuredProducts: [
-        {
-          title: "Best Selling Scrubs",
-          url: "/medical-wear/scrubs/best-selling",
-        },
-        { title: "New Arrivals", url: "/medical-wear/new-arrivals" },
-      ],
     },
     title: "WhiteCoat Professional Lab Coat with Embroidery Option",
     price: 6899,
@@ -228,13 +214,6 @@ export const products: Product[] = [
         { title: "Lab Coats", url: "/medical-wear/lab-coats" },
         { title: "Medical Shoes", url: "/medical-wear/shoes" },
         { title: "Surgical Caps", url: "/medical-wear/surgical-caps" },
-      ],
-      featuredProducts: [
-        {
-          title: "Best Selling Scrubs",
-          url: "/medical-wear/scrubs/best-selling",
-        },
-        { title: "New Arrivals", url: "/medical-wear/new-arrivals" },
       ],
     },
     title: "NurseMates Alicia Women's Medical Shoes",
@@ -332,13 +311,6 @@ export const products: Product[] = [
         { title: "Medical Shoes", url: "/medical-wear/shoes" },
         { title: "Surgical Caps", url: "/medical-wear/surgical-caps" },
       ],
-      featuredProducts: [
-        {
-          title: "Best Selling Scrubs",
-          url: "/medical-wear/scrubs/best-selling",
-        },
-        { title: "New Arrivals", url: "/medical-wear/new-arrivals" },
-      ],
     },
     title: "SurgiCap Disposable Bouffant Surgical Caps (100 Pack)",
     price: 2499,
@@ -433,13 +405,6 @@ export const products: Product[] = [
         { title: "Lab Coats", url: "/medical-wear/lab-coats" },
         { title: "Medical Shoes", url: "/medical-wear/shoes" },
         { title: "Surgical Caps", url: "/medical-wear/surgical-caps" },
-      ],
-      featuredProducts: [
-        {
-          title: "Best Selling Scrubs",
-          url: "/medical-wear/scrubs/best-selling",
-        },
-        { title: "New Arrivals", url: "/medical-wear/new-arrivals" },
       ],
     },
     title: "HealingHands 15-20 mmHg Compression Socks (3 Pack)",
@@ -539,13 +504,6 @@ export const products: Product[] = [
         { title: "Medical Shoes", url: "/medical-wear/shoes" },
         { title: "Surgical Caps", url: "/medical-wear/surgical-caps" },
       ],
-      featuredProducts: [
-        {
-          title: "Best Selling Scrubs",
-          url: "/medical-wear/scrubs/best-selling",
-        },
-        { title: "New Arrivals", url: "/medical-wear/new-arrivals" },
-      ],
     },
     title: "ScrubLife Men's Jogger Scrub Pants with Cargo Pockets",
     price: 4299,
@@ -641,13 +599,6 @@ export const products: Product[] = [
         { title: "Medical Shoes", url: "/medical-wear/shoes" },
         { title: "Surgical Caps", url: "/medical-wear/surgical-caps" },
       ],
-      featuredProducts: [
-        {
-          title: "Best Selling Scrubs",
-          url: "/medical-wear/scrubs/best-selling",
-        },
-        { title: "New Arrivals", url: "/medical-wear/new-arrivals" },
-      ],
     },
     title: "ORReady Level 3 Disposable Surgical Gowns (25 Pack)",
     price: 8999,
@@ -741,13 +692,6 @@ export const products: Product[] = [
         { title: "Lab Coats", url: "/medical-wear/lab-coats" },
         { title: "Medical Shoes", url: "/medical-wear/shoes" },
         { title: "Surgical Caps", url: "/medical-wear/surgical-caps" },
-      ],
-      featuredProducts: [
-        {
-          title: "Best Selling Scrubs",
-          url: "/medical-wear/scrubs/best-selling",
-        },
-        { title: "New Arrivals", url: "/medical-wear/new-arrivals" },
       ],
     },
     title: "StethoStyle Fleece Warm-Up Jacket for Medical Professionals",
@@ -846,13 +790,6 @@ export const products: Product[] = [
           url: "/medical-accessories/diagnostic-tools",
         },
       ],
-      featuredProducts: [
-        {
-          title: "Best Selling Watches",
-          url: "/medical-accessories/watches/best-selling",
-        },
-        { title: "New Arrivals", url: "/medical-accessories/new-arrivals" },
-      ],
     },
     title: "MediTech VitalTrack Pro Smartwatch for Healthcare Workers",
     price: 12999,
@@ -945,13 +882,6 @@ export const products: Product[] = [
         { title: "Perfumes", url: "/medical-personal-care/perfumes" },
         { title: "Antimicrobial Soaps", url: "/medical-personal-care/soaps" },
         { title: "Hand Sanitizers", url: "/medical-personal-care/sanitizers" },
-      ],
-      featuredProducts: [
-        {
-          title: "Best Selling Fragrances",
-          url: "/medical-personal-care/perfumes/best-selling",
-        },
-        { title: "New Arrivals", url: "/medical-personal-care/new-arrivals" },
       ],
     },
     title:
@@ -1052,13 +982,6 @@ export const products: Product[] = [
         },
         { title: "Bandages", url: "/medical-supplies/bandages" },
         { title: "First Aid Kits", url: "/medical-supplies/first-aid" },
-      ],
-      featuredProducts: [
-        {
-          title: "Best Selling Dressings",
-          url: "/medical-supplies/tapes-dressings/best-selling",
-        },
-        { title: "New Arrivals", url: "/medical-supplies/new-arrivals" },
       ],
     },
     title: "DermaSeal ProCare Medical Tape & Dressing Kit (100 Pieces)",

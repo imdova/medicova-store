@@ -17,15 +17,17 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/UI/Modals/DynamicModal";
 import AuthLogin from "@/components/UI/Modals/loginAuth";
-import { getExecuteDateFormatted } from "@/util";
+import { calculateShippingFee, getExecuteDateFormatted } from "@/util";
+import { CartItem } from "@/types/cart";
+import { shippingMethod } from "@/types/product";
 
 export default function CartPage() {
   const [appliedCoupon, setAppliedCoupon] = useState<string>("");
   const [discountAmount, setDiscountAmount] = useState(0);
   const [couponError, setCouponError] = useState<string | null>(null);
   const dispatch = useAppDispatch(); // Get the dispatch function
-  const session = useSession(); // Get the dispatch function
-  const router = useRouter(); // Get the dispatch function
+  const session = useSession();
+  const router = useRouter();
   const { products: productsData, totalPrice } = useAppSelector(
     (state) => state.cart,
   );
@@ -36,6 +38,25 @@ export default function CartPage() {
 
   const [isClient, setIsClient] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Calculate shipping fee
+  const productShippingFees = (item: CartItem): string => {
+    const shippingMethod =
+      (item.shippingMethod?.toLowerCase() as shippingMethod) || "standard";
+    const itemWeight = item.weightKg && item.weightKg > 0 ? item.weightKg : 1;
+    const itemPrice = item.price && item.price > 0 ? item.price : 0;
+
+    const feeInput = {
+      shippingMethod,
+      destination: getAddress(),
+      cartTotal: itemPrice * item.quantity,
+      weightKg: itemWeight * item.quantity,
+    };
+
+    const fee = calculateShippingFee(feeInput);
+
+    return fee === 0 ? "Free Delivery" : `${fee.toFixed(2)} EGP`;
+  };
 
   useEffect(() => {
     setIsClient(true);
@@ -260,7 +281,7 @@ export default function CartPage() {
                               </span>
                             </p>
                           )}
-                          {item.deliveryTime && (
+                          {item.shippingMethod === "express" && (
                             <div className="flex items-center text-xs font-semibold">
                               <span className="rounded bg-light-primary px-2 py-1 text-white">
                                 Express
@@ -271,9 +292,7 @@ export default function CartPage() {
                         <div className="flex items-center gap-2">
                           <Truck size={17} className="text-primary" />
                           <span className="text-xs font-semibold">
-                            {item.shipping_fee > 0
-                              ? `${item.shipping_fee} EGP For Delivery`
-                              : "Free Delivery"}
+                            {productShippingFees(item)}
                           </span>
                         </div>
 

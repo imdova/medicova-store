@@ -10,8 +10,30 @@ export const leftFilters: FilterGroup[] = [
         id: "electronics",
         name: "Electronics & Mobiles",
         subcategories: [
-          { id: "smartphones", name: "Smartphones" },
-          { id: "laptops", name: "Laptops" },
+          {
+            id: "smartphones",
+            name: "Smartphones",
+            subcategories: [
+              { id: "android", name: "Android Phones" },
+              { id: "ios", name: "iOS Phones" },
+              {
+                id: "foldable",
+                name: "Foldable Phones",
+                subcategories: [
+                  { id: "samsung-fold", name: "Samsung Fold Series" },
+                  { id: "motorola-razr", name: "Motorola Razr" },
+                ],
+              },
+            ],
+          },
+          {
+            id: "laptops",
+            name: "Laptops",
+            subcategories: [
+              { id: "gaming", name: "Gaming Laptops" },
+              { id: "ultrabooks", name: "Ultrabooks" },
+            ],
+          },
           { id: "smartwatches", name: "Smartwatches" },
         ],
       },
@@ -50,12 +72,6 @@ export const leftFilters: FilterGroup[] = [
     id: "price",
     name: "Price",
     options: [
-      { id: "deals", name: "Deals" },
-      { id: "price-drop", name: "Price drop" },
-      { id: "under-1000", name: "Under EGP 1000" },
-      { id: "1000-2000", name: "EGP 1000 - EGP 2000" },
-      { id: "2000-5000", name: "EGP 2000 - EGP 5000" },
-      { id: "over-5000", name: "Over EGP 5000" },
       {
         id: "custom-range",
         name: "Custom Range",
