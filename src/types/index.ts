@@ -86,6 +86,11 @@ export interface CategoryType {
   image: string;
   isSale?: boolean;
   subCategories?: CategoryType[];
+  cover?: string;
+  banner?: {
+    image: string;
+    url: string;
+  };
 }
 // Brand type
 export interface Brand {
@@ -181,3 +186,11 @@ export type FilterGroup = {
   options?: FilterOption[];
   option?: string;
 };
+
+// offers type
+export interface Offer {
+  id: string;
+  title: string;
+  imgUrl: string;
+  url: string;
+}

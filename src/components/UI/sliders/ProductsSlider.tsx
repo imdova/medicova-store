@@ -1,3 +1,4 @@
+"use client";
 import { useRef, useState, useEffect, ReactNode } from "react";
 import { useSwipeable } from "react-swipeable";
 import { motion } from "framer-motion";

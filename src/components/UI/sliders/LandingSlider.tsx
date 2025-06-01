@@ -189,7 +189,7 @@ const LandingSlider = ({
         {sliderSlides.length > 0 && (
           <section className="relative" {...handlers}>
             <div
-              className={`relative h-[150px] w-full overflow-hidden rounded-lg sm:rounded-none md:h-[300px] ${
+              className={`relative h-[100px] w-full overflow-hidden rounded-lg sm:h-[150px] sm:rounded-none md:h-[300px] ${
                 pageLoading ? "opacity-0" : "opacity-100"
               }`}
             >
@@ -276,11 +276,6 @@ const LandingSlider = ({
                         fill="rgba(255,255,255,.4)"
                       ></path>
                     </svg>
-
-                    {/* <ChevronRight
-                    className="invisible -translate-x-24 text-black opacity-0 transition duration-200 group-hover:visible group-hover:-translate-x-6 group-hover:opacity-100"
-                    size={25}
-                  /> */}
                   </button>
                 </>
               )}
@@ -299,7 +294,7 @@ const LandingSlider = ({
 
               {/* Dots Navigation - only show if more than one slide */}
               {showNavigation && sliderSlides.length > 1 && (
-                <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-2 space-x-2">
+                <div className="absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 gap-2 space-x-2">
                   {sliderSlides.map((_, index) => (
                     <button
                       key={index}
@@ -308,7 +303,7 @@ const LandingSlider = ({
                       aria-label={`Go to slide ${index + 1}`}
                     >
                       <div
-                        className={`absolute inset-0 left-1/2 top-1/2 h-1 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all ${
+                        className={`absolute inset-0 left-1/2 top-1/2 h-0.5 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all ${
                           currentIndex === index
                             ? "bg-primary"
                             : "bg-white/50 group-hover:bg-white/70"

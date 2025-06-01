@@ -1,5 +1,13 @@
 import { useSession, signOut } from "next-auth/react";
-import { User, Settings, Bookmark, HelpCircle, LogOut } from "lucide-react";
+import {
+  User,
+  Settings,
+  Bookmark,
+  HelpCircle,
+  LogOut,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import Modal from "../Modals/DynamicModal";
@@ -33,15 +41,16 @@ const AuthButton = () => {
       <div className="relative" ref={dropdownRef}>
         <button
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="flex min-w-[100px] items-center gap-2 border-r border-gray-200 px-4 text-sm font-semibold text-white hover:text-gray-100"
+          className="flex min-w-[170px] items-center justify-center gap-2 border-r border-gray-200 px-4 text-xs font-semibold text-white hover:text-gray-100"
           aria-expanded={isDropdownOpen}
           aria-haspopup="true"
         >
-          {session.user?.name || "Account"} <User size={18} />
+          {session.user?.name || "Account"}{" "}
+          {isDropdownOpen ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
         </button>
 
         {isDropdownOpen && (
-          <div className="absolute right-0 z-50 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <div className="absolute right-0 z-50 mt-2 w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className="py-1">
               <div className="px-4 py-3">
                 <p className="text-sm font-medium text-gray-900">

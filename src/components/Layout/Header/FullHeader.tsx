@@ -9,7 +9,6 @@ import {
   Menu,
   RotateCcw,
   ShoppingCart,
-  User,
 } from "lucide-react";
 import LogoIcon from "@/assets/icons/logo";
 import SearchComponent from "@/components/Forms/formFields/SearchComponent";
@@ -61,7 +60,7 @@ const FullHeader: React.FC = () => {
   return (
     <>
       <header className="relative z-40">
-        <div className="min-h-[70px] w-full bg-white py-3 shadow-md transition-all duration-700 md:bg-primary md:shadow-none">
+        <div className="min-h-[70px] w-full bg-white py-3 transition-all duration-700 md:bg-primary">
           <div className="relative">
             <div className="container mx-auto px-6 lg:max-w-[1440px]">
               <div className="mb-4 hidden flex-col items-center justify-between gap-6 sm:flex-row md:flex lg:hidden">
@@ -85,7 +84,7 @@ const FullHeader: React.FC = () => {
                   </span>
                 </div>
                 {/* Top actions  */}
-                <div className="flex items-center">
+                {/* <div className="flex items-center">
                   <button className="border-r border-gray-200 px-4 text-white">
                     العربية
                   </button>
@@ -100,7 +99,7 @@ const FullHeader: React.FC = () => {
                       <ShoppingCart size={20} />
                     </button>
                   </div>
-                </div>
+                </div> */}
               </div>
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
@@ -137,9 +136,6 @@ const FullHeader: React.FC = () => {
                 </button>
                 {/* Right-side Icons */}
                 <div className="hidden items-center lg:flex">
-                  <button className="border-r border-gray-200 px-4 text-white">
-                    العربية
-                  </button>
                   <AuthButton />
                   <div className="flex items-center gap-4 px-4">
                     <button className="flex items-center gap-2 text-sm font-semibold text-white hover:text-gray-100">

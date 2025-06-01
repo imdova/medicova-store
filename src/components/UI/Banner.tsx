@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 type BannerProps = {
@@ -7,7 +9,10 @@ type BannerProps = {
 
 export const Banner: React.FC<BannerProps> = ({ image, url }) => {
   return (
-    <Link href={url} className="relative block w-full md:h-[80px] lg:h-[140px]">
+    <Link
+      href={url}
+      className="relative block w-full select-none md:h-[80px] lg:h-[140px]"
+    >
       <Image
         className="h-full w-full rounded-md object-cover md:rounded-xl"
         src={image}

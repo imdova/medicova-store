@@ -7,14 +7,23 @@ import { useSwipeable } from "react-swipeable";
 import Image from "next/image";
 import { MultiCategory } from "@/types";
 
+type CardSize = "small" | "medium" | "large";
+type DisplayMode = "default" | "numbered";
+
 type CategorySliderProps = {
   categories?: MultiCategory[];
-  singleCategory?: boolean;
+  inCategory?: boolean;
+  cardSize?: CardSize;
+  displayMode?: DisplayMode;
+  path?: string;
 };
 
 const CategorySlider: React.FC<CategorySliderProps> = ({
   categories,
-  singleCategory = false,
+  inCategory = false,
+  cardSize = "medium",
+  displayMode = "default",
+  path,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [visibleCards, setVisibleCards] = useState(4);
@@ -24,18 +33,62 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
   const controls = useAnimation();
   const autoPlayTimeoutRef = useRef<number | null>(null);
 
-  // Calculate visible cards based on screen size
+  // Get card dimensions based on size prop
+  const getCardDimensions = () => {
+    switch (cardSize) {
+      case "large":
+        return {
+          container: "h-16 w-16 sm:h-28 sm:w-28 md:h-32 md:w-32",
+          textSize: "text-xs sm:text-sm",
+          numberSize: "text-lg sm:text-xl",
+        };
+      case "small":
+        return {
+          container: "h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16",
+          textSize: "text-[9px] sm:text-[10px]",
+          numberSize: "text-sm sm:text-base",
+        };
+      case "medium":
+      default:
+        return {
+          container: "h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20",
+          textSize: "text-[10px] sm:text-xs",
+          numberSize: "text-base sm:text-lg",
+        };
+    }
+  };
+
+  // Calculate visible cards based on screen size and card size
   const updateVisibleCards = useCallback(() => {
     const width = window.innerWidth;
     let cards = 4;
-    if (width < 400) cards = 4;
-    else if (width < 640) cards = 4;
-    else if (width < 768) cards = 5;
-    else if (width < 1024) cards = 6;
-    else if (width < 1280) cards = 8;
-    else cards = 12;
+
+    if (cardSize === "large") {
+      if (width < 400) cards = 3;
+      else if (width < 640) cards = 3;
+      else if (width < 768) cards = 4;
+      else if (width < 1024) cards = 5;
+      else if (width < 1280) cards = 6;
+      else cards = 8;
+    } else if (cardSize === "small") {
+      if (width < 400) cards = 6;
+      else if (width < 640) cards = 6;
+      else if (width < 768) cards = 8;
+      else if (width < 1024) cards = 10;
+      else if (width < 1280) cards = 12;
+      else cards = 16;
+    } else {
+      // medium
+      if (width < 400) cards = 4;
+      else if (width < 640) cards = 4;
+      else if (width < 768) cards = 5;
+      else if (width < 1024) cards = 6;
+      else if (width < 1280) cards = 8;
+      else cards = 12;
+    }
+
     setVisibleCards(cards);
-  }, []);
+  }, [cardSize]);
 
   useEffect(() => {
     updateVisibleCards();
@@ -88,7 +141,7 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
   };
 
   const handleDragEnd = (
-    event: MouseEvent | TouchEvent | PointerEvent,
+    _event: MouseEvent | TouchEvent | PointerEvent,
     info: PanInfo,
   ) => {
     setIsDragging(false);
@@ -142,6 +195,8 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
     visible: { opacity: 1, x: 0 },
     hover: { scale: 1.1, backgroundColor: "rgba(255,255,255,0.9)" },
   };
+
+  const { container, textSize, numberSize } = getCardDimensions();
 
   return (
     <div
@@ -243,7 +298,7 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
                   slideIndex * visibleCards,
                   (slideIndex + 1) * visibleCards,
                 )
-                .map((category) => (
+                .map((category, index) => (
                   <motion.div
                     key={category.id}
                     variants={cardVariants}
@@ -255,8 +310,11 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
                   >
                     <Link
                       href={
-                        singleCategory
-                          ? `/search?category=${category.slug}`
+                        inCategory
+                          ? !category.subCategories ||
+                            category.subCategories.length === 0
+                            ? `/search/${category.slug}`
+                            : `${path}/${category.slug}`
                           : category.slug
                       }
                       className="flex flex-col items-center transition-transform duration-300"
@@ -264,7 +322,7 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
                     >
                       <div className="relative">
                         <motion.div
-                          className="mb-3 flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-green-50 sm:h-16 sm:w-16 md:h-20 md:w-20"
+                          className={`mb-3 flex items-center justify-center overflow-hidden rounded-full bg-green-50 ${container}`}
                           whileHover={{ scale: 1.1 }}
                           transition={{
                             type: "spring",
@@ -272,15 +330,23 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
                             damping: 10,
                           }}
                         >
-                          <Image
-                            className="h-full w-full object-cover"
-                            src={category.image}
-                            width={80}
-                            height={80}
-                            alt={category.title}
-                            loading="lazy"
-                          />
-                        </motion.div>{" "}
+                          {displayMode === "numbered" ? (
+                            <span
+                              className={`font-bold text-gray-700 ${numberSize}`}
+                            >
+                              {index + 1 + slideIndex * visibleCards}
+                            </span>
+                          ) : (
+                            <Image
+                              className="h-full w-full object-cover"
+                              src={category.image}
+                              width={80}
+                              height={80}
+                              alt={category.title}
+                              loading="lazy"
+                            />
+                          )}
+                        </motion.div>
                         {category.isSale && (
                           <div className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded-3xl bg-red-600 px-4 text-xs font-bold text-white">
                             Sale
@@ -288,7 +354,9 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
                         )}
                       </div>
 
-                      <motion.h3 className="text-center text-[10px] font-medium text-gray-800 transition hover:text-primary sm:text-xs">
+                      <motion.h3
+                        className={`text-center font-medium text-gray-800 transition hover:text-primary ${textSize}`}
+                      >
                         {category.title}
                       </motion.h3>
                     </Link>

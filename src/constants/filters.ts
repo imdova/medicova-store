@@ -7,51 +7,99 @@ export const leftFilters: FilterGroup[] = [
     name: "Category",
     options: [
       {
-        id: "electronics",
-        name: "Electronics & Mobiles",
+        id: "medical",
+        name: "Medical Supplies & Equipment",
         subcategories: [
           {
-            id: "smartphones",
-            name: "Smartphones",
+            id: "medical-wear",
+            name: "Medical Wear & Uniforms",
             subcategories: [
-              { id: "android", name: "Android Phones" },
-              { id: "ios", name: "iOS Phones" },
-              {
-                id: "foldable",
-                name: "Foldable Phones",
-                subcategories: [
-                  { id: "samsung-fold", name: "Samsung Fold Series" },
-                  { id: "motorola-razr", name: "Motorola Razr" },
-                ],
-              },
+              { id: "scrubs", name: "Surgical Scrubs" },
+              { id: "lab-coats", name: "Lab Coats" },
+              { id: "shoes", name: "Medical Footwear" }, // Matches slug "shoes"
+              { id: "nursing-wear", name: "Nursing Wear" },
+              { id: "medical-accessories", name: "Medical Accessories" },
             ],
           },
           {
-            id: "laptops",
-            name: "Laptops",
+            id: "medical-equipment",
+            name: "Medical Equipment",
             subcategories: [
-              { id: "gaming", name: "Gaming Laptops" },
-              { id: "ultrabooks", name: "Ultrabooks" },
+              { id: "diagnostic", name: "Diagnostic Equipment" },
+              { id: "surgical", name: "Surgical Instruments" },
+              { id: "equipment-dental", name: "Dental Equipment" },
+              { id: "hospital-furniture", name: "Hospital Furniture" },
+              { id: "monitoring", name: "Patient Care Equipment" }, // Matches slug "monitoring"
+              { id: "medical-carts", name: "Medical Carts & Stands" },
             ],
           },
-          { id: "smartwatches", name: "Smartwatches" },
+          {
+            id: "medical-consumables",
+            name: "Medical Consumables",
+            subcategories: [
+              { id: "disposable", name: "Disposable Products" }, // Matches slug "disposable"
+              { id: "face-protection", name: "Face Masks & Shields" },
+              { id: "wound-care", name: "Wound Care Supplies" },
+              { id: "infection-control", name: "Infection Control" },
+              {
+                id: "medical-consumables-tapes",
+                name: "Medical Tapes & Dressings",
+              },
+              { id: "syringes-needles", name: "Syringes & Needles" },
+            ],
+          },
         ],
       },
       {
-        id: "health",
-        name: "Health & Nutrition",
+        id: "lifestyle",
+        name: "Lifestyle Products",
         subcategories: [
-          { id: "vitamins", name: "Vitamins" },
-          { id: "protein", name: "Protein" },
-          { id: "weight-loss", name: "Weight Loss" },
+          {
+            id: "fashion",
+            name: "Fashion",
+            subcategories: [
+              { id: "casual", name: "Casual Wear" },
+              { id: "formal", name: "Formal Wear" },
+              { id: "athleisure", name: "Athleisure" },
+            ],
+          },
+          {
+            id: "accessories",
+            name: "Accessories",
+            subcategories: [
+              { id: "watches", name: "Watches" },
+              { id: "jewelry", name: "Jewelry" },
+              { id: "eyewear", name: "Eyewear" },
+            ],
+          },
+          {
+            id: "wellness",
+            name: "Wellness",
+            subcategories: [
+              { id: "fitness", name: "Fitness Equipment" },
+              { id: "massage", name: "Massage Tools" },
+              { id: "relaxation", name: "Relaxation" },
+            ],
+          },
+          {
+            id: "personal-care",
+            name: "Personal Care",
+            subcategories: [
+              { id: "fragrances", name: "Fragrances" },
+              { id: "skincare", name: "Skincare" },
+              { id: "haircare", name: "Haircare" },
+            ],
+          },
         ],
       },
-      { id: "all-health", name: "All Health & Nutrition" },
-      { id: "medical", name: "Medical Supplies & Equipment" },
-      { id: "fashion", name: "Fashion" },
-      { id: "baby", name: "Baby Products" },
-      { id: "toys", name: "Toys & Games" },
-      { id: "books", name: "Books" },
+      {
+        id: "all-medical",
+        name: "All Medical Supplies",
+      },
+      {
+        id: "all-lifestyle",
+        name: "All Lifestyle Products",
+      },
     ],
   },
   {

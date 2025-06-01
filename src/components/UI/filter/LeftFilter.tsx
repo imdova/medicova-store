@@ -272,7 +272,7 @@ export default function LeftFilter({
 
                   return (
                     <div key={option.id}>
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center">
                           <label className="flex cursor-pointer items-center">
                             <div className="relative h-5 w-5 cursor-pointer">
@@ -290,7 +290,7 @@ export default function LeftFilter({
                                 <Check className="text-white" size={13} />
                               </span>
                             </div>
-                            <span className="ml-3 text-sm font-semibold text-gray-600">
+                            <span className="ml-3 text-xs font-semibold text-gray-600">
                               {group.id === "rating"
                                 ? renderRatingStars(option.id)
                                 : option.name}
