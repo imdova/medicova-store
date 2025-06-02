@@ -1,20 +1,43 @@
-"use clinet";
-import Link from "next/link";
-import { isCurrentPage } from "@/util";
-import { usePathname } from "next/navigation";
-import { NavbarLinks } from "@/constants/navbar";
+"use client";
+
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { isCurrentPage } from "@/util";
+import { NavbarLinks } from "@/constants/navbar";
 import { useAppSelector } from "@/store/hooks";
+import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
+import Modal from "@/components/UI/Modals/DynamicModal";
+import AuthLogin from "@/components/UI/Modals/loginAuth";
+import { NavLink } from "@/types";
 
 const Navbar = () => {
   const pathname = usePathname();
-  const [productsCount, setProductsCount] = useState(0);
+  const router = useRouter();
+  const session = useSession();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { products } = useAppSelector((state) => state.cart);
+  const [productsCount, setProductsCount] = useState(0);
 
   useEffect(() => {
     setProductsCount(products.length);
   }, [products]);
+
+  const handleClick = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    link: NavLink,
+  ) => {
+    if (link.name === "Account") {
+      if (session.data?.user) {
+        router.push(link.path);
+      } else {
+        setIsModalOpen(true);
+      }
+    } else {
+      router.push(link.path);
+    }
+  };
 
   return (
     <nav
@@ -26,6 +49,27 @@ const Navbar = () => {
           const CurrentPage = isCurrentPage(pathname, link.path);
           const IconComponent = link.icon;
 
+          if (link.name === "Account") {
+            return (
+              <button
+                key={link.name}
+                onClick={(e) => handleClick(e, link)}
+                className={`flex h-full w-full flex-col items-center justify-center ${
+                  CurrentPage ? "text-primary" : "text-gray-600"
+                }`}
+              >
+                <div
+                  className={`relative rounded-full p-2 ${
+                    CurrentPage ? "bg-green-50" : ""
+                  }`}
+                >
+                  {IconComponent && <IconComponent size={18} />}
+                </div>
+                <span className="text-xs font-semibold">{link.name}</span>
+              </button>
+            );
+          }
+
           return (
             <Link
               key={link.name}
@@ -35,37 +79,47 @@ const Navbar = () => {
               }`}
             >
               <div
-                className={`relative rounded-full p-2 ${CurrentPage ? "bg-green-50" : ""}`}
+                className={`relative rounded-full p-2 ${
+                  CurrentPage ? "bg-green-50" : ""
+                }`}
               >
                 {IconComponent && <IconComponent size={18} />}
                 {link.name === "Cart" && (
-                  <>
-                    {/* Animate cart badge */}
-                    <AnimatePresence>
-                      {productsCount > 0 && (
-                        <motion.span
-                          key="cart-badge"
-                          initial={{ scale: 0, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          exit={{ scale: 0, opacity: 0 }}
-                          transition={{
-                            type: "spring",
-                            stiffness: 300,
-                            damping: 20,
-                          }}
-                          className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-primary text-white"
-                        >
-                          {productsCount}
-                        </motion.span>
-                      )}
-                    </AnimatePresence>
-                  </>
+                  <AnimatePresence>
+                    {productsCount > 0 && (
+                      <motion.span
+                        key="cart-badge"
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 300,
+                          damping: 20,
+                        }}
+                        className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-white"
+                      >
+                        {productsCount}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
                 )}
               </div>
               <span className="text-xs font-semibold">{link.name}</span>
             </Link>
           );
         })}
+      </div>
+
+      {/* Modal for login */}
+      <div className="relative z-[1000]">
+        <Modal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          size="lg"
+        >
+          <AuthLogin redirect={"/account"} />
+        </Modal>
       </div>
     </nav>
   );

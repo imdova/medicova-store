@@ -1,24 +1,22 @@
-type HeaderType = "full" | "account";
+type FooterType = "full" | "account";
 
 interface RouteConfig {
   pattern: string;
-  headerType: HeaderType;
+  footerType: FooterType; // Use lowercase for consistency with other codebases
 }
 
 export const routeConfigs: RouteConfig[] = [
-  { pattern: "/", headerType: "full" }, // Changed from "/*" to "/" for better default
-  { pattern: "/account", headerType: "account" },
-  { pattern: "/account/*", headerType: "account" },
+  { pattern: "/", footerType: "full" }, // "/" is better as a default than "/*"
+  { pattern: "/account/*", footerType: "account" }, // Keep wildcard for subpaths
 ];
 
 export const matchRoute = (pathname: string): RouteConfig | undefined => {
-  // Exact match first
+  // First: try exact or dynamic matches
   const exactMatch = routeConfigs.find((route) => {
-    // Convert dynamic segments like [id] to match non-slash characters
     const regexPattern = route.pattern
-      .replace(/\[.*?\]/g, "[^/]+") // Handle [id]
+      .replace(/\[.*?\]/g, "[^/]+") // Replace [dynamic] segments
       .replace(/\//g, "\\/") // Escape slashes
-      .replace(/\*/g, ".*"); // Wildcards handled as ".*"
+      .replace(/\*/g, ".*"); // Handle wildcard (if present)
 
     const regex = new RegExp(`^${regexPattern}$`);
     return regex.test(pathname);
@@ -26,13 +24,14 @@ export const matchRoute = (pathname: string): RouteConfig | undefined => {
 
   if (exactMatch) return exactMatch;
 
-  // Wildcard match (e.g., /account/*)
+  // Second: fallback to wildcard matches (partial paths)
   const wildcardMatch = routeConfigs.find((route) => {
     if (route.pattern.includes("*")) {
-      const basePattern = route.pattern
+      const wildcardPattern = route.pattern
         .replace(/\*/g, ".*")
         .replace(/\//g, "\\/");
-      const regex = new RegExp(`^${basePattern}`);
+
+      const regex = new RegExp(`^${wildcardPattern}`);
       return regex.test(pathname);
     }
     return false;

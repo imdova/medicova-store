@@ -1,5 +1,5 @@
 "use client";
-import { Pagination } from "@/components/Pagination";
+import { Pagination } from "@/components/UI/Pagination";
 import { Banner } from "@/components/UI/Banner";
 import DynamicButton from "@/components/UI/Buttons/DynamicButton";
 import ProductCard from "@/components/UI/cards/ProductCard";

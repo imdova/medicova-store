@@ -15,6 +15,14 @@ export default withAuth(
         new URL(`/login?callbackUrl=${callbackUrl}`, req.url),
       );
     }
+    // If no token (not authenticated) and trying to access account
+    if (!token && pathname.startsWith("/account")) {
+      // Redirect to login with a callback URL to return after login
+      const callbackUrl = encodeURIComponent(req.nextUrl.href);
+      return NextResponse.redirect(
+        new URL(`/login?callbackUrl=${callbackUrl}`, req.url),
+      );
+    }
 
     return NextResponse.next();
   },
@@ -31,5 +39,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/checkout", "/checkout/:path*"],
+  matcher: ["/checkout", "/checkout/:path*", "/account/:path*"],
 };

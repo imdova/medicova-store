@@ -4,17 +4,39 @@ import { ShippingOptions } from "@/types";
 export const isCurrentPage = (pathname?: string, pattern?: string): boolean => {
   if (!pathname || !pattern) return false;
 
-  const regexPattern = pattern
-    .replace(/\[.*?\]/g, "[^/]+")
+  // Normalize paths by removing trailing slashes
+  const normalizedPathname = pathname.replace(/\/$/, "");
+  const normalizedPattern = pattern.replace(/\/$/, "");
+
+  // Special handling for root path
+  if (normalizedPattern === "") {
+    return normalizedPathname === "";
+  }
+
+  // Handle exact matches first
+  if (normalizedPathname === normalizedPattern) return true;
+
+  // Convert pattern to regex
+  const regexPattern = normalizedPattern
+    .replace(/\[.*?\]/g, "[^/]+") // Handle dynamic segments
     .replace(/\//g, "\\/");
 
+  // Check exact match with regex
   const exactRegex = new RegExp(`^${regexPattern}$`);
-  if (exactRegex.test(pathname)) return true;
+  if (exactRegex.test(normalizedPathname)) return true;
 
+  // Check for nested routes (e.g., account/profile under account)
+  // But exclude the root path from this check
+  if (normalizedPattern !== "") {
+    const nestedRegex = new RegExp(`^${regexPattern}(\\/|$)`);
+    if (nestedRegex.test(normalizedPathname)) return true;
+  }
+
+  // Handle wildcards if needed
   if (pattern.includes("*")) {
-    const wildcardPattern = pattern.replace(/\*/g, ".*");
+    const wildcardPattern = normalizedPattern.replace(/\*/g, ".*");
     const wildcardRegex = new RegExp(`^${wildcardPattern}`);
-    return wildcardRegex.test(pathname);
+    return wildcardRegex.test(normalizedPathname);
   }
 
   return false;

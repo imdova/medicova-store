@@ -20,6 +20,7 @@ import DeliverToModal from "@/components/UI/Modals/DeliverToModal";
 import AuthButton from "@/components/UI/Buttons/AuthButton";
 import { Drawer } from "@/components/UI/Drawer";
 import Collapse from "@/components/UI/Collapse";
+import { AccountPageProps } from "@/app/(auth)/account/types/account";
 
 type Address = {
   id: string;
@@ -35,7 +36,7 @@ type Address = {
   };
 };
 
-const FullHeader: React.FC = () => {
+const FullHeader: React.FC<AccountPageProps> = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<
     Address | null | undefined
@@ -83,23 +84,6 @@ const FullHeader: React.FC = () => {
                     </span>
                   </span>
                 </div>
-                {/* Top actions  */}
-                {/* <div className="flex items-center">
-                  <button className="border-r border-gray-200 px-4 text-white">
-                    العربية
-                  </button>
-                  <button className="flex items-center gap-2 border-r border-gray-200 px-4 text-sm font-semibold text-white hover:text-gray-100">
-                    Log in <User size={18} />
-                  </button>
-                  <div className="flex items-center gap-4 px-4">
-                    <button className="flex items-center gap-2 text-sm font-semibold text-white hover:text-gray-100">
-                      <Heart size={20} />
-                    </button>
-                    <button className="flex items-center gap-2 text-sm font-semibold text-white hover:text-gray-100">
-                      <ShoppingCart size={20} />
-                    </button>
-                  </div>
-                </div> */}
               </div>
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2">

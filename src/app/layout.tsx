@@ -1,11 +1,11 @@
 import { Raleway } from "next/font/google";
 import "./globals.css";
 import DynamicHeaderWrapper from "@/components/Layout/Header/DynamicHeaderWrapper";
-import Footer from "@/components/Layout/Footer/Footer";
 import { Suspense } from "react";
 import LoadingAnimation from "@/components/UI/LoadingAnimation";
 import StoreProvider from "@/store/StoreProvider";
 import { NextAuthProvider } from "@/NextAuthProvider";
+import DynamicFooter from "@/components/Layout/Footer/DynamicFooter";
 
 const raleway = Raleway({
   variable: "--font-raleway",
@@ -25,7 +25,7 @@ export default function RootLayout({
             <DynamicHeaderWrapper>
               <Suspense fallback={<LoadingAnimation />}>{children}</Suspense>
             </DynamicHeaderWrapper>
-            <Footer />
+            <DynamicFooter />
           </NextAuthProvider>
         </StoreProvider>
       </body>

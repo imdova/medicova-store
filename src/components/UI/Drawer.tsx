@@ -25,7 +25,7 @@ export const Drawer: React.FC<DrawerProps> = ({
   position = "left",
 }) => {
   return (
-    <div className="relative z-[2000]">
+    <div className="relative z-[2000] md:hidden">
       {hasOverlay && (
         <div
           className={`fixed inset-0 bg-[#00000060] bg-opacity-50 transition-opacity ${

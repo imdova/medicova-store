@@ -11,7 +11,7 @@ import {
   socialMedia,
 } from "@/constants/footer";
 
-const Footer = () => {
+const FullFooter = () => {
   const [expandedSections, setExpandedSections] = useState<
     Record<string, boolean>
   >({});
@@ -171,4 +171,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default FullFooter;

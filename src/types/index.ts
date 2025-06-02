@@ -1,4 +1,5 @@
 import { destinationSurcharges } from "@/constants";
+import { LucideIcon } from "lucide-react";
 import { StaticImageData } from "next/image";
 
 export interface BaseHeaderProps {
@@ -12,6 +13,23 @@ export type UserProps = {
   email: string;
   avatar: string;
 };
+
+// sidebar types
+
+// Define the type for a main item (which may have sub-items)
+export interface SidebarItem {
+  title: string;
+  href: string;
+  icon?: LucideIcon;
+  subItems?: SidebarItem[]; // Optional
+}
+
+// Define the type for a group of sidebar items
+export interface SidebarGroup {
+  title?: string;
+  description?: string; // Optional
+  items: SidebarItem[];
+}
 
 // header types
 export type link = {
