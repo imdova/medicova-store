@@ -206,7 +206,7 @@ export default function CategoryPage({
 
   return (
     <div className="relative bg-white">
-      <div className="container mx-auto px-6 py-4 lg:max-w-[1440px]">
+      <div className="container mx-auto p-3 lg:max-w-[1440px]">
         <div className="gap-4 lg:flex">
           <div className="hidden lg:block">
             <LeftFilter
@@ -313,7 +313,7 @@ export default function CategoryPage({
               setIsOpen={setIsOpenDropdown}
             />
 
-            <div className="mb-4 gap-2 border-b border-gray-200 p-4">
+            <div className="mb-4 gap-2 border-b border-gray-100">
               <TapFilter
                 filterGroups={tapFilters}
                 currentFilters={getCurrentFilters()}

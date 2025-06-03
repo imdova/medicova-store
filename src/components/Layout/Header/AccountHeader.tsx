@@ -22,9 +22,9 @@ const AccountHeader: React.FC<AccountPageProps> = ({ user, activeSection }) => {
   return (
     <>
       <header className="relative z-40">
-        <div className="min-h-[70px] w-full bg-primary py-3 transition-all duration-700">
+        <div className="min-h-[70px] w-full bg-primary transition-all duration-700">
           <div className="relative">
-            <div className="container mx-auto px-6 lg:max-w-[1440px]">
+            <div className="container mx-auto p-3 lg:max-w-[1440px]">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
                   <button onClick={() => setIsOpen(true)}>

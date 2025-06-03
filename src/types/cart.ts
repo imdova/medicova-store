@@ -29,6 +29,24 @@ export interface CartItem {
   shippingMethod: shippingMethod;
   weightKg: number;
 }
+export interface WishlistItem {
+  id: string;
+  image: string;
+  title: string;
+  price: number;
+  del_price?: number;
+  description: string;
+  deliveryTime?: string;
+  sellers?: Seller;
+  shipping_fee: number;
+  size?: SizeType | NumericSizeType | LiquidSizeType;
+  color?: ColorType;
+  brand?: Brand;
+  stock?: number;
+  shippingMethod: shippingMethod;
+  weightKg: number;
+  addedBy?: string;
+}
 
 export type Coupon = {
   code: string;

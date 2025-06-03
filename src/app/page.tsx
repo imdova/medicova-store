@@ -111,7 +111,7 @@ export default function Home() {
         <CategorySlider categories={allCategories} />
       </section>
       <section className="hidden pb-8 xl:block">
-        <div className="container mx-auto px-6 lg:max-w-[1440px]">
+        <div className="container mx-auto p-3 lg:max-w-[1440px]">
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-white p-3 shadow-sm">
               <h2 className="mb-3 text-xl font-bold text-gray-700">
@@ -206,7 +206,7 @@ export default function Home() {
       </section>
       {/* recommended for you section  */}
       <section className="bg-white">
-        <div className="container mx-auto px-6 lg:max-w-[1440px]">
+        <div className="container mx-auto p-3 lg:max-w-[1440px]">
           <SectionHeader blackText="Recommended" greenText="for you" />
           <ProductsSlider>
             {products.map((product) => (
@@ -225,7 +225,7 @@ export default function Home() {
       </section>
       {/* Brands section  */}
       <section className="bg-white py-6">
-        <div className="container mx-auto px-6 lg:max-w-[1440px]">
+        <div className="container mx-auto p-3 lg:max-w-[1440px]">
           <SectionHeader
             blackText="Explore"
             greenText="official brands stores"
@@ -235,7 +235,7 @@ export default function Home() {
       </section>
       {/* Consumable Category  */}
       <section className="bg-white py-6">
-        <div className="container mx-auto px-6 lg:max-w-[1440px]">
+        <div className="container mx-auto p-3 lg:max-w-[1440px]">
           <div className="mb-4 flex items-center justify-between gap-4">
             <h2 className="text-lg font-bold sm:text-2xl">Consumable</h2>
             <DynamicButton
@@ -277,7 +277,7 @@ export default function Home() {
       </section>
       {/* life style Category  */}
       <section className="bg-white py-6">
-        <div className="container mx-auto px-6 lg:max-w-[1440px]">
+        <div className="container mx-auto p-3 lg:max-w-[1440px]">
           <div className="mb-4 flex items-center justify-between gap-4">
             <h2 className="text-lg font-bold sm:text-2xl">Life Style</h2>
             <DynamicButton
@@ -322,7 +322,7 @@ export default function Home() {
       </section>
       {/* equipment Category  */}
       <section className="bg-white py-6">
-        <div className="container mx-auto px-6 lg:max-w-[1440px]">
+        <div className="container mx-auto p-3 lg:max-w-[1440px]">
           <div className="mb-4 flex items-center justify-between gap-4">
             <h2 className="text-lg font-bold sm:text-2xl">Equipment</h2>
             <DynamicButton
@@ -363,7 +363,7 @@ export default function Home() {
         </div>
       </section>
       <section className="bg-white">
-        <div className="container mx-auto px-6 lg:max-w-[1440px]">
+        <div className="container mx-auto p-3 lg:max-w-[1440px]">
           <PopularSearches />
         </div>
       </section>

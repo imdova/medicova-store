@@ -200,7 +200,7 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
 
   return (
     <div
-      className="container relative mx-auto overflow-hidden px-6 pt-4 lg:max-w-[1440px]"
+      className="container relative mx-auto overflow-hidden p-3 pt-4 lg:max-w-[1440px]"
       {...handlers}
     >
       {/* Navigation Arrows */}
@@ -259,7 +259,7 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
       {/* Slider container */}
       <div
         ref={containerRef}
-        className="relative w-full overflow-hidden py-4"
+        className="relative w-full overflow-hidden py-2"
         style={{
           cursor: isDragging ? "grabbing" : "grab",
         }}

@@ -24,11 +24,6 @@ export const sidebarGroups: SidebarGroup[] = [
         icon: Undo2,
       },
       {
-        title: "Medicova Credits",
-        href: "/account/credits",
-        icon: WalletCards,
-      },
-      {
         title: "Wishlist",
         href: "/account/wishlist",
         icon: Heart,

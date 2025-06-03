@@ -21,6 +21,10 @@ import AuthButton from "@/components/UI/Buttons/AuthButton";
 import { Drawer } from "@/components/UI/Drawer";
 import Collapse from "@/components/UI/Collapse";
 import { AccountPageProps } from "@/app/(auth)/account/types/account";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import Modal from "@/components/UI/Modals/DynamicModal";
+import AuthLogin from "@/components/UI/Modals/loginAuth";
 
 type Address = {
   id: string;
@@ -38,6 +42,7 @@ type Address = {
 
 const FullHeader: React.FC<AccountPageProps> = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalLogOpen, setIsModalLogOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<
     Address | null | undefined
   >({
@@ -51,19 +56,31 @@ const FullHeader: React.FC<AccountPageProps> = () => {
     location: { lat: 30.0444, lng: 31.2357 },
   });
   const [productsCount, setProductsCount] = useState(0);
+  const [productsCountWishlist, setProductsCountWishlist] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const { products } = useAppSelector((state) => state.cart);
+  const { products: wishlistData } = useAppSelector((state) => state.wishlist);
+  const session = useSession();
+  const router = useRouter();
+  const handdleLogin = () => {
+    if (session.data?.user) {
+      router.push("account/wishlist");
+    } else {
+      setIsModalLogOpen(true);
+    }
+  };
 
   useEffect(() => {
     setProductsCount(products.length);
-  }, [products]);
+    setProductsCountWishlist(wishlistData.length);
+  }, [products, wishlistData]);
 
   return (
     <>
       <header className="relative z-40">
-        <div className="min-h-[70px] w-full bg-white py-3 transition-all duration-700 md:bg-primary">
+        <div className="min-h-[70px] w-full bg-white transition-all duration-700 md:bg-primary">
           <div className="relative">
-            <div className="container mx-auto px-6 lg:max-w-[1440px]">
+            <div className="container mx-auto p-3 lg:max-w-[1440px]">
               <div className="mb-4 hidden flex-col items-center justify-between gap-6 sm:flex-row md:flex lg:hidden">
                 <div className="flex w-full items-center justify-between gap-3 sm:w-fit">
                   <h3 className="flex items-center gap-1 text-xs font-semibold text-white">
@@ -115,19 +132,42 @@ const FullHeader: React.FC<AccountPageProps> = () => {
                     <SearchComponent />
                   </Suspense>
                 </div>
-                <button className="flex items-center gap-2 text-sm font-semibold text-primary hover:text-gray-100 md:hidden md:text-white">
-                  <Heart size={20} />
-                </button>
+
                 {/* Right-side Icons */}
-                <div className="hidden items-center lg:flex">
-                  <AuthButton />
-                  <div className="flex items-center gap-4 px-4">
-                    <button className="flex items-center gap-2 text-sm font-semibold text-white hover:text-gray-100">
+                <div className="flex">
+                  <div className="hidden lg:block">
+                    <AuthButton />
+                  </div>
+
+                  <div className="flex items-center gap-4 md:px-4">
+                    <button
+                      onClick={handdleLogin}
+                      className="relative items-center gap-2 text-sm font-semibold text-primary md:text-white"
+                    >
                       <Heart size={20} />
+                      {/* Animate cart badge */}
+                      <AnimatePresence>
+                        {productsCountWishlist > 0 && (
+                          <motion.span
+                            key="cart-badge"
+                            initial={{ scale: 0, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0, opacity: 0 }}
+                            transition={{
+                              type: "spring",
+                              stiffness: 300,
+                              damping: 20,
+                            }}
+                            className="absolute -right-2 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-white md:bg-white md:text-primary"
+                          >
+                            {productsCountWishlist}
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
                     </button>
                     <Link
                       href={`/cart`}
-                      className="relative flex items-center gap-2 text-sm font-semibold text-white hover:text-gray-100"
+                      className="relative hidden items-center gap-2 text-sm font-semibold hover:text-gray-100 md:text-white lg:flex"
                     >
                       <ShoppingCart size={20} />
 
@@ -277,6 +317,13 @@ const FullHeader: React.FC<AccountPageProps> = () => {
           </div>
         </nav>
       </Drawer>
+      <Modal
+        isOpen={isModalLogOpen}
+        onClose={() => setIsModalLogOpen(false)}
+        size="lg"
+      >
+        <AuthLogin redirect="/account/wishlist" />
+      </Modal>
     </>
   );
 };

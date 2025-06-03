@@ -225,12 +225,12 @@ const AddressPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-4">
-      <h1 className="mb-6 text-2xl font-bold">My Addresses</h1>
+    <div>
+      <h1 className="mb-6 text-2xl font-bold text-gray-700">My Addresses</h1>
 
       {/* Default Address Section */}
       <div className="mb-8">
-        <h2 className="mb-4 text-lg font-semibold">Default Address</h2>
+        <h2 className="mb-2 text-sm font-semibold">Default Address</h2>
         {defaultAddress ? (
           <div className="relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
             <div className="mb-2 flex items-start">
@@ -276,8 +276,8 @@ const AddressPage = () => {
 
       {/* Saved Addresses Section */}
       <div className="mb-8">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Saved Addresses</h2>
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="text-sm font-semibold">Saved Addresses</h2>
           <button
             onClick={() => {
               setAddressToEdit(null); // Ensure we're adding, not editing

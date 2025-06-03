@@ -38,7 +38,9 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm">
-      <h2 className="mb-6 text-xl font-semibold">Profile Information</h2>
+      <h2 className="mb-6 text-2xl font-bold text-gray-700">
+        Profile Information
+      </h2>
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>

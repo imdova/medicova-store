@@ -92,7 +92,7 @@ export default function RenderComponent({ category }: RenderComponentProps) {
           alt={`${category.title} Cover`}
         />
       </div>
-      <div className="container mx-auto px-6 lg:max-w-[1440px]">
+      <div className="container mx-auto p-3 lg:max-w-[1440px]">
         {category.subCategories && (
           <CategorySlider
             path={`${category.slug}`}

@@ -1,48 +1,26 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Star, ChevronLeft, ChevronRight, Trash } from "lucide-react";
 import Image from "next/image";
 import LogoLoader from "../LogoLoader";
 import { Product } from "@/types/product";
 import Link from "next/link";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import {
-  addItem,
-  decreaseQuantity,
-  increaseQuantity,
-  removeItem,
-} from "@/store/slices/cartSlice";
-import CartButton from "../Buttons/CartButton";
-import CustomAlert from "../CustomAlert";
-import {
-  addToWishlist,
-  removeFromWishlist,
-} from "@/store/slices/wishlistSlice";
-import WishlistButton from "../Buttons/WishlistButton";
-import { useSession } from "next-auth/react";
+import ActionDropdownMenu from "../ActionDropdownMenu";
 
-interface ProductCardProps {
+interface WishlistCardProps {
   loading?: boolean;
   product: Product;
+  handleDelete?: () => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
+const WishlistCard: React.FC<WishlistCardProps> = ({
+  loading,
+  product,
+  handleDelete,
+}) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currentNudgeIndex, setCurrentNudgeIndex] = useState(0);
-  const session = useSession();
-  const [quantity, setQuantity] = useState(1);
-  const [alert, setAlert] = useState<{
-    message: string;
-    type: "success" | "error" | "info" | "cart" | "wishlist";
-  } | null>(null);
-  const dispatch = useAppDispatch();
-  const { products } = useAppSelector((state) => state.cart);
-  const { products: wishlistData } = useAppSelector((state) => state.wishlist);
-  const cartProduct = products.find((item) => item.id === product.id);
-  // Check if product is in cart
-  const isInCart = products.some((item) => item.id === product.id);
-  const isInWishlist = wishlistData.some((item) => item.id === product.id);
 
   // Image navigation
   const nextImage = () => {
@@ -61,14 +39,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
     setCurrentImageIndex(index);
   };
 
-  // Fixed useEffect hooks
-  useEffect(() => {
-    if (cartProduct) {
-      setQuantity(cartProduct.quantity);
-    } else {
-      setQuantity(1);
-    }
-  }, [cartProduct?.quantity]);
   // Auto-rotate nudges every 3 seconds
   const nudgeCount = product.nudges ? product.nudges.length : 0;
 
@@ -82,113 +52,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
     return () => clearInterval(interval);
   }, [nudgeCount]);
 
-  // Add useCallback to memoize functions
-  const addToCart = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      if (!isInCart) {
-        dispatch(
-          addItem({
-            id: product.id,
-            title: product.title ?? "",
-            image: product.images?.[0] ?? "/images/placeholder.jpg",
-            description: product.description ?? "No description available",
-            del_price: product.del_price,
-            price: product.price ?? 0,
-            shipping_fee: product.shipping_fee ?? 0,
-            quantity: Math.min(quantity, product.stock ?? 1), // Ensure we don't exceed stock
-            brand: product.brand,
-            deliveryTime: product.deliveryTime,
-            sellers: product.sellers,
-            stock: product.stock,
-            shippingMethod: product.shippingMethod,
-            weightKg: product.weightKg,
-          }),
-        );
-        showAlert("Added to cart", "cart");
-      } else {
-        showAlert("Product Already in cart!", "cart");
-      }
+  const dropdownItems = [
+    {
+      id: "delete",
+      label: "Delete",
+      icon: <Trash className="h-4 w-4" />,
+      action: handleDelete,
     },
-    [dispatch, isInCart, product, quantity],
-  );
-  const handdleAddToWishlist = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      if (!session.data?.user) {
-        showAlert("Please login to add items to your wishlist", "error");
-        return;
-      }
-
-      const userId = session.data.user.id;
-
-      try {
-        if (!isInWishlist) {
-          dispatch(addToWishlist(product, userId));
-          showAlert("Added to wishlist", "wishlist");
-        } else {
-          dispatch(
-            removeFromWishlist({
-              id: product.id,
-              userId: userId,
-            }),
-          );
-          showAlert("Removed from wishlist", "wishlist");
-        }
-      } catch (error) {
-        console.error("Wishlist operation failed:", error);
-        showAlert("Failed to update wishlist", "error");
-      }
-    },
-    [dispatch, isInWishlist, product, quantity, session.data?.user],
-  );
-
-  const handleQuantityChange = useCallback(
-    (newQuantity: number) => {
-      const validatedQuantity = Math.max(0, Math.floor(newQuantity));
-
-      if (validatedQuantity === 0) {
-        dispatch(removeItem(product.id));
-        showAlert("Deleted from cart", "error");
-      } else if (validatedQuantity > quantity) {
-        const increaseAmount = validatedQuantity - quantity;
-        dispatch(increaseQuantity({ id: product.id, amount: increaseAmount }));
-      } else {
-        const decreaseAmount = quantity - validatedQuantity;
-        dispatch(decreaseQuantity({ id: product.id, amount: decreaseAmount }));
-      }
-
-      if (validatedQuantity !== quantity) {
-        setQuantity(validatedQuantity);
-      }
-    },
-    [dispatch, product.id, quantity],
-  );
-
-  // Show Alert Function
-  const showAlert = (
-    message: string,
-    type: "success" | "error" | "info" | "cart" | "wishlist",
-  ) => {
-    setAlert({ message, type });
-    setTimeout(() => setAlert(null), 3000); // Hide after 3 seconds
-  };
+  ];
 
   return (
     <>
-      {/* Global Alert Display */}
-      {alert && (
-        <CustomAlert
-          message={alert.message}
-          type={alert.type}
-          onClose={() => setAlert(null)}
-        />
-      )}
-      <div className="group relative mx-auto h-full min-h-[300px] w-full cursor-pointer overflow-hidden rounded-xl border border-gray-300 bg-white p-2 shadow-sm">
+      <div className="group relative mx-auto h-full min-h-[300px] w-full cursor-pointer rounded-xl border border-gray-300 bg-white p-2 shadow-sm">
         {loading ? (
           <div className="flex h-full w-full items-center justify-center">
             <LogoLoader className="w-[40px] animate-pulse text-gray-400" />
@@ -259,27 +134,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
                   </span>
                 </div>
               </div>
-              <CartButton
-                isInCart={isInCart}
-                quantity={quantity}
-                addToCart={addToCart}
-                handleQuantityChange={handleQuantityChange}
-                maxStock={product.stock}
-                productId={product.id}
-              />
-
-              <WishlistButton
-                addToWishlist={handdleAddToWishlist}
-                isInWishlist={isInWishlist}
-                productId={product.id}
-              />
-
-              {/* <button
-                onClick={handdleAddToWishlist}
-                className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white text-sm font-medium text-gray-700 transition duration-150 hover:bg-light-primary hover:text-white"
-              >
-                <Heart size={16} />
-              </button> */}
             </div>
 
             <Link
@@ -338,6 +192,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
                 </div>
               )}
             </Link>
+            <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+              <Link
+                className="w-full rounded-md border border-primary p-2 text-center text-xs font-semibold uppercase text-primary"
+                href={`/product-details/${product.id}`}
+              >
+                View options
+              </Link>
+              <ActionDropdownMenu items={dropdownItems} align="left" />
+            </div>
           </div>
         )}
       </div>
@@ -345,4 +208,4 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
   );
 };
 
-export default ProductCard;
+export default WishlistCard;

@@ -334,7 +334,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
         </div>
       </Drawer>
       {/* Main Product Section */}
-      <main className="container mx-auto bg-white px-6 py-3 lg:max-w-[1440px]">
+      <main className="container mx-auto bg-white p-3 lg:max-w-[1440px]">
         <div className="grid grid-cols-1 gap-2 md:grid-cols-10 md:gap-6">
           <div className="col-span-1 h-full bg-white md:col-span-5 lg:col-span-3">
             <div className="my-3 block md:hidden">

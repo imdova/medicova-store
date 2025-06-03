@@ -1,11 +1,18 @@
 "use client";
-import { X, CheckCircle2, AlertCircle, Info } from "lucide-react";
+import {
+  X,
+  CheckCircle2,
+  AlertCircle,
+  Info,
+  ShoppingBag,
+  Heart,
+} from "lucide-react";
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface AlertProps {
   message: string;
-  type: "success" | "error" | "info";
+  type: "success" | "error" | "info" | "cart" | "wishlist";
   onClose: () => void;
   autoClose?: boolean;
   autoCloseDuration?: number;
@@ -27,24 +34,38 @@ const CustomAlert: React.FC<AlertProps> = ({
 
   const alertConfig = {
     success: {
-      icon: <CheckCircle2 className="h-5 w-5" />,
-      bg: "bg-emerald-50",
-      text: "text-emerald-800",
-      border: "border-emerald-200",
-      accent: "text-emerald-600",
+      icon: <CheckCircle2 className="h-5 w-5 text-green-700" />,
+      bg: "bg-white",
+      text: "text-gray-800",
+      border: "border-gray-100",
+      accent: "text-gray-600",
     },
     error: {
-      icon: <AlertCircle className="h-5 w-5" />,
-      bg: "bg-rose-50",
-      text: "text-rose-800",
-      border: "border-rose-200",
-      accent: "text-rose-600",
+      icon: <AlertCircle className="h-5 w-5 text-red-700" />,
+      bg: "bg-white",
+      text: "text-gray-800",
+      border: "border-gray-100",
+      accent: "text-gray-600",
     },
     info: {
       icon: <Info className="h-5 w-5" />,
-      bg: "bg-gray-50",
+      bg: "bg-white",
       text: "text-gray-800",
-      border: "border-gray-200",
+      border: "border-gray-100",
+      accent: "text-gray-600",
+    },
+    cart: {
+      icon: <ShoppingBag className="h-5 w-5 text-green-700" />,
+      bg: "bg-white",
+      text: "text-gray-800",
+      border: "border-gray-100",
+      accent: "text-gray-600",
+    },
+    wishlist: {
+      icon: <Heart className="h-5 w-5 text-red-600" />,
+      bg: "bg-white",
+      text: "text-gray-800",
+      border: "border-gray-100",
       accent: "text-gray-600",
     },
   };
@@ -56,18 +77,13 @@ const CustomAlert: React.FC<AlertProps> = ({
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, x: -20 }}
         transition={{ type: "spring", damping: 25, stiffness: 120 }}
-        className={`fixed bottom-5 left-5 z-[9999] flex w-full max-w-[300px] items-start gap-3 rounded-lg border p-4 shadow-lg backdrop-blur-sm md:max-w-md ${alertConfig[type].bg} ${alertConfig[type].border}`}
+        className={`fixed bottom-5 left-5 z-[9999] flex w-full max-w-[300px] items-start gap-3 rounded-lg border p-4 shadow-lg backdrop-blur-sm ${alertConfig[type].bg} ${alertConfig[type].border}`}
       >
         <div className={`mt-0.5 ${alertConfig[type].accent}`}>
           {alertConfig[type].icon}
         </div>
 
         <div className="flex-1">
-          <h3
-            className={`text-sm font-medium ${alertConfig[type].text} leading-tight`}
-          >
-            {type === "success" ? "Success!" : "Oops!"}
-          </h3>
           <p className={`mt-1 text-sm ${alertConfig[type].text}`}>{message}</p>
         </div>
 
@@ -78,15 +94,6 @@ const CustomAlert: React.FC<AlertProps> = ({
         >
           <X className="h-4 w-4" />
         </button>
-
-        {autoClose && (
-          <motion.div
-            initial={{ width: "100%" }}
-            animate={{ width: 0 }}
-            transition={{ duration: autoCloseDuration / 1000, ease: "linear" }}
-            className={`absolute bottom-0 left-0 h-1 ${type === "success" ? "bg-emerald-400" : type === "info" ? "bg-gray-700" : "bg-rose-400"}`}
-          />
-        )}
       </motion.div>
     </AnimatePresence>
   );

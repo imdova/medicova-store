@@ -167,7 +167,7 @@ export default function CartPage() {
 
   if (!productsData.length) {
     return (
-      <div className="container mx-auto px-6 py-3 lg:max-w-[1440px]">
+      <div className="container mx-auto p-3 lg:max-w-[1440px]">
         {/* Items you previously viewed */}
         <div className="mt-6 rounded-lg bg-white shadow-sm">
           <h2 className="mb-2 text-2xl font-bold text-gray-600">
@@ -215,7 +215,7 @@ export default function CartPage() {
           onClose={() => setAlert(null)}
         />
       )}
-      <div className="container mx-auto px-6 py-3 lg:max-w-[1440px]">
+      <div className="container mx-auto p-3 lg:max-w-[1440px]">
         <h1 className="mb-6 text-2xl font-bold">
           Cart{" "}
           <span className="text-sm text-secondary">({productsCount} item)</span>
