@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Check } from "lucide-react";
 
 interface DynamicCheckboxProps {
@@ -18,8 +18,13 @@ const DynamicCheckbox: React.FC<DynamicCheckboxProps> = ({
   id,
   disabled = false,
 }) => {
-  const checkboxId =
-    id || `checkbox-${Math.random().toString(36).substr(2, 9)}`;
+  const [checkboxId, setCheckboxId] = useState(id || "");
+
+  useEffect(() => {
+    if (!id) {
+      setCheckboxId(`checkbox-${Math.random().toString(36).substr(2, 9)}`);
+    }
+  }, [id]);
 
   return (
     <div className="flex items-center gap-2">

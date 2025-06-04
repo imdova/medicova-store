@@ -20,11 +20,11 @@ import DeliverToModal from "@/components/UI/Modals/DeliverToModal";
 import AuthButton from "@/components/UI/Buttons/AuthButton";
 import { Drawer } from "@/components/UI/Drawer";
 import Collapse from "@/components/UI/Collapse";
-import { AccountPageProps } from "@/app/(auth)/account/types/account";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/UI/Modals/DynamicModal";
 import AuthLogin from "@/components/UI/Modals/loginAuth";
+import { AccountPageProps } from "@/app/(auth)/user/types/account";
 
 type Address = {
   id: string;

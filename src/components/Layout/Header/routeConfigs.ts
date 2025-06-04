@@ -7,8 +7,10 @@ interface RouteConfig {
 
 export const routeConfigs: RouteConfig[] = [
   { pattern: "/", headerType: "full" }, // Changed from "/*" to "/" for better default
-  { pattern: "/account", headerType: "account" },
-  { pattern: "/account/*", headerType: "account" },
+  { pattern: "/user/*", headerType: "account" },
+  { pattern: "/user", headerType: "account" },
+  { pattern: "/seller", headerType: "account" },
+  { pattern: "/seller/*", headerType: "account" },
 ];
 
 export const matchRoute = (pathname: string): RouteConfig | undefined => {

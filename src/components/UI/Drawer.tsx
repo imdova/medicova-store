@@ -12,6 +12,7 @@ interface DrawerProps {
   width?: string;
   hasOverlay?: boolean;
   position?: "left" | "right";
+  mobile?: boolean;
 }
 
 export const Drawer: React.FC<DrawerProps> = ({
@@ -23,9 +24,10 @@ export const Drawer: React.FC<DrawerProps> = ({
   width = "w-70",
   hasOverlay = true,
   position = "left",
+  mobile = true,
 }) => {
   return (
-    <div className="relative z-[2000] md:hidden">
+    <div className={`relative z-[2000] ${mobile ? "md:hidden" : ""} `}>
       {hasOverlay && (
         <div
           className={`fixed inset-0 bg-[#00000060] bg-opacity-50 transition-opacity ${

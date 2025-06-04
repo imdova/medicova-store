@@ -7,8 +7,8 @@ import { useAppSelector } from "@/store/hooks";
 import { motion, AnimatePresence } from "framer-motion";
 import { Suspense, useEffect, useState } from "react";
 import { Drawer } from "@/components/UI/Drawer";
-import { AccountPageProps } from "@/app/(auth)/account/types/account";
-import Sidebar from "@/app/(auth)/account/component/Sidebar";
+import Sidebar from "@/components/Layout/sidebar/Sidebar";
+import { AccountPageProps } from "@/app/(auth)/user/types/account";
 
 const AccountHeader: React.FC<AccountPageProps> = ({ user, activeSection }) => {
   const [productsCount, setProductsCount] = useState(0);

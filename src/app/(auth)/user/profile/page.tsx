@@ -17,7 +17,7 @@ const ProfilePage: React.FC = () => {
     name: session?.user?.name || "",
     email: session?.user?.email || "",
     image: session?.user?.image || "",
-    isAdmin: session?.user?.isAdmin,
+    role: session?.user?.role,
   };
   const {
     register,

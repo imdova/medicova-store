@@ -24,6 +24,22 @@ const Navbar = () => {
     setProductsCount(products.length);
   }, [products]);
 
+  // Get the appropriate links based on user role
+  const getNavLinks = () => {
+    if (!session.data?.user) return NavbarLinks.user; // Default for non-logged in users
+
+    switch (session.data.user.role) {
+      case "seller":
+        return NavbarLinks.seller;
+      case "admin":
+        return NavbarLinks.admin;
+      default:
+        return NavbarLinks.user;
+    }
+  };
+
+  const currentLinks = getNavLinks();
+
   const handleClick = (
     e: React.MouseEvent<HTMLButtonElement>,
     link: NavLink,
@@ -45,7 +61,7 @@ const Navbar = () => {
       className="fixed bottom-0 z-50 w-full bg-white md:hidden"
     >
       <div className="flex h-16 items-center justify-around">
-        {NavbarLinks.map((link) => {
+        {currentLinks.map((link) => {
           const CurrentPage = isCurrentPage(pathname, link.path);
           const IconComponent = link.icon;
 

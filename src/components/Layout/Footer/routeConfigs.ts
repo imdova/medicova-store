@@ -7,7 +7,10 @@ interface RouteConfig {
 
 export const routeConfigs: RouteConfig[] = [
   { pattern: "/", footerType: "full" }, // "/" is better as a default than "/*"
+  { pattern: "/account", footerType: "account" }, // Keep wildcard for subpaths
   { pattern: "/account/*", footerType: "account" }, // Keep wildcard for subpaths
+  { pattern: "/seller", footerType: "account" }, // Keep wildcard for subpaths
+  { pattern: "/seller/*", footerType: "account" }, // Keep wildcard for subpaths
 ];
 
 export const matchRoute = (pathname: string): RouteConfig | undefined => {

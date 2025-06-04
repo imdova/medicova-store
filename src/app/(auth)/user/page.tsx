@@ -7,7 +7,7 @@ const AccountPage: React.FC = () => {
 
   // Redirect to orders page by default
   React.useEffect(() => {
-    router.push("/account/orders");
+    router.push("/user/orders");
   }, []);
 
   return null;

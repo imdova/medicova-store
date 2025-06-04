@@ -174,10 +174,10 @@ const SearchComponent = () => {
 
       {/* Search results dropdown */}
       {isFocused && (
-        <div className="absolute left-0 right-0 top-full z-50 mt-1 w-full">
+        <div className="absolute left-0 right-0 top-full z-50 w-full">
           {/* Show recent searches and keyword suggestions when there's no query */}
           {!searchQuery && recentSearches.length > 0 && (
-            <div className="rounded-sm border border-gray-200 bg-white p-2 shadow-lg">
+            <div className="border border-t-0 border-gray-200 bg-white p-2 shadow-lg md:rounded-sm">
               <div className="mb-2 flex items-center justify-between px-2 py-1">
                 <div className="flex items-center text-xs font-semibold uppercase tracking-wider text-gray-500">
                   <Clock className="mr-2 h-3 w-3" />

@@ -14,7 +14,7 @@ interface DropdownProps {
 }
 
 export default function Dropdown({
-  label = "Select",
+  label,
   icon,
   options,
   selected,
@@ -40,16 +40,16 @@ export default function Dropdown({
   const selectedOption = options.find((opt) => opt.id === selected);
 
   return (
-    <div ref={dropdownRef} className="relative inline-block text-left">
+    <div ref={dropdownRef} className="relative inline-block w-full text-left">
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex items-center gap-1 rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 focus:outline-none"
+        className="flex w-full items-center justify-between gap-1 rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 focus:outline-none"
       >
         {icon}
-        <span>
-          {label}: {selectedOption?.name}
-        </span>
+
+        <span>{selectedOption ? selectedOption.name : label}</span>
+
         <ChevronDown size={16} />
       </button>
 

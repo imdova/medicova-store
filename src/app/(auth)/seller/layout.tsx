@@ -1,8 +1,7 @@
 "use client";
 import React, { ReactNode } from "react";
-import Sidebar from "./component/Sidebar";
 import { useSession } from "next-auth/react";
-import GoBackButton from "@/components/UI/Buttons/GoBackButton";
+import Sidebar from "@/components/Layout/sidebar/Sidebar";
 
 interface AccountLayoutProps {
   children: ReactNode;
@@ -17,7 +16,7 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({ children }) => {
     name: session?.user?.name || "",
     email: session?.user?.email || "",
     image: session?.user?.image || "",
-    isAdmin: session?.user?.isAdmin,
+    role: session?.user?.role || "user",
   };
 
   return (
@@ -27,9 +26,6 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({ children }) => {
       </div>
 
       <main className="flex-1 pt-2 md:px-4">
-        <div className="mb-2">
-          <GoBackButton />
-        </div>
         <div>{children}</div>
       </main>
     </div>

@@ -1,3 +1,4 @@
+import { userType } from "@/types/next-auth";
 import { User } from "next-auth";
 
 export interface Order {
@@ -20,7 +21,7 @@ export interface SidebarItem {
   subItems?: SidebarItem[];
 }
 interface HeaderUser extends User {
-  isAdmin?: boolean;
+  role: userType;
 }
 
 export interface AccountPageProps {

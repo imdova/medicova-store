@@ -1,5 +1,6 @@
 import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+
 export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
@@ -10,16 +11,35 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         try {
+          // In a real app, you would query your database here
+          // This is just a mock implementation
+
+          // User credentials
           if (
             credentials?.email === "user@medicova.com" &&
-            credentials?.password === "12345678"
+            credentials?.password === "user123"
           ) {
             return {
               id: "1",
-              name: "Mohamed Sayed",
+              name: "Regular User",
               email: "user@medicova.com",
+              role: "user",
             };
           }
+
+          // Seller credentials
+          if (
+            credentials?.email === "seller@medicova.com" &&
+            credentials?.password === "seller123"
+          ) {
+            return {
+              id: "2",
+              name: "Seller Account",
+              email: "seller@medicova.com",
+              role: "seller",
+            };
+          }
+
           return null;
         } catch (error) {
           console.error("Authorize error:", error);
@@ -39,19 +59,21 @@ export const authOptions: AuthOptions = {
         token.id = user.id;
         token.name = user.name;
         token.email = user.email;
+        token.role = user.role; // Using 'role' instead of 'type' for better semantics
       }
-      console.log(token);
-
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id;
-        session.user.name = token.name;
-        session.user.email = token.email;
+        session.user.id = token.id as string;
+        session.user.name = token.name as string;
+        session.user.email = token.email as string;
+        session.user.role = token.role ;
       }
-      console.log(session);
       return session;
     },
+  },
+  pages: {
+    signIn: "/auth/signin", 
   },
 };

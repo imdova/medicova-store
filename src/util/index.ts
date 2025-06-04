@@ -1,45 +1,28 @@
 import { destinationSurcharges } from "@/constants";
 import { ShippingOptions } from "@/types";
 
-export const isCurrentPage = (pathname?: string, pattern?: string): boolean => {
-  if (!pathname || !pattern) return false;
+export const isCurrentPage = (pathname: string, href: string): boolean => {
+  if (!pathname || !href) return false;
 
-  // Normalize paths by removing trailing slashes
-  const normalizedPathname = pathname.replace(/\/$/, "");
-  const normalizedPattern = pattern.replace(/\/$/, "");
+  // Normalize paths by removing trailing slashes (but keep "/" intact)
+  const normalize = (path: string) =>
+    path === "/" ? "/" : path.replace(/\/$/, "");
+  const normalizedPathname = normalize(pathname);
+  const normalizedHref = normalize(href);
 
-  // Special handling for root path
-  if (normalizedPattern === "") {
-    return normalizedPathname === "";
+  // Exact match
+  if (normalizedPathname === normalizedHref) return true;
+
+  // Special handling: '/' should only match exact root, not every path
+  if (normalizedHref === "/") return false;
+
+  // Special handling for seller dashboard
+  if (normalizedHref === "/seller") {
+    return normalizedPathname === "/seller";
   }
 
-  // Handle exact matches first
-  if (normalizedPathname === normalizedPattern) return true;
-
-  // Convert pattern to regex
-  const regexPattern = normalizedPattern
-    .replace(/\[.*?\]/g, "[^/]+") // Handle dynamic segments
-    .replace(/\//g, "\\/");
-
-  // Check exact match with regex
-  const exactRegex = new RegExp(`^${regexPattern}$`);
-  if (exactRegex.test(normalizedPathname)) return true;
-
-  // Check for nested routes (e.g., account/profile under account)
-  // But exclude the root path from this check
-  if (normalizedPattern !== "") {
-    const nestedRegex = new RegExp(`^${regexPattern}(\\/|$)`);
-    if (nestedRegex.test(normalizedPathname)) return true;
-  }
-
-  // Handle wildcards if needed
-  if (pattern.includes("*")) {
-    const wildcardPattern = normalizedPattern.replace(/\*/g, ".*");
-    const wildcardRegex = new RegExp(`^${wildcardPattern}`);
-    return wildcardRegex.test(normalizedPathname);
-  }
-
-  return false;
+  // Match nested routes (e.g., "/user/orders" startsWith "/user")
+  return normalizedPathname.startsWith(normalizedHref);
 };
 
 // Ex Data

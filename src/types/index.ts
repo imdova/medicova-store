@@ -31,6 +31,18 @@ export interface SidebarGroup {
   items: SidebarItem[];
 }
 
+// menus type
+export interface MenuItem {
+  title: string;
+  href: string;
+  icon: LucideIcon;
+}
+
+export interface MenuGroup {
+  title?: string;
+  items: MenuItem[];
+}
+
 // header types
 export type link = {
   title: string;
