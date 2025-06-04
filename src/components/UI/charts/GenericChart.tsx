@@ -1,7 +1,7 @@
 "use client";
 
 import { ApexOptions } from "apexcharts";
-import { ChevronDown, BarChart2, LineChart } from "lucide-react";
+import { ChevronDown, BarChart2, LineChart, LucideIcon } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 
@@ -32,7 +32,7 @@ interface CardData {
   title: string;
   value: string;
   color: string;
-  icon?: React.ReactNode;
+  icon?: LucideIcon;
 }
 
 interface Props {
@@ -227,37 +227,40 @@ const GenericChart = ({
           </h2>
 
           <div className="flex flex-col justify-center gap-4 md:flex-row">
-            {cards.map((card) => (
-              <div
-                key={card.title}
-                onClick={() => setSelectedSeries(card.title)}
-                className={`flex cursor-pointer items-center gap-3 rounded-lg border p-2 shadow-sm transition ${
-                  selectedSeries === card.title
-                    ? "border-gray-400"
-                    : "border-gray-100"
-                }`}
-              >
+            {cards.map((card) => {
+              const Icon = card.icon;
+              return (
                 <div
-                  className={`flex h-10 w-10 items-center justify-center rounded-lg ${
+                  key={card.title}
+                  onClick={() => setSelectedSeries(card.title)}
+                  className={`flex cursor-pointer items-center gap-3 rounded-lg border p-2 shadow-sm transition ${
                     selectedSeries === card.title
-                      ? "bg-primary text-white"
-                      : "bg-gray-200 text-secondary"
+                      ? "border-gray-400"
+                      : "border-gray-100"
                   }`}
-                  style={{
-                    backgroundColor:
-                      selectedSeries === card.title ? card.color : undefined,
-                  }}
                 >
-                  {card.icon || card.title.charAt(0)}
+                  <div
+                    className={`flex h-10 w-10 items-center justify-center rounded-lg ${
+                      selectedSeries === card.title
+                        ? "bg-primary text-white"
+                        : "bg-gray-200 text-secondary"
+                    }`}
+                    style={{
+                      backgroundColor:
+                        selectedSeries === card.title ? card.color : undefined,
+                    }}
+                  >
+                    {Icon && <Icon size={15} />}
+                  </div>
+                  <div>
+                    <span className="mb-2 text-xs text-secondary">
+                      {card.title}
+                    </span>
+                    <p className="font-semibold">{card.value}</p>
+                  </div>
                 </div>
-                <div>
-                  <span className="mb-2 text-xs text-secondary">
-                    {card.title}
-                  </span>
-                  <p className="font-semibold">{card.value}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
       )}

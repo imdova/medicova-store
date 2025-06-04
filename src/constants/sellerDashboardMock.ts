@@ -1,4 +1,4 @@
-// src/data/sellerDashboardMock.ts
+import { DollarSign, RotateCcw, ShoppingCart } from "lucide-react";
 
 export const dummyChartData = {
   yearly: {
@@ -88,18 +88,18 @@ export const dummyCards = [
     title: "Revenue",
     value: "$34,000",
     color: "#3b82f6",
-    icon: "dollar",
+    icon: DollarSign,
   },
   {
     title: "Orders",
     value: "1,235",
     color: "#10b981",
-    icon: "shoppingCart",
+    icon: ShoppingCart,
   },
   {
     title: "Returns",
     value: "48",
     color: "#ef4444",
-    icon: "rotateCcw",
+    icon: RotateCcw,
   },
 ];
