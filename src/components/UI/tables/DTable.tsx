@@ -222,6 +222,10 @@ const DynamicTable = <T extends object>({
     if (!sortConfig || sortConfig.key !== key) return null;
     return sortConfig.direction;
   };
+  const someSelectedOnPage =
+    displayedData.length > 0 &&
+    displayedData.some((item) => selectedRows.has(item[rowIdKey])) &&
+    !allSelectedOnPage;
 
   // Render sort indicator
   const renderSortIndicator = (key: string) => {
@@ -242,7 +246,7 @@ const DynamicTable = <T extends object>({
     if (visibleActions.length === 0) return null;
 
     return (
-      <div className="flex items-center justify-end">
+      <div className="relative flex items-center justify-end">
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -259,7 +263,7 @@ const DynamicTable = <T extends object>({
             ref={(el) => {
               dropdownRefs.current[index] = el;
             }}
-            className="absolute z-10 mt-1 w-48 origin-top-right rounded-md bg-white p-1 py-1 shadow-lg ring-opacity-5 focus:outline-none"
+            className="absolute z-10 mt-1 w-48 rounded-md bg-white p-1 py-1 shadow-lg ring-opacity-5 focus:outline-none"
           >
             {visibleActions.map((action, actionIndex) => (
               <button
@@ -282,7 +286,7 @@ const DynamicTable = <T extends object>({
   };
 
   return (
-    <div className={`flex flex-col overflow-hidden rounded-md ${className}`}>
+    <div className={`relative flex flex-col rounded-md ${className}`}>
       <div className="grid grid-cols-1 overflow-x-auto">
         <table
           style={{ minWidth: minWidth }}
@@ -294,37 +298,56 @@ const DynamicTable = <T extends object>({
                 <th scope="col" className={`${cellClassName} w-10 text-center`}>
                   <label
                     htmlFor="all"
-                    className="inline-flex h-5 w-5 cursor-pointer items-center justify-center"
+                    className="relative inline-flex h-5 w-5 cursor-pointer items-center justify-center"
                   >
                     <input
                       id="all"
                       type="checkbox"
                       checked={allSelectedOnPage && displayedData.length > 0}
+                      ref={(el) => {
+                        if (el)
+                          el.indeterminate =
+                            !allSelectedOnPage && someSelectedOnPage;
+                      }}
                       onChange={toggleSelectAll}
-                      className="absolute h-full w-full opacity-0"
+                      className="absolute z-10 h-full w-full cursor-pointer opacity-0"
                     />
                     <div
-                      className={`h-5 w-5 rounded border transition-all duration-150 ease-in-out ${
+                      className={`flex h-5 w-5 items-center justify-center rounded border transition-all duration-150 ease-in-out ${
                         allSelectedOnPage && displayedData.length > 0
                           ? "border-white bg-green-500 hover:bg-green-600"
-                          : "border-gray-300 bg-white hover:border-gray-400"
-                      } focus:ring-2 focus:ring-green-200`}
+                          : someSelectedOnPage
+                            ? "border-white bg-green-500 hover:bg-green-600"
+                            : "border-gray-300 bg-white hover:border-gray-400"
+                      }`}
                     >
-                      <svg
-                        className={`absolute left-1/2 top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 text-white transition-all duration-200 ease-out ${
-                          allSelectedOnPage && displayedData.length > 0
-                            ? "scale-100 opacity-100"
-                            : "scale-50 opacity-0"
-                        }`}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M20 6L9 17l-5-5" />
-                      </svg>
+                      {allSelectedOnPage && displayedData.length > 0 ? (
+                        //  Checked Icon
+                        <svg
+                          className="h-3.5 w-3.5 text-white"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M20 6L9 17l-5-5" />
+                        </svg>
+                      ) : someSelectedOnPage ? (
+                        // Indeterminate Icon
+                        <svg
+                          className="h-3.5 w-3.5 text-white"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <line x1="6" y1="12" x2="18" y2="12" />
+                        </svg>
+                      ) : null}
                     </div>
                   </label>
                 </th>

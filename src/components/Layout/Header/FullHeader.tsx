@@ -64,7 +64,7 @@ const FullHeader: React.FC<AccountPageProps> = () => {
   const router = useRouter();
   const handdleLogin = () => {
     if (session.data?.user) {
-      router.push("account/wishlist");
+      router.push("/wishlist");
     } else {
       setIsModalLogOpen(true);
     }

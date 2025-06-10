@@ -30,7 +30,7 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
         },
         {
           title: "Wishlist",
-          href: "/user/wishlist",
+          href: "/wishlist",
           icon: Heart,
         },
       ],
@@ -72,6 +72,16 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
           title: "Products",
           href: "/seller/products",
           icon: Box,
+          subItems: [
+            {
+              title: "All Products",
+              href: "/seller/products",
+            },
+            {
+              title: "Create Product",
+              href: "/seller/create-product",
+            },
+          ],
         },
         {
           title: "Brand Management",
@@ -94,6 +104,11 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
           title: "Payments",
           href: "/seller/payments",
           icon: WalletCards,
+        },
+        {
+          title: "Wishlist",
+          href: "/wishlist",
+          icon: Heart,
         },
       ],
     },

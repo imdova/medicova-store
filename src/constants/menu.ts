@@ -33,7 +33,7 @@ export const menuGroups: { [key in userType]: MenuGroup[] } = {
         },
         {
           title: "Wishlist",
-          href: "/user/wishlist",
+          href: "/wishlist",
           icon: Heart,
         },
       ],
@@ -106,6 +106,11 @@ export const menuGroups: { [key in userType]: MenuGroup[] } = {
           title: "Payments",
           href: "/seller/payments",
           icon: WalletCards,
+        },
+        {
+          title: "Wishlist",
+          href: "/wishlist",
+          icon: Heart,
         },
       ],
     },

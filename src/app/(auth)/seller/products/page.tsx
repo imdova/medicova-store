@@ -198,20 +198,35 @@ export default function ProductsPage() {
       <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         {/* Filter Controls */}
         <div className="flex flex-col items-end gap-4 pb-4 xl:flex-row">
-          <div className="relative w-full xl:w-fit xl:min-w-[350px]">
-            <input
-              type="text"
-              defaultValue={searchQuery}
-              onChange={(e) =>
-                handleFilterChange("search", e.target.value.trim())
-              }
-              placeholder="Search for product"
-              className="w-full rounded-md border border-gray-300 px-3 py-1.5 pl-10 outline-none placeholder:text-sm"
-            />
-            <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600"
-              size={15}
-            />
+          <div className="flex w-full gap-4 xl:w-fit xl:min-w-[350px]">
+            <div className="relative w-full">
+              <input
+                type="text"
+                defaultValue={searchQuery}
+                onChange={(e) =>
+                  handleFilterChange("search", e.target.value.trim())
+                }
+                placeholder="Search for product"
+                className="w-full rounded-md border border-gray-300 px-3 py-1.5 pl-10 outline-none placeholder:text-sm"
+              />
+              <Search
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600"
+                size={15}
+              />
+            </div>
+            <div className="block lg:hidden">
+              <button
+                onClick={() => setFiltersOpen(true)}
+                className="rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-gray-500"
+              >
+                <Filter size={16} />
+              </button>
+
+              <Filters
+                isOpen={filtersOpen}
+                onClose={() => setFiltersOpen(false)}
+              />
+            </div>
           </div>
           <div className="flex w-full flex-1 items-end gap-2">
             <div className="grid w-full grid-cols-1 gap-2 lg:grid-cols-3">
@@ -257,7 +272,7 @@ export default function ProductsPage() {
                 />
               </div>
             </div>
-            <div>
+            <div className="hidden lg:block">
               <button
                 onClick={() => setFiltersOpen(true)}
                 className="rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-gray-500"
@@ -272,13 +287,13 @@ export default function ProductsPage() {
             </div>
           </div>
         </div>
-        <div className="overflow-x-auto">
+        <div>
           <DynamicTable
             data={filteredProducts}
             columns={columns}
             pagination={true}
             itemsPerPage={5}
-            selectable={false}
+            selectable={true}
             defaultSort={{ key: "name", direction: "asc" }}
             actions={[
               {

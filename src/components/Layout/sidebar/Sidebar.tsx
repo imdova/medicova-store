@@ -1,10 +1,9 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-
 import { sidebarGroups } from "@/constants/sidebar";
 import { usePathname } from "next/navigation";
-import { Power } from "lucide-react";
+import { Power, ChevronDown, ChevronUp } from "lucide-react"; // Import ChevronDown and ChevronUp for collapse icons
 import { signOut } from "next-auth/react";
 import { isCurrentPage } from "@/util";
 import { AccountPageProps } from "@/app/(auth)/user/types/account";
@@ -12,8 +11,20 @@ import ProfileCompletion from "@/app/(auth)/user/component/ProfileCompletion";
 
 const Sidebar: React.FC<AccountPageProps> = ({ user }) => {
   const pathname = usePathname();
+  // State to manage the open/collapsed state of parent items.
+  // The key will be the item's href (or a unique identifier if no href),
+  // and the value will be a boolean (true for open, false for collapsed).
+  const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
 
   const groups = sidebarGroups[user.role] || [];
+
+  // Function to toggle the collapse state of an item
+  const toggleItem = (itemHref: string) => {
+    setOpenItems((prev) => ({
+      ...prev,
+      [itemHref]: !prev[itemHref],
+    }));
+  };
 
   return (
     <aside className="w-72">
@@ -44,36 +55,78 @@ const Sidebar: React.FC<AccountPageProps> = ({ user }) => {
               <ul className="space-y-1">
                 {group.items.map((item) => {
                   const Icon = item.icon;
-                  const CurrentPage = isCurrentPage(pathname, item.href);
+                  // Check if the item has sub-items
+                  const hasSubItems = item.subItems && item.subItems.length > 0;
+                  // Determine if any of its sub-items are currently the active page
+                  const isAnySubItemCurrentPage =
+                    hasSubItems &&
+                    item.subItems?.some((subItem) =>
+                      isCurrentPage(pathname, subItem.href),
+                    );
+                  // Determine if the item should be open (either explicitly opened, or if a sub-item is active)
+                  const isOpen =
+                    openItems[item.href] || isAnySubItemCurrentPage;
+                  // This item is only a direct link if it DOES NOT have sub-items.
+                  const isDirectLink = !hasSubItems;
+
                   return (
                     <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm ${
-                          CurrentPage
-                            ? "bg-green-50 font-medium text-green-600"
-                            : "text-gray-700 hover:bg-gray-100"
-                        }`}
-                      >
-                        {Icon && <Icon className="h-4 w-4" />}
-                        {item.title}
-                      </Link>
+                      {/*
+                        Conditional rendering:
+                        If it has sub-items, it's a button to toggle collapse.
+                        Otherwise (if no sub-items), it's a direct link.
+                      */}
+                      {!isDirectLink ? (
+                        <button
+                          onClick={() => toggleItem(item.href)}
+                          className={`flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-sm ${
+                            isOpen
+                              ? "bg-green-50 font-medium text-green-600"
+                              : "text-gray-700 hover:bg-gray-100"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            {Icon && <Icon className="h-4 w-4" />}
+                            {item.title}
+                          </div>
+                          {/* Display appropriate chevron icon based on collapse state */}
+                          {isOpen ? (
+                            <ChevronUp className="h-4 w-4" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4" />
+                          )}
+                        </button>
+                      ) : (
+                        // Render a regular Link if it's a direct link (i.e., no sub-items)
+                        <Link
+                          href={item.href}
+                          className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm ${
+                            isCurrentPage(pathname, item.href)
+                              ? "bg-green-50 font-medium text-green-600"
+                              : "text-gray-700 hover:bg-gray-100"
+                          }`}
+                        >
+                          {Icon && <Icon className="h-4 w-4" />}
+                          {item.title}
+                        </Link>
+                      )}
 
-                      {item.subItems && (
+                      {/* Render sub-items only if they exist and the parent item is open */}
+                      {hasSubItems && isOpen && (
                         <ul className="ml-4 mt-1 space-y-1 border-l border-gray-200 pl-3">
-                          {item.subItems.map((subItem) => {
-                            const CurrentPage = isCurrentPage(
+                          {item.subItems?.map((subItem, subIndex) => {
+                            const isCurrentSubPage = isCurrentPage(
                               pathname,
                               subItem.href,
                             );
                             return (
-                              <li key={subItem.href}>
+                              <li key={subIndex}>
                                 <Link
                                   href={subItem.href}
                                   className={`flex items-center rounded px-3 py-1.5 text-sm ${
-                                    CurrentPage
-                                      ? "bg-green-50 font-medium text-green-600"
-                                      : "text-gray-600 hover:bg-gray-100"
+                                    isCurrentSubPage
+                                      ? "font-medium text-green-600"
+                                      : "text-gray-600 hover:text-gray-800"
                                   }`}
                                 >
                                   {subItem.title}
