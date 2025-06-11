@@ -80,4 +80,5 @@ export interface Product {
   specifications?: { label: string; content: string }[];
   stock?: number;
   shipping_fee: number;
+  sku?: string;
 }

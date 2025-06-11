@@ -273,13 +273,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
                 isInWishlist={isInWishlist}
                 productId={product.id}
               />
-
-              {/* <button
-                onClick={handdleAddToWishlist}
-                className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white text-sm font-medium text-gray-700 transition duration-150 hover:bg-light-primary hover:text-white"
-              >
-                <Heart size={16} />
-              </button> */}
             </div>
 
             <Link

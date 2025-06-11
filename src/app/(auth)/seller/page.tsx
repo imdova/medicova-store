@@ -5,6 +5,7 @@ import GenericChart from "@/components/UI/charts/GenericChart";
 import DynamicTable from "@/components/UI/tables/DTable";
 import TopProducts from "./components/TopProducts";
 import { dummyCards, dummyChartData } from "@/constants/sellerDashboardMock";
+import { PencilIcon, TrashIcon } from "lucide-react";
 
 type Order = {
   id: string;
@@ -127,8 +128,24 @@ export default function SellerDashboard() {
               columns={columns}
               pagination={true}
               itemsPerPage={5}
-              selectable={false}
+              selectable
               defaultSort={{ key: "date", direction: "desc" }}
+              actions={[
+                {
+                  label: "Edit",
+                  onClick: () => console.log("Edited"),
+                  className:
+                    "bg-white text-gray-700 hover:text-blue-700 hover:bg-blue-50 ",
+                  icon: <PencilIcon className="h-4 w-4" />,
+                },
+                {
+                  label: "Delete",
+                  onClick: () => console.log("Deleted"),
+                  className:
+                    "bg-white text-gray-700 hover:text-red-700 hover:bg-red-50 ",
+                  icon: <TrashIcon className="h-4 w-4" />,
+                },
+              ]}
             />
           </div>
         </div>

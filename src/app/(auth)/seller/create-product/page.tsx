@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, JSX } from "react";
 import {
   ChevronRight,
   Search,
@@ -10,11 +10,15 @@ import {
   Check,
   Info,
   AlertCircle,
+  ChevronLeft,
+  Save,
+  Eye,
 } from "lucide-react";
 import { allCategories } from "@/constants/categouries";
-import { CategoryType } from "@/types";
+import { CategoryType, MultiCategory } from "@/types";
 import { brands } from "@/constants/brands";
 import Image from "next/image";
+import DynamicButton from "@/components/UI/Buttons/DynamicButton";
 
 type Brand = {
   id: string;
@@ -27,14 +31,21 @@ type Specification = {
   key: string;
   value: string;
 };
+// Define the component props
+type CategoryItemProps = {
+  category: CategoryType;
+  onSelect: (category: CategoryType) => void;
+  onNavigate: (category: CategoryType) => void;
+};
 
 type ProductDetails = {
-  category?: CategoryType;
+  id: string;
+  category?: MultiCategory;
   brand?: Brand;
   sku?: string;
   pricingMethod: PricingMethod;
+  del_price?: number;
   price?: number;
-  salePrice?: number;
   saleStart?: string;
   saleEnd?: string;
   title?: string;
@@ -48,6 +59,7 @@ type ProductDetails = {
   colors?: string[];
   specifications?: Specification[];
   images?: File[];
+  existingImages?: string[];
 };
 
 interface ValidationErrors {
@@ -104,26 +116,26 @@ const validateDetails = (product: ProductDetails): ValidationErrors => {
     errors.title = "Title must be at least 3 characters";
   }
 
-  if (product.price === undefined || product.price === null) {
-    errors.price = "Price is required";
+  if (product.del_price === undefined || product.del_price === null) {
+    errors.del_price = "del_price is required";
   } else if (
-    typeof product.price !== "number" ||
-    isNaN(product.price) ||
-    product.price < 0
+    typeof product.del_price !== "number" ||
+    isNaN(product.del_price) ||
+    product.del_price < 0
   ) {
-    errors.price = "Price must be a positive number";
+    errors.del_price = "Price must be a positive number";
   }
 
   if (product.saleStart) {
-    if (product.salePrice === undefined || product.salePrice === null) {
+    if (product.price === undefined || product.price === null) {
       errors.salePrice = "Sale price is required when sale dates are set";
     } else if (
-      typeof product.salePrice !== "number" ||
-      isNaN(product.salePrice) ||
-      product.salePrice < 0
+      typeof product.price !== "number" ||
+      isNaN(product.price) ||
+      product.price < 0
     ) {
       errors.salePrice = "Sale price must be a positive number";
-    } else if (product.salePrice >= (product.price || 0)) {
+    } else if (product.price >= (product.price || 0)) {
       errors.salePrice = "Sale price must be less than regular price";
     }
 
@@ -155,6 +167,45 @@ const validateDetails = (product: ProductDetails): ValidationErrors => {
   }
 
   return errors;
+};
+
+// Separate component for category items
+const CategoryItem = ({
+  category,
+  onSelect,
+  onNavigate,
+}: CategoryItemProps): JSX.Element => {
+  const hasSubcategories =
+    category.subCategories && category.subCategories.length > 0;
+
+  return (
+    <button
+      type="button"
+      className="flex w-full items-center justify-between p-2 text-left hover:bg-gray-100"
+      onClick={() => {
+        if (hasSubcategories) {
+          onNavigate(category);
+        } else {
+          onSelect(category);
+        }
+      }}
+    >
+      <div>
+        <div>{category.title}</div>
+        {category.slug && (
+          <div className="text-sm text-gray-500">{category.slug}</div>
+        )}
+      </div>
+      {hasSubcategories && (
+        <div className="flex items-center">
+          <span className="mr-2 text-xs text-gray-400">
+            {category.subCategories?.length} subcategories
+          </span>
+          <ChevronRight className="text-gray-400" size={16} />
+        </div>
+      )}
+    </button>
+  );
 };
 
 const HealthStatus = ({ product }: { product: ProductDetails }) => {
@@ -329,8 +380,11 @@ const ProductCreationWizard = () => {
   type Step = "category" | "brand" | "identity" | "details";
   const [step, setStep] = useState<Step>("category");
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentParentCategory, setCurrentParentCategory] =
+    useState<CategoryType | null>(null);
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [product, setProduct] = useState<ProductDetails>({
+    id: "",
     pricingMethod: "manual",
     specifications: [],
     images: [],
@@ -380,6 +434,7 @@ const ProductCreationWizard = () => {
           alert("Product created successfully!");
           // Reset product for new creation or navigate to confirmation
           setProduct({
+            id: "",
             pricingMethod: "manual",
             specifications: [],
             images: [],
@@ -538,7 +593,7 @@ const ProductCreationWizard = () => {
         }
       >
         <span
-          className={`mr-2 flex h-6 w-6 items-center justify-center rounded-full ${
+          className={`mr-2 hidden h-6 w-6 items-center justify-center rounded-full md:flex ${
             isActive
               ? "bg-green-100"
               : isCompleted
@@ -546,7 +601,7 @@ const ProductCreationWizard = () => {
                 : "bg-gray-100"
           }`}
         >
-          {isCompleted && !isActive ? "✓" : stepNumber}
+          {isCompleted && !isActive ? <Check size={15} /> : stepNumber}
         </span>
         {label}
         {stepName !== "details" && <ChevronRight className="mx-2" size={16} />}
@@ -556,29 +611,45 @@ const ProductCreationWizard = () => {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold">Product Creation Wizard</h1>
+      <h1 className="mb-6 text-2xl font-bold md:text-3xl">Product Creation</h1>
 
       <div className="grid w-full overflow-x-auto">
         {/* Stepper */}
-        <div className="mb-8 flex w-full min-w-[320px] snap-x gap-2 overflow-x-auto rounded-lg border border-gray-200 bg-white p-2">
+        <div className="mb-8 flex w-full min-w-[270px] snap-x gap-2 overflow-x-auto rounded-lg border border-gray-200 bg-white p-2">
           {renderStepIndicator("category", 1, "Category")}
           {renderStepIndicator("brand", 2, "Brand")}
           {renderStepIndicator("identity", 3, "Identity")}
           {renderStepIndicator("details", 4, "Details")}
         </div>
       </div>
-
       {/* Category Step */}
       {step === "category" && (
         <div className="rounded-xl border border-gray-200 bg-white p-6">
-          <h2 className="mb-4 text-xl font-semibold">
-            Select Product Category
-          </h2>
+          {/* Header with back button if in subcategory view */}
+          <div className="mb-4 flex items-center">
+            {currentParentCategory && (
+              <button
+                type="button"
+                className="mr-2 flex items-center text-gray-600 hover:text-gray-800"
+                onClick={() => setCurrentParentCategory(null)}
+              >
+                <ChevronLeft size={20} />
+              </button>
+            )}
+            <h2 className="text-xl font-semibold">
+              {currentParentCategory
+                ? currentParentCategory.title
+                : "Select Product Category"}
+            </h2>
+          </div>
+
           {errors.category && (
-            <div className="mb-4 rounded-md bg-red-50 p-3 text-red-600">
+            <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
               {errors.category}
             </div>
           )}
+
+          {/* Search input */}
           <div className="mb-6">
             <div className="relative">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -587,7 +658,11 @@ const ProductCreationWizard = () => {
               <input
                 type="text"
                 className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-4 focus:outline-none"
-                placeholder="Search category"
+                placeholder={
+                  currentParentCategory
+                    ? "Search subcategories"
+                    : "Search categories"
+                }
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 aria-label="Search categories"
@@ -605,23 +680,18 @@ const ProductCreationWizard = () => {
             </div>
           </div>
 
+          {/* Category list */}
           {searchTerm ? (
+            // Search results
             <div className="mb-2 max-h-[250px] space-y-2 overflow-y-auto rounded-lg border border-gray-200 p-2">
               {filteredCategories.length > 0 ? (
                 filteredCategories.map((category) => (
-                  <button
-                    type="button"
+                  <CategoryItem
                     key={category.id}
-                    className="w-full cursor-pointer p-2 text-left hover:bg-gray-100"
-                    onClick={() => handleCategorySelect(category)}
-                  >
-                    {category.title}
-                    {category.slug && (
-                      <div className="text-sm text-gray-500">
-                        {category.slug}
-                      </div>
-                    )}
-                  </button>
+                    category={category}
+                    onSelect={handleCategorySelect}
+                    onNavigate={setCurrentParentCategory}
+                  />
                 ))
               ) : (
                 <div className="p-3 text-center text-gray-500">
@@ -630,24 +700,22 @@ const ProductCreationWizard = () => {
               )}
             </div>
           ) : (
+            // Regular category list
             <>
               <div className="mb-2 max-h-[250px] overflow-y-auto rounded-lg border border-gray-200 p-2">
-                {allCategories.map((category, index) => (
-                  <button
-                    type="button"
-                    key={index}
-                    className="w-full cursor-pointer p-2 text-left hover:bg-gray-100"
-                    onClick={() => handleCategorySelect(category)}
-                  >
-                    {category.title}
-                    {category.slug && (
-                      <div className="text-sm text-gray-500">
-                        {category.slug}
-                      </div>
-                    )}
-                  </button>
-                ))}
+                {(currentParentCategory?.subCategories ?? allCategories).map(
+                  (category, index) => (
+                    <CategoryItem
+                      key={index}
+                      category={category}
+                      onSelect={handleCategorySelect}
+                      onNavigate={setCurrentParentCategory}
+                    />
+                  ),
+                )}
               </div>
+
+              {/* Selected category indicator */}
               {product.category && (
                 <div className="mb-6 rounded-md border border-green-200 bg-green-50 p-3">
                   <div className="font-medium">{product.category.title}</div>
@@ -657,6 +725,7 @@ const ProductCreationWizard = () => {
             </>
           )}
 
+          {/* Next button */}
           <div className="mt-6 flex justify-end">
             <button
               type="button"
@@ -675,7 +744,7 @@ const ProductCreationWizard = () => {
         <div className="rounded-xl border border-gray-200 bg-white p-6">
           <h2 className="mb-4 text-xl font-semibold">Select Brand</h2>
           {errors.brand && (
-            <div className="mb-4 rounded-md bg-red-50 p-3 text-red-600">
+            <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
               {errors.brand}
             </div>
           )}
@@ -760,7 +829,7 @@ const ProductCreationWizard = () => {
         <div className="rounded-xl border border-gray-200 bg-white p-6">
           <h2 className="mb-4 text-xl font-semibold">Product Identity</h2>
           {errors.sku && (
-            <div className="mb-4 rounded-md bg-red-50 p-3 text-red-600">
+            <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
               {errors.sku}
             </div>
           )}
@@ -797,7 +866,9 @@ const ProductCreationWizard = () => {
             onClick={handleGenerateSku}
           >
             <Clipboard className="mb-2 text-gray-400" size={24} />
-            <span className="text-gray-600">Generate SKU Automatically</span>
+            <span className="text-sm text-gray-600">
+              Generate SKU Automatically
+            </span>
           </button>
 
           {product.sku && (
@@ -830,14 +901,55 @@ const ProductCreationWizard = () => {
       {/* Details Step */}
       {step === "details" && (
         <div>
+          <div className="mb-4 flex flex-col justify-between gap-3 rounded-lg border border-gray-200 bg-white p-2 lg:flex-row">
+            <div className="flex gap-2">
+              <div>
+                {product.images?.[0] ? (
+                  <Image
+                    src={URL.createObjectURL(product.images[0])}
+                    alt="Product image"
+                    width={100}
+                    height={100}
+                    className="h-16 w-16 rounded-md object-cover"
+                  />
+                ) : (
+                  <Image
+                    src={"/images/placeholder.jpg"}
+                    alt="Product image"
+                    width={100}
+                    height={100}
+                    className="h-16 w-16 rounded-md object-cover"
+                  />
+                )}
+              </div>
+              <div>
+                <h2 className="font-semibold">
+                  {product.brand?.name || "Product"}
+                </h2>
+                <span className="text-sm">
+                  {product.category?.title || "category"}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <DynamicButton
+                variant="outlineSussces"
+                size="sm"
+                icon={<Eye size={15} />}
+                label={"View on store"}
+              />
+              <DynamicButton
+                variant="success"
+                size="sm"
+                icon={<Save size={15} />}
+                onClick={validateStep}
+                label={"Create Product"}
+              />
+            </div>
+          </div>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-9">
             <div className="col-span-1 rounded-xl border border-gray-200 bg-white p-6 lg:col-span-6">
-              <h1 className="mb-2 text-2xl font-bold">
-                {product.brand?.name || "Product"}
-              </h1>
-              <div className="mb-6 text-gray-600">
-                {product.category?.title}
-              </div>
+              <h1 className="mb-4 text-2xl font-bold">Product Details</h1>
               <div className="mb-6 rounded-md border border-gray-200 p-3">
                 <div className="font-mono text-sm font-medium">
                   {product.sku}
@@ -845,7 +957,7 @@ const ProductCreationWizard = () => {
               </div>
               <h2 className="mb-4 text-xl font-semibold">Product Title</h2>
               {errors.title && (
-                <div className="mb-4 rounded-md bg-red-50 p-3 text-red-600">
+                <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
                   {errors.title}
                 </div>
               )}
@@ -864,12 +976,12 @@ const ProductCreationWizard = () => {
                 Product Description
               </h2>
               {errors.description && (
-                <div className="mb-4 rounded-md bg-red-50 p-3 text-red-600">
+                <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
                   {errors.description}
                 </div>
               )}
               <textarea
-                className="mb-6 w-full rounded-md border border-gray-300 p-3 focus:outline-none"
+                className="mb-6 w-full resize-none rounded-md border border-gray-300 p-3 focus:outline-none"
                 rows={5}
                 placeholder="Enter detailed product description..."
                 value={product.description || ""}
@@ -977,34 +1089,34 @@ const ProductCreationWizard = () => {
 
               <h2 className="mb-4 text-xl font-semibold">Pricing</h2>
               {errors.price && (
-                <div className="mb-4 rounded-md bg-red-50 p-3 text-red-600">
+                <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
                   {errors.price}
                 </div>
               )}
               {errors.salePrice && (
-                <div className="mb-4 rounded-md bg-red-50 p-3 text-red-600">
+                <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
                   {errors.salePrice}
                 </div>
               )}
               {errors.saleEnd && (
-                <div className="mb-4 rounded-md bg-red-50 p-3 text-red-600">
+                <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
                   {errors.saleEnd}
                 </div>
               )}
               <div className="mb-4">
-                <label htmlFor="price" className="mb-1 block text-gray-700">
+                <label htmlFor="del_price" className="mb-1 block text-gray-700">
                   Price ($)
                 </label>
                 <input
                   type="number"
-                  id="price"
+                  id="del_price"
                   className="w-full rounded-md border border-gray-300 p-2 focus:outline-none"
                   placeholder="e.g. 99.99"
-                  value={product.price ?? ""}
+                  value={product.del_price ?? ""}
                   onChange={(e) =>
                     setProduct({
                       ...product,
-                      price: parseFloat(e.target.value),
+                      del_price: parseFloat(e.target.value),
                     })
                   }
                   step="0.01"
@@ -1012,19 +1124,19 @@ const ProductCreationWizard = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="salePrice" className="mb-1 block text-gray-700">
+                <label htmlFor="price" className="mb-1 block text-gray-700">
                   Sale Price ($) (Optional)
                 </label>
                 <input
                   type="number"
-                  id="salePrice"
+                  id="price"
                   className="w-full rounded-md border border-gray-300 p-2 focus:outline-none"
                   placeholder="e.g. 79.99"
-                  value={product.salePrice ?? ""}
+                  value={product.price ?? ""}
                   onChange={(e) =>
                     setProduct({
                       ...product,
-                      salePrice: parseFloat(e.target.value),
+                      price: parseFloat(e.target.value),
                     })
                   }
                   step="0.01"
@@ -1069,12 +1181,12 @@ const ProductCreationWizard = () => {
 
               <h2 className="mb-4 text-xl font-semibold">Inventory & Weight</h2>
               {errors.stock && (
-                <div className="mb-4 rounded-md bg-red-50 p-3 text-red-600">
+                <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
                   {errors.stock}
                 </div>
               )}
               {errors.weightKg && (
-                <div className="mb-4 rounded-md bg-red-50 p-3 text-red-600">
+                <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
                   {errors.weightKg}
                 </div>
               )}
@@ -1148,15 +1260,16 @@ const ProductCreationWizard = () => {
                   <button
                     type="button"
                     key={color}
-                    className={`rounded-md px-3 py-1 text-sm font-medium ${
-                      product.colors?.includes(color)
-                        ? "bg-green-600 text-white"
-                        : "border border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
+                    style={{ backgroundColor: color }}
+                    className={`relative h-8 w-8 overflow-hidden rounded-full border border-gray-300 px-3 py-1 text-sm font-medium text-white sm:h-10 sm:w-10`}
                     onClick={() => toggleColor(color)}
                     aria-pressed={product.colors?.includes(color)}
                   >
-                    {color}
+                    {product.colors?.includes(color) && (
+                      <span className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/25">
+                        <Check size={15} />
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
@@ -1215,17 +1328,26 @@ const ProductCreationWizard = () => {
 
               <h2 className="mb-4 text-xl font-semibold">Product Images</h2>
               {errors.images && (
-                <div className="mb-4 rounded-md bg-red-50 p-3 text-red-600">
+                <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
                   {errors.images}
                 </div>
               )}
               <div className="mb-6">
                 <label
                   htmlFor="imageUpload"
-                  className="flex cursor-pointer flex-col items-center rounded-md border-2 border-dashed border-gray-300 py-6 hover:border-green-500 hover:bg-green-50"
+                  className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-300 bg-white px-6 py-8 text-center transition hover:border-green-500 hover:bg-green-50"
                 >
-                  <ImageIcon className="mb-2 text-gray-400" size={24} />
-                  <span className="text-gray-600">Upload Images (Max 10)</span>
+                  <ImageIcon
+                    className="mb-3 text-gray-400 transition-transform group-hover:scale-110"
+                    size={32}
+                  />
+                  <p className="text-base font-medium text-gray-600 group-hover:text-green-600">
+                    Click or drag to upload
+                  </p>
+                  <span className="mt-1 text-sm text-gray-400">
+                    Max 10 images • JPG, PNG, WebP
+                  </span>
+
                   <input
                     id="imageUpload"
                     type="file"
@@ -1236,19 +1358,20 @@ const ProductCreationWizard = () => {
                     aria-label="Upload product images"
                   />
                 </label>
-                <div className="mt-4 grid grid-cols-3 gap-4">
+
+                <div className="mt-4 flex flex-wrap items-center gap-4">
                   {product.images?.map((image, index) => (
-                    <div key={index} className="relative">
+                    <div key={index} className="relative h-32 w-32 rounded-md">
                       <Image
                         src={URL.createObjectURL(image)}
                         alt={`Product image ${index + 1}`}
                         width={100}
                         height={100}
-                        className="h-24 w-full rounded-md object-cover"
+                        className="h-full w-full rounded-md object-cover"
                       />
                       <button
                         type="button"
-                        className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-700"
+                        className="absolute right-1 top-1 rounded-full bg-black bg-opacity-50 p-1 text-white hover:bg-opacity-75"
                         onClick={() => handleRemoveImage(index)}
                         aria-label="Remove image"
                       >
@@ -1266,13 +1389,6 @@ const ProductCreationWizard = () => {
                   onClick={() => setStep("identity")}
                 >
                   Back
-                </button>
-                <button
-                  type="button"
-                  className="rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700"
-                  onClick={validateStep}
-                >
-                  Create Product
                 </button>
               </div>
             </div>

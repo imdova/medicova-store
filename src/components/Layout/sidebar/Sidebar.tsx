@@ -11,9 +11,6 @@ import ProfileCompletion from "@/app/(auth)/user/component/ProfileCompletion";
 
 const Sidebar: React.FC<AccountPageProps> = ({ user }) => {
   const pathname = usePathname();
-  // State to manage the open/collapsed state of parent items.
-  // The key will be the item's href (or a unique identifier if no href),
-  // and the value will be a boolean (true for open, false for collapsed).
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
 
   const groups = sidebarGroups[user.role] || [];
@@ -27,8 +24,8 @@ const Sidebar: React.FC<AccountPageProps> = ({ user }) => {
   };
 
   return (
-    <aside className="w-72">
-      <div className="rounded-xl border-gray-300 bg-white p-2 shadow-sm md:border">
+    <aside className="sticky top-6 w-72">
+      <div className="rounded-xl border-gray-300 bg-white p-2 md:border md:shadow-sm">
         <div className="mb-4">
           <h1 className="text-lg font-bold text-gray-800">
             {user.name || "Hala!"}
@@ -46,7 +43,7 @@ const Sidebar: React.FC<AccountPageProps> = ({ user }) => {
                 {group.title}
               </h3>
             )}
-            <div className="rounded-xl border-gray-300 bg-white p-2 shadow-sm md:border">
+            <div className="rounded-xl border-gray-300 bg-white p-2 md:border md:shadow-sm">
               {group.description && (
                 <p className="mb-3 px-2 text-xs text-gray-500">
                   {group.description}
@@ -144,7 +141,7 @@ const Sidebar: React.FC<AccountPageProps> = ({ user }) => {
           </div>
         ))}
 
-        <div className="rounded-xl border-gray-300 bg-white p-2 shadow-sm md:border">
+        <div className="rounded-xl border-gray-300 bg-white p-2 md:border md:shadow-sm">
           <button
             onClick={() => signOut({ redirect: true, callbackUrl: "/" })}
             className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-red-50"

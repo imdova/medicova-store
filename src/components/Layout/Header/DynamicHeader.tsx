@@ -4,11 +4,7 @@ import { matchRoute } from "./routeConfigs";
 import FullHeader from "./FullHeader";
 import { useSession } from "next-auth/react";
 import { User } from "next-auth";
-import AccountHeader from "./AccountHeader";
-
-interface HeaderUser extends User {
-  isAdmin?: boolean;
-}
+import MinimalHeader from "./MinimalHeader";
 
 const DynamicHeader: React.FC = () => {
   const { data: session } = useSession();
@@ -17,13 +13,13 @@ const DynamicHeader: React.FC = () => {
 
   const headerComponents = {
     full: FullHeader,
-    account: AccountHeader,
+    minimal: MinimalHeader,
   };
 
   const SelectedHeader = headerComponents[headerType];
 
   // Create a safe user object with default values
-  const safeUser: HeaderUser = {
+  const safeUser: User = {
     id: session?.user?.id || "",
     name: session?.user?.name || "",
     email: session?.user?.email || "",

@@ -28,7 +28,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "postcss.config.mjs",
-    "src/components/Layout/Header/AccountHeader.tsx"
+    "src/components/Layout/Header/MinimalHeader.tsx"
   ],
   "exclude": ["node_modules"]
 }

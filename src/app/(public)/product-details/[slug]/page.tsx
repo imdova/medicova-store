@@ -6,7 +6,6 @@ import { products } from "@/constants/products";
 import NotFound from "@/app/not-found";
 import Image from "next/image";
 import ProductImagesSlider from "@/components/UI/sliders/ProductImagesSlider";
-import DynamicButton from "@/components/UI/Buttons/DynamicButton";
 import InfoCards from "@/components/UI/InfoCards";
 import { motion } from "framer-motion";
 import {
@@ -357,7 +356,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
             </div>
             {/* Product Images - Left Side */}
             <div className="sticky top-4 h-fit rounded-lg bg-white p-4">
-              <ProductImagesSlider images={product.images} />
+              <ProductImagesSlider product={product} images={product.images} />
               <div className="mt-4 hidden gap-2 md:flex">
                 <QuantitySelector
                   productId={cartProduct?.id ?? ""}
@@ -447,15 +446,6 @@ const ProductPage = ({ params }: ProductPageProps) => {
                       {product.rating} ★ (
                       {product.reviewCount?.toLocaleString()} Ratings)
                     </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <button className="sh ml-4 rounded-lg bg-white text-sm font-medium text-blue-600"></button>
-                    <DynamicButton
-                      variant="white"
-                      size="sm"
-                      href={"#Variant"}
-                      label={"Show Variants"}
-                    />
                   </div>
                 </div>
 

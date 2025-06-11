@@ -1,22 +1,40 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useSwipeable } from "react-swipeable";
-import { Heart, ZoomIn } from "lucide-react";
+import { ZoomIn } from "lucide-react";
 import ThumbnailsSlider from "./ThumbnailsSlider";
+import WishlistButton from "../Buttons/WishlistButton";
+import { useSession } from "next-auth/react";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "@/store/slices/wishlistSlice";
+import { Product } from "@/types/product";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import CustomAlert from "../CustomAlert";
 
 type ImagesSliderProps = {
   images?: string[];
+  product: Product;
 };
 
-const ProductImagesSlider = ({ images = [] }: ImagesSliderProps) => {
+const ProductImagesSlider = ({ images = [], product }: ImagesSliderProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
   const [isMobile, setIsMobile] = useState(false);
   const imageRef = useRef<HTMLDivElement>(null);
+  const { products: wishlistData } = useAppSelector((state) => state.wishlist);
+  const session = useSession();
+  const [alert, setAlert] = useState<{
+    message: string;
+    type: "success" | "error" | "info" | "cart" | "wishlist";
+  } | null>(null);
+  const dispatch = useAppDispatch();
+  const isInWishlist = wishlistData.some((item) => item.id === product.id);
 
   useEffect(() => {
     // Check if the device is touch-enabled or has a small screen (mobile)
@@ -77,8 +95,57 @@ const ProductImagesSlider = ({ images = [] }: ImagesSliderProps) => {
     trackMouse: true,
   });
 
+  const handdleAddToWishlist = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (!session.data?.user) {
+        showAlert("Please login to add items to your wishlist", "error");
+        return;
+      }
+
+      const userId = session.data.user.id;
+
+      try {
+        if (!isInWishlist) {
+          dispatch(addToWishlist(product, userId));
+          showAlert("Added to wishlist", "wishlist");
+        } else {
+          dispatch(
+            removeFromWishlist({
+              id: product.id,
+              userId: userId,
+            }),
+          );
+          showAlert("Removed from wishlist", "wishlist");
+        }
+      } catch (error) {
+        console.error("Wishlist operation failed:", error);
+        showAlert("Failed to update wishlist", "error");
+      }
+    },
+    [dispatch, isInWishlist, product, session.data?.user],
+  );
+  // Show Alert Function
+  const showAlert = (
+    message: string,
+    type: "success" | "error" | "info" | "cart" | "wishlist",
+  ) => {
+    setAlert({ message, type });
+    setTimeout(() => setAlert(null), 3000); // Hide after 3 seconds
+  };
+
   return (
     <div>
+      {/* Global Alert Display */}
+      {alert && (
+        <CustomAlert
+          message={alert.message}
+          type={alert.type}
+          onClose={() => setAlert(null)}
+        />
+      )}
       {/* Main Image Slider */}
       <div
         {...swipeHandlers}
@@ -159,14 +226,13 @@ const ProductImagesSlider = ({ images = [] }: ImagesSliderProps) => {
             <span>Hover to zoom</span>
           </motion.div>
         )}
-        <motion.button
-          className="absolute right-2 top-2 z-20 flex h-10 w-10 items-center justify-center gap-1 rounded-md bg-white/80 text-xs text-gray-700 shadow-md transition hover:bg-light-primary hover:text-white"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        >
-          <Heart size={20} />
-        </motion.button>
+        <div>
+          <WishlistButton
+            addToWishlist={handdleAddToWishlist}
+            isInWishlist={isInWishlist}
+            productId={product.id}
+          />
+        </div>
         {/* Thumbnails in mobile screen */}
         <div className="absolute bottom-1 left-1/2 block -translate-x-1/2 md:hidden">
           <div className="mt-4 flex items-center gap-2 py-2">

@@ -10,7 +10,7 @@ import { Drawer } from "@/components/UI/Drawer";
 import Sidebar from "@/components/Layout/sidebar/Sidebar";
 import { AccountPageProps } from "@/app/(auth)/user/types/account";
 
-const AccountHeader: React.FC<AccountPageProps> = ({ user, activeSection }) => {
+const MinimalHeader: React.FC<AccountPageProps> = ({ user, activeSection }) => {
   const [productsCount, setProductsCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const { products } = useAppSelector((state) => state.cart);
@@ -39,9 +39,6 @@ const AccountHeader: React.FC<AccountPageProps> = ({ user, activeSection }) => {
                       <LogoIcon className="h-10 w-20 text-white md:w-28" />
                     </Link>
                   </div>
-                  <span className="border-white text-xs font-semibold text-white">
-                    Account
-                  </span>
                 </div>
                 {/* search component  */}
                 <div className="hidden w-full md:block md:max-w-5xl">
@@ -104,4 +101,4 @@ const AccountHeader: React.FC<AccountPageProps> = ({ user, activeSection }) => {
   );
 };
 
-export default AccountHeader;
+export default MinimalHeader;

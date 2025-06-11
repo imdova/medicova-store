@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 
 interface DynamicButtonProps {
-  href: string;
+  href?: string;
   label: string;
   className?: string;
   variant?:
@@ -11,7 +11,8 @@ interface DynamicButtonProps {
     | "outline"
     | "white"
     | "danger"
-    | "success";
+    | "success"
+    | "outlineSussces";
   size?: "xs" | "sm" | "md" | "lg" | "xl";
   icon?: React.ReactNode;
   iconPosition?: "left" | "right";
@@ -44,6 +45,8 @@ const DynamicButton: React.FC<DynamicButtonProps> = ({
       "bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500 rounded-lg",
     outline:
       "border border-gray-700 text-gray-700 hover:bg-gray-700 hover:text-white ",
+    outlineSussces:
+      "border border-green-700 text-green-700 hover:bg-green-700 hover:text-white rounded-lg",
     white:
       "bg-white text-gray-700 shadow-md hover:bg-gray-100 focus:ring-gray-300 rounded-lg",
     danger:
@@ -102,7 +105,7 @@ const DynamicButton: React.FC<DynamicButtonProps> = ({
 
   return (
     <Link
-      href={href}
+      href={href ?? ""}
       className={combinedClasses.trim()}
       onClick={(e) => {
         if (disabled) {

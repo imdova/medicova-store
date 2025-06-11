@@ -6,62 +6,8 @@ import DynamicTable from "@/components/UI/tables/DTable";
 import Dropdown from "@/components/UI/DropDownMenu";
 import { Filters } from "@/components/UI/filter/FilterDrawer";
 import { useState } from "react";
-
-type Product = {
-  id: string;
-  name: string;
-  price: number;
-  stock: number;
-  status: "active" | "out_of_stock";
-  category: string;
-  onOffer?: boolean;
-};
-
-const products: Product[] = [
-  {
-    id: "1",
-    name: "Premium Headphones",
-    price: 199.99,
-    stock: 45,
-    status: "active",
-    category: "Electronics",
-    onOffer: true,
-  },
-  {
-    id: "2",
-    name: "Wireless Mouse",
-    price: 29.99,
-    stock: 120,
-    status: "active",
-    category: "Electronics",
-  },
-  {
-    id: "3",
-    name: "Organic Cotton T-Shirt",
-    price: 24.99,
-    stock: 0,
-    status: "out_of_stock",
-    category: "Clothing",
-    onOffer: false,
-  },
-  {
-    id: "4",
-    name: "Bluetooth Speaker",
-    price: 89.99,
-    stock: 15,
-    status: "active",
-    category: "Electronics",
-    onOffer: true,
-  },
-  {
-    id: "5",
-    name: "Yoga Mat",
-    price: 39.99,
-    stock: 0,
-    status: "out_of_stock",
-    category: "Fitness",
-  },
-];
+import { products } from "@/constants/products";
+import { Product } from "@/types/product";
 
 const columns = [
   {
@@ -70,9 +16,14 @@ const columns = [
     sortable: true,
   },
   {
-    key: "name",
-    header: "Name",
+    key: "title",
+    header: "Title",
     sortable: true,
+    render: (item: Product) => (
+      <Link className="hover:underline" href={`/product-details/${item.id}`}>
+        {item.title}
+      </Link>
+    ),
   },
   {
     key: "price",
@@ -80,7 +31,7 @@ const columns = [
     render: (item: Product) => (
       <div className="flex items-center">
         ${item.price.toFixed(2)}
-        {item.onOffer && (
+        {item.sale && (
           <span className="ml-2 rounded bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-800">
             Offer
           </span>
@@ -96,12 +47,12 @@ const columns = [
     render: (item: Product) => (
       <span
         className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-          item.stock > 0
+          (item.stock ?? 0) > 0
             ? "bg-green-100 text-green-800"
             : "bg-red-100 text-red-800"
         }`}
       >
-        {item.stock > 0 ? item.stock : "Out of stock"}
+        {(item.stock ?? 0) > 0 ? item.stock : "Out of stock"}
       </span>
     ),
     sortable: true,
@@ -120,7 +71,7 @@ const columns = [
         <span
           className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${statusColor}`}
         >
-          {item.status.replace("_", " ")}
+          {item.status?.replace("_", " ")}
         </span>
       );
     },
@@ -131,6 +82,7 @@ const columns = [
     key: "category",
     header: "Category",
     sortable: true,
+    render: (item: Product) => <span>{item.category?.title}</span>,
   },
 ];
 
@@ -167,15 +119,20 @@ export default function ProductsPage() {
   // Filter products based on URL params
   const filteredProducts = products.filter((product) => {
     if (statusFilter !== "all" && product.status !== statusFilter) return false;
-    if (stockFilter === "in_stock" && product.stock <= 0) return false;
-    if (stockFilter === "out_of_stock" && product.stock > 0) return false;
-    if (offerFilter === "yes" && !product.onOffer) return false;
-    if (offerFilter === "no" && product.onOffer) return false;
-    if (searchQuery && !product.name.toLowerCase().includes(searchQuery))
+    if (stockFilter === "in_stock" && (product.stock ?? 0) <= 0) return false;
+    if (stockFilter === "out_of_stock" && (product.stock ?? 0) > 0)
+      return false;
+    if (offerFilter === "yes" && !product.sale) return false;
+    if (offerFilter === "no" && product.sale) return false;
+    if (searchQuery && !product.title.toLowerCase().includes(searchQuery))
       return false;
 
     return true;
   });
+
+  const handleEditProduct = (slug: string) => {
+    router.push(`products/edit-product/${slug}`);
+  };
 
   // Update URL params when filters change
   const handleFilterChange = (filterType: string, value: string) => {
@@ -198,7 +155,7 @@ export default function ProductsPage() {
       <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         {/* Filter Controls */}
         <div className="flex flex-col items-end gap-4 pb-4 xl:flex-row">
-          <div className="flex w-full gap-4 xl:w-fit xl:min-w-[350px]">
+          <div className="flex w-full gap-2 xl:w-fit xl:min-w-[350px]">
             <div className="relative w-full">
               <input
                 type="text"
@@ -298,7 +255,7 @@ export default function ProductsPage() {
             actions={[
               {
                 label: "Edit",
-                onClick: () => console.log("Edited"),
+                onClick: (product) => handleEditProduct(product.id),
                 className:
                   "bg-white text-gray-700 hover:text-blue-700 hover:bg-blue-50 ",
                 icon: <PencilIcon className="h-4 w-4" />,

@@ -1,4 +1,4 @@
-type HeaderType = "full" | "account";
+type HeaderType = "full" | "minimal";
 
 interface RouteConfig {
   pattern: string;
@@ -7,10 +7,10 @@ interface RouteConfig {
 
 export const routeConfigs: RouteConfig[] = [
   { pattern: "/", headerType: "full" }, // Changed from "/*" to "/" for better default
-  { pattern: "/user/*", headerType: "account" },
-  { pattern: "/user", headerType: "account" },
-  { pattern: "/seller", headerType: "account" },
-  { pattern: "/seller/*", headerType: "account" },
+  { pattern: "/user/*", headerType: "minimal" },
+  { pattern: "/user", headerType: "minimal" },
+  { pattern: "/seller", headerType: "minimal" },
+  { pattern: "/seller/*", headerType: "minimal" },
 ];
 
 export const matchRoute = (pathname: string): RouteConfig | undefined => {

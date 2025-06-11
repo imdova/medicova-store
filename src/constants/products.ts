@@ -4,6 +4,7 @@ import { Product } from "@/types/product";
 export const products: Product[] = [
   {
     id: "1",
+    sku: "PSKU_165988_1749660138380",
     brand: {
       id: "1",
       title: "MediPro",

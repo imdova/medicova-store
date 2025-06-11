@@ -8,7 +8,6 @@ import {
   MapPin,
   SendToBack,
   ShieldUser,
-  SquareChartGantt,
   Undo2,
   UserRoundPen,
   WalletCards,
@@ -88,10 +87,24 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
           href: "/seller/brand-management",
           icon: HandCoins,
         },
+      ],
+    },
+    {
+      items: [
         {
-          title: "Brand Catalog",
-          href: "/seller/brand-catalog",
-          icon: SquareChartGantt,
+          title: "Orders",
+          href: "/seller/orders",
+          icon: SendToBack,
+        },
+        {
+          title: "Returns",
+          href: "/seller/returns",
+          icon: Undo2,
+        },
+        {
+          title: "Wishlist",
+          href: "/wishlist",
+          icon: Heart,
         },
       ],
     },
