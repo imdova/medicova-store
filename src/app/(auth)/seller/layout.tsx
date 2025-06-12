@@ -21,11 +21,11 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({ children }) => {
 
   return (
     <div className="container mx-auto flex min-h-screen bg-gray-50 p-3 lg:max-w-[1440px]">
-      <div className="hidden md:block">
+      <div className="hidden lg:block">
         <Sidebar user={safeUser} />
       </div>
 
-      <main className="flex-1 pt-2 md:px-4">
+      <main className="flex-1 pt-2 lg:px-4">
         <div>{children}</div>
       </main>
     </div>

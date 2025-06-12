@@ -39,6 +39,18 @@ export const authOptions: AuthOptions = {
               role: "seller",
             };
           }
+          // Admin credentials
+          if (
+            credentials?.email === "admin@medicova.com" &&
+            credentials?.password === "admin123"
+          ) {
+            return {
+              id: "3",
+              name: "admin Account",
+              email: "admin@medicova.com",
+              role: "admin",
+            };
+          }
 
           return null;
         } catch (error) {
@@ -68,12 +80,12 @@ export const authOptions: AuthOptions = {
         session.user.id = token.id as string;
         session.user.name = token.name as string;
         session.user.email = token.email as string;
-        session.user.role = token.role ;
+        session.user.role = token.role;
       }
       return session;
     },
   },
   pages: {
-    signIn: "/auth/signin", 
+    signIn: "/auth/signin",
   },
 };

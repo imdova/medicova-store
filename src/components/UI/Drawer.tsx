@@ -27,7 +27,7 @@ export const Drawer: React.FC<DrawerProps> = ({
   mobile = true,
 }) => {
   return (
-    <div className={`relative z-[2000] ${mobile ? "md:hidden" : ""} `}>
+    <div className={`relative z-[2000] ${mobile ? "lg:hidden" : ""} `}>
       {hasOverlay && (
         <div
           className={`fixed inset-0 bg-[#00000060] bg-opacity-50 transition-opacity ${

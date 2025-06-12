@@ -4,12 +4,18 @@ import {
   Box,
   HandCoins,
   Heart,
+  Landmark,
+  Layers3,
   LayoutDashboard,
   MapPin,
+  PackagePlus,
+  PackageSearch,
   SendToBack,
   ShieldUser,
+  Tags,
   Undo2,
   UserRoundPen,
+  Users2,
   WalletCards,
 } from "lucide-react";
 
@@ -132,6 +138,97 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
         {
           title: "Security Settings",
           href: "/seller/security",
+          icon: ShieldUser,
+        },
+      ],
+    },
+  ],
+  admin: [
+    {
+      title: "Dashboard",
+      items: [
+        {
+          title: "Dashboard",
+          href: "/admin",
+          icon: LayoutDashboard,
+        },
+      ],
+    },
+    {
+      title: "Products",
+      items: [
+        {
+          title: "All Products",
+          href: "/admin/products",
+          icon: PackageSearch,
+        },
+        {
+          title: "Create Product",
+          href: "/admin/create-product",
+          icon: PackagePlus,
+        },
+        {
+          title: "Inventory",
+          href: "/admin/inventory",
+          icon: Layers3,
+        },
+        {
+          title: "Categories",
+          href: "/admin/categories",
+          icon: Tags,
+        },
+        {
+          title: "Brands",
+          href: "/admin/brands",
+          icon: Landmark,
+        },
+      ],
+    },
+    {
+      title: "Users",
+      items: [
+        {
+          title: "Sellers",
+          href: "/admin/sellers",
+          icon: Users2,
+        },
+        {
+          title: "Users",
+          href: "/admin/users",
+          icon: Users2,
+        },
+      ],
+    },
+    {
+      title: "Sales",
+      items: [
+        {
+          title: "Orders",
+          href: "/admin/orders",
+          icon: SendToBack,
+        },
+        {
+          title: "Returns",
+          href: "/admin/returns",
+          icon: Undo2,
+        },
+      ],
+    },
+    {
+      title: "My Account",
+      items: [
+        { title: "Profile", href: "/admin/profile", icon: UserRoundPen },
+        { title: "Addresses", href: "/admin/addresses", icon: MapPin },
+        { title: "Payments", href: "/admin/payments", icon: WalletCards },
+      ],
+    },
+    {
+      title: "Others",
+      items: [
+        { title: "Notifications", href: "/admin/notifications", icon: Bell },
+        {
+          title: "Security Settings",
+          href: "/admin/security",
           icon: ShieldUser,
         },
       ],

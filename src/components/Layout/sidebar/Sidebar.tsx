@@ -25,7 +25,7 @@ const Sidebar: React.FC<AccountPageProps> = ({ user }) => {
 
   return (
     <aside className="sticky top-6 w-72">
-      <div className="rounded-xl border-gray-300 bg-white p-2 md:border md:shadow-sm">
+      <div className="rounded-xl border-gray-300 bg-white p-2 lg:border lg:shadow-sm">
         <div className="mb-4">
           <h1 className="text-lg font-bold text-gray-800">
             {user.name || "Hala!"}
@@ -43,7 +43,7 @@ const Sidebar: React.FC<AccountPageProps> = ({ user }) => {
                 {group.title}
               </h3>
             )}
-            <div className="rounded-xl border-gray-300 bg-white p-2 md:border md:shadow-sm">
+            <div className="rounded-xl border-gray-300 bg-white p-2 lg:border lg:shadow-sm">
               {group.description && (
                 <p className="mb-3 px-2 text-xs text-gray-500">
                   {group.description}
@@ -141,7 +141,7 @@ const Sidebar: React.FC<AccountPageProps> = ({ user }) => {
           </div>
         ))}
 
-        <div className="rounded-xl border-gray-300 bg-white p-2 md:border md:shadow-sm">
+        <div className="rounded-xl border-gray-300 bg-white p-2 lg:border lg:shadow-sm">
           <button
             onClick={() => signOut({ redirect: true, callbackUrl: "/" })}
             className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-red-50"

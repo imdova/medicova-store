@@ -8,6 +8,7 @@ import { Filters } from "@/components/UI/filter/FilterDrawer";
 import { useState } from "react";
 import { products } from "@/constants/products";
 import { Product } from "@/types/product";
+import { filtersData } from "@/constants/drawerFilter";
 
 const columns = [
   {
@@ -180,6 +181,7 @@ export default function ProductsPage() {
               </button>
 
               <Filters
+                filtersData={filtersData}
                 isOpen={filtersOpen}
                 onClose={() => setFiltersOpen(false)}
               />
@@ -238,6 +240,7 @@ export default function ProductsPage() {
               </button>
 
               <Filters
+                filtersData={filtersData}
                 isOpen={filtersOpen}
                 onClose={() => setFiltersOpen(false)}
               />

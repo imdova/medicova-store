@@ -500,7 +500,7 @@ const DynamicTable = <T extends object>({
                 of <span className="font-medium">{sortedData.length}</span>{" "}
                 results
                 {selectable && selectedRows.size > 0 && (
-                  <span className="ml-2 font-medium text-indigo-600">
+                  <span className="ml-2 font-medium text-green-600">
                     ({selectedRows.size} selected)
                   </span>
                 )}

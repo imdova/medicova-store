@@ -28,7 +28,7 @@ const MinimalHeader: React.FC<AccountPageProps> = ({ user, activeSection }) => {
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
                   <button onClick={() => setIsOpen(true)}>
-                    <Menu size={18} className="text-white md:hidden" />
+                    <Menu size={18} className="text-white lg:hidden" />
                   </button>
                   {/* Logo */}
                   <div className="flex items-center">

@@ -1,8 +1,7 @@
 "use client";
 import React, { ReactNode } from "react";
-import Sidebar from "../../../components/Layout/sidebar/Sidebar";
 import { useSession } from "next-auth/react";
-import GoBackButton from "@/components/UI/Buttons/GoBackButton";
+import Sidebar from "@/components/Layout/sidebar/Sidebar";
 
 interface AccountLayoutProps {
   children: ReactNode;
@@ -26,10 +25,7 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({ children }) => {
         <Sidebar user={safeUser} />
       </div>
 
-      <main className="flex-1 pt-2 lg:px-4">
-        <div className="mb-2">
-          <GoBackButton />
-        </div>
+      <main className="flex-1 lg:px-4">
         <div>{children}</div>
       </main>
     </div>

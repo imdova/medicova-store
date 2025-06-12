@@ -20,6 +20,10 @@ export const isCurrentPage = (pathname: string, href: string): boolean => {
   if (normalizedHref === "/seller") {
     return normalizedPathname === "/seller";
   }
+  // Special handling for seller dashboard
+  if (normalizedHref === "/admin") {
+    return normalizedPathname === "/admin";
+  }
 
   // Match nested routes (e.g., "/user/orders" startsWith "/user")
   return normalizedPathname.startsWith(normalizedHref);

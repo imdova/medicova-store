@@ -11,6 +11,8 @@ export const routeConfigs: RouteConfig[] = [
   { pattern: "/user", headerType: "minimal" },
   { pattern: "/seller", headerType: "minimal" },
   { pattern: "/seller/*", headerType: "minimal" },
+  { pattern: "/admin", headerType: "minimal" },
+  { pattern: "/admin/*", headerType: "minimal" },
 ];
 
 export const matchRoute = (pathname: string): RouteConfig | undefined => {

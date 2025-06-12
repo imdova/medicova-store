@@ -217,6 +217,20 @@ export type FilterGroup = {
   option?: string;
 };
 
+export type FilterDrawerOption = {
+  id: string;
+  label: string;
+  count: number;
+};
+
+export type FilterDrawerGroup = {
+  id: string;
+  label: string;
+  isSingleSelect: boolean;
+  options: FilterDrawerOption[];
+  collapsed: boolean;
+};
+
 // offers type
 export interface Offer {
   id: string;
