@@ -82,6 +82,56 @@ export const dummyChartData = {
     ],
   },
 };
+export const dummyChartSingleData = {
+  yearly: {
+    categories: [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ],
+    series: [
+      {
+        name: "View",
+        data: [
+          12000, 15000, 18000, 22000, 25000, 23000, 24000, 26000, 28000, 30000,
+          32000, 34000,
+        ],
+        color: "#2ba149",
+      },
+    ],
+  },
+  monthly: {
+    categories: Array.from({ length: 30 }, (_, i) => `Day ${i + 1}`),
+    series: [
+      {
+        name: "View",
+        data: Array.from({ length: 30 }, () =>
+          Math.floor(800 + Math.random() * 500),
+        ),
+        color: "#2ba149",
+      },
+    ],
+  },
+  weekly: {
+    categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    series: [
+      {
+        name: "View",
+        data: [3500, 3700, 3600, 3900, 4100, 4500, 4700],
+        color: "#2ba149",
+      },
+    ],
+  },
+};
 
 export const dummyCards = [
   {

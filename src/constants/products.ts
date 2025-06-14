@@ -17,12 +17,7 @@ export const products: Product[] = [
       title: "Medical Wear",
       url: "/medical-wear",
       image: "/images/medical-wear.jpg",
-      subCategories: [
-        { title: "Scrubs", url: "/medical-wear/scrubs" },
-        { title: "Lab Coats", url: "/medical-wear/lab-coats" },
-        { title: "Medical Shoes", url: "/medical-wear/shoes" },
-        { title: "Surgical Caps", url: "/medical-wear/surgical-caps" },
-      ],
+      subcategory: { title: "Medical Shoes", url: "/medical-wear/shoes" },
     },
     title: "MediPro Professional V-Neck Scrub Top & Pants Set",
     price: 4599,
@@ -79,6 +74,8 @@ export const products: Product[] = [
       partnerSince: "2018",
       returnPolicy: "30 days return policy",
       itemShown: 90,
+      status: "active",
+      isActive: false,
     },
 
     overview_desc:
@@ -114,12 +111,10 @@ export const products: Product[] = [
       title: "Medical Wear",
       url: "/medical-wear",
       image: "/images/medical-wear.jpg",
-      subCategories: [
-        { title: "Scrubs", url: "/medical-wear/scrubs" },
-        { title: "Lab Coats", url: "/medical-wear/lab-coats" },
-        { title: "Medical Shoes", url: "/medical-wear/shoes" },
-        { title: "Surgical Caps", url: "/medical-wear/surgical-caps" },
-      ],
+      subcategory: {
+        title: "Surgical Caps",
+        url: "/medical-wear/surgical-caps",
+      },
     },
     title: "WhiteCoat Professional Lab Coat with Embroidery Option",
     price: 6899,
@@ -176,6 +171,8 @@ export const products: Product[] = [
       partnerSince: "2017",
       returnPolicy: "30 days return policy",
       itemShown: 90,
+      status: "active",
+      isActive: false,
     },
 
     overview_desc:
@@ -210,12 +207,10 @@ export const products: Product[] = [
       title: "Medical Wear",
       url: "/medical-wear",
       image: "/images/medical-wear.jpg",
-      subCategories: [
-        { title: "Scrubs", url: "/medical-wear/scrubs" },
-        { title: "Lab Coats", url: "/medical-wear/lab-coats" },
-        { title: "Medical Shoes", url: "/medical-wear/shoes" },
-        { title: "Surgical Caps", url: "/medical-wear/surgical-caps" },
-      ],
+      subcategory: {
+        title: "Surgical Caps",
+        url: "/medical-wear/surgical-caps",
+      },
     },
     title: "NurseMates Alicia Women's Medical Shoes",
     price: 7999,
@@ -272,6 +267,8 @@ export const products: Product[] = [
       partnerSince: "2019",
       returnPolicy: "30 days return policy",
       itemShown: 90,
+      status: "active",
+      isActive: false,
     },
 
     overview_desc:
@@ -306,12 +303,7 @@ export const products: Product[] = [
       title: "Medical Wear",
       url: "/medical-wear",
       image: "/images/medical-wear.jpg",
-      subCategories: [
-        { title: "Scrubs", url: "/medical-wear/scrubs" },
-        { title: "Lab Coats", url: "/medical-wear/lab-coats" },
-        { title: "Medical Shoes", url: "/medical-wear/shoes" },
-        { title: "Surgical Caps", url: "/medical-wear/surgical-caps" },
-      ],
+      subcategory: { title: "Scrubs", url: "/medical-wear/scrubs" },
     },
     title: "SurgiCap Disposable Bouffant Surgical Caps (100 Pack)",
     price: 2499,
@@ -367,6 +359,8 @@ export const products: Product[] = [
       partnerSince: "2016",
       returnPolicy: "30 days return policy",
       itemShown: 90,
+      status: "active",
+      isActive: false,
     },
 
     overview_desc:
@@ -401,12 +395,7 @@ export const products: Product[] = [
       title: "Medical Wear",
       url: "/medical-wear",
       image: "/images/medical-wear.jpg",
-      subCategories: [
-        { title: "Scrubs", url: "/medical-wear/scrubs" },
-        { title: "Lab Coats", url: "/medical-wear/lab-coats" },
-        { title: "Medical Shoes", url: "/medical-wear/shoes" },
-        { title: "Surgical Caps", url: "/medical-wear/surgical-caps" },
-      ],
+      subcategory: { title: "Lab Coats", url: "/medical-wear/lab-coats" },
     },
     title: "HealingHands 15-20 mmHg Compression Socks (3 Pack)",
     price: 3899,
@@ -462,6 +451,8 @@ export const products: Product[] = [
       partnerSince: "2015",
       returnPolicy: "30 days return policy",
       itemShown: 90,
+      status: "active",
+      isActive: false,
     },
 
     overview_desc:
@@ -499,12 +490,7 @@ export const products: Product[] = [
       title: "Medical Wear",
       url: "/medical-wear",
       image: "/images/medical-wear.jpg",
-      subCategories: [
-        { title: "Scrubs", url: "/medical-wear/scrubs" },
-        { title: "Lab Coats", url: "/medical-wear/lab-coats" },
-        { title: "Medical Shoes", url: "/medical-wear/shoes" },
-        { title: "Surgical Caps", url: "/medical-wear/surgical-caps" },
-      ],
+      subcategory: { title: "Scrubs", url: "/medical-wear/scrubs" },
     },
     title: "ScrubLife Men's Jogger Scrub Pants with Cargo Pockets",
     price: 4299,
@@ -560,6 +546,8 @@ export const products: Product[] = [
       partnerSince: "2018",
       returnPolicy: "30 days return policy",
       itemShown: 90,
+      status: "active",
+      isActive: false,
     },
 
     overview_desc:
@@ -594,12 +582,7 @@ export const products: Product[] = [
       title: "Medical Wear",
       url: "/medical-wear",
       image: "/images/medical-wear.jpg",
-      subCategories: [
-        { title: "Scrubs", url: "/medical-wear/scrubs" },
-        { title: "Lab Coats", url: "/medical-wear/lab-coats" },
-        { title: "Medical Shoes", url: "/medical-wear/shoes" },
-        { title: "Surgical Caps", url: "/medical-wear/surgical-caps" },
-      ],
+      subcategory: { title: "Scrubs", url: "/medical-wear/scrubs" },
     },
     title: "ORReady Level 3 Disposable Surgical Gowns (25 Pack)",
     price: 8999,
@@ -654,6 +637,8 @@ export const products: Product[] = [
       partnerSince: "2017",
       returnPolicy: "30 days return policy",
       itemShown: 90,
+      status: "active",
+      isActive: false,
     },
 
     overview_desc:
@@ -688,12 +673,7 @@ export const products: Product[] = [
       title: "Medical Wear",
       url: "/medical-wear",
       image: "/images/medical-wear.jpg",
-      subCategories: [
-        { title: "Scrubs", url: "/medical-wear/scrubs" },
-        { title: "Lab Coats", url: "/medical-wear/lab-coats" },
-        { title: "Medical Shoes", url: "/medical-wear/shoes" },
-        { title: "Surgical Caps", url: "/medical-wear/surgical-caps" },
-      ],
+      subcategory: { title: "Scrubs", url: "/medical-wear/scrubs" },
     },
     title: "StethoStyle Fleece Warm-Up Jacket for Medical Professionals",
     price: 6599,
@@ -749,6 +729,8 @@ export const products: Product[] = [
       partnerSince: "2019",
       returnPolicy: "30 days return policy",
       itemShown: 90,
+      status: "active",
+      isActive: false,
     },
 
     overview_desc:
@@ -783,14 +765,7 @@ export const products: Product[] = [
       title: "Medical Accessories",
       url: "/medical-accessories",
       image: "/images/medical-accessories.jpg",
-      subCategories: [
-        { title: "Watches", url: "/medical-accessories/watches" },
-        { title: "Stethoscopes", url: "/medical-accessories/stethoscopes" },
-        {
-          title: "Diagnostic Tools",
-          url: "/medical-accessories/diagnostic-tools",
-        },
-      ],
+      subcategory: { title: "Watches", url: "/medical-accessories/watches" },
     },
     title: "MediTech VitalTrack Pro Smartwatch for Healthcare Workers",
     price: 12999,
@@ -845,6 +820,8 @@ export const products: Product[] = [
       partnerSince: "2020",
       returnPolicy: "30 days return policy",
       itemShown: 90,
+      status: "active",
+      isActive: false,
     },
 
     overview_desc:
@@ -879,11 +856,10 @@ export const products: Product[] = [
       title: "Medical Personal Care",
       url: "/medical-personal-care",
       image: "/images/medical-personal-care.jpg",
-      subCategories: [
-        { title: "Perfumes", url: "/medical-personal-care/perfumes" },
-        { title: "Antimicrobial Soaps", url: "/medical-personal-care/soaps" },
-        { title: "Hand Sanitizers", url: "/medical-personal-care/sanitizers" },
-      ],
+      subcategory: {
+        title: "Perfumes",
+        url: "/medical-personal-care/perfumes",
+      },
     },
     title:
       "Clinique SteriScent Antimicrobial Perfume for Healthcare Professionals",
@@ -942,6 +918,8 @@ export const products: Product[] = [
       partnerSince: "2018",
       returnPolicy: "30 days return policy",
       itemShown: 90,
+      status: "active",
+      isActive: false,
     },
 
     overview_desc:
@@ -976,14 +954,10 @@ export const products: Product[] = [
       title: "Medical Supplies",
       url: "/medical-supplies",
       image: "/images/medical-supplies.jpg",
-      subCategories: [
-        {
-          title: "Tapes & Dressings",
-          url: "/medical-supplies/tapes-dressings",
-        },
-        { title: "Bandages", url: "/medical-supplies/bandages" },
-        { title: "First Aid Kits", url: "/medical-supplies/first-aid" },
-      ],
+      subcategory: {
+        title: "Tapes & Dressings",
+        url: "/medical-supplies/tapes-dressings",
+      },
     },
     title: "DermaSeal ProCare Medical Tape & Dressing Kit (100 Pieces)",
     price: 2499,
@@ -1038,6 +1012,8 @@ export const products: Product[] = [
       partnerSince: "2015",
       returnPolicy: "30 days return policy",
       itemShown: 90,
+      status: "active",
+      isActive: false,
     },
 
     overview_desc:

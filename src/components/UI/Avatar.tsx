@@ -5,9 +5,15 @@ type AvatarProps = {
   name: string;
   imageUrl?: string;
   className?: string;
+  RandomColor?: boolean;
 };
 
-const Avatar: React.FC<AvatarProps> = ({ name, imageUrl, className = "" }) => {
+const Avatar: React.FC<AvatarProps> = ({
+  name,
+  imageUrl,
+  RandomColor,
+  className = "",
+}) => {
   const getInitial = () => {
     return name ? name.charAt(0).toUpperCase() : "?";
   };
@@ -30,7 +36,7 @@ const Avatar: React.FC<AvatarProps> = ({ name, imageUrl, className = "" }) => {
 
   return (
     <div
-      className={`flex items-center justify-center rounded-full text-white ${imageUrl ? "" : getRandomColor()} ${className}`}
+      className={`flex items-center justify-center rounded-full text-white ${imageUrl ? "" : RandomColor ? getRandomColor() : "bg-gray-400"} ${className}`}
     >
       {imageUrl ? (
         <Image
@@ -44,7 +50,7 @@ const Avatar: React.FC<AvatarProps> = ({ name, imageUrl, className = "" }) => {
             const target = e.target as HTMLImageElement;
             target.src = "";
             target.alt = name;
-            target.className = `flex items-center justify-center rounded-full ${getRandomColor()} ${className}`;
+            target.className = `flex items-center justify-center rounded-full ${RandomColor ? getRandomColor() : "bg-gray-400"} ${className}`;
             target.textContent = getInitial();
           }}
         />

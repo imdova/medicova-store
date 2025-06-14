@@ -4,10 +4,18 @@ export type Seller = {
   id: string;
   name: string;
   rating: number;
+  image?: string;
+  isActive: boolean;
+  status: "active" | "pending" | "draft" | "best_seller";
   positiveRatings?: string;
   itemShown?: number;
   partnerSince?: string;
   returnPolicy?: string;
+  products?: number;
+  customers?: number;
+  sales?: number;
+  country?: string;
+  city?: string;
 };
 
 export type methodType = {
@@ -37,16 +45,14 @@ interface CategoryType {
   title: string;
   image: string;
   isSale?: boolean;
-  subCategories?: { title: string; url?: string }[]; // url optional here
+  subcategory?: { title: string; url?: string };
 }
-interface MultiCategory extends CategoryType {
-  subCategories?: { title: string; url?: string }[]; // now compatible
-}
+
 export interface Product {
   id: string;
   brand?: Brand;
   model?: string;
-  category?: MultiCategory;
+  category?: CategoryType;
   title: string;
   price: number;
   del_price?: number;

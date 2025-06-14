@@ -18,6 +18,13 @@ type ActionButton<T> = {
   icon?: React.ReactNode;
   hide?: (item: T) => boolean;
 };
+type ActionSolidButton<T> = {
+  onClick: (item: T, index: number) => void;
+  className?: string;
+  color?: string;
+  icon?: React.ReactNode;
+  hide?: (item: T) => boolean;
+};
 
 type SortDirection = "asc" | "desc" | null;
 
@@ -40,6 +47,7 @@ type DynamicTableProps<T> = {
     direction: SortDirection;
   };
   actions?: ActionButton<T>[];
+  solidActions?: ActionSolidButton<T>[];
   actionsColumnHeader?: string;
   actionsColumnWidth?: string;
 };
@@ -60,6 +68,7 @@ const DynamicTable = <T extends object>({
   defaultSort,
   minWidth = 900,
   actions = [],
+  solidActions = [],
   actionsColumnHeader = "Actions",
   actionsColumnWidth = "50px",
 }: DynamicTableProps<T>) => {
@@ -284,6 +293,34 @@ const DynamicTable = <T extends object>({
       </div>
     );
   };
+  // Render action buttons in a dropdown menu
+  const renderSoldActions = (item: T) => {
+    if (solidActions.length === 0) return null;
+
+    const visibleActions = solidActions.filter(
+      (action) => !action.hide || !action.hide(item),
+    );
+
+    if (visibleActions.length === 0) return null;
+
+    return (
+      <div className="relative flex items-center justify-end">
+        {visibleActions.map((action, index) => {
+          return (
+            <button
+              key={index}
+              onClick={() => action.onClick}
+              style={{ color: action.color }}
+              className="mr-1 inline-flex items-center text-gray-500 focus:outline-none"
+              aria-label="Actions"
+            >
+              {action.icon && <span className="mr-2">{action.icon}</span>}
+            </button>
+          );
+        })}
+      </div>
+    );
+  };
 
   return (
     <div className={`relative flex flex-col rounded-md ${className}`}>
@@ -446,10 +483,13 @@ const DynamicTable = <T extends object>({
                   ))}
                   {actions.length > 0 && (
                     <td
-                      className={`${cellClassName} text-right`}
+                      className={`${cellClassName} `}
                       style={{ width: actionsColumnWidth }}
                     >
-                      {renderActions(item, rowIndex)}
+                      <div className="flex gap-1">
+                        {renderSoldActions(item)}
+                        {renderActions(item, rowIndex)}
+                      </div>
                     </td>
                   )}
                 </tr>

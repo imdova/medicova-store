@@ -238,6 +238,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
       <nav className="bg-white px-4 py-2">
         <div className="container mx-auto">
           <div className="flex flex-wrap items-center space-x-1 py-2 text-xs text-gray-600 md:flex-nowrap md:gap-y-0 md:text-sm">
+            {/* Home Link */}
             <div className="flex items-center gap-2">
               <Link href="/" className="whitespace-nowrap hover:text-primary">
                 Home
@@ -245,6 +246,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
               <ChevronRight className="h-3 w-3 text-secondary" />
             </div>
 
+            {/* Category */}
             <div className="flex items-center gap-1">
               <Link
                 href={product.category?.slug ?? "#"}
@@ -252,26 +254,22 @@ const ProductPage = ({ params }: ProductPageProps) => {
               >
                 {product.category?.title}
               </Link>
-              {(product.category?.subCategories?.length ?? 0) > 0 && (
+              {product.category?.subcategory && (
                 <ChevronRight className="h-3 w-3 text-secondary" />
               )}
             </div>
 
-            {product.category?.subCategories?.map((subCategory, index) => {
-              return (
-                <div className="flex items-center gap-1" key={index}>
-                  <Link
-                    href={subCategory.url ?? "#"}
-                    className="whitespace-nowrap hover:text-primary"
-                  >
-                    {subCategory.title}
-                  </Link>
-                  {!(product.category?.subCategories?.length === index + 1) && (
-                    <ChevronRight className="h-3 w-3 text-secondary" />
-                  )}
-                </div>
-              );
-            })}
+            {/* Single SubCategory */}
+            {product.category?.subcategory && (
+              <div className="flex items-center gap-1">
+                <Link
+                  href={product.category?.subcategory?.url ?? "#"}
+                  className="whitespace-nowrap hover:text-primary"
+                >
+                  {product.category?.subcategory?.title}
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </nav>

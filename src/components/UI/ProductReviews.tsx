@@ -181,6 +181,7 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ reviews }) => {
                           name={review.author.name}
                           imageUrl={review.author.imgUrl}
                           className="h-10 w-10"
+                          RandomColor
                         />
                         <div className="flex flex-col items-start">
                           <span className="text-sm font-medium">

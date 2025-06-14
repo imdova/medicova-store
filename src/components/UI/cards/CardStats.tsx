@@ -5,13 +5,21 @@ import {
   Star,
   Eye,
   Award,
+  Users,
 } from "lucide-react";
 
 interface CardStatsProps {
   title: string;
   value: string;
   change: string;
-  icon: "dollar" | "shoppingCart" | "package" | "star" | "eye" | "award";
+  icon:
+    | "dollar"
+    | "shoppingCart"
+    | "package"
+    | "star"
+    | "eye"
+    | "award"
+    | "users";
   color?: string; // expected format: hex or rgb
   size?: "sm" | "md" | "lg";
 }
@@ -23,6 +31,7 @@ const iconMap = {
   star: Star,
   eye: Eye,
   award: Award,
+  users: Users,
 };
 
 function hexToRgba(hex: string, opacity: number): string {

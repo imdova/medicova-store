@@ -247,7 +247,7 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
   const [newSpec, setNewSpec] = useState<Specification>({ key: "", value: "" });
   const [newFeature, setNewFeature] = useState("");
   const [newHighlight, setNewHighlight] = useState("");
-  const { slug } = use(params); // Unwrap the async params
+  const { slug } = use(params);
 
   // Find the product by slug from constants
   useEffect(() => {

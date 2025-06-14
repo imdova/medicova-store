@@ -20,6 +20,7 @@ import ProductCard from "@/components/UI/cards/ProductCard";
 import { Pagination } from "@/components/UI/Pagination";
 import { formatDate } from "@/util/dateUtils";
 import { productFilters } from "@/constants/drawerFilter";
+import Image from "next/image";
 
 type Status = "active" | "pending" | "draft";
 
@@ -29,12 +30,21 @@ const columns = [
     header: "Product Name",
     sortable: true,
     render: (item: Product) => (
-      <Link
-        className="line-clamp-2 hover:underline"
-        href={`/product-details/${item.id}`}
-      >
-        {item.title}
-      </Link>
+      <div className="flex gap-2">
+        <Image
+          className="w-10 rounded-md object-cover"
+          src={item.images?.[0] || "/images/placeholder.jpg"}
+          width={300}
+          height={300}
+          alt={item.title}
+        />
+        <Link
+          className="line-clamp-2 hover:underline"
+          href={`products/${item.id}`}
+        >
+          {item.title}
+        </Link>
+      </div>
     ),
   },
   {
@@ -109,21 +119,6 @@ const columns = [
       );
     },
     sortable: true,
-    align: "center",
-  },
-  {
-    key: "actions",
-    header: "",
-    render: () => (
-      <div className="flex space-x-2">
-        <button className="text-blue-600 hover:text-blue-800">
-          <PencilIcon className="h-4 w-4" />
-        </button>
-        <button className="text-red-600 hover:text-red-800">
-          <TrashIcon className="h-4 w-4" />
-        </button>
-      </div>
-    ),
     align: "center",
   },
 ];
@@ -477,6 +472,18 @@ export default function ProductListPanel() {
                 onClick: () => console.log("Deleted"),
                 className:
                   "bg-white text-gray-700 hover:text-red-700 hover:bg-red-50 ",
+                icon: <TrashIcon className="h-4 w-4" />,
+              },
+            ]}
+            solidActions={[
+              {
+                onClick: () => console.log("edited"),
+                icon: <PencilIcon className="h-4 w-4" />,
+                color: "#2563eb",
+              },
+              {
+                onClick: () => console.log("Deleted"),
+                color: "#dc2626",
                 icon: <TrashIcon className="h-4 w-4" />,
               },
             ]}
