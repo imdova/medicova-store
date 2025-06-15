@@ -2,6 +2,7 @@ import { SidebarGroup } from "@/types";
 import {
   Bell,
   Box,
+  Building2,
   HandCoins,
   Heart,
   Landmark,
@@ -152,6 +153,29 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
           href: "/admin",
           icon: LayoutDashboard,
         },
+        {
+          title: "Users",
+          href: "/seller/products",
+          icon: Users2,
+          subItems: [
+            {
+              title: "All Sellers",
+              href: "/admin/sellers",
+              icon: Users2,
+            },
+
+            {
+              title: "All Users",
+              href: "/admin/users",
+              icon: Users2,
+            },
+          ],
+        },
+        {
+          title: "Financial",
+          href: "/admin/financial",
+          icon: Building2,
+        },
       ],
     },
     {
@@ -181,21 +205,6 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
           title: "Brands",
           href: "/admin/brands",
           icon: Landmark,
-        },
-      ],
-    },
-    {
-      title: "Users",
-      items: [
-        {
-          title: "Sellers",
-          href: "/admin/sellers",
-          icon: Users2,
-        },
-        {
-          title: "Users",
-          href: "/admin/users",
-          icon: Users2,
         },
       ],
     },

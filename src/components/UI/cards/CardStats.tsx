@@ -6,12 +6,14 @@ import {
   Eye,
   Award,
   Users,
+  ArrowUp,
 } from "lucide-react";
 
 interface CardStatsProps {
   title: string;
   value: string;
-  change: string;
+  change?: string;
+  details?: string;
   icon:
     | "dollar"
     | "shoppingCart"
@@ -19,7 +21,8 @@ interface CardStatsProps {
     | "star"
     | "eye"
     | "award"
-    | "users";
+    | "users"
+    | "ArrowUp";
   color?: string; // expected format: hex or rgb
   size?: "sm" | "md" | "lg";
 }
@@ -32,6 +35,7 @@ const iconMap = {
   eye: Eye,
   award: Award,
   users: Users,
+  ArrowUp: ArrowUp ,
 };
 
 function hexToRgba(hex: string, opacity: number): string {
@@ -59,9 +63,10 @@ export function CardStats({
   icon,
   color = "#16a34a",
   size = "md",
+  details,
 }: CardStatsProps) {
   const Icon = iconMap[icon];
-  const isPositive = change.startsWith("+");
+  const isPositive = change?.startsWith("+");
   const bgColor = hexToRgba(color, 0.1);
 
   // Size classes map
@@ -81,16 +86,20 @@ export function CardStats({
       >
         <Icon className={`${sizeStyles.icon}`} style={{ color }} />
       </span>
-      <div>
+      <div className="space-y-0.5">
         <p className="text-sm font-medium text-gray-500">{title}</p>
         <p className={`font-semibold ${sizeStyles.text}`}>{value}</p>
-        <p
-          className={`text-xs ${
-            isPositive ? "text-green-600" : "text-red-600"
-          }`}
-        >
-          {change} from last month
-        </p>
+        {details ? (
+          <span className="text-xs text-gray-500">{details}</span>
+        ) : (
+          <p
+            className={`text-xs ${
+              isPositive ? "text-green-600" : "text-red-600"
+            }`}
+          >
+            {change} from last month
+          </p>
+        )}
       </div>
     </div>
   );

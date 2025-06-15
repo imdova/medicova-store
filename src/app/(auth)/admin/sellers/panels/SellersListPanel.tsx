@@ -324,6 +324,18 @@ export default function SellersListPanel() {
                 icon: <TrashIcon className="h-4 w-4" />,
               },
             ]}
+            solidActions={[
+              {
+                onClick: () => console.log("edited"),
+                icon: <PencilIcon className="h-4 w-4" />,
+                color: "#2563eb",
+              },
+              {
+                onClick: () => console.log("Deleted"),
+                color: "#dc2626",
+                icon: <TrashIcon className="h-4 w-4" />,
+              },
+            ]}
           />
         )}
         {viewMode === "grid" && (

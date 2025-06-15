@@ -26,7 +26,7 @@ export const TabWithIcon = ({ tabs, leftbutton }: TabsProps) => {
     <div className="w-full">
       <div className="flex flex-col gap-3 rounded-lg border border-gray-300 bg-white p-2 sm:items-center sm:justify-between lg:flex-row">
         {/* Tabs List */}
-        <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-fit">
+        <div className="flex w-full flex-col flex-wrap gap-2 sm:flex-row lg:w-fit">
           {tabs.map((tab, index) => {
             const isActive = activeIndex === index;
             const Icon = tab.icon;

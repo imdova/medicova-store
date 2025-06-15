@@ -110,7 +110,7 @@ const Sidebar: React.FC<AccountPageProps> = ({ user }) => {
 
                       {/* Render sub-items only if they exist and the parent item is open */}
                       {hasSubItems && isOpen && (
-                        <ul className="ml-4 mt-1 space-y-1 border-l border-gray-200 pl-3">
+                        <ul className="ml-4 mt-1 space-y-1 border-l border-gray-100 pl-3">
                           {item.subItems?.map((subItem, subIndex) => {
                             const isCurrentSubPage = isCurrentPage(
                               pathname,
@@ -120,12 +120,13 @@ const Sidebar: React.FC<AccountPageProps> = ({ user }) => {
                               <li key={subIndex}>
                                 <Link
                                   href={subItem.href}
-                                  className={`flex items-center rounded px-3 py-1.5 text-sm ${
+                                  className={`flex items-center gap-2 rounded px-3 py-1.5 text-sm ${
                                     isCurrentSubPage
                                       ? "font-medium text-green-600"
                                       : "text-gray-600 hover:text-gray-800"
                                   }`}
                                 >
+                                  {Icon && <Icon className="h-3.5 w-3.5" />}
                                   {subItem.title}
                                 </Link>
                               </li>
