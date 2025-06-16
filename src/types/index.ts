@@ -1,6 +1,7 @@
 import { destinationSurcharges } from "@/constants";
 import { LucideIcon } from "lucide-react";
 import { StaticImageData } from "next/image";
+import { LocalizedTitle } from "./language";
 
 export interface BaseHeaderProps {
   pathname: string;
@@ -18,7 +19,7 @@ export type UserProps = {
 
 // Define the type for a main item (which may have sub-items)
 export interface SidebarItem {
-  title: string;
+  title: LocalizedTitle;
   href: string;
   icon?: LucideIcon;
   subItems?: SidebarItem[]; // Optional
@@ -26,7 +27,7 @@ export interface SidebarItem {
 
 // Define the type for a group of sidebar items
 export interface SidebarGroup {
-  title?: string;
+  title?: LocalizedTitle;
   description?: string; // Optional
   items: SidebarItem[];
 }
@@ -73,9 +74,9 @@ export type NavLink = {
 };
 //footer types
 export interface FooterSection {
-  title: string;
+  title: LocalizedTitle;
   links: {
-    name: string;
+    name: LocalizedTitle;
     href: string;
   }[];
 }
@@ -91,7 +92,7 @@ export interface PaymentMethod {
   icon: string;
 }
 export type LegalLink = {
-  name: string;
+  name: LocalizedTitle;
   href: string;
 };
 

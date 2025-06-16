@@ -8,10 +8,12 @@ import { signOut } from "next-auth/react";
 import { isCurrentPage } from "@/util";
 import { AccountPageProps } from "@/app/(auth)/user/types/account";
 import ProfileCompletion from "@/app/(auth)/user/component/ProfileCompletion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Sidebar: React.FC<AccountPageProps> = ({ user }) => {
   const pathname = usePathname();
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
+  const { isArabic } = useLanguage();
 
   const groups = sidebarGroups[user.role] || [];
 
@@ -32,7 +34,7 @@ const Sidebar: React.FC<AccountPageProps> = ({ user }) => {
           </h1>
           <p className="text-xs text-gray-600">{user.email}</p>
         </div>
-        <ProfileCompletion percentage={40} />
+        <ProfileCompletion isArabic={isArabic} percentage={40} />
       </div>
 
       <nav className="mt-4">
@@ -40,7 +42,7 @@ const Sidebar: React.FC<AccountPageProps> = ({ user }) => {
           <div key={groupIndex} className="mb-4">
             {group.title && (
               <h3 className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                {group.title}
+                {isArabic ? group.title.ar : group.title.en}
               </h3>
             )}
             <div className="rounded-xl border-gray-300 bg-white p-2 lg:border lg:shadow-sm">
@@ -84,7 +86,7 @@ const Sidebar: React.FC<AccountPageProps> = ({ user }) => {
                         >
                           <div className="flex items-center gap-2">
                             {Icon && <Icon className="h-4 w-4" />}
-                            {item.title}
+                            {isArabic ? item.title.ar : item.title.en}
                           </div>
                           {/* Display appropriate chevron icon based on collapse state */}
                           {isOpen ? (
@@ -104,7 +106,7 @@ const Sidebar: React.FC<AccountPageProps> = ({ user }) => {
                           }`}
                         >
                           {Icon && <Icon className="h-4 w-4" />}
-                          {item.title}
+                          {isArabic ? item.title.ar : item.title.en}
                         </Link>
                       )}
 
@@ -127,7 +129,9 @@ const Sidebar: React.FC<AccountPageProps> = ({ user }) => {
                                   }`}
                                 >
                                   {Icon && <Icon className="h-3.5 w-3.5" />}
-                                  {subItem.title}
+                                  {isArabic
+                                    ? subItem.title.ar
+                                    : subItem.title.en}
                                 </Link>
                               </li>
                             );
@@ -148,7 +152,7 @@ const Sidebar: React.FC<AccountPageProps> = ({ user }) => {
             className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-red-50"
           >
             <Power className="h-4 w-4" />
-            Sign out
+            {isArabic ? "تسجيل الخروج" : " Sign out"}
           </button>
         </div>
       </nav>

@@ -9,90 +9,192 @@ import {
 // Footer sections data
 export const sections: FooterSection[] = [
   {
-    title: "ELECTRONICS",
+    title: { en: "ELECTRONICS", ar: "إلكترونيات" },
     links: [
-      { name: "Mobiles", href: "/electronics/mobiles" },
-      { name: "Tablets", href: "/electronics/tablets" },
-      { name: "Laptops", href: "/electronics/laptops" },
-      { name: "Home Appliances", href: "/electronics/appliances" },
-      { name: "Camera, Photo & Video", href: "/electronics/cameras" },
-      { name: "Televisions", href: "/electronics/tvs" },
-      { name: "Headphones", href: "/electronics/headphones" },
-      { name: "Video Games", href: "/electronics/games" },
+      { name: { en: "Mobiles", ar: "الهواتف" }, href: "/electronics/mobiles" },
+      {
+        name: { en: "Tablets", ar: "الأجهزة اللوحية" },
+        href: "/electronics/tablets",
+      },
+      {
+        name: { en: "Laptops", ar: "أجهزة الكمبيوتر المحمولة" },
+        href: "/electronics/laptops",
+      },
+      {
+        name: { en: "Home Appliances", ar: "الأجهزة المنزلية" },
+        href: "/electronics/appliances",
+      },
+      {
+        name: { en: "Camera, Photo & Video", ar: "كاميرات وصور وفيديو" },
+        href: "/electronics/cameras",
+      },
+      {
+        name: { en: "Televisions", ar: "أجهزة التلفاز" },
+        href: "/electronics/tvs",
+      },
+      {
+        name: { en: "Headphones", ar: "سماعات الرأس" },
+        href: "/electronics/headphones",
+      },
+      {
+        name: { en: "Video Games", ar: "ألعاب الفيديو" },
+        href: "/electronics/games",
+      },
     ],
   },
   {
-    title: "FASHION",
+    title: { en: "FASHION", ar: "أزياء" },
     links: [
-      { name: "Women's Fashion", href: "/fashion/women" },
-      { name: "Men's Fashion", href: "/fashion/men" },
-      { name: "Girls' Fashion", href: "/fashion/girls" },
-      { name: "Boys' Fashion", href: "/fashion/boys" },
-      { name: "Men's Watches", href: "/fashion/mens-watches" },
-      { name: "Women's Watches", href: "/fashion/womens-watches" },
-      { name: "Eyewear", href: "/fashion/eyewear" },
-      { name: "Bags & Luggage", href: "/fashion/bags" },
+      {
+        name: { en: "Women's Fashion", ar: "أزياء النساء" },
+        href: "/fashion/women",
+      },
+      {
+        name: { en: "Men's Fashion", ar: "أزياء الرجال" },
+        href: "/fashion/men",
+      },
+      {
+        name: { en: "Girls' Fashion", ar: "أزياء البنات" },
+        href: "/fashion/girls",
+      },
+      {
+        name: { en: "Boys' Fashion", ar: "أزياء الأولاد" },
+        href: "/fashion/boys",
+      },
+      {
+        name: { en: "Men's Watches", ar: "ساعات الرجال" },
+        href: "/fashion/mens-watches",
+      },
+      {
+        name: { en: "Women's Watches", ar: "ساعات النساء" },
+        href: "/fashion/womens-watches",
+      },
+      { name: { en: "Eyewear", ar: "نظارات" }, href: "/fashion/eyewear" },
+      {
+        name: { en: "Bags & Luggage", ar: "الحقائب والأمتعة" },
+        href: "/fashion/bags",
+      },
     ],
   },
   {
-    title: "HOME AND KITCHEN",
+    title: { en: "HOME AND KITCHEN", ar: "المنزل والمطبخ" },
     links: [
-      { name: "Kitchen & Dining", href: "/home/kitchen" },
-      { name: "Bedding", href: "/home/bedding" },
-      { name: "Bath", href: "/home/bath" },
-      { name: "Home Decor", href: "/home/decor" },
-      { name: "Home Appliances", href: "/home/appliances" },
-      { name: "Tools & Home Improvement", href: "/home/tools" },
-      { name: "Patio, Lawn & Garden", href: "/home/garden" },
-      { name: "Home Storage & Organisation", href: "/home/storage" },
+      {
+        name: { en: "Kitchen & Dining", ar: "المطبخ وتناول الطعام" },
+        href: "/home/kitchen",
+      },
+      { name: { en: "Bedding", ar: "مفروشات" }, href: "/home/bedding" },
+      { name: { en: "Bath", ar: "الحمام" }, href: "/home/bath" },
+      { name: { en: "Home Decor", ar: "ديكور المنزل" }, href: "/home/decor" },
+      {
+        name: { en: "Home Appliances", ar: "أجهزة منزلية" },
+        href: "/home/appliances",
+      },
+      {
+        name: { en: "Tools & Home Improvement", ar: "أدوات وتحسين المنزل" },
+        href: "/home/tools",
+      },
+      {
+        name: { en: "Patio, Lawn & Garden", ar: "الفناء والحديقة" },
+        href: "/home/garden",
+      },
+      {
+        name: { en: "Home Storage & Organisation", ar: "تخزين وتنظيم المنزل" },
+        href: "/home/storage",
+      },
     ],
   },
   {
-    title: "BEAUTY",
+    title: { en: "BEAUTY", ar: "الجمال" },
     links: [
-      { name: "Women's Fragrance", href: "/beauty/womens-fragrance" },
-      { name: "Men's Fragrance", href: "/beauty/mens-fragrance" },
-      { name: "Make-Up", href: "/beauty/makeup" },
-      { name: "Haircare", href: "/beauty/haircare" },
-      { name: "Skincare", href: "/beauty/skincare" },
-      { name: "Personal Care", href: "/beauty/personal-care" },
-      { name: "Tools & Accessories", href: "/beauty/tools" },
+      {
+        name: { en: "Women's Fragrance", ar: "عطور النساء" },
+        href: "/beauty/womens-fragrance",
+      },
+      {
+        name: { en: "Men's Fragrance", ar: "عطور الرجال" },
+        href: "/beauty/mens-fragrance",
+      },
+      { name: { en: "Make-Up", ar: "مكياج" }, href: "/beauty/makeup" },
+      {
+        name: { en: "Haircare", ar: "العناية بالشعر" },
+        href: "/beauty/haircare",
+      },
+      {
+        name: { en: "Skincare", ar: "العناية بالبشرة" },
+        href: "/beauty/skincare",
+      },
+      {
+        name: { en: "Personal Care", ar: "العناية الشخصية" },
+        href: "/beauty/personal-care",
+      },
+      {
+        name: { en: "Tools & Accessories", ar: "الأدوات والإكسسوارات" },
+        href: "/beauty/tools",
+      },
     ],
   },
   {
-    title: "KIDS, BABY & TOYS",
+    title: { en: "KIDS, BABY & TOYS", ar: "أطفال ورضع وألعاب" },
     links: [
-      { name: "Strollers & Accessories", href: "/kids/strollers" },
-      { name: "Car Seats", href: "/kids/car-seats" },
-      { name: "Baby Clothing", href: "/kids/baby-clothing" },
-      { name: "Feeding", href: "/kids/feeding" },
-      { name: "Bathing & Skincare", href: "/kids/bathing" },
-      { name: "Diapering", href: "/kids/diapering" },
-      { name: "Baby & Toddler Toys", href: "/kids/toys" },
-      { name: "Toys & Games", href: "/kids/games" },
+      {
+        name: { en: "Strollers & Accessories", ar: "عربات وإكسسوارات" },
+        href: "/kids/strollers",
+      },
+      {
+        name: { en: "Car Seats", ar: "مقاعد سيارات" },
+        href: "/kids/car-seats",
+      },
+      {
+        name: { en: "Baby Clothing", ar: "ملابس الرضع" },
+        href: "/kids/baby-clothing",
+      },
+      { name: { en: "Feeding", ar: "الرضاعة" }, href: "/kids/feeding" },
+      {
+        name: { en: "Bathing & Skincare", ar: "الاستحمام والعناية بالبشرة" },
+        href: "/kids/bathing",
+      },
+      { name: { en: "Diapering", ar: "الحفاضات" }, href: "/kids/diapering" },
+      {
+        name: { en: "Baby & Toddler Toys", ar: "ألعاب الرضع والصغار" },
+        href: "/kids/toys",
+      },
+      { name: { en: "Toys & Games", ar: "ألعاب" }, href: "/kids/games" },
     ],
   },
   {
-    title: "TOP BRANDS",
+    title: { en: "TOP BRANDS", ar: "أفضل العلامات التجارية" },
     links: [
-      { name: "Apple", href: "/brands/apple" },
-      { name: "Samsung", href: "/brands/samsung" },
-      { name: "Nike", href: "/brands/nike" },
-      { name: "Ray-Ban", href: "/brands/rayban" },
-      { name: "Tefal", href: "/brands/tefal" },
-      { name: "L'Oreal Paris", href: "/brands/loreal" },
-      { name: "Chicco", href: "/brands/chicco" },
-      { name: "Tomado", href: "/brands/tomado" },
+      { name: { en: "Apple", ar: "آبل" }, href: "/brands/apple" },
+      { name: { en: "Samsung", ar: "سامسونج" }, href: "/brands/samsung" },
+      { name: { en: "Nike", ar: "نايكي" }, href: "/brands/nike" },
+      { name: { en: "Ray-Ban", ar: "راي بان" }, href: "/brands/rayban" },
+      { name: { en: "Tefal", ar: "تيفال" }, href: "/brands/tefal" },
+      {
+        name: { en: "L'Oreal Paris", ar: "لوريال باريس" },
+        href: "/brands/loreal",
+      },
+      { name: { en: "Chicco", ar: "شيكو" }, href: "/brands/chicco" },
+      { name: { en: "Tomado", ar: "تومادو" }, href: "/brands/tomado" },
     ],
   },
   {
-    title: "DISCOVER NOW",
+    title: { en: "DISCOVER NOW", ar: "اكتشف الآن" },
     links: [
-      { name: "Brand Glossary", href: "/discover/glossary" },
-      { name: "Noon Kuwait", href: "/discover/kuwait" },
-      { name: "Noon Bahrain", href: "/discover/bahrain" },
-      { name: "Noon Oman", href: "/discover/oman" },
-      { name: "Noon Qatar", href: "/discover/qatar" },
+      {
+        name: { en: "Brand Glossary", ar: "دليل العلامات التجارية" },
+        href: "/discover/glossary",
+      },
+      {
+        name: { en: "Noon Kuwait", ar: "نون الكويت" },
+        href: "/discover/kuwait",
+      },
+      {
+        name: { en: "Noon Bahrain", ar: "نون البحرين" },
+        href: "/discover/bahrain",
+      },
+      { name: { en: "Noon Oman", ar: "نون عمان" }, href: "/discover/oman" },
+      { name: { en: "Noon Qatar", ar: "نون قطر" }, href: "/discover/qatar" },
     ],
   },
 ];
@@ -132,12 +234,30 @@ export const paymentMethods: PaymentMethod[] = [
 
 // Legal links
 export const legalLinks: LegalLink[] = [
-  { name: "Careers", href: "/careers" },
-  { name: "Warranty Policy", href: "/warranty" },
-  { name: "Sell with us", href: "/sell-with-us" },
-  { name: "Terms of Use", href: "/terms" },
-  { name: "Terms of Sale", href: "/terms-of-sale" },
-  { name: "Privacy Policy", href: "/privacy" },
+  {
+    name: { en: "Careers", ar: "الوظائف" },
+    href: "/careers",
+  },
+  {
+    name: { en: "Warranty Policy", ar: "سياسة الضمان" },
+    href: "/warranty",
+  },
+  {
+    name: { en: "Sell with us", ar: "البيع معنا" },
+    href: "/sell-with-us",
+  },
+  {
+    name: { en: "Terms of Use", ar: "شروط الاستخدام" },
+    href: "/terms",
+  },
+  {
+    name: { en: "Terms of Sale", ar: "شروط البيع" },
+    href: "/terms-of-sale",
+  },
+  {
+    name: { en: "Privacy Policy", ar: "سياسة الخصوصية" },
+    href: "/privacy",
+  },
 ];
 
 // App download links

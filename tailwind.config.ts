@@ -4,6 +4,9 @@ export default {
   content: ["./src/**/*.{js,ts,jsx,tsx}", "./app/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        arabic: ['"Noto Sans Arabic"', "sans-serif"],
+      },
       colors: {
         main: "var(--main-color)",
         primary: "var(--primary)",

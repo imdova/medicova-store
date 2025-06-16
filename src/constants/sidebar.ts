@@ -5,7 +5,6 @@ import {
   Building2,
   HandCoins,
   Heart,
-  Landmark,
   Layers3,
   LayoutDashboard,
   MapPin,
@@ -25,40 +24,52 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
     {
       items: [
         {
-          title: "Orders",
+          title: { en: "Orders", ar: "الطلبات" },
           href: "/user/orders",
           icon: SendToBack,
         },
         {
-          title: "Returns",
+          title: { en: "Returns", ar: "المرتجعات" },
           href: "/user/returns",
           icon: Undo2,
         },
         {
-          title: "Wishlist",
+          title: { en: "Wishlist", ar: "المفضلة" },
           href: "/wishlist",
           icon: Heart,
         },
       ],
     },
     {
-      title: "My Account",
+      title: { en: "My Account", ar: "حسابي" },
       items: [
-        { title: "Profile", href: "/user/profile", icon: UserRoundPen },
-        { title: "Addresses", href: "/user/addresses", icon: MapPin },
         {
-          title: "Payments",
+          title: { en: "Profile", ar: "الملف الشخصي" },
+          href: "/user/profile",
+          icon: UserRoundPen,
+        },
+        {
+          title: { en: "Addresses", ar: "العناوين" },
+          href: "/user/addresses",
+          icon: MapPin,
+        },
+        {
+          title: { en: "Payments", ar: "المدفوعات" },
           href: "/user/payments",
           icon: WalletCards,
         },
       ],
     },
     {
-      title: "Others",
+      title: { en: "Others", ar: "أخرى" },
       items: [
-        { title: "Notifications", href: "/user/notifications", icon: Bell },
         {
-          title: "Security Settings",
+          title: { en: "Notifications", ar: "الإشعارات" },
+          href: "/user/notifications",
+          icon: Bell,
+        },
+        {
+          title: { en: "Security Settings", ar: "إعدادات الأمان" },
           href: "/user/security",
           icon: ShieldUser,
         },
@@ -67,30 +78,30 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
   ],
   seller: [
     {
-      title: "Dashboard",
+      title: { en: "Dashboard", ar: "لوحة التحكم" },
       items: [
         {
-          title: "Dashboard",
+          title: { en: "Dashboard", ar: "لوحة التحكم" },
           href: "/seller",
           icon: LayoutDashboard,
         },
         {
-          title: "Products",
+          title: { en: "Products", ar: "المنتجات" },
           href: "/seller/products",
           icon: Box,
           subItems: [
             {
-              title: "All Products",
+              title: { en: "All Products", ar: "كل المنتجات" },
               href: "/seller/products",
             },
             {
-              title: "Create Product",
+              title: { en: "Create Product", ar: "إنشاء منتج" },
               href: "/seller/create-product",
             },
           ],
         },
         {
-          title: "Brand Management",
+          title: { en: "Brand Management", ar: "إدارة العلامات التجارية" },
           href: "/seller/brand-management",
           icon: HandCoins,
         },
@@ -99,45 +110,57 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
     {
       items: [
         {
-          title: "Orders",
+          title: { en: "Orders", ar: "الطلبات" },
           href: "/seller/orders",
           icon: SendToBack,
         },
         {
-          title: "Returns",
+          title: { en: "Returns", ar: "المرتجعات" },
           href: "/seller/returns",
           icon: Undo2,
         },
         {
-          title: "Wishlist",
+          title: { en: "Wishlist", ar: "المفضلة" },
           href: "/wishlist",
           icon: Heart,
         },
       ],
     },
     {
-      title: "My Account",
+      title: { en: "My Account", ar: "حسابي" },
       items: [
-        { title: "Profile", href: "/seller/profile", icon: UserRoundPen },
-        { title: "Addresses", href: "/seller/addresses", icon: MapPin },
         {
-          title: "Payments",
+          title: { en: "Profile", ar: "الملف الشخصي" },
+          href: "/seller/profile",
+          icon: UserRoundPen,
+        },
+        {
+          title: { en: "Addresses", ar: "العناوين" },
+          href: "/seller/addresses",
+          icon: MapPin,
+        },
+        {
+          title: { en: "Payments", ar: "المدفوعات" },
           href: "/seller/payments",
           icon: WalletCards,
         },
         {
-          title: "Wishlist",
+          title: { en: "Wishlist", ar: "المفضلة" },
           href: "/wishlist",
           icon: Heart,
         },
       ],
     },
     {
-      title: "Others",
+      title: { en: "Others", ar: "أخرى" },
       items: [
-        { title: "Notifications", href: "/seller/notifications", icon: Bell },
         {
-          title: "Security Settings",
+          title: { en: "Notifications", ar: "الإشعارات" },
+          href: "/seller/notifications",
+          icon: Bell,
+        },
+        {
+          title: { en: "Security Settings", ar: "إعدادات الأمان" },
           href: "/seller/security",
           icon: ShieldUser,
         },
@@ -146,97 +169,110 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
   ],
   admin: [
     {
-      title: "Dashboard",
+      title: { en: "Dashboard", ar: "لوحة التحكم" },
       items: [
         {
-          title: "Dashboard",
+          title: { en: "Dashboard", ar: "لوحة التحكم" },
           href: "/admin",
           icon: LayoutDashboard,
         },
         {
-          title: "Users",
+          title: { en: "Users", ar: "المستخدمين" },
           href: "/seller/products",
           icon: Users2,
           subItems: [
             {
-              title: "All Sellers",
+              title: { en: "All Sellers", ar: "جميع البائعين" },
               href: "/admin/sellers",
               icon: Users2,
             },
-
             {
-              title: "All Users",
-              href: "/admin/users",
+              title: { en: "All Customers", ar: "جميع العملاء" },
+              href: "/admin/Customers",
               icon: Users2,
             },
           ],
         },
         {
-          title: "Financial",
+          title: { en: "Financial", ar: "المالية" },
           href: "/admin/financial",
           icon: Building2,
         },
       ],
     },
     {
-      title: "Products",
+      title: { en: "Products", ar: "المنتجات" },
       items: [
         {
-          title: "All Products",
+          title: { en: "All Products", ar: "كل المنتجات" },
           href: "/admin/products",
           icon: PackageSearch,
         },
         {
-          title: "Create Product",
+          title: { en: "Create Product", ar: "إنشاء منتج" },
           href: "/admin/create-product",
           icon: PackagePlus,
         },
         {
-          title: "Inventory",
+          title: { en: "Inventory", ar: "المخزون" },
           href: "/admin/inventory",
           icon: Layers3,
         },
         {
-          title: "Categories",
+          title: {
+            en: "Categories and Brands",
+            ar: "التصنيفات والعلامات التجارية",
+          },
           href: "/admin/categories",
           icon: Tags,
-        },
-        {
-          title: "Brands",
-          href: "/admin/brands",
-          icon: Landmark,
         },
       ],
     },
     {
-      title: "Sales",
+      title: { en: "Sales", ar: "المبيعات" },
       items: [
         {
-          title: "Orders",
+          title: { en: "Orders", ar: "الطلبات" },
           href: "/admin/orders",
           icon: SendToBack,
         },
         {
-          title: "Returns",
+          title: { en: "Returns", ar: "المرتجعات" },
           href: "/admin/returns",
           icon: Undo2,
         },
       ],
     },
     {
-      title: "My Account",
+      title: { en: "My Account", ar: "حسابي" },
       items: [
-        { title: "Profile", href: "/admin/profile", icon: UserRoundPen },
-        { title: "Addresses", href: "/admin/addresses", icon: MapPin },
-        { title: "Payments", href: "/admin/payments", icon: WalletCards },
+        {
+          title: { en: "Profile", ar: "الملف الشخصي" },
+          href: "/admin/profile",
+          icon: UserRoundPen,
+        },
+        {
+          title: { en: "Addresses", ar: "العناوين" },
+          href: "/admin/addresses",
+          icon: MapPin,
+        },
+        {
+          title: { en: "Payments", ar: "المدفوعات" },
+          href: "/admin/payments",
+          icon: WalletCards,
+        },
       ],
     },
     {
-      title: "Others",
+      title: { en: "Others", ar: "أخرى" },
       items: [
-        { title: "Notifications", href: "/admin/notifications", icon: Bell },
         {
-          title: "Security Settings",
+          title: { en: "Notifications", ar: "الإشعارات" },
+          href: "/admin/notifications",
+          icon: Bell,
+        },
+        {
+          title: { en: "Security Settings", ar: "إعدادات الأمان" },
           href: "/admin/security",
           icon: ShieldUser,
         },

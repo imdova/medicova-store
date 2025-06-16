@@ -9,6 +9,7 @@ import { Suspense, useEffect, useState } from "react";
 import { Drawer } from "@/components/UI/Drawer";
 import Sidebar from "@/components/Layout/sidebar/Sidebar";
 import { AccountPageProps } from "@/app/(auth)/user/types/account";
+import LanguageSwitcher from "@/components/UI/LanguageSwitcher";
 
 const MinimalHeader: React.FC<AccountPageProps> = ({ user, activeSection }) => {
   const [productsCount, setProductsCount] = useState(0);
@@ -46,6 +47,7 @@ const MinimalHeader: React.FC<AccountPageProps> = ({ user, activeSection }) => {
                     <SearchComponent />
                   </Suspense>
                 </div>
+                <LanguageSwitcher />
                 {/* Right-side Icons */}
                 <div className="flex items-center">
                   <div className="flex items-center gap-4 px-4">

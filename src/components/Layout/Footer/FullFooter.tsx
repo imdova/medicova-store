@@ -10,11 +10,14 @@ import {
   sections,
   socialMedia,
 } from "@/constants/footer";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { t } from "@/util/translations";
 
 const FullFooter = () => {
   const [expandedSections, setExpandedSections] = useState<
     Record<string, boolean>
   >({});
+  const { language } = useLanguage();
 
   const toggleSection = (title: string) => {
     setExpandedSections((prev) => ({
@@ -27,11 +30,16 @@ const FullFooter = () => {
     <footer className="border-t border-gray-200 bg-white text-gray-800">
       {/* Main footer content */}
       <div className="container mx-auto px-4 py-8">
-        {/* Help section */}
         <div className="mb-8 text-center">
-          <h2 className="mb-2 text-2xl font-bold">Were Always Here To Help</h2>
+          <h2 className="mb-2 text-2xl font-bold">
+            {language === "ar"
+              ? "نحن دائمًا هنا لمساعدتك"
+              : "We're Always Here To Help"}
+          </h2>
           <p className="text-gray-600">
-            Reach out to us through any of these support channels
+            {language === "ar"
+              ? "تواصل معنا من خلال أي من قنوات الدعم هذه"
+              : "Reach out to us through any of these support channels"}
           </p>
         </div>
 
@@ -45,13 +53,15 @@ const FullFooter = () => {
               {/* Section header with toggle button for mobile */}
               <button
                 className="flex w-full items-center justify-between py-3 text-left font-semibold uppercase md:pointer-events-none md:py-0"
-                onClick={() => toggleSection(section.title)}
-                aria-expanded={expandedSections[section.title] || false}
+                onClick={() => toggleSection(section.title[language])}
+                aria-expanded={
+                  expandedSections[section.title[language]] || false
+                }
                 aria-controls={`footer-section-${index}`}
               >
-                <h3 className="text-sm">{section.title}</h3>
+                <h3 className="text-sm">{section.title[language]}</h3>
                 <span className="md:hidden">
-                  {expandedSections[section.title] ? (
+                  {expandedSections[section.title[language]] ? (
                     <ChevronUp size={17} />
                   ) : (
                     <ChevronDown size={17} />
@@ -63,7 +73,7 @@ const FullFooter = () => {
               <div
                 id={`footer-section-${index}`}
                 className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                  expandedSections[section.title]
+                  expandedSections[section.title[language]]
                     ? "max-h-96 py-2"
                     : "max-h-0 py-0"
                 } md:max-h-full md:py-2`}
@@ -75,7 +85,7 @@ const FullFooter = () => {
                         href={link.href}
                         className="block py-1 text-xs text-gray-600 transition-colors hover:text-green-600"
                       >
-                        {link.name}
+                        {link.name[language]}
                       </Link>
                     </li>
                   ))}
@@ -85,10 +95,12 @@ const FullFooter = () => {
           ))}
         </div>
 
-        {/* App download section */}
         <div className="mb-8 flex flex-col justify-between gap-4 border-gray-200 pt-8 md:flex-row md:border-t">
+          {/* App Section */}
           <div className="flex flex-col items-center">
-            <h3 className="mb-4 text-sm font-bold uppercase">SHOP ON THE GO</h3>
+            <h3 className="mb-4 text-sm font-bold uppercase">
+              {language === "ar" ? "تسوق أثناء التنقل" : "SHOP ON THE GO"}
+            </h3>
             <div className="flex flex-wrap justify-center gap-4">
               {appLinks.map((app, index) => (
                 <Link
@@ -107,9 +119,11 @@ const FullFooter = () => {
               ))}
             </div>
           </div>
+
+          {/* Social Media */}
           <div className="flex flex-col items-center">
             <h3 className="mb-4 text-sm font-bold uppercase">
-              Connect With Us
+              {language === "ar" ? "تواصل معنا" : "Connect With Us"}
             </h3>
             <div className="mb-4 flex items-center space-x-4 md:mb-0">
               {socialMedia.map((social, index) => (
@@ -135,7 +149,7 @@ const FullFooter = () => {
         <div className="flex flex-col items-center justify-between gap-4 pb-12 md:py-3 md:pb-0 xl:flex-row xl:items-start">
           {/* Social media and copyright */}
           <p className="w-fit text-gray-600">
-            © {new Date().getFullYear()} Medicova. All Rights Reserved
+            © {new Date().getFullYear()} {t("copyright", language)}
           </p>
 
           {/* Payment methods */}
@@ -161,7 +175,7 @@ const FullFooter = () => {
                 href={link.href}
                 className="text-gray-600 transition-colors hover:text-green-600"
               >
-                {link.name}
+                {link.name[language]}
               </Link>
             ))}
           </div>

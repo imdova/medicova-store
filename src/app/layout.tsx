@@ -6,6 +6,7 @@ import LoadingAnimation from "@/components/UI/LoadingAnimation";
 import StoreProvider from "@/store/StoreProvider";
 import { NextAuthProvider } from "@/NextAuthProvider";
 import DynamicFooter from "@/components/Layout/Footer/DynamicFooter";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 const raleway = Raleway({
   variable: "--font-raleway",
@@ -18,17 +19,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={raleway.variable}>
-      <body className="bg-gray-50 antialiased">
-        <StoreProvider>
-          <NextAuthProvider>
-            <DynamicHeaderWrapper>
-              <Suspense fallback={<LoadingAnimation />}>{children}</Suspense>
-            </DynamicHeaderWrapper>
-            <DynamicFooter />
-          </NextAuthProvider>
-        </StoreProvider>
-      </body>
-    </html>
+    <LanguageProvider>
+      <html lang="en" className={raleway.variable}>
+        <body className="bg-gray-50 antialiased">
+          <StoreProvider>
+            <NextAuthProvider>
+              <DynamicHeaderWrapper>
+                <Suspense fallback={<LoadingAnimation />}>{children}</Suspense>
+              </DynamicHeaderWrapper>
+              <DynamicFooter />
+            </NextAuthProvider>
+          </StoreProvider>
+        </body>
+      </html>
+    </LanguageProvider>
   );
 }

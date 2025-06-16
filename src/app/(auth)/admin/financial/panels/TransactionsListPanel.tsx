@@ -561,7 +561,7 @@ export default function TransactionsListPanel() {
       <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         {/* Tabs */}
         <div className="mb-4 flex flex-col items-center justify-between gap-3 sm:flex-row">
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row">
             {tabs.map((tab) => (
               <button
                 key={tab.key}

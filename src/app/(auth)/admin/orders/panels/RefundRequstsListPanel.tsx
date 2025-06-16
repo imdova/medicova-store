@@ -21,8 +21,9 @@ type Product = {
   quantity: number;
   price: string;
 };
-type Order = {
+type Refund = {
   id: string;
+  order_id: string;
   date: string;
   unit_price: string;
   customer: {
@@ -37,20 +38,16 @@ type Order = {
     method: "visa" | "paypal" | "cash" | "mastercard";
     last4?: string;
   };
-  status:
-    | "Packaging"
-    | "Pending"
-    | "Delivered"
-    | "For Delivery"
-    | "Returned"
-    | "Cancelled";
+  status: "Processed" | "Pending";
+
   quantity: string;
 };
 
-// Orders dummy data
-const orders: Order[] = [
+// Refunds dummy data
+const refunds: Refund[] = [
   {
-    id: "ORD-1001",
+    id: "ewqke2",
+    order_id: "ORD-1001",
     date: "15/5/2025",
     customer: {
       name: "Ahmed Mohamed",
@@ -78,11 +75,12 @@ const orders: Order[] = [
       method: "visa",
       last4: "1452",
     },
-    status: "Packaging",
+    status: "Processed",
     quantity: "4 units",
   },
   {
-    id: "ORD-1002",
+    id: "ewjqe2",
+    order_id: "ORD-1002",
     date: "14/5/2025",
     unit_price: "800 EGP",
     customer: {
@@ -107,7 +105,8 @@ const orders: Order[] = [
     quantity: "4 units",
   },
   {
-    id: "ORD-1003",
+    id: "ewqgge2",
+    order_id: "ORD-1003",
     date: "13/5/2025",
     unit_price: "800 EGP",
     customer: {
@@ -134,11 +133,12 @@ const orders: Order[] = [
     payment: {
       method: "mastercard",
     },
-    status: "Delivered",
+    status: "Pending",
     quantity: "4 units",
   },
   {
-    id: "ORD-1004",
+    id: "ewqde2",
+    order_id: "ORD-1004",
     date: "12/5/2025",
     unit_price: "500 EGP",
     customer: {
@@ -159,11 +159,12 @@ const orders: Order[] = [
     payment: {
       method: "cash",
     },
-    status: "For Delivery",
+    status: "Pending",
     quantity: "1 unit",
   },
   {
-    id: "ORD-1005",
+    id: "ewfqe2",
+    order_id: "ORD-1005",
     date: "11/5/2025",
     unit_price: "350 EGP",
     customer: {
@@ -185,11 +186,12 @@ const orders: Order[] = [
       method: "visa",
       last4: "9876",
     },
-    status: "Returned",
+    status: "Pending",
     quantity: "1 unit",
   },
   {
-    id: "ORD-1006",
+    id: "ewge2",
+    order_id: "ORD-1006",
     date: "10/5/2025",
     unit_price: "1200 EGP",
     customer: {
@@ -211,7 +213,7 @@ const orders: Order[] = [
       method: "mastercard",
       last4: "5432",
     },
-    status: "Cancelled",
+    status: "Pending",
     quantity: "1 unit",
   },
 ];
@@ -232,27 +234,15 @@ const customerOptions = [
 ];
 
 const statusOptions = [
-  { id: "all", name: "All orders" },
+  { id: "all", name: "All Status" },
   { id: "pending", name: "Pending" },
-  { id: "packaging", name: "Packaging" },
-  { id: "for_delivery", name: "For Delivery" },
-  { id: "delivered", name: "Delivered" },
-  { id: "returned", name: "Returned" },
-  { id: "cancelled", name: "Cancelled" },
+  { id: "processed", name: "Processed" },
 ];
 
-const categoryOptions = [
-  { id: "all", name: "All Category" },
-  { id: "visa", name: "Visa" },
-  { id: "mastercard", name: "Mastercard" },
-  { id: "paypal", name: "PayPal" },
-  { id: "cash", name: "Cash" },
-];
-
-const brandOptions = [
-  { id: "all", name: "All Brands" },
-  { id: "nike", name: "Nike" },
-  { id: "adidas", name: "Adidas" },
+const productsOptions = [
+  { id: "all", name: "All Products" },
+  { id: "standard", name: "Standard" },
+  { id: "express", name: "Express" },
   { id: "priority", name: "Priority" },
 ];
 
@@ -260,6 +250,11 @@ const brandOptions = [
 const orderColumns = [
   {
     key: "id",
+    header: "Refund ID",
+    sortable: true,
+  },
+  {
+    key: "order_id",
     header: "Order ID",
     sortable: true,
   },
@@ -269,20 +264,9 @@ const orderColumns = [
     sortable: true,
   },
   {
-    key: "customer",
-    header: "Customer",
-    render: (item: Order) => (
-      <div className="text-sm leading-5">
-        <div className="font-medium">{item.customer.name}</div>
-        <div className="text-xs text-gray-500">{item.customer.phone}</div>
-        <div className="text-xs text-gray-500">{item.customer.location}</div>
-      </div>
-    ),
-  },
-  {
     key: "products",
     header: "Products",
-    render: (item: Order) => (
+    render: (item: Refund) => (
       <div className="space-y-2">
         {item.products.map((product: Product, index: number) => (
           <div key={index} className="flex items-center gap-2">
@@ -293,75 +277,29 @@ const orderColumns = [
               width={32}
               height={32}
             />
-            <div>
-              <div className="text-sm">{product.name}</div>
-              <div className="text-xs text-gray-500">
-                {product.quantity} × {product.price}
-              </div>
-            </div>
+            <Link href={"#"} className="text-sm hover:underline">
+              {product.name}
+            </Link>
           </div>
         ))}
       </div>
     ),
   },
   {
-    key: "seller",
-    header: "Seller",
-  },
-  {
-    key: "total",
-    header: "Total Sales",
-    sortable: true,
-  },
-  {
-    key: "payment",
-    header: "Payment",
-    render: (item: Order) => (
-      <div className="flex items-center gap-1">
-        {item.payment.method === "visa" && (
-          <Image src="/icons/card-visa.svg" alt="visa" width={24} height={16} />
-        )}
-        {item.payment.method === "mastercard" && (
-          <Image
-            src="/icons/card-mastercard.svg"
-            alt="mastercard"
-            width={24}
-            height={16}
-          />
-        )}
-        {item.payment.method === "paypal" && (
-          <Image
-            src="/icons/google-play.svg"
-            alt="paypal"
-            width={24}
-            height={16}
-          />
-        )}
-        <span className="text-xs capitalize">
-          {item.payment.method}
-          {item.payment.last4 && ` •••• ${item.payment.last4}`}
-        </span>
+    key: "customer",
+    header: "Customer",
+    render: (item: Refund) => (
+      <div className="text-sm leading-5">
+        <div className="font-medium">{item.customer.name}</div>
+        <div className="text-xs text-gray-500">{item.customer.phone}</div>
+        <div className="text-xs text-gray-500">{item.customer.location}</div>
       </div>
     ),
   },
-  {
-    key: "status",
-    header: "Status",
-    render: (item: Order) => {
-      let color = "bg-gray-100 text-gray-700";
-      if (item.status === "For Delivery") color = "bg-blue-100 text-blue-700";
-      if (item.status === "Packaging") color = "bg-indigo-100 text-indigo-700";
-      if (item.status === "Pending") color = "bg-yellow-100 text-yellow-700";
-      if (item.status === "Delivered") color = "bg-green-100 text-green-700";
-      if (item.status === "Cancelled") color = "bg-red-100 text-red-700";
-      if (item.status === "Returned") color = "bg-orange-100 text-orange-700";
 
-      return (
-        <span className={`inline-block rounded-full px-2 text-[10px] ${color}`}>
-          {item.status}
-        </span>
-      );
-    },
+  {
+    key: "seller",
+    header: "Seller",
   },
   {
     key: "unit_price",
@@ -370,9 +308,27 @@ const orderColumns = [
   {
     key: "quantity",
     header: "Quantity",
-    render: (item: Order) => (
-      <span className="text-xs capitalize">{item.quantity}</span>
-    ),
+  },
+  {
+    key: "total",
+    header: "Total Sales",
+    sortable: true,
+  },
+  {
+    key: "status",
+    header: "Status",
+    render: (item: Refund) => {
+      let color = "bg-gray-100 text-gray-700";
+
+      if (item.status === "Pending") color = "bg-yellow-100 text-yellow-700";
+      if (item.status === "Processed") color = "bg-green-100 text-green-700";
+
+      return (
+        <span className={`inline-block rounded-full px-2 text-[10px] ${color}`}>
+          {item.status}
+        </span>
+      );
+    },
   },
 ];
 
@@ -387,45 +343,32 @@ export default function OrdersListPanel() {
   // Get current filter values from URL
   const sellerFilter = searchParams.get("seller") || "all";
   const customerFilter = searchParams.get("customer") || "all";
-  const CategoryFilter = searchParams.get("category") || "all";
+  const productsFilter = searchParams.get("product") || "all";
   const statusFilter = searchParams.get("status") || "all";
-  const brandFilter = searchParams.get("brand") || "all";
 
   // Calculate order counts by status
   const orderCounts = useMemo(() => {
     const counts: Record<string, number> = {
-      all: orders.length,
+      all: refunds.length,
       pending: 0,
-      packaging: 0,
-      for_delivery: 0,
-      delivered: 0,
-      returned: 0,
-      cancelled: 0,
+      processed: 0,
     };
 
-    orders.forEach((order) => {
-      if (order.status === "Pending") counts.pending++;
-      if (order.status === "Packaging") counts.packaging++;
-      if (order.status === "For Delivery") counts.for_delivery++;
-      if (order.status === "Delivered") counts.delivered++;
-      if (order.status === "Returned") counts.returned++;
-      if (order.status === "Cancelled") counts.cancelled++;
+    refunds.forEach((refund) => {
+      if (refund.status === "Pending") counts.pending++;
+      if (refund.status === "Processed") counts.Processed++;
     });
 
     return counts;
   }, []);
 
-  // Filter orders based on active status
+  // Filter refunds based on active status
   const filteredOrders = useMemo(() => {
-    if (activeStatus === "all") return orders;
-    return orders.filter((order) => {
-      if (activeStatus === "pending") return order.status === "Pending";
-      if (activeStatus === "packaging") return order.status === "Packaging";
-      if (activeStatus === "for_delivery")
-        return order.status === "For Delivery";
-      if (activeStatus === "delivered") return order.status === "Delivered";
-      if (activeStatus === "returned") return order.status === "Returned";
-      if (activeStatus === "cancelled") return order.status === "Cancelled";
+    if (activeStatus === "all") return refunds;
+    return refunds.filter((refund) => {
+      if (activeStatus === "pending") return refund.status === "Pending";
+      if (activeStatus === "processed") return refund.status === "Processed";
+
       return true;
     });
   }, [activeStatus]);
@@ -535,31 +478,20 @@ export default function OrdersListPanel() {
               </div>
             </div>
 
-            {/* Category Filter */}
+            {/* Products Filter */}
             <div>
-              <h3 className="mb-2 text-sm font-medium">Category</h3>
+              <h3 className="mb-2 text-sm font-medium">Product</h3>
               <Dropdown
-                options={categoryOptions}
-                selected={CategoryFilter}
+                options={productsOptions}
+                selected={productsFilter}
                 onSelect={(value) =>
-                  handleFilterChange("category", value.toString())
-                }
-              />
-            </div>
-            {/* Brands Method Filter */}
-            <div>
-              <h3 className="mb-2 text-sm font-medium">Brand</h3>
-              <Dropdown
-                options={brandOptions}
-                selected={brandFilter}
-                onSelect={(value) =>
-                  handleFilterChange("brand", value.toString())
+                  handleFilterChange("product", value.toString())
                 }
               />
             </div>
             {/* status Filter */}
             <div>
-              <h3 className="mb-2 text-sm font-medium">status</h3>
+              <h3 className="mb-2 text-sm font-medium">Status</h3>
               <Dropdown
                 options={statusOptions}
                 selected={statusFilter}

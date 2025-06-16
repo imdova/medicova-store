@@ -2,6 +2,7 @@
 import { TabWithIcon } from "@/components/UI/TabWithIcon";
 import { List } from "lucide-react";
 import OrdersListPanel from "./panels/OrdersListPanel";
+import RefundRequstsListPanel from "./panels/RefundRequstsListPanel";
 
 const tabs = [
   {
@@ -12,7 +13,7 @@ const tabs = [
   {
     label: "Refund Requsts",
     icon: List,
-    content: <OrdersListPanel />,
+    content: <RefundRequstsListPanel />,
   },
 ];
 

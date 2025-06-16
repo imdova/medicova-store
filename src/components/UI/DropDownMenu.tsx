@@ -11,6 +11,8 @@ interface DropdownProps {
   options: DropdownOption[];
   selected: string | number;
   onSelect: (value: string | number) => void;
+  className?: string;
+  placeholder?: string;
 }
 
 export default function Dropdown({
@@ -19,6 +21,8 @@ export default function Dropdown({
   options,
   selected,
   onSelect,
+  className,
+  placeholder,
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -44,17 +48,19 @@ export default function Dropdown({
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex w-full items-center justify-between gap-1 rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 focus:outline-none"
+        className={`flex w-full items-center justify-between gap-1 rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 focus:outline-none ${className}`}
       >
         {icon}
 
-        <span>{selectedOption ? selectedOption.name : label}</span>
+        <span>
+          {selectedOption ? selectedOption.name : label ? label : placeholder}
+        </span>
 
         <ChevronDown size={16} />
       </button>
 
       {isOpen && (
-        <div className="absolute z-10 mt-1 max-h-[300px] w-48 overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg">
+        <div className="absolute z-10 mt-1 max-h-[300px] min-w-48 overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg">
           <ul className="py-1">
             {options.map((option) => (
               <li
