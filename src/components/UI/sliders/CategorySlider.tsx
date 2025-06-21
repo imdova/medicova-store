@@ -208,7 +208,7 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
     <div
       className="container relative mx-auto overflow-hidden p-3 pt-4 lg:max-w-[1440px]"
       {...handlers}
-      dir={isRTL ? "rtl" : "ltr"}
+      dir={isRTL ? "ltr" : "rtl"}
     >
       {/* Navigation Arrows */}
       <motion.button
