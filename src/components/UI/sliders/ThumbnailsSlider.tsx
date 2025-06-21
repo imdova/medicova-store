@@ -97,7 +97,7 @@ const ThumbnailsSlider = ({
         <div
           ref={containerRef}
           onScroll={checkScrollPosition}
-          className="no-scrollbar flex space-x-3 overflow-x-auto py-2"
+          className="no-scrollbar flex gap-3 overflow-x-auto py-2"
         >
           {images.map((img, index) => (
             <motion.button

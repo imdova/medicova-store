@@ -2,8 +2,15 @@
 
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { CreditCard, Plus, Trash2, ChevronRight } from "lucide-react";
+import {
+  CreditCard,
+  Plus,
+  Trash2,
+  ChevronRight,
+  ChevronLeft,
+} from "lucide-react";
 import Modal from "@/components/UI/Modals/DynamicModal";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type CardFormData = {
   cardNumber: string;
@@ -12,7 +19,28 @@ type CardFormData = {
   cvv: string;
 };
 
+const translations = {
+  title: { en: "Payments", ar: "طرق الدفع" },
+  addCard: { en: "Add New Card", ar: "إضافة بطاقة جديدة" },
+  noCards: { en: "No saved cards", ar: "لا توجد بطاقات محفوظة" },
+  noCardsDesc: {
+    en: "Cards saved during the checkout process will display here.",
+    ar: "ستظهر البطاقات المحفوظة أثناء عملية الدفع هنا.",
+  },
+  addPaymentMethod: { en: "Add Payment Method", ar: "إضافة طريقة دفع" },
+  default: { en: "Default", ar: "افتراضي" },
+  setDefault: { en: "Set as default", ar: "تعيين كافتراضي" },
+  modalTitle: { en: "Add New Card", ar: "إضافة بطاقة جديدة" },
+  cardNumber: { en: "Card Number", ar: "رقم البطاقة" },
+  nameOnCard: { en: "Name on Card", ar: "الاسم على البطاقة" },
+  expiryDate: { en: "Expiry Date (MM/YY)", ar: "تاريخ الانتهاء (MM/YY)" },
+  cvv: { en: "CVV", ar: "رمز التحقق" },
+  cancel: { en: "Cancel", ar: "إلغاء" },
+  saveCard: { en: "Save Card", ar: "حفظ البطاقة" },
+};
+
 const PaymentsPage = () => {
+  const { language: locale } = useLanguage();
   const [paymentMethods, setPaymentMethods] = useState([
     {
       id: "card_1",
@@ -31,7 +59,6 @@ const PaymentsPage = () => {
       isDefault: false,
     },
   ]);
-
   const [showModal, setShowModal] = useState(false);
 
   const {
@@ -69,15 +96,17 @@ const PaymentsPage = () => {
   return (
     <div>
       <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-700">Payments</h1>
+        <h1 className="text-2xl font-bold text-gray-700">
+          {translations.title[locale]}
+        </h1>
       </div>
 
       <div className="mb-6">
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center rounded-md bg-green-600 px-4 py-2 text-white transition hover:bg-green-700"
+          className="flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 text-white transition hover:bg-green-700"
         >
-          <Plus className="mr-2 h-4 w-4" /> Add New Card
+          <Plus className="h-4 w-4" /> {translations.addCard[locale]}
         </button>
       </div>
 
@@ -89,8 +118,8 @@ const PaymentsPage = () => {
               className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="mr-4 rounded-md bg-green-50 p-2">
+                <div className="flex items-center gap-4">
+                  <div className="rounded-md bg-green-50 p-2">
                     <CreditCard className="h-5 w-5 text-green-600" />
                   </div>
                   <div>
@@ -103,17 +132,17 @@ const PaymentsPage = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center gap-3">
                   {method.isDefault ? (
                     <span className="rounded-full bg-green-100 px-2 py-1 text-xs text-green-800">
-                      Default
+                      {translations.default[locale]}
                     </span>
                   ) : (
                     <button
                       onClick={() => setAsDefault(method.id)}
                       className="text-sm text-green-600 hover:text-green-800"
                     >
-                      Set as default
+                      {translations.setDefault[locale]}
                     </button>
                   )}
 
@@ -125,7 +154,11 @@ const PaymentsPage = () => {
                   </button>
 
                   <button className="text-gray-400 hover:text-gray-600">
-                    <ChevronRight className="h-4 w-4" />
+                    {locale === "ar" ? (
+                      <ChevronLeft className="h-4 w-4" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -138,16 +171,16 @@ const PaymentsPage = () => {
             <CreditCard className="text-2xl text-gray-400" />
           </div>
           <h2 className="mb-2 text-lg font-semibold text-gray-800">
-            No saved cards
+            {translations.noCards[locale]}
           </h2>
           <p className="mb-4 text-gray-600">
-            Cards saved during the checkout process will display here.
+            {translations.noCardsDesc[locale]}
           </p>
           <button
             onClick={() => setShowModal(true)}
             className="rounded-md bg-green-600 px-4 py-2 text-white transition hover:bg-green-700"
           >
-            Add Payment Method
+            {translations.addPaymentMethod[locale]}
           </button>
         </div>
       )}
@@ -155,12 +188,14 @@ const PaymentsPage = () => {
       <Modal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        title="Add New Card"
+        title={translations.modalTitle[locale]}
       >
         <form onSubmit={handleSubmit(handleAddCard)} className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              Card Number
+            <label
+              className={`mb-1 block text-sm font-medium text-gray-700 ${locale === "ar" ? "text-right" : "text-left"}`}
+            >
+              {translations.cardNumber[locale]}
             </label>
             <input
               {...register("cardNumber", {
@@ -181,8 +216,10 @@ const PaymentsPage = () => {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              Name on Card
+            <label
+              className={`mb-1 block text-sm font-medium text-gray-700 ${locale === "ar" ? "text-right" : "text-left"}`}
+            >
+              {translations.nameOnCard[locale]}
             </label>
             <input
               {...register("cardName", {
@@ -200,8 +237,10 @@ const PaymentsPage = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Expiry Date (MM/YY)
+              <label
+                className={`mb-1 block text-sm font-medium text-gray-700 ${locale === "ar" ? "text-right" : "text-left"}`}
+              >
+                {translations.expiryDate[locale]}
               </label>
               <input
                 {...register("expiryDate", {
@@ -222,8 +261,10 @@ const PaymentsPage = () => {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                CVV
+              <label
+                className={`mb-1 block text-sm font-medium text-gray-700 ${locale === "ar" ? "text-right" : "text-left"}`}
+              >
+                {translations.cvv[locale]}
               </label>
               <input
                 {...register("cvv", {
@@ -244,19 +285,19 @@ const PaymentsPage = () => {
             </div>
           </div>
 
-          <div className="flex justify-end space-x-3 pt-2">
+          <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
               onClick={() => setShowModal(false)}
               className="rounded-md border border-gray-300 px-4 py-2 text-gray-700 transition hover:bg-gray-50"
             >
-              Cancel
+              {translations.cancel[locale]}
             </button>
             <button
               type="submit"
               className="rounded-md bg-green-600 px-4 py-2 text-white transition hover:bg-green-700"
             >
-              Save Card
+              {translations.saveCard[locale]}
             </button>
           </div>
         </form>

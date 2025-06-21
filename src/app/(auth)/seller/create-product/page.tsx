@@ -19,10 +19,12 @@ import { CategoryType, MultiCategory } from "@/types";
 import { brands } from "@/constants/brands";
 import Image from "next/image";
 import DynamicButton from "@/components/UI/Buttons/DynamicButton";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { LocalizedTitle } from "@/types/language";
 
 type Brand = {
   id: string;
-  name: string;
+  name: LocalizedTitle;
 };
 
 type PricingMethod = "manual" | "auto";
@@ -175,6 +177,7 @@ const CategoryItem = ({
   onSelect,
   onNavigate,
 }: CategoryItemProps): JSX.Element => {
+  const { language, isArabic } = useLanguage();
   const hasSubcategories =
     category.subCategories && category.subCategories.length > 0;
 
@@ -190,8 +193,8 @@ const CategoryItem = ({
         }
       }}
     >
-      <div>
-        <div>{category.title}</div>
+      <div className="flex flex-col items-start">
+        <div>{category.title[language]}</div>
         {category.slug && (
           <div className="text-sm text-gray-500">{category.slug}</div>
         )}
@@ -199,9 +202,14 @@ const CategoryItem = ({
       {hasSubcategories && (
         <div className="flex items-center">
           <span className="mr-2 text-xs text-gray-400">
-            {category.subCategories?.length} subcategories
+            {category.subCategories?.length}{" "}
+            {isArabic ? "فئات الفرعية" : "subcategories"}
           </span>
-          <ChevronRight className="text-gray-400" size={16} />
+          {isArabic ? (
+            <ChevronLeft className="text-gray-400" size={16} />
+          ) : (
+            <ChevronRight className="text-gray-400" size={16} />
+          )}
         </div>
       )}
     </button>
@@ -209,8 +217,68 @@ const CategoryItem = ({
 };
 
 const HealthStatus = ({ product }: { product: ProductDetails }) => {
-  // Check each health condition
-  const invoicingValid = true; // Placeholder, assuming invoicing is always valid for now
+  const { language } = useLanguage(); // language: "en" | "ar"
+
+  const t = {
+    health: {
+      en: "Health",
+      ar: "حالة المنتج",
+    },
+    allChecksPassed: {
+      en: "All checks passed",
+      ar: "تم اجتياز جميع الفحوصات",
+    },
+    fixToGoOnline: {
+      en: "Fix the following to go online",
+      ar: "قم بإصلاح التالي للنشر",
+    },
+    invoicing: {
+      en: "Invoicing",
+      ar: "الفوترة",
+    },
+    invalidInvoicing: {
+      en: "Invalid invoicing",
+      ar: "الفوترة غير صالحة",
+    },
+    price: {
+      en: "Price",
+      ar: "السعر",
+    },
+    invalidPrice: {
+      en: "Price is invalid",
+      ar: "السعر غير صالح",
+    },
+    psku: {
+      en: "PSKU Active",
+      ar: "رمز المنتج نشط",
+    },
+    invalidPsku: {
+      en: "PSKU not active",
+      ar: "رمز المنتج غير نشط",
+    },
+    stock: {
+      en: "Stock Check",
+      ar: "فحص المخزون",
+    },
+    noStock: {
+      en: "Stock not available",
+      ar: "المخزون غير متوفر",
+    },
+    product: {
+      en: "Product Active",
+      ar: "المنتج نشط",
+    },
+    notProduct: {
+      en: "Product not active",
+      ar: "المنتج غير نشط",
+    },
+    learnMore: {
+      en: "Learn more",
+      ar: "اعرف المزيد",
+    },
+  };
+
+  const invoicingValid = true;
   const priceValid = product.price !== undefined && product.price >= 0;
   const pskuActive = !!product.sku && product.sku.length >= 3;
   const stockAvailable = product.stock !== undefined && product.stock > 0;
@@ -229,7 +297,7 @@ const HealthStatus = ({ product }: { product: ProductDetails }) => {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Health</h2>
+        <h2 className="text-xl font-semibold">{t.health[language]}</h2>
       </div>
 
       <div className="my-4">
@@ -240,7 +308,7 @@ const HealthStatus = ({ product }: { product: ProductDetails }) => {
               : "bg-yellow-50 text-yellow-700"
           }`}
         >
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
             {allValid ? (
               <Check className="mr-2 h-4 w-4" />
             ) : (
@@ -248,133 +316,99 @@ const HealthStatus = ({ product }: { product: ProductDetails }) => {
             )}
             <span className="text-sm font-medium">
               {allValid
-                ? "All checks passed"
-                : "Fix the following to go online"}
+                ? t.allChecksPassed[language]
+                : t.fixToGoOnline[language]}
             </span>
           </div>
         </div>
 
         <div className="space-y-2">
-          <div
-            className={`rounded-md p-3 ${invoicingValid ? "bg-gray-50" : "bg-red-50"}`}
-          >
-            <div className="flex items-center">
-              {invoicingValid ? (
-                <Check className="mr-2 h-5 w-5 text-green-500" />
-              ) : (
-                <X className="mr-2 h-5 w-5 text-red-500" />
-              )}
-              <span className="font-medium">Invoicing</span>
-            </div>
-            {!invoicingValid && (
-              <div className="mt-1 text-sm">Invalid invoicing</div>
-            )}
-          </div>
+          {/* Invoicing */}
+          <CheckItem
+            valid={invoicingValid}
+            label={t.invoicing[language]}
+            error={t.invalidInvoicing[language]}
+          />
 
-          <div
-            className={`rounded-md p-3 ${priceValid ? "bg-gray-50" : "bg-red-50"}`}
-          >
-            <div className="flex items-center">
-              {priceValid ? (
-                <Check className="mr-2 h-5 w-5 text-green-500" />
-              ) : (
-                <X className="mr-2 h-5 w-5 text-red-500" />
-              )}
-              <span className="font-medium">Price</span>
-            </div>
-            {!priceValid && (
-              <div className="mt-1 flex items-center text-xs">
-                <span className="text-xs">Price is invalid</span>
-                <button
-                  type="button"
-                  className="ml-2 flex items-center text-xs text-blue-500 hover:text-blue-700"
-                >
-                  <Info className="mr-1 h-4 w-4" />
-                  Learn more
-                </button>
-              </div>
-            )}
-          </div>
+          {/* Price */}
+          <CheckItem
+            valid={priceValid}
+            label={t.price[language]}
+            error={t.invalidPrice[language]}
+            showLearnMore
+            learnMoreLabel={t.learnMore[language]}
+          />
 
-          <div
-            className={`rounded-md p-3 ${pskuActive ? "bg-gray-50" : "bg-red-50"}`}
-          >
-            <div className="flex items-center">
-              {pskuActive ? (
-                <Check className="mr-2 h-5 w-5 text-green-500" />
-              ) : (
-                <X className="mr-2 h-5 w-5 text-red-500" />
-              )}
-              <span className="font-medium">PSKU Active</span>
-            </div>
-            {!pskuActive && (
-              <div className="mt-1 flex items-center text-xs">
-                <span className="text-xs">PSKU not active</span>
-                <button
-                  type="button"
-                  className="ml-2 flex items-center text-xs text-blue-500 hover:text-blue-700"
-                >
-                  <Info className="mr-1 h-4 w-4" />
-                  Learn more
-                </button>
-              </div>
-            )}
-          </div>
+          {/* PSKU */}
+          <CheckItem
+            valid={pskuActive}
+            label={t.psku[language]}
+            error={t.invalidPsku[language]}
+            showLearnMore
+            learnMoreLabel={t.learnMore[language]}
+          />
 
-          <div
-            className={`rounded-md p-3 ${stockAvailable ? "bg-gray-50" : "bg-red-50"}`}
-          >
-            <div className="flex items-center">
-              {stockAvailable ? (
-                <Check className="mr-2 h-5 w-5 text-green-500" />
-              ) : (
-                <X className="mr-2 h-5 w-5 text-red-500" />
-              )}
-              <span className="font-medium">Stock Check</span>
-            </div>
-            {!stockAvailable && (
-              <div className="mt-1 flex items-center text-xs">
-                <span className="text-xs">Stock not available</span>
-                <button
-                  type="button"
-                  className="ml-2 flex items-center text-xs text-blue-500 hover:text-blue-700"
-                >
-                  <Info className="mr-1 h-4 w-4" />
-                  Learn more
-                </button>
-              </div>
-            )}
-          </div>
+          {/* Stock */}
+          <CheckItem
+            valid={stockAvailable}
+            label={t.stock[language]}
+            error={t.noStock[language]}
+            showLearnMore
+            learnMoreLabel={t.learnMore[language]}
+          />
 
-          <div
-            className={`rounded-md p-3 ${productActive ? "bg-gray-50" : "bg-red-50"}`}
-          >
-            <div className="flex items-center">
-              {productActive ? (
-                <Check className="mr-2 h-5 w-5 text-green-500" />
-              ) : (
-                <X className="mr-2 h-5 w-5 text-red-500" />
-              )}
-              <span className="font-medium">Product Active</span>
-            </div>
-            {!productActive && (
-              <div className="mt-1 flex items-center text-xs">
-                <span className="text-xs">Product not active</span>
-                <button
-                  type="button"
-                  className="ml-2 flex items-center text-blue-500 hover:text-blue-700"
-                >
-                  <Info className="mr-1 h-4 w-4" />
-                  Learn more
-                </button>
-              </div>
-            )}
-          </div>
+          {/* Product Active */}
+          <CheckItem
+            valid={productActive}
+            label={t.product[language]}
+            error={t.notProduct[language]}
+            showLearnMore
+            learnMoreLabel={t.learnMore[language]}
+          />
         </div>
       </div>
     </div>
   );
 };
+
+const CheckItem = ({
+  valid,
+  label,
+  error,
+  showLearnMore = false,
+  learnMoreLabel,
+}: {
+  valid: boolean;
+  label: string;
+  error?: string;
+  showLearnMore?: boolean;
+  learnMoreLabel?: string;
+}) => (
+  <div className={`rounded-md p-3 ${valid ? "bg-gray-50" : "bg-red-50"}`}>
+    <div className="flex items-center gap-2">
+      {valid ? (
+        <Check className="mr-2 h-5 w-5 text-green-500" />
+      ) : (
+        <X className="mr-2 h-5 w-5 text-red-500" />
+      )}
+      <span className="font-medium">{label}</span>
+    </div>
+    {!valid && error && (
+      <div className="mt-1 flex items-center gap-3 text-xs">
+        <span>{error}</span>
+        {showLearnMore && learnMoreLabel && (
+          <button
+            type="button"
+            className="ml-2 flex items-center gap-1 text-primary"
+          >
+            <Info className="mr-1 h-3 w-3" />
+            {learnMoreLabel}
+          </button>
+        )}
+      </div>
+    )}
+  </div>
+);
 
 const ProductCreationWizard = () => {
   type Step = "category" | "brand" | "identity" | "details";
@@ -382,6 +416,7 @@ const ProductCreationWizard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentParentCategory, setCurrentParentCategory] =
     useState<CategoryType | null>(null);
+  const { language } = useLanguage();
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [product, setProduct] = useState<ProductDetails>({
     id: "",
@@ -397,14 +432,137 @@ const ProductCreationWizard = () => {
   const [newFeature, setNewFeature] = useState("");
   const [newHighlight, setNewHighlight] = useState("");
 
+  // Translation dictionary
+  const translations = {
+    en: {
+      productCreation: "Product Creation",
+      category: "Category",
+      brand: "Brand",
+      identity: "Identity",
+      details: "Details",
+      selectProductCategory: "Select Product Category",
+      searchCategories: "Search categories",
+      searchSubcategories: "Search subcategories",
+      noCategoriesFound: "No categories found",
+      selected: "Selected",
+      nextBrand: "Next: Brand",
+      selectBrand: "Select Brand",
+      searchBrand: "Search brand",
+      noBrandsFound: "No brands found",
+      back: "Back",
+      nextIdentity: "Next: Identity",
+      productIdentity: "Product Identity",
+      manualSkuEntry: "Manual SKU Entry",
+      enterSku: "Enter your SKU",
+      submit: "Submit",
+      or: "or",
+      generateSku: "Generate SKU Automatically",
+      skuGenerated: "SKU Generated",
+      nextDetails: "Next: Details",
+      productDetails: "Product Details",
+      productTitle: "Product Title",
+      enterProductTitle: "Enter product title",
+      productDescription: "Product Description",
+      enterDescription: "Enter detailed product description...",
+      keyFeatures: "Key Features",
+      addFeature: "Add a feature",
+      add: "Add",
+      deliveryInfo: "Delivery Information",
+      deliveryTime: "Delivery Time",
+      deliveryPlaceholder: "e.g. 3-5 business days",
+      productHighlights: "Product Highlights",
+      addHighlight: "Add a highlight",
+      pricing: "Pricing",
+      price: "Price ($)",
+      salePrice: "Sale Price ($) (Optional)",
+      saleStart: "Sale Start Date (Optional)",
+      saleEnd: "Sale End Date (Optional)",
+      inventoryWeight: "Inventory & Weight",
+      stockQuantity: "Stock Quantity",
+      weight: "Weight (kg)",
+      sizes: "Sizes",
+      colors: "Colors",
+      specifications: "Specifications",
+      specKeyPlaceholder: "Key (e.g., Material)",
+      specValuePlaceholder: "Value (e.g., Cotton)",
+      productImages: "Product Images",
+      clickToUpload: "Click or drag to upload",
+      maxImages: "Max 10 images • JPG, PNG, WebP",
+      viewOnStore: "View on store",
+      createProduct: "Create Product",
+      clearSearch: "Clear search",
+      product: "product",
+    },
+    ar: {
+      productCreation: "إنشاء المنتج",
+      category: "الفئة",
+      brand: "العلامة التجارية",
+      identity: "الهوية",
+      details: "التفاصيل",
+      selectProductCategory: "اختر فئة المنتج",
+      searchCategories: "ابحث في الفئات",
+      searchSubcategories: "ابحث في الفئات الفرعية",
+      noCategoriesFound: "لا توجد فئات",
+      selected: "محدد",
+      nextBrand: "التالي: العلامة التجارية",
+      selectBrand: "اختر العلامة التجارية",
+      searchBrand: "ابحث عن علامة تجارية",
+      noBrandsFound: "لا توجد علامات تجارية",
+      back: "رجوع",
+      nextIdentity: "التالي: الهوية",
+      productIdentity: "هوية المنتج",
+      manualSkuEntry: "إدخال SKU يدويًا",
+      enterSku: "أدخل SKU الخاص بك",
+      submit: "إرسال",
+      or: "أو",
+      generateSku: "إنشاء SKU تلقائيًا",
+      skuGenerated: "تم إنشاء SKU",
+      nextDetails: "التالي: التفاصيل",
+      productDetails: "تفاصيل المنتج",
+      productTitle: "عنوان المنتج",
+      enterProductTitle: "أدخل عنوان المنتج",
+      productDescription: "وصف المنتج",
+      enterDescription: "أدخل وصف مفصل للمنتج...",
+      keyFeatures: "الميزات الرئيسية",
+      addFeature: "أضف ميزة",
+      add: "إضافة",
+      deliveryInfo: "معلومات التوصيل",
+      deliveryTime: "وقت التوصيل",
+      deliveryPlaceholder: "مثال: 3-5 أيام عمل",
+      productHighlights: "أبرز ميزات المنتج",
+      addHighlight: "أضف نقطة بارزة",
+      pricing: "التسعير",
+      price: "السعر ($)",
+      salePrice: "سعر البيع ($) (اختياري)",
+      saleStart: "تاريخ بدء البيع (اختياري)",
+      saleEnd: "تاريخ انتهاء البيع (اختياري)",
+      inventoryWeight: "المخزون والوزن",
+      stockQuantity: "الكمية المتاحة",
+      weight: "الوزن (كجم)",
+      sizes: "المقاسات",
+      colors: "الألوان",
+      specifications: "المواصفات",
+      specKeyPlaceholder: "المفتاح (مثال: المادة)",
+      specValuePlaceholder: "القيمة (مثال: قطن)",
+      productImages: "صور المنتج",
+      clickToUpload: "انقر أو اسحب للتحميل",
+      maxImages: "10 صور كحد أقصى • JPG, PNG, WebP",
+      viewOnStore: "عرض في المتجر",
+      createProduct: "إنشاء المنتج",
+      clearSearch: "مسح البحث",
+      product: "منتج",
+    },
+  };
+
+  const t = translations[language];
+
   const filteredCategories = allCategories.filter((cat) =>
-    cat.title.toLowerCase().includes(searchTerm.toLowerCase()),
+    cat.title?.[language].toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const filteredBrands = brands.filter((brand) =>
-    brand.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    brand.name[language].toLowerCase().includes(searchTerm.toLowerCase()),
   );
-
   const validateStep = useCallback(() => {
     let currentErrors: ValidationErrors = {};
 
@@ -568,7 +726,7 @@ const ProductCreationWizard = () => {
   const renderStepIndicator = (
     stepName: Step,
     stepNumber: number,
-    label: string,
+    labelKey: keyof typeof translations.en,
   ) => {
     const isActive = step === stepName;
     const isCompleted =
@@ -579,7 +737,7 @@ const ProductCreationWizard = () => {
     return (
       <button
         type="button"
-        className={`flex items-center ${isActive ? "font-medium text-green-600" : "text-gray-500"}`}
+        className={`flex items-center gap-1 ${isActive ? "font-medium text-green-600" : "text-gray-500"}`}
         onClick={() => {
           if (stepName === "category") setStep("category");
           if (stepName === "brand" && product.category) setStep("brand");
@@ -603,25 +761,33 @@ const ProductCreationWizard = () => {
         >
           {isCompleted && !isActive ? <Check size={15} /> : stepNumber}
         </span>
-        {label}
-        {stepName !== "details" && <ChevronRight className="mx-2" size={16} />}
+        {t[labelKey]}
+        {stepName !== "details" &&
+          (language === "ar" ? (
+            <ChevronLeft className="mx-2" size={16} />
+          ) : (
+            <ChevronRight className="mx-2" size={16} />
+          ))}
       </button>
     );
   };
 
   return (
-    <div>
-      <h1 className="mb-6 text-2xl font-bold md:text-3xl">Product Creation</h1>
+    <div className={language === "ar" ? "text-right" : "text-left"}>
+      <h1 className="mb-6 text-2xl font-bold md:text-3xl">
+        {t.productCreation}
+      </h1>
 
       <div className="grid w-full overflow-x-auto">
         {/* Stepper */}
         <div className="mb-8 flex w-full min-w-[270px] snap-x gap-2 overflow-x-auto rounded-lg border border-gray-200 bg-white p-2">
-          {renderStepIndicator("category", 1, "Category")}
-          {renderStepIndicator("brand", 2, "Brand")}
-          {renderStepIndicator("identity", 3, "Identity")}
-          {renderStepIndicator("details", 4, "Details")}
+          {renderStepIndicator("category", 1, "category")}
+          {renderStepIndicator("brand", 2, "brand")}
+          {renderStepIndicator("identity", 3, "identity")}
+          {renderStepIndicator("details", 4, "details")}
         </div>
       </div>
+
       {/* Category Step */}
       {step === "category" && (
         <div className="rounded-xl border border-gray-200 bg-white p-6">
@@ -630,7 +796,7 @@ const ProductCreationWizard = () => {
             {currentParentCategory && (
               <button
                 type="button"
-                className="mr-2 flex items-center text-gray-600 hover:text-gray-800"
+                className={`flex items-center text-gray-600 hover:text-gray-800 ${language === "ar" ? "ml-2" : "mr-2"}`}
                 onClick={() => setCurrentParentCategory(null)}
               >
                 <ChevronLeft size={20} />
@@ -638,8 +804,8 @@ const ProductCreationWizard = () => {
             )}
             <h2 className="text-xl font-semibold">
               {currentParentCategory
-                ? currentParentCategory.title
-                : "Select Product Category"}
+                ? currentParentCategory.title[language]
+                : t.selectProductCategory}
             </h2>
           </div>
 
@@ -652,27 +818,34 @@ const ProductCreationWizard = () => {
           {/* Search input */}
           <div className="mb-6">
             <div className="relative">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <div
+                className={`pointer-events-none absolute inset-y-0 ${language === "ar" ? "right-0 flex items-center pr-3" : "left-0 flex items-center pl-3"}`}
+              >
                 <Search className="text-gray-400" size={18} />
               </div>
               <input
                 type="text"
-                className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-4 focus:outline-none"
+                className={`w-full rounded-md border border-gray-300 py-2 ${language === "ar" ? "pl-4 pr-10" : "pl-10 pr-4"} focus:outline-none`}
                 placeholder={
                   currentParentCategory
-                    ? "Search subcategories"
-                    : "Search categories"
+                    ? t.searchSubcategories
+                    : t.searchCategories
                 }
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                aria-label="Search categories"
+                aria-label={
+                  currentParentCategory
+                    ? t.searchSubcategories
+                    : t.searchCategories
+                }
+                dir={language === "ar" ? "rtl" : "ltr"}
               />
               {searchTerm && (
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700"
+                  className={`absolute inset-y-0 ${language === "ar" ? "left-0 flex items-center pl-3" : "right-0 flex items-center pr-3"} text-gray-500 hover:text-gray-700`}
                   onClick={() => setSearchTerm("")}
-                  aria-label="Clear search"
+                  aria-label={t.clearSearch}
                 >
                   <X size={16} />
                 </button>
@@ -695,7 +868,7 @@ const ProductCreationWizard = () => {
                 ))
               ) : (
                 <div className="p-3 text-center text-gray-500">
-                  No categories found
+                  {t.noCategoriesFound}
                 </div>
               )}
             </div>
@@ -718,8 +891,10 @@ const ProductCreationWizard = () => {
               {/* Selected category indicator */}
               {product.category && (
                 <div className="mb-6 rounded-md border border-green-200 bg-green-50 p-3">
-                  <div className="font-medium">{product.category.title}</div>
-                  <div className="text-sm text-green-600">Selected</div>
+                  <div className="font-medium">
+                    {product.category.title[language]}
+                  </div>
+                  <div className="text-sm text-green-600">{t.selected}</div>
                 </div>
               )}
             </>
@@ -733,7 +908,7 @@ const ProductCreationWizard = () => {
               disabled={!product.category}
               onClick={validateStep}
             >
-              Next: Brand
+              {t.nextBrand}
             </button>
           </div>
         </div>
@@ -742,7 +917,7 @@ const ProductCreationWizard = () => {
       {/* Brand Step */}
       {step === "brand" && (
         <div className="rounded-xl border border-gray-200 bg-white p-6">
-          <h2 className="mb-4 text-xl font-semibold">Select Brand</h2>
+          <h2 className="mb-4 text-xl font-semibold">{t.selectBrand}</h2>
           {errors.brand && (
             <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
               {errors.brand}
@@ -750,23 +925,26 @@ const ProductCreationWizard = () => {
           )}
           <div className="mb-6">
             <div className="relative">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <div
+                className={`pointer-events-none absolute inset-y-0 ${language === "ar" ? "right-0 flex items-center pr-3" : "left-0 flex items-center pl-3"}`}
+              >
                 <Search className="text-gray-400" size={18} />
               </div>
               <input
                 type="text"
-                className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-4 focus:outline-none"
-                placeholder="Search brand"
+                className={`w-full rounded-md border border-gray-300 py-2 ${language === "ar" ? "pl-4 pr-10" : "pl-10 pr-4"} focus:outline-none`}
+                placeholder={t.searchBrand}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                aria-label="Search brands"
+                aria-label={t.searchBrand}
+                dir={language === "ar" ? "rtl" : "ltr"}
               />
               {searchTerm && (
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700"
+                  className={`absolute inset-y-0 ${language === "ar" ? "left-0 flex items-center pl-3" : "right-0 flex items-center pr-3"} text-gray-500 hover:text-gray-700`}
                   onClick={() => setSearchTerm("")}
-                  aria-label="Clear search"
+                  aria-label={t.clearSearch}
                 >
                   <X size={16} />
                 </button>
@@ -780,27 +958,27 @@ const ProductCreationWizard = () => {
                 <button
                   type="button"
                   key={brand.id}
-                  className={`w-full cursor-pointer rounded-md border p-3 text-left ${
+                  className={`w-full cursor-pointer rounded-md border p-3 ${language === "ar" ? "text-right" : "text-left"} ${
                     product.brand?.id === brand.id
                       ? "border-green-500 bg-green-50"
                       : "border-white hover:bg-gray-100"
                   }`}
                   onClick={() => handleBrandSelect(brand)}
                 >
-                  {brand.name}
+                  {brand.name[language]}
                 </button>
               ))
             ) : (
               <div className="p-3 text-center text-gray-500">
-                No brands found
+                {t.noBrandsFound}
               </div>
             )}
           </div>
 
           {product.brand && (
             <div className="mb-6 rounded-md border border-green-200 bg-green-50 p-3">
-              <div className="font-medium">{product.brand.name}</div>
-              <div className="text-sm text-green-600">Selected</div>
+              <div className="font-medium">{product.brand.name[language]}</div>
+              <div className="text-sm text-green-600">{t.selected}</div>
             </div>
           )}
 
@@ -810,7 +988,7 @@ const ProductCreationWizard = () => {
               className="rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50"
               onClick={() => setStep("category")}
             >
-              Back
+              {t.back}
             </button>
             <button
               type="button"
@@ -818,7 +996,7 @@ const ProductCreationWizard = () => {
               disabled={!product.brand}
               onClick={validateStep}
             >
-              Next: Identity
+              {t.nextIdentity}
             </button>
           </div>
         </div>
@@ -827,7 +1005,7 @@ const ProductCreationWizard = () => {
       {/* Identity Step */}
       {step === "identity" && (
         <div className="rounded-xl border border-gray-200 bg-white p-6">
-          <h2 className="mb-4 text-xl font-semibold">Product Identity</h2>
+          <h2 className="mb-4 text-xl font-semibold">{t.productIdentity}</h2>
           {errors.sku && (
             <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
               {errors.sku}
@@ -835,30 +1013,31 @@ const ProductCreationWizard = () => {
           )}
 
           <div className="mb-6">
-            <h3 className="mb-2 font-medium">Manual SKU Entry</h3>
+            <h3 className="mb-2 font-medium">{t.manualSkuEntry}</h3>
             <div className="flex">
               <input
                 type="text"
-                className="flex-grow rounded-l-md border border-gray-300 px-3 py-2 focus:outline-none"
-                placeholder="Enter your SKU"
+                className={`flex-grow rounded-md border border-gray-300 px-3 py-2 focus:outline-none ${language === "ar" ? "rounded-r-md" : "rounded-l-md"}`}
+                placeholder={t.enterSku}
                 value={product.sku || ""}
                 onChange={(e) =>
                   setProduct({ ...product, sku: e.target.value })
                 }
-                aria-label="Enter SKU manually"
+                aria-label={t.enterSku}
+                dir={language === "ar" ? "rtl" : "ltr"}
               />
               <button
                 type="button"
-                className="rounded-r-md bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+                className={`rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700 ${language === "ar" ? "rounded-l-md" : "rounded-r-md"}`}
                 onClick={() => product.sku && validateStep()}
                 disabled={!product.sku}
               >
-                Submit
+                {t.submit}
               </button>
             </div>
           </div>
 
-          <div className="my-4 text-center text-gray-500">or</div>
+          <div className="my-4 text-center text-gray-500">{t.or}</div>
 
           <button
             type="button"
@@ -866,14 +1045,12 @@ const ProductCreationWizard = () => {
             onClick={handleGenerateSku}
           >
             <Clipboard className="mb-2 text-gray-400" size={24} />
-            <span className="text-sm text-gray-600">
-              Generate SKU Automatically
-            </span>
+            <span className="text-sm text-gray-600">{t.generateSku}</span>
           </button>
 
           {product.sku && (
             <div className="mt-6 rounded-md border border-green-200 bg-green-50 p-4">
-              <div className="font-medium">SKU Generated</div>
+              <div className="font-medium">{t.skuGenerated}</div>
               <div className="mt-1 font-mono text-sm">{product.sku}</div>
             </div>
           )}
@@ -884,7 +1061,7 @@ const ProductCreationWizard = () => {
               className="rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50"
               onClick={() => setStep("brand")}
             >
-              Back
+              {t.back}
             </button>
             <button
               type="button"
@@ -892,7 +1069,7 @@ const ProductCreationWizard = () => {
               disabled={!product.sku}
               onClick={validateStep}
             >
-              Next: Details
+              {t.nextDetails}
             </button>
           </div>
         </div>
@@ -924,10 +1101,10 @@ const ProductCreationWizard = () => {
               </div>
               <div>
                 <h2 className="font-semibold">
-                  {product.brand?.name || "Product"}
+                  {product.brand?.name[language] || t.product}
                 </h2>
                 <span className="text-sm">
-                  {product.category?.title || "category"}
+                  {product.category?.title[language] || t.category}
                 </span>
               </div>
             </div>
@@ -936,26 +1113,26 @@ const ProductCreationWizard = () => {
                 variant="outlineSussces"
                 size="sm"
                 icon={<Eye size={15} />}
-                label={"View on store"}
+                label={t.viewOnStore}
               />
               <DynamicButton
                 variant="success"
                 size="sm"
                 icon={<Save size={15} />}
                 onClick={validateStep}
-                label={"Create Product"}
+                label={t.createProduct}
               />
             </div>
           </div>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-9">
             <div className="col-span-1 rounded-xl border border-gray-200 bg-white p-6 lg:col-span-6">
-              <h1 className="mb-4 text-2xl font-bold">Product Details</h1>
+              <h1 className="mb-4 text-2xl font-bold">{t.productDetails}</h1>
               <div className="mb-6 rounded-md border border-gray-200 p-3">
                 <div className="font-mono text-sm font-medium">
                   {product.sku}
                 </div>
               </div>
-              <h2 className="mb-4 text-xl font-semibold">Product Title</h2>
+              <h2 className="mb-4 text-xl font-semibold">{t.productTitle}</h2>
               {errors.title && (
                 <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
                   {errors.title}
@@ -964,16 +1141,17 @@ const ProductCreationWizard = () => {
               <input
                 type="text"
                 className="mb-6 w-full rounded-md border border-gray-300 p-3 focus:outline-none"
-                placeholder="Enter product title"
+                placeholder={t.enterProductTitle}
                 value={product.title || ""}
                 onChange={(e) =>
                   setProduct({ ...product, title: e.target.value })
                 }
-                aria-label="Product title"
+                aria-label={t.productTitle}
+                dir={language === "ar" ? "rtl" : "ltr"}
               />
 
               <h2 className="mb-4 text-xl font-semibold">
-                Product Description
+                {t.productDescription}
               </h2>
               {errors.description && (
                 <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
@@ -983,31 +1161,33 @@ const ProductCreationWizard = () => {
               <textarea
                 className="mb-6 w-full resize-none rounded-md border border-gray-300 p-3 focus:outline-none"
                 rows={5}
-                placeholder="Enter detailed product description..."
+                placeholder={t.enterDescription}
                 value={product.description || ""}
                 onChange={(e) =>
                   setProduct({ ...product, description: e.target.value })
                 }
-                aria-label="Product description"
+                aria-label={t.productDescription}
+                dir={language === "ar" ? "rtl" : "ltr"}
               />
-              <h2 className="mb-4 text-xl font-semibold">Key Features</h2>
+              <h2 className="mb-4 text-xl font-semibold">{t.keyFeatures}</h2>
               <div className="mb-6">
                 <div className="mb-2 flex">
                   <input
                     type="text"
-                    className="flex-grow rounded-l-md border border-gray-300 p-2 focus:outline-none"
-                    placeholder="Add a feature"
+                    className={`flex-grow border border-gray-300 p-2 focus:outline-none ${language === "ar" ? "rounded-r-md" : "rounded-l-md"}`}
+                    placeholder={t.addFeature}
                     value={newFeature}
                     onChange={(e) => setNewFeature(e.target.value)}
-                    aria-label="Add feature"
+                    aria-label={t.addFeature}
+                    dir={language === "ar" ? "rtl" : "ltr"}
                   />
                   <button
                     type="button"
-                    className="rounded-r-md bg-green-600 px-3 text-white hover:bg-green-700"
+                    className={`bg-green-600 px-3 text-white hover:bg-green-700 ${language === "ar" ? "rounded-l-md" : "rounded-r-md"}`}
                     onClick={handleAddFeature}
                     disabled={!newFeature.trim()}
                   >
-                    Add
+                    {t.add}
                   </button>
                 </div>
                 {product.features?.map((feature, index) => (
@@ -1020,53 +1200,54 @@ const ProductCreationWizard = () => {
                       type="button"
                       className="text-red-500 hover:text-red-700"
                       onClick={() => handleRemoveFeature(index)}
-                      aria-label="Remove feature"
                     >
                       <X size={16} />
                     </button>
                   </div>
                 ))}
               </div>
-              <h2 className="mb-4 text-xl font-semibold">
-                Delivery Information
-              </h2>
+              <h2 className="mb-4 text-xl font-semibold">{t.deliveryInfo}</h2>
               <div className="mb-6">
                 <label
                   htmlFor="deliveryTime"
                   className="mb-1 block text-gray-700"
                 >
-                  Delivery Time
+                  {t.deliveryTime}
                 </label>
                 <input
                   type="text"
                   id="deliveryTime"
                   className="focus:ring-500 w-full rounded-md border border-gray-300 p-2 focus:outline-none"
-                  placeholder="e.g. 3-5 business days"
+                  placeholder={t.deliveryPlaceholder}
                   value={product.deliveryTime || ""}
                   onChange={(e) =>
                     setProduct({ ...product, deliveryTime: e.target.value })
                   }
-                  aria-label="Delivery time"
+                  aria-label={t.deliveryTime}
+                  dir={language === "ar" ? "rtl" : "ltr"}
                 />
               </div>
-              <h2 className="mb-4 text-xl font-semibold">Product Highlights</h2>
+              <h2 className="mb-4 text-xl font-semibold">
+                {t.productHighlights}
+              </h2>
               <div className="mb-6">
                 <div className="mb-2 flex">
                   <input
                     type="text"
-                    className="flex-grow rounded-l-md border border-gray-300 p-2 focus:outline-none"
-                    placeholder="Add a highlight"
+                    className={`flex-grow border border-gray-300 p-2 focus:outline-none ${language === "ar" ? "rounded-r-md" : "rounded-l-md"}`}
+                    placeholder={t.addHighlight}
                     value={newHighlight}
                     onChange={(e) => setNewHighlight(e.target.value)}
-                    aria-label="Add highlight"
+                    aria-label={t.addHighlight}
+                    dir={language === "ar" ? "rtl" : "ltr"}
                   />
                   <button
                     type="button"
-                    className="rounded-r-md bg-green-600 px-3 text-white hover:bg-green-700"
+                    className={`bg-green-600 px-3 text-white hover:bg-green-700 ${language === "ar" ? "rounded-l-md" : "rounded-r-md"}`}
                     onClick={handleAddHighlight}
                     disabled={!newHighlight.trim()}
                   >
-                    Add
+                    {t.add}
                   </button>
                 </div>
                 {product.highlights?.map((highlight, index) => (
@@ -1079,7 +1260,6 @@ const ProductCreationWizard = () => {
                       type="button"
                       className="text-red-500 hover:text-red-700"
                       onClick={() => handleRemoveHighlight(index)}
-                      aria-label="Remove highlight"
                     >
                       <X size={16} />
                     </button>
@@ -1087,7 +1267,7 @@ const ProductCreationWizard = () => {
                 ))}
               </div>
 
-              <h2 className="mb-4 text-xl font-semibold">Pricing</h2>
+              <h2 className="mb-4 text-xl font-semibold">{t.pricing}</h2>
               {errors.price && (
                 <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
                   {errors.price}
@@ -1105,7 +1285,7 @@ const ProductCreationWizard = () => {
               )}
               <div className="mb-4">
                 <label htmlFor="del_price" className="mb-1 block text-gray-700">
-                  Price ($)
+                  {t.price}
                 </label>
                 <input
                   type="number"
@@ -1120,12 +1300,13 @@ const ProductCreationWizard = () => {
                     })
                   }
                   step="0.01"
-                  aria-label="Product price"
+                  aria-label={t.price}
+                  dir={language === "ar" ? "rtl" : "ltr"}
                 />
               </div>
               <div className="mb-4">
                 <label htmlFor="price" className="mb-1 block text-gray-700">
-                  Sale Price ($) (Optional)
+                  {t.salePrice}
                 </label>
                 <input
                   type="number"
@@ -1140,7 +1321,8 @@ const ProductCreationWizard = () => {
                     })
                   }
                   step="0.01"
-                  aria-label="Product sale price"
+                  aria-label={t.salePrice}
+                  dir={language === "ar" ? "rtl" : "ltr"}
                 />
               </div>
               <div className="mb-6 grid gap-4 md:grid-cols-2">
@@ -1149,7 +1331,7 @@ const ProductCreationWizard = () => {
                     htmlFor="saleStart"
                     className="mb-1 block text-gray-700"
                   >
-                    Sale Start Date (Optional)
+                    {t.saleStart}
                   </label>
                   <input
                     type="date"
@@ -1159,12 +1341,12 @@ const ProductCreationWizard = () => {
                     onChange={(e) =>
                       setProduct({ ...product, saleStart: e.target.value })
                     }
-                    aria-label="Sale start date"
+                    aria-label={t.saleStart}
                   />
                 </div>
                 <div>
                   <label htmlFor="saleEnd" className="mb-1 block text-gray-700">
-                    Sale End Date (Optional)
+                    {t.saleEnd}
                   </label>
                   <input
                     type="date"
@@ -1174,12 +1356,14 @@ const ProductCreationWizard = () => {
                     onChange={(e) =>
                       setProduct({ ...product, saleEnd: e.target.value })
                     }
-                    aria-label="Sale end date"
+                    aria-label={t.saleEnd}
                   />
                 </div>
               </div>
 
-              <h2 className="mb-4 text-xl font-semibold">Inventory & Weight</h2>
+              <h2 className="mb-4 text-xl font-semibold">
+                {t.inventoryWeight}
+              </h2>
               {errors.stock && (
                 <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
                   {errors.stock}
@@ -1193,7 +1377,7 @@ const ProductCreationWizard = () => {
               <div className="mb-6 grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="stock" className="mb-1 block text-gray-700">
-                    Stock Quantity
+                    {t.stockQuantity}
                   </label>
                   <input
                     type="number"
@@ -1207,7 +1391,8 @@ const ProductCreationWizard = () => {
                         stock: parseInt(e.target.value, 10),
                       })
                     }
-                    aria-label="Stock quantity"
+                    aria-label={t.stockQuantity}
+                    dir={language === "ar" ? "rtl" : "ltr"}
                   />
                 </div>
                 <div>
@@ -1215,7 +1400,7 @@ const ProductCreationWizard = () => {
                     htmlFor="weightKg"
                     className="mb-1 block text-gray-700"
                   >
-                    Weight (kg)
+                    {t.weight}
                   </label>
                   <input
                     type="number"
@@ -1230,12 +1415,13 @@ const ProductCreationWizard = () => {
                       })
                     }
                     step="0.01"
-                    aria-label="Product weight in kilograms"
+                    aria-label={t.weight}
+                    dir={language === "ar" ? "rtl" : "ltr"}
                   />
                 </div>
               </div>
 
-              <h2 className="mb-4 text-xl font-semibold">Sizes</h2>
+              <h2 className="mb-4 text-xl font-semibold">{t.sizes}</h2>
               <div className="mb-6 flex flex-wrap gap-2">
                 {sizeOptions.map((size) => (
                   <button
@@ -1254,7 +1440,7 @@ const ProductCreationWizard = () => {
                 ))}
               </div>
 
-              <h2 className="mb-4 text-xl font-semibold">Colors</h2>
+              <h2 className="mb-4 text-xl font-semibold">{t.colors}</h2>
               <div className="mb-6 flex flex-wrap gap-2">
                 {colorOptions.map((color) => (
                   <button
@@ -1274,28 +1460,30 @@ const ProductCreationWizard = () => {
                 ))}
               </div>
 
-              <h2 className="mb-4 text-xl font-semibold">Specifications</h2>
+              <h2 className="mb-4 text-xl font-semibold">{t.specifications}</h2>
               <div className="mb-6">
                 <div className="mb-2 flex flex-wrap gap-2">
                   <input
                     type="text"
-                    className="flex-grow rounded-l-md border border-gray-300 p-2 focus:outline-none"
-                    placeholder="Key (e.g., Material)"
+                    className={`flex-grow rounded-md border border-gray-300 p-2 focus:outline-none ${language === "ar" ? "rounded-r-md" : "rounded-l-md"}`}
+                    placeholder={t.specKeyPlaceholder}
                     value={newSpec.key}
                     onChange={(e) =>
                       setNewSpec({ ...newSpec, key: e.target.value })
                     }
-                    aria-label="Specification key"
+                    aria-label={t.specKeyPlaceholder}
+                    dir={language === "ar" ? "rtl" : "ltr"}
                   />
                   <input
                     type="text"
-                    className="flex-grow rounded-r-md border border-gray-300 p-2 focus:outline-none"
-                    placeholder="Value (e.g., Cotton)"
+                    className={`flex-grow rounded-md border border-gray-300 p-2 focus:outline-none ${language === "ar" ? "rounded-l-md" : "rounded-r-md"}`}
+                    placeholder={t.specValuePlaceholder}
                     value={newSpec.value}
                     onChange={(e) =>
                       setNewSpec({ ...newSpec, value: e.target.value })
                     }
-                    aria-label="Specification value"
+                    aria-label={t.specValuePlaceholder}
+                    dir={language === "ar" ? "rtl" : "ltr"}
                   />
                   <button
                     type="button"
@@ -1303,7 +1491,7 @@ const ProductCreationWizard = () => {
                     onClick={handleAddSpecification}
                     disabled={!newSpec.key || !newSpec.value}
                   >
-                    Add
+                    {t.add}
                   </button>
                 </div>
                 {product.specifications?.map((spec, index) => (
@@ -1318,7 +1506,6 @@ const ProductCreationWizard = () => {
                       type="button"
                       className="text-red-500 hover:text-red-700"
                       onClick={() => handleRemoveSpecification(index)}
-                      aria-label="Remove specification"
                     >
                       <X size={16} />
                     </button>
@@ -1326,7 +1513,7 @@ const ProductCreationWizard = () => {
                 ))}
               </div>
 
-              <h2 className="mb-4 text-xl font-semibold">Product Images</h2>
+              <h2 className="mb-4 text-xl font-semibold">{t.productImages}</h2>
               {errors.images && (
                 <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
                   {errors.images}
@@ -1342,10 +1529,10 @@ const ProductCreationWizard = () => {
                     size={32}
                   />
                   <p className="text-base font-medium text-gray-600 group-hover:text-green-600">
-                    Click or drag to upload
+                    {t.clickToUpload}
                   </p>
                   <span className="mt-1 text-sm text-gray-400">
-                    Max 10 images • JPG, PNG, WebP
+                    {t.maxImages}
                   </span>
 
                   <input
@@ -1355,7 +1542,7 @@ const ProductCreationWizard = () => {
                     multiple
                     accept="image/*"
                     onChange={(e) => handleImageUpload(e.target.files)}
-                    aria-label="Upload product images"
+                    aria-label={t.productImages}
                   />
                 </label>
 
@@ -1373,7 +1560,6 @@ const ProductCreationWizard = () => {
                         type="button"
                         className="absolute right-1 top-1 rounded-full bg-black bg-opacity-50 p-1 text-white hover:bg-opacity-75"
                         onClick={() => handleRemoveImage(index)}
-                        aria-label="Remove image"
                       >
                         <X size={16} />
                       </button>
@@ -1388,7 +1574,7 @@ const ProductCreationWizard = () => {
                   className="rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50"
                   onClick={() => setStep("identity")}
                 >
-                  Back
+                  {t.back}
                 </button>
               </div>
             </div>
@@ -1401,5 +1587,4 @@ const ProductCreationWizard = () => {
     </div>
   );
 };
-
 export default ProductCreationWizard;

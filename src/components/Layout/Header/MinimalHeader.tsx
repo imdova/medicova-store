@@ -10,10 +10,12 @@ import { Drawer } from "@/components/UI/Drawer";
 import Sidebar from "@/components/Layout/sidebar/Sidebar";
 import { AccountPageProps } from "@/app/(auth)/user/types/account";
 import LanguageSwitcher from "@/components/UI/LanguageSwitcher";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const MinimalHeader: React.FC<AccountPageProps> = ({ user, activeSection }) => {
   const [productsCount, setProductsCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
+  const { language } = useLanguage();
   const { products } = useAppSelector((state) => state.cart);
 
   useEffect(() => {
@@ -44,13 +46,14 @@ const MinimalHeader: React.FC<AccountPageProps> = ({ user, activeSection }) => {
                 {/* search component  */}
                 <div className="hidden w-full md:block md:max-w-5xl">
                   <Suspense>
-                    <SearchComponent />
+                    <SearchComponent locale={language} />
                   </Suspense>
                 </div>
-                <LanguageSwitcher />
+
                 {/* Right-side Icons */}
                 <div className="flex items-center">
                   <div className="flex items-center gap-4 px-4">
+                    <LanguageSwitcher className="px-0 text-white" />
                     <Link
                       href={"/"}
                       className="flex items-center gap-2 text-sm font-semibold text-white hover:text-gray-100"

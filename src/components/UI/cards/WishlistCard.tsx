@@ -7,16 +7,19 @@ import LogoLoader from "../LogoLoader";
 import { Product } from "@/types/product";
 import Link from "next/link";
 import ActionDropdownMenu from "../ActionDropdownMenu";
+import { LanguageType } from "@/util/translations";
 
 interface WishlistCardProps {
   loading?: boolean;
   product: Product;
+  locale: LanguageType;
   handleDelete?: () => void;
 }
 
 const WishlistCard: React.FC<WishlistCardProps> = ({
   loading,
   product,
+  locale,
   handleDelete,
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -40,7 +43,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
   };
 
   // Auto-rotate nudges every 3 seconds
-  const nudgeCount = product.nudges ? product.nudges.length : 0;
+  const nudgeCount = product.nudges ? product.nudges[locale].length : 0;
 
   useEffect(() => {
     if (nudgeCount === 0) return;
@@ -55,7 +58,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
   const dropdownItems = [
     {
       id: "delete",
-      label: "Delete",
+      label: locale === "ar" ? "حذف" : "Delete",
       icon: <Trash className="h-4 w-4" />,
       action: handleDelete,
     },
@@ -72,7 +75,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
           <div className="flex h-full flex-col">
             {product.isBestSaller && (
               <span className="absolute left-3 top-3 z-[2] rounded-full bg-gray-800 px-3 py-1 text-[10px] font-semibold text-white">
-                Best Saller
+                {locale === "ar" ? "الأكثر مبيعًا" : "Best Seller"}
               </span>
             )}
             {/* Product Slider */}
@@ -87,7 +90,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                       product.images?.[currentImageIndex] ||
                       "/images/placeholder.jpg"
                     }
-                    alt={product.title}
+                    alt={product.title[locale] ?? "Product title"}
                     className="h-48 w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105 sm:h-64"
                     priority={currentImageIndex === 0} // Only prioritize first image
                   />
@@ -143,21 +146,20 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
               {/* Product Info */}
               <div className="p-1">
                 <h3 className="mt-2 text-sm font-semibold text-gray-700">
-                  {product.title}
+                  {product.title[locale]}
                 </h3>
 
                 <div className="m-2 flex flex-wrap items-center gap-1 text-sm sm:gap-3">
                   <p>
-                    EGP{" "}
+                    {locale === "ar" ? "ج.م" : "EGP"}{" "}
                     <span className="text-lg font-bold">
                       {product.price.toLocaleString()}
                     </span>
                   </p>
-                  {product.del_price && (
-                    <del className="text-sm text-gray-600">
-                      {product.del_price.toLocaleString()} EGP
-                    </del>
-                  )}
+                  <del className="text-sm text-gray-600">
+                    {product.del_price?.toLocaleString()}{" "}
+                    {locale === "ar" ? "ج.م" : "EGP"}
+                  </del>
                   {product.sale && (
                     <span className="text-xs font-bold text-light-primary">
                       {product.sale}
@@ -173,7 +175,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                       transform: `translateY(-${currentNudgeIndex * 24}px)`,
                     }}
                   >
-                    {product.nudges?.map((nudge, index) => (
+                    {product.nudges?.[locale]?.map((nudge, index) => (
                       <div
                         key={index}
                         className="flex h-6 items-center text-xs text-gray-600"
@@ -184,10 +186,10 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                   </div>
                 </div>
               </div>
-              {product.shippingMethod === "express" && (
+              {product.shippingMethod && (
                 <div className="mt-2 flex items-center text-xs font-semibold">
                   <span className="rounded bg-light-primary px-2 py-1 text-white">
-                    Express
+                    {product.shippingMethod?.[locale]}
                   </span>
                 </div>
               )}
@@ -197,7 +199,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                 className="w-full rounded-md border border-primary p-2 text-center text-xs font-semibold uppercase text-primary"
                 href={`/product-details/${product.id}`}
               >
-                View options
+                {locale === "ar" ? "عرض الخيارات" : "View Options"}
               </Link>
               <ActionDropdownMenu items={dropdownItems} align="left" />
             </div>

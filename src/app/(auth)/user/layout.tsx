@@ -3,6 +3,7 @@ import React, { ReactNode } from "react";
 import Sidebar from "../../../components/Layout/sidebar/Sidebar";
 import { useSession } from "next-auth/react";
 import GoBackButton from "@/components/UI/Buttons/GoBackButton";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface AccountLayoutProps {
   children: ReactNode;
@@ -10,6 +11,7 @@ interface AccountLayoutProps {
 
 const AccountLayout: React.FC<AccountLayoutProps> = ({ children }) => {
   const { data: session } = useSession();
+  const { language } = useLanguage();
 
   // Create a safe user object with default values
   const safeUser = {
@@ -28,7 +30,7 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({ children }) => {
 
       <main className="flex-1 pt-2 lg:px-4">
         <div className="mb-2">
-          <GoBackButton />
+          <GoBackButton locale={language} />
         </div>
         <div>{children}</div>
       </main>

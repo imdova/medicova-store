@@ -5,7 +5,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        arabic: ['"Noto Sans Arabic"', "sans-serif"],
+        cairo: ["var(--font-cairo)", "sans-serif"],
+        raleway: ["var(--font-raleway)", "sans-serif"],
+        sans: ["var(--font-cairo)", "var(--font-raleway)", "sans-serif"],
       },
       colors: {
         main: "var(--main-color)",

@@ -1,79 +1,112 @@
 export const brands = [
   {
     id: "1",
-    name: "BergHOFF",
+    name: {
+      en: "BergHOFF",
+      ar: "بيرغهوف",
+    },
     image:
       "https://static.vecteezy.com/system/resources/previews/007/897/232/non_2x/bjk-letter-logo-design-on-black-background-bjk-creative-initials-letter-logo-concept-bjk-letter-design-vector.jpg",
     hasStore: true,
   },
   {
     id: "2",
-    name: "YVES Saint Laurent",
+    name: {
+      en: "YVES Saint Laurent",
+      ar: "إيف سان لوران",
+    },
     image:
       "https://static.vecteezy.com/system/resources/previews/007/897/232/non_2x/bjk-letter-logo-design-on-black-background-bjk-creative-initials-letter-logo-concept-bjk-letter-design-vector.jpg",
     hasStore: true,
   },
   {
     id: "3",
-    name: "Kerasstase",
+    name: {
+      en: "Kerasstase",
+      ar: "كريستاس",
+    },
     image:
-      "https://static.vecteezy.com/system/resources/previews/007/897/232/non_2x/bjk-letter-logo-design-on-black-background-bjk-creative-initials-letter-logo-concept-bjk-letter-design-vector.jpg",
+      "https://static.vecteezy.com/system/resources/previews/007/897/232/non_2x/bjk-letter-logo-design-on-black-background-bjk-letter-design-vector.jpg",
     hasStore: true,
   },
   {
     id: "4",
-    name: "BOSCH",
+    name: {
+      en: "BOSCH",
+      ar: "بوش",
+    },
     image:
-      "https://static.vecteezy.com/system/resources/previews/007/897/232/non_2x/bjk-letter-logo-design-on-black-background-bjk-creative-initials-letter-logo-concept-bjk-letter-design-vector.jpg",
+      "https://static.vecteezy.com/system/resources/previews/007/897/232/non_2x/bjk-letter-logo-design-on-black-background-bjk-letter-design-vector.jpg",
     hasStore: true,
   },
   {
     id: "5",
-    name: "Eva",
+    name: {
+      en: "Eva",
+      ar: "إيفا",
+    },
     image:
-      "https://static.vecteezy.com/system/resources/previews/007/897/232/non_2x/bjk-letter-logo-design-on-black-background-bjk-creative-initials-letter-logo-concept-bjk-letter-design-vector.jpg",
+      "https://static.vecteezy.com/system/resources/previews/007/897/232/non_2x/bjk-letter-logo-design-on-black-background-bjk-letter-design-vector.jpg",
     hasStore: true,
   },
   {
     id: "6",
-    name: "Oraimo",
+    name: {
+      en: "Oraimo",
+      ar: "أوريمو",
+    },
     image:
-      "https://static.vecteezy.com/system/resources/previews/007/897/232/non_2x/bjk-letter-logo-design-on-black-background-bjk-creative-initials-letter-logo-concept-bjk-letter-design-vector.jpg",
+      "https://static.vecteezy.com/system/resources/previews/007/897/232/non_2x/bjk-letter-logo-design-on-black-background-bjk-letter-design-vector.jpg",
     hasStore: true,
   },
   {
     id: "7",
-    name: "Bosch",
+    name: {
+      en: "Bosch",
+      ar: "بوش",
+    },
     image:
-      "https://static.vecteezy.com/system/resources/previews/007/897/232/non_2x/bjk-letter-logo-design-on-black-background-bjk-creative-initials-letter-logo-concept-bjk-letter-design-vector.jpg",
+      "https://static.vecteezy.com/system/resources/previews/007/897/232/non_2x/bjk-letter-logo-design-on-black-background-bjk-letter-design-vector.jpg",
     hasStore: true,
   },
   {
     id: "8",
-    name: "LARGA LE ROSA",
+    name: {
+      en: "LARGA LE ROSA",
+      ar: "لارغا لو روزا",
+    },
     image:
-      "https://static.vecteezy.com/system/resources/previews/007/897/232/non_2x/bjk-letter-logo-design-on-black-background-bjk-creative-initials-letter-logo-concept-bjk-letter-design-vector.jpg",
+      "https://static.vecteezy.com/system/resources/previews/007/897/232/non_2x/bjk-letter-logo-design-on-black-background-bjk-letter-design-vector.jpg",
     hasStore: true,
   },
   {
     id: "9",
-    name: "ELARABY",
+    name: {
+      en: "ELARABY",
+      ar: "العربي",
+    },
     image:
-      "https://static.vecteezy.com/system/resources/previews/007/897/232/non_2x/bjk-letter-logo-design-on-black-background-bjk-creative-initials-letter-logo-concept-bjk-letter-design-vector.jpg",
+      "https://static.vecteezy.com/system/resources/previews/007/897/232/non_2x/bjk-letter-logo-design-on-black-background-bjk-letter-design-vector.jpg",
     hasStore: true,
   },
   {
     id: "10",
-    name: "TOSHIBA",
+    name: {
+      en: "TOSHIBA",
+      ar: "توشيبا",
+    },
     image:
-      "https://static.vecteezy.com/system/resources/previews/007/897/232/non_2x/bjk-letter-logo-design-on-black-background-bjk-creative-initials-letter-logo-concept-bjk-letter-design-vector.jpg",
+      "https://static.vecteezy.com/system/resources/previews/007/897/232/non_2x/bjk-letter-logo-design-on-black-background-bjk-letter-design-vector.jpg",
     hasStore: true,
   },
   {
     id: "11",
-    name: "La Roche Posay",
+    name: {
+      en: "La Roche Posay",
+      ar: "لاروش بوزيه",
+    },
     image:
-      "https://static.vecteezy.com/system/resources/previews/007/897/232/non_2x/bjk-letter-logo-design-on-black-background-bjk-creative-initials-letter-logo-concept-bjk-letter-design-vector.jpg",
+      "https://static.vecteezy.com/system/resources/previews/007/897/232/non_2x/bjk-letter-logo-design-on-black-background-bjk-letter-design-vector.jpg",
     hasStore: true,
   },
 ];

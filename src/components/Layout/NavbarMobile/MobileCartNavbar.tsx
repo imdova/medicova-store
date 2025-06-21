@@ -4,12 +4,10 @@ import { ShoppingCart } from "lucide-react";
 import QuantitySelector from "@/components/Forms/formFields/QuantitySelector";
 import { Product } from "@/types/product";
 import { useAppSelector } from "@/store/hooks";
-import { ColorType, LiquidSizeType, NumericSizeType, SizeType } from "@/types";
 
 type MobileCartNavbarProps = {
   product: Product;
-  selectedColor: ColorType | undefined;
-  selectedSize: SizeType | NumericSizeType | LiquidSizeType | undefined;
+
   quantity: number;
   setQuantity: (quantity: number) => void;
   handleAddToCart: () => void;

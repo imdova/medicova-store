@@ -6,9 +6,14 @@ import LogoLoader from "../LogoLoader";
 type CategoryCardProps = {
   loading?: boolean;
   category: CategoryType;
+  locale: "ar" | "en";
 };
 
-const CategoryCard: React.FC<CategoryCardProps> = ({ loading, category }) => {
+const CategoryCard: React.FC<CategoryCardProps> = ({
+  loading,
+  category,
+  locale = "en",
+}) => {
   if (loading) {
     return (
       <div className="flex h-[100px] w-full items-center justify-center md:h-[290px]">
@@ -23,10 +28,10 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ loading, category }) => {
         src={category.image}
         width={300}
         height={300}
-        alt={category.title}
+        alt={category.title[locale]}
       />
       <h1 className="text-xs font-bold text-gray-700 md:text-sm">
-        {category.title}
+        {category.title[locale]}
       </h1>
     </Link>
   );

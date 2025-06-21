@@ -1,5 +1,6 @@
-import { Brand, ColorType, LiquidSizeType, NumericSizeType, SizeType } from ".";
-import { Seller, shippingMethod } from "./product";
+import { Brand, LiquidSizeType, NumericSizeType, SizeType } from ".";
+import { LocalizedTitle } from "./language";
+import { MultilingualColor, Seller, shippingMethod } from "./product";
 
 export type CartFormValues = {
   payment: string;
@@ -13,21 +14,21 @@ export type CartFormValues = {
 export interface CartItem {
   id: string;
   image: string;
-  title: string;
+  title: LocalizedTitle;
   price: number;
   del_price?: number;
-  totalPrice: number;
   description: string;
-  deliveryTime?: string;
+  deliveryTime?: LocalizedTitle;
   sellers?: Seller;
   shipping_fee: number;
   size?: SizeType | NumericSizeType | LiquidSizeType;
-  color?: ColorType;
+  color?: string;
   quantity: number;
   brand?: Brand;
   stock?: number;
   shippingMethod: shippingMethod;
   weightKg: number;
+  totalPrice: number;
 }
 export interface WishlistItem {
   id: string;
@@ -40,7 +41,7 @@ export interface WishlistItem {
   sellers?: Seller;
   shipping_fee: number;
   size?: SizeType | NumericSizeType | LiquidSizeType;
-  color?: ColorType;
+  color?: MultilingualColor;
   brand?: Brand;
   stock?: number;
   shippingMethod: shippingMethod;

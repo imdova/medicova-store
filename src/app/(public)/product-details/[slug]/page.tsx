@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import {
   Archive,
   Check,
+  ChevronLeft,
   ChevronRight,
   Handshake,
   Landmark,
@@ -22,7 +23,7 @@ import {
   Truck,
 } from "lucide-react";
 import { ProgressLine } from "@/components/UI/ProgressLine";
-import { ColorType, LiquidSizeType, NumericSizeType, SizeType } from "@/types";
+import { LiquidSizeType, NumericSizeType, SizeType } from "@/types";
 import MobileCartNavbar from "@/components/Layout/NavbarMobile/MobileCartNavbar";
 import QuantitySelector from "@/components/Forms/formFields/QuantitySelector";
 import ProductReviews from "@/components/UI/ProductReviews";
@@ -39,6 +40,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/UI/Modals/DynamicModal";
 import AuthLogin from "@/components/UI/Modals/loginAuth";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -52,7 +54,8 @@ const ProductPage = ({ params }: ProductPageProps) => {
   const [selectedSize, setSelectedSize] = useState<
     SizeType | NumericSizeType | LiquidSizeType | undefined
   >();
-  const [selectedColor, setSelectedColor] = useState<ColorType | undefined>();
+  const { language } = useLanguage();
+  const [selectedColor, setSelectedColor] = useState<string>();
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -105,13 +108,13 @@ const ProductPage = ({ params }: ProductPageProps) => {
     }
 
     // Set the initial color
-    if (product?.colors && product.colors.length > 0) {
-      setSelectedColor(product.colors[0]);
+    if (product?.colors && product.colors["en"].length > 0) {
+      setSelectedColor(product.colors?.en?.[0]);
     }
   }, [product?.sizes, product?.colors]);
 
   // Auto-rotate nudges every 3 seconds
-  const nudgeCount = product?.nudges ? product?.nudges?.length : 0;
+  const nudgeCount = product?.nudges ? product?.nudges["en"]?.length : 0;
 
   useEffect(() => {
     if (nudgeCount === 0) return;
@@ -138,7 +141,12 @@ const ProductPage = ({ params }: ProductPageProps) => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     if (!product?.id) {
-      showAlert("Product information is missing", "error");
+      showAlert(
+        language === "ar"
+          ? "معلومات المنتج غير متوفرة"
+          : "Product information is missing",
+        "error",
+      );
       setLoading(false);
       return;
     }
@@ -150,7 +158,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
           id: product.id,
           title: product.title ?? "",
           image: product.images?.[0] ?? "/images/placeholder.jpg",
-          description: product.description ?? "No description available",
+          description: product.description.en ?? "No description available",
           del_price: product.del_price,
           price: product.price ?? 0,
           shipping_fee: product.shipping_fee ?? 0,
@@ -165,7 +173,10 @@ const ProductPage = ({ params }: ProductPageProps) => {
           weightKg: product.weightKg,
         }),
       );
-      showAlert("Added to cart", "success");
+      showAlert(
+        language === "ar" ? "تمت الإضافة إلى السلة" : "Added to cart",
+        "success",
+      );
     } else {
       // Product is already in cart - handle quantity increase
       const currentCartItem = productData.find(
@@ -185,11 +196,18 @@ const ProductPage = ({ params }: ProductPageProps) => {
             }),
           );
           showAlert(
-            `Only ${canAdd} more available. Added to your existing quantity.`,
+            language === "ar"
+              ? `متاح فقط ${canAdd} عناصر إضافية. تم إضافتها إلى الكمية الحالية.`
+              : `Only ${canAdd} more available. Added to your existing quantity.`,
             "info",
           );
         } else {
-          showAlert("No more items available in stock", "error");
+          showAlert(
+            language === "ar"
+              ? "لا توجد عناصر إضافية متاحة في المخزون"
+              : "No more items available in stock",
+            "error",
+          );
         }
       } else {
         dispatch(
@@ -198,12 +216,16 @@ const ProductPage = ({ params }: ProductPageProps) => {
             amount: quantity,
           }),
         );
-        showAlert(`Added ${quantity} more to your cart`, "success");
+        showAlert(
+          language === "ar"
+            ? `تمت إضافة ${quantity} عنصرًا آخر إلى سلة التسوق`
+            : `Added ${quantity} more to your cart`,
+          "success",
+        );
       }
     }
-
-    setLoading(false);
     setIsOpen(true);
+    setLoading(false);
   };
 
   // Show Alert Function
@@ -219,7 +241,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
   if (!product) return <NotFound />;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen overflow-hidden bg-gray-50">
       {/* Global Alert Display */}
       {alert && (
         <CustomAlert
@@ -230,32 +252,45 @@ const ProductPage = ({ params }: ProductPageProps) => {
       )}
 
       <Head>
-        <title>{product.name} | Medicova</title>
-        <meta name="description" content={product.description} />
+        <title>
+          {product.title[language]} |{" "}
+          {language === "ar" ? "ميديكوفا" : "Medicova"}
+        </title>
+        <meta name="description" content={product.description["en"]} />
       </Head>
 
       {/* Navigation Breadcrumbs */}
       <nav className="bg-white px-4 py-2">
         <div className="container mx-auto">
-          <div className="flex flex-wrap items-center space-x-1 py-2 text-xs text-gray-600 md:flex-nowrap md:gap-y-0 md:text-sm">
+          <div className="flex flex-wrap items-center gap-2 py-2 text-xs text-gray-600 md:flex-nowrap md:gap-y-0 md:text-sm">
             {/* Home Link */}
             <div className="flex items-center gap-2">
               <Link href="/" className="whitespace-nowrap hover:text-primary">
-                Home
+                {language === "ar" ? "المتجر" : "Home"}
               </Link>
-              <ChevronRight className="h-3 w-3 text-secondary" />
+              {language === "ar" ? (
+                <ChevronLeft className="h-3 w-3 text-secondary" />
+              ) : (
+                <ChevronRight className="h-3 w-3 text-secondary" />
+              )}
             </div>
 
             {/* Category */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               <Link
                 href={product.category?.slug ?? "#"}
                 className="whitespace-nowrap hover:text-primary"
               >
-                {product.category?.title}
+                {product.category?.title[language]}
               </Link>
               {product.category?.subcategory && (
-                <ChevronRight className="h-3 w-3 text-secondary" />
+                <>
+                  {language === "ar" ? (
+                    <ChevronLeft className="h-3 w-3 text-secondary" />
+                  ) : (
+                    <ChevronRight className="h-3 w-3 text-secondary" />
+                  )}
+                </>
               )}
             </div>
 
@@ -266,7 +301,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
                   href={product.category?.subcategory?.url ?? "#"}
                   className="whitespace-nowrap hover:text-primary"
                 >
-                  {product.category?.subcategory?.title}
+                  {product.category?.subcategory?.title[language]}
                 </Link>
               </div>
             )}
@@ -274,6 +309,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
         </div>
       </nav>
       <Drawer
+        mobile={false}
         hiddenCloseBtn
         position="right"
         isOpen={isOpen}
@@ -291,15 +327,18 @@ const ProductPage = ({ params }: ProductPageProps) => {
                         src={item.image}
                         width={300}
                         height={300}
-                        alt={item.title}
+                        alt={item.title?.[language] || "Product image"}
                       />
                     </div>
                     <div className="flex-1">
                       <h2 className="mb-2 text-sm font-semibold">
-                        {item.title}
+                        {item.title[language]}
                       </h2>
                       <div className="flex items-center gap-1 text-xs">
-                        Added to cart{" "}
+                        {" "}
+                        {language === "ar"
+                          ? "تمت الإضافة إلى سلة التسوق"
+                          : "Added to cart"}
                         <span className="flex h-3 w-3 items-center justify-center rounded-full bg-primary text-white">
                           <Check size={10} />
                         </span>
@@ -312,21 +351,28 @@ const ProductPage = ({ params }: ProductPageProps) => {
           })}
         </ul>
         <div className="mt-3 flex justify-between gap-2 font-semibold text-gray-700">
-          <span className="text-sm">Cart Total</span>
-          <p className="text-sm">EGP {totalPrice}</p>
+          <span className="text-sm">
+            {language === "ar" ? "إجمالي السلة" : "Cart Total"}
+          </span>
+          <p className="text-sm">
+            {" "}
+            {language === "ar" ? "جنيه" : "EGP"} {totalPrice}
+          </p>
         </div>
+
         <div>
           <button
             onClick={onCheckout}
             className="mt-6 w-full rounded-lg bg-primary px-4 py-2 text-xs font-semibold uppercase text-white transition hover:bg-green-700"
           >
-            CHECKOUT
+            {language === "ar" ? "الدفع" : "CHECKOUT"}
           </button>
+
           <button
             onClick={() => setIsOpen(false)}
             className="mt-2 w-full rounded-lg border border-gray-200 bg-white px-4 py-2 text-xs font-semibold uppercase text-primary"
           >
-            Continue Shopping
+            {language === "ar" ? "متابعة التسوق" : "Continue Shopping"}
           </button>
         </div>
       </Drawer>
@@ -339,10 +385,10 @@ const ProductPage = ({ params }: ProductPageProps) => {
                 href={product.brand?.url ?? "#"}
                 className="mb-3 text-xl font-semibold text-secondary"
               >
-                {product.brand?.title}
+                {product.brand?.title[language]}
               </Link>
               <h1 className="text-2xl font-bold text-gray-800">
-                {product.title}
+                {product.title[language]}
               </h1>
             </div>
             <div className="my-3 flex w-fit items-center gap-1 rounded-lg bg-gray-200 px-3 py-1 text-sm md:hidden">
@@ -354,7 +400,11 @@ const ProductPage = ({ params }: ProductPageProps) => {
             </div>
             {/* Product Images - Left Side */}
             <div className="sticky top-4 h-fit rounded-lg bg-white p-4">
-              <ProductImagesSlider product={product} images={product.images} />
+              <ProductImagesSlider
+                locale={language}
+                product={product}
+                images={product.images}
+              />
               <div className="mt-4 hidden gap-2 md:flex">
                 <QuantitySelector
                   productId={cartProduct?.id ?? ""}
@@ -402,7 +452,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
                   ) : (
                     <>
                       <ShoppingCart size={18} />
-                      Add To Cart
+                      {language === "ar" ? "اضف للعربة" : "Add To Cart"}
                     </>
                   )}
                 </motion.button>
@@ -418,16 +468,18 @@ const ProductPage = ({ params }: ProductPageProps) => {
                     href={product.brand?.url ?? "#"}
                     className="mb-3 text-xl font-semibold text-secondary"
                   >
-                    {product.brand?.title}
+                    {product.brand?.title[language]}
                   </Link>
                   <h1 className="text-2xl font-bold text-gray-800">
-                    {product.title}
+                    {product.title[language]}
                   </h1>
                 </div>
 
                 {/* Rating */}
                 <div className="mt-2 hidden w-full items-center justify-between md:flex">
-                  <div className="flex items-center">
+                  <div
+                    className={`flex items-center ${language === "ar" && "flex-row-reverse"}`}
+                  >
                     <div className="flex">
                       {[...Array(5)].map((_, i) => (
                         <svg
@@ -442,40 +494,47 @@ const ProductPage = ({ params }: ProductPageProps) => {
                     </div>
                     <span className="ml-2 cursor-pointer text-xs text-blue-600 hover:underline">
                       {product.rating} ★ (
-                      {product.reviewCount?.toLocaleString()} Ratings)
+                      {product.reviewCount?.toLocaleString()}{" "}
+                      {language === "ar" ? "تقييم" : "Ratings"})
                     </span>
                   </div>
                 </div>
 
                 {/* Price */}
                 <div className="mt-4">
-                  <div className="flex items-center">
-                    <span className="text-lg font-bold text-gray-800">
-                      EGP {product.price?.toLocaleString()}
-                    </span>
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-1 text-lg font-bold text-gray-800">
+                      <p>{product.price?.toLocaleString()}</p>
+                      {language === "ar" ? "جنيه" : "EGP"}{" "}
+                    </div>
                     {product.del_price && (
                       <>
-                        <span className="ml-2 text-sm text-gray-500 line-through">
-                          EGP {product.del_price.toLocaleString()}
-                        </span>
+                        <div className="flex gap-1 text-sm text-gray-500 line-through">
+                          <p>{product.del_price.toLocaleString()}</p>
+                          {language === "ar" ? "جنيه" : "EGP"}{" "}
+                        </div>
                       </>
                     )}
                   </div>
                   {product.del_price && (
                     <p className="flex items-center gap-2 text-xs">
-                      Saving:{" "}
+                      {language === "ar" ? "خصم:" : "Saving:"}{" "}
                       <span className="flex items-center gap-1 text-xs font-semibold text-light-primary">
-                        EGP
                         <span className="text-sm">
                           {product.del_price - product.price}
                         </span>
+                        {language === "ar" ? "جنيه" : "EGP"}
                       </span>
                     </p>
                   )}
                   {product.stock && (
                     <div className="mt-2 flex items-center gap-1 text-xs">
                       <ShoppingBag size={13} className="text-light-primary" />
-                      Only {product.stock} left in stock
+                      {language === "en" ? (
+                        <>Only {product.stock} left in stock</>
+                      ) : (
+                        <>متبقي فقط {product.stock} في المخزون</>
+                      )}
                     </div>
                   )}
                 </div>
@@ -487,7 +546,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
                       transform: `translateY(-${currentNudgeIndex * 24}px)`,
                     }}
                   >
-                    {product.nudges?.map((nudge, index) => (
+                    {product.nudges?.[language]?.map((nudge, index) => (
                       <div
                         key={index}
                         className="flex h-6 items-center text-xs text-gray-600"
@@ -501,18 +560,20 @@ const ProductPage = ({ params }: ProductPageProps) => {
                 {/* Delivery */}
                 <div className="mt-4 rounded-lg p-3">
                   <div className="flex items-center gap-2">
-                    {product.deliveryTime && (
+                    {product.shippingMethod && (
                       <div className="flex items-center text-xs font-semibold">
                         <span className="rounded bg-light-primary px-2 py-1 text-white">
-                          Express
+                          {product.shippingMethod[language]}
                         </span>
                       </div>
                     )}
                     <span className="text-sm font-bold text-gray-700">
-                      Get it by {product.deliveryTime} (
+                      {language === "ar" ? "احصل عليه خلال" : "Get it by"}{" "}
+                      {product.deliveryTime?.[language]} (
                       {getExecuteDateFormatted(
-                        product.deliveryTime ?? "",
+                        product.deliveryTime?.[language] ?? "",
                         "EEE, MMM d",
+                        language,
                       )}
                       )
                     </span>
@@ -535,7 +596,10 @@ const ProductPage = ({ params }: ProductPageProps) => {
                       />
 
                       <div className="mt-1 text-sm text-secondary">
-                        {option.months} monthly payments of EGP{" "}
+                        {option.months}{" "}
+                        {language === "ar"
+                          ? "دفعات شهرية جنيه مصري"
+                          : "monthly payments of EGP"}
                         {option.amount.toLocaleString()}
                       </div>
                     </div>
@@ -543,7 +607,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
                 </div>
                 {/* Skeleton */}
                 <div>
-                  <InfoCards />
+                  <InfoCards locale={language} />
                 </div>
 
                 {/* Variant Selection */}
@@ -551,9 +615,11 @@ const ProductPage = ({ params }: ProductPageProps) => {
                   {/* Colors */}
                   {product.colors && (
                     <div>
-                      <div className="font-medium">COLOR GUIDE:</div>
-                      <div className="mt-2 flex space-x-2">
-                        {product.colors.map((color, index) => (
+                      <div className="font-medium">
+                        {language === "ar" ? "دليل الالوان" : "COLOR GUIDE:"}
+                      </div>
+                      <div className="mt-2 flex gap-2">
+                        {product.colors["en"].map((color, index) => (
                           <button
                             key={index}
                             style={{ background: color }}
@@ -567,8 +633,10 @@ const ProductPage = ({ params }: ProductPageProps) => {
                   {/* Sizes */}
                   {product.sizes && (
                     <div>
-                      <div className="font-medium">SIZE GUIDE:</div>
-                      <div className="mt-2 flex space-x-2">
+                      <div className="font-medium">
+                        {language === "ar" ? ":دليل المقاسات" : "SIZE GUIDE:"}
+                      </div>
+                      <div className="mt-2 flex gap-2">
                         {product.sizes.map((size, index) => (
                           <button
                             key={index}
@@ -588,7 +656,9 @@ const ProductPage = ({ params }: ProductPageProps) => {
             <div className="col-span-1 lg:col-span-3">
               {/* Bank Offers */}
               <div className="my-6 rounded-lg">
-                <div className="font-bold">BANK OFFERS</div>
+                <div className="font-bold">
+                  {language === "ar" ? "عروض البنوك" : "BANK OFFERS"}
+                </div>
                 <ul className="mt-2 space-y-1">
                   {product.bankOffers?.map((offer, index) => (
                     <li key={index}>
@@ -598,7 +668,9 @@ const ProductPage = ({ params }: ProductPageProps) => {
                       >
                         <div className="flex items-center gap-2">
                           <Landmark size={22} className="text-primary" />
-                          <span className="ml-2 text-xs">{offer.title}</span>
+                          <span className="ml-2 text-xs">
+                            {offer.title[language]}
+                          </span>
                         </div>
                         <ChevronRight className="text-secondary" size={15} />
                       </Link>
@@ -607,7 +679,9 @@ const ProductPage = ({ params }: ProductPageProps) => {
                 </ul>
               </div>
               {/* Seller Information */}
-              <h2 className="mb-2 font-bold">SELLER</h2>
+              <h2 className="mb-2 font-bold">
+                {language === "ar" ? "البائع" : "SELLER"}{" "}
+              </h2>
               <div className="rounded-lg border border-gray-300 bg-white shadow-sm">
                 <div className="flex items-start justify-between">
                   <Link
@@ -621,7 +695,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
                       <div>
                         {product.sellers && (
                           <div className="mb-1">
-                            Sold by{" "}
+                            {language === "ar" ? "تباع من قبل" : "Sold by"}{" "}
                             <span className="text-xs text-primary underline">
                               {product.sellers?.name}
                             </span>
@@ -629,7 +703,10 @@ const ProductPage = ({ params }: ProductPageProps) => {
                         )}
                         {product.sellers && (
                           <div className="text-gray-600">
-                            {product.sellers.positiveRatings} Positive Ratings
+                            {product.sellers.positiveRatings}{" "}
+                            {language === "ar"
+                              ? "التقييمات الإيجابية"
+                              : "Positive Ratings"}
                           </div>
                         )}
                       </div>
@@ -645,7 +722,9 @@ const ProductPage = ({ params }: ProductPageProps) => {
                     <div className="flex items-center gap-3">
                       <Archive size={16} className="text-primary" />
                       <span className="ml-1 text-sm font-semibold">
-                        Item as shown
+                        {language === "ar"
+                          ? "البند كما هو مبين"
+                          : "Item as shown"}
                         <ProgressLine
                           progress={product.sellers.itemShown ?? 0}
                           height="h-1"
@@ -659,13 +738,18 @@ const ProductPage = ({ params }: ProductPageProps) => {
                     {product.sellers && (
                       <div className="flex items-center gap-3 text-sm font-semibold">
                         <Handshake size={16} className="text-primary" />
-                        Partner since {product.sellers.partnerSince}
+                        {language === "ar"
+                          ? "شريك منذ  "
+                          : "Partner since"}{" "}
+                        {product.sellers.partnerSince}
                       </div>
                     )}
                   </div>
                   <div className="mt-1 flex items-center gap-3 text-sm font-semibold">
                     <ListRestart size={16} className="text-primary" />
-                    Low return seller
+                    {language === "ar"
+                      ? "بائع ذو عائد منخفض"
+                      : "Low return seller"}
                   </div>
                 </Link>
               </div>
@@ -678,7 +762,9 @@ const ProductPage = ({ params }: ProductPageProps) => {
                     >
                       <div className="flex items-center gap-2 text-xs">
                         <Truck size={16} className="text-primary" />
-                        Free delivery on Lockers & Pickup Points
+                        {language === "ar"
+                          ? "توصيل مجاني للخزائن ونقاط الاستلام"
+                          : "Free delivery on Lockers & Pickup Points"}
                       </div>
                       <ChevronRight className="text-secondary" size={15} />
                     </Link>
@@ -689,7 +775,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
                       >
                         <div className="flex items-center gap-2 text-xs">
                           <RefreshCcw size={16} className="text-primary" />
-                          {product.sellers.returnPolicy}
+                          {product.sellers.returnPolicy[language]}
                         </div>
                         <ChevronRight className="text-secondary" size={15} />
                       </Link>
@@ -702,14 +788,16 @@ const ProductPage = ({ params }: ProductPageProps) => {
         </div>
         <div className="py-16">
           <h1 className="border-b border-gray-300 py-2 text-2xl font-bold text-gray-600">
-            Product Overview
+            {language === "ar" ? "نظرة عامة على المنتج" : "Product Overview"}
           </h1>
           {/* products highlights  */}
           {product.highlights && (
             <div className="mt-4 text-gray-600">
-              <h2 className="mb-2 font-bold">Hightlights</h2>
+              <h2 className="mb-2 font-bold">
+                {language === "ar" ? "ابرز المميزات" : "Hightlights"}
+              </h2>
               <ul className="list-disc pl-4">
-                {product.highlights?.map((highlight, index) => {
+                {product.highlights[language]?.map((highlight, index) => {
                   return (
                     <li className="text-sm" key={index}>
                       {highlight}
@@ -722,14 +810,18 @@ const ProductPage = ({ params }: ProductPageProps) => {
           {/* products overview describtion  */}
           {product.overview_desc && (
             <div className="mt-4 text-gray-600">
-              <h2 className="mb-2 font-bold">OverView</h2>
-              <p className="text-sm">{product.overview_desc}</p>
+              <h2 className="mb-2 font-bold">
+                {language === "ar" ? "نظرة عامة" : "Overview"}
+              </h2>
+              <p className="text-sm">{product.overview_desc[language]}</p>
             </div>
           )}
           {/* products Specfications  */}
           {product.specifications && (
             <div className="mt-4 text-gray-600">
-              <h2 className="mb-2 font-bold">Specfications</h2>
+              <h2 className="mb-2 font-bold">
+                {language === "ar" ? "المواصفات" : "Specfications"}
+              </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 md:gap-3">
                 {product.specifications.map((spec, index) => {
                   return (
@@ -745,8 +837,8 @@ const ProductPage = ({ params }: ProductPageProps) => {
                       }`}
                       key={index}
                     >
-                      <div className="w-full">{spec.label}</div>
-                      <div className="w-full">{spec.content}</div>
+                      <div className="w-full">{spec.label[language]}</div>
+                      <div className="w-full">{spec.content[language]}</div>
                     </div>
                   );
                 })}
@@ -756,14 +848,17 @@ const ProductPage = ({ params }: ProductPageProps) => {
         </div>
         <div className="py-8">
           <h1 className="border-b border-gray-300 py-2 text-2xl font-bold text-gray-600">
-            Product Ratings & Reviews
+            {language === "ar"
+              ? "تقييمات ومراجعات المنتج"
+              : " Product Ratings & Reviews"}
           </h1>
-          <ProductReviews reviews={reviews} />
+          <ProductReviews locale={language} reviews={reviews} />
         </div>
         {/* Brand Products */}
         <div className="mt-6 rounded-lg bg-white shadow-sm">
           <h2 className="mb-2 text-2xl font-bold text-gray-600">
-            More from {product.brand?.title}
+            {language === "ar" ? "المزيد من" : "More from"}{" "}
+            {product.brand?.title[language]}
           </h2>
           <ProductsSlider>
             {products.map((product) => (
@@ -779,7 +874,9 @@ const ProductPage = ({ params }: ProductPageProps) => {
         {/* Products related this Product */}
         <div className="mt-6 rounded-lg bg-white shadow-sm">
           <h2 className="mb-2 text-2xl font-bold text-gray-600">
-            Products related to this
+            {language === "ar"
+              ? "منتجات ذات صلة بهذا"
+              : "Products related to this"}
           </h2>
           <ProductsSlider>
             {products.map((product) => (
@@ -794,8 +891,6 @@ const ProductPage = ({ params }: ProductPageProps) => {
         </div>
         <MobileCartNavbar
           product={product}
-          selectedColor={selectedColor}
-          selectedSize={selectedSize}
           quantity={quantity}
           setQuantity={setQuantity}
           handleAddToCart={handleAddToCart}

@@ -2,16 +2,21 @@ import React from "react";
 import Image from "next/image";
 import { Seller } from "@/types/product";
 import Link from "next/link";
+import { LanguageType } from "@/util/translations";
 
 interface SellerReviewCardProps {
   className?: string;
   seller: Seller;
+  locale: LanguageType;
 }
 
 const SellerReviewCard: React.FC<SellerReviewCardProps> = ({
   className = "",
   seller,
+  locale,
 }) => {
+  const isAr = locale === "ar";
+
   const renderStars = () => {
     const stars = [];
     const fullStars = Math.floor(seller.rating);
@@ -70,7 +75,7 @@ const SellerReviewCard: React.FC<SellerReviewCardProps> = ({
       href={`sellers/${seller.id}`}
       className={`rounded-lg border border-gray-200 bg-white p-2 shadow-sm ${className}`}
     >
-      <div className="flex items-start space-x-3">
+      <div className="flex items-start gap-3">
         {seller.image ? (
           <div className="relative h-10 w-10 overflow-hidden rounded-md">
             <Image
@@ -82,25 +87,25 @@ const SellerReviewCard: React.FC<SellerReviewCardProps> = ({
             />
           </div>
         ) : (
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-2xl font-bold text-white">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-sm font-bold text-white">
             {seller.name.charAt(0).toUpperCase()}
           </div>
         )}
         <div className="flex-1">
           <h3 className="text-sm font-medium text-gray-900">{seller.name}</h3>
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-1 rtl:space-x-reverse">
             {renderStars()}
-            <span className="ml-1 text-sm text-gray-500">
+            <span className="ml-1 text-sm text-gray-500 rtl:ml-0 rtl:mr-1">
               ({seller.rating})
             </span>
           </div>
         </div>
       </div>
 
-      <div className="mt-2 flex items-center justify-between gap-2 pt-2">
-        <div className="flex items-center text-[10px] text-gray-500">
+      <div className="mt-2 flex items-center justify-between gap-2 pt-2 text-[10px] text-gray-500">
+        <div className="flex items-center gap-1 rtl:flex-row-reverse">
           <svg
-            className="mr-1 h-3 w-3"
+            className="h-3 w-3"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -118,9 +123,13 @@ const SellerReviewCard: React.FC<SellerReviewCardProps> = ({
               d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
             />
           </svg>
-          {seller.country} {seller.city}
+          {isAr
+            ? `${seller.city}، ${seller.country}`
+            : `${seller.country}, ${seller.city}`}
         </div>
-        <div className="text-[10px] text-gray-500">{seller.sales} Sales</div>
+        <div>
+          {isAr ? `${seller.sales} عملية بيع` : `${seller.sales} Sales`}
+        </div>
       </div>
     </Link>
   );

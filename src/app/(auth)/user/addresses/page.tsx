@@ -10,6 +10,7 @@ import {
   Check,
 } from "lucide-react";
 import DeliverToModal from "@/components/UI/Modals/DeliverToModal";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Location {
   lat: number;
@@ -29,11 +30,51 @@ export interface Address {
   location: Location;
 }
 
+const translations = {
+  myAddresses: {
+    en: "My Addresses",
+    ar: "عناويني",
+  },
+  defaultAddress: {
+    en: "Default Address",
+    ar: "العنوان الافتراضي",
+  },
+  noAddress: {
+    en: "No default address set",
+    ar: "لم يتم تعيين عنوان افتراضي",
+  },
+  savedAddresses: {
+    en: "Saved Addresses",
+    ar: "العناوين المحفوظة",
+  },
+  defaultTag: {
+    en: "Default",
+    ar: "افتراضي",
+  },
+  addNewAddress: {
+    en: "Add New Address",
+    ar: "إضافة عنوان جديد",
+  },
+  edit: {
+    en: "Edit",
+    ar: "تعديل",
+  },
+  setAsDefault: {
+    en: "Set As Default",
+    ar: "تعيين كافتراضي",
+  },
+  delete: {
+    en: "Delete",
+    ar: "حذف",
+  },
+};
+
 const AddressPage = () => {
   const [defaultAddress, setDefaultAddress] = useState<Address | null>(null);
   const [savedAddresses, setSavedAddresses] = useState<Address[]>([]);
   const [isDeliverModalOpen, setIsDeliverModalOpen] = useState(false);
   const [addressToEdit, setAddressToEdit] = useState<Address | null>(null);
+  const { language } = useLanguage();
 
   useEffect(() => {
     const loadAddresses = () => {
@@ -226,22 +267,30 @@ const AddressPage = () => {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-gray-700">My Addresses</h1>
+      <h1 className="mb-6 text-2xl font-bold text-gray-700">
+        {translations.myAddresses[language]}
+      </h1>
 
       {/* Default Address Section */}
-      <div className="mb-8">
-        <h2 className="mb-2 text-sm font-semibold">Default Address</h2>
+      <div
+        className={`mb-8 ${language === "ar" ? "text-right" : ""}`}
+        dir={language === "ar" ? "rtl" : "ltr"}
+      >
+        <h2 className="mb-2 text-sm font-semibold">
+          {translations.defaultAddress[language]}
+        </h2>
+
         {defaultAddress ? (
           <div className="relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
             <div className="mb-2 flex items-start">
-              <div className="mr-3 mt-1">
+              <div className={`mt-1 ${language === "ar" ? "ml-3" : "mr-3"}`}>
                 {getAddressIcon(defaultAddress.type)}
               </div>
               <div className="flex-1">
                 <div className="flex items-start justify-between">
                   <h3 className="font-medium">{defaultAddress.name}</h3>
                   <span className="rounded-full bg-green-100 px-2 py-1 text-xs text-green-800">
-                    Default
+                    {translations.defaultTag[language]}
                   </span>
                 </div>
                 <p className="text-gray-700">{defaultAddress.details}</p>
@@ -250,26 +299,28 @@ const AddressPage = () => {
                 </p>
               </div>
             </div>
-            <div className="mt-2 flex justify-end space-x-2">
+            <div
+              className={`mt-2 flex ${language === "ar" ? "justify-start space-x-reverse" : "justify-end"} space-x-2`}
+            >
               <button
                 onClick={() => editAddress(defaultAddress)}
-                className="text-green-600 hover:text-green-800"
-                title="Edit"
+                className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-300 text-green-600 hover:text-green-800"
+                title={translations.edit[language]}
               >
-                <Edit2 size={18} />
+                <Edit2 size={15} />
               </button>
               <button
                 onClick={() => deleteAddress(defaultAddress.id)}
-                className="text-red-600 hover:text-red-800"
-                title="Delete"
+                className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-300 text-red-600 hover:text-red-800"
+                title={translations.delete[language]}
               >
-                <Trash2 size={18} />
+                <Trash2 size={15} />
               </button>
             </div>
           </div>
         ) : (
           <div className="rounded-lg bg-gray-50 p-4 text-center text-gray-500">
-            No default address set
+            {translations.noAddress[language]}
           </div>
         )}
       </div>
@@ -277,7 +328,9 @@ const AddressPage = () => {
       {/* Saved Addresses Section */}
       <div className="mb-8">
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-sm font-semibold">Saved Addresses</h2>
+          <h2 className="text-sm font-semibold">
+            {translations.savedAddresses[language]}
+          </h2>
           <button
             onClick={() => {
               setAddressToEdit(null); // Ensure we're adding, not editing
@@ -285,8 +338,10 @@ const AddressPage = () => {
             }}
             className="flex items-center rounded-full bg-green-600 px-4 py-2 text-white hover:bg-green-700 md:rounded-lg"
           >
-            <Plus size={18} />{" "}
-            <span className="hidden md:block">Add New Address</span>
+            <Plus size={18} />
+            <span className="hidden md:block">
+              {translations.addNewAddress[language]}
+            </span>
           </button>
         </div>
 
@@ -297,7 +352,7 @@ const AddressPage = () => {
                 key={address.id}
                 className="relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
               >
-                <div className="mb-2 flex items-start">
+                <div className="mb-2 flex items-start gap-2">
                   <div className="mr-3 mt-1">
                     {getAddressIcon(address.type)}
                   </div>
@@ -309,27 +364,27 @@ const AddressPage = () => {
                     </p>
                   </div>
                 </div>
-                <div className="mt-2 flex justify-end space-x-2">
+                <div className="mt-2 flex justify-end gap-3">
                   <button
                     onClick={() => setAsDefault(address)}
-                    className="text-green-600 hover:text-green-800"
-                    title="Set as default"
+                    className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-300 text-green-600 hover:text-green-800"
+                    title={translations.setAsDefault[language]}
                   >
-                    <Check size={18} />
+                    <Check size={15} />
                   </button>
                   <button
                     onClick={() => editAddress(address)}
-                    className="text-green-600 hover:text-green-800"
-                    title="Edit"
+                    className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-300 text-green-600 hover:text-green-800"
+                    title={translations.edit[language]}
                   >
-                    <Edit2 size={18} />
+                    <Edit2 size={15} />
                   </button>
                   <button
                     onClick={() => deleteAddress(address.id)}
-                    className="text-red-600 hover:text-red-800"
-                    title="Delete"
+                    className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-300 text-red-600 hover:text-red-800"
+                    title={translations.delete[language]}
                   >
-                    <Trash2 size={18} />
+                    <Trash2 size={15} />
                   </button>
                 </div>
               </div>
@@ -350,7 +405,7 @@ const AddressPage = () => {
           setAddressToEdit(null); // Reset addressToEdit when closing modal
         }}
         onAddressSelect={handleAddressSelectedFromModal}
-        locale="en"
+        locale={language}
       />
     </div>
   );

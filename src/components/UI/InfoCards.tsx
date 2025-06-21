@@ -1,8 +1,17 @@
-import React from "react";
-
-const InfoCards = () => {
+import { LocalizedTitle } from "@/types/language";
+import React, { ReactNode } from "react";
+type InfoCardsProps = {
+  locale: "en" | "ar";
+};
+type InfoCardItem = {
+  icon: ReactNode;
+  title: LocalizedTitle;
+  bgColor: string;
+  textColor: string;
+};
+const InfoCards = ({ locale }: InfoCardsProps) => {
   // Dummy data for the info cards
-  const cards = [
+  const cards: InfoCardItem[] = [
     {
       icon: (
         <svg
@@ -26,8 +35,7 @@ const InfoCards = () => {
           />
         </svg>
       ),
-      title: "Delivery by",
-      subtitle: "medicova",
+      title: { en: "Delivery by Medicova", ar: "التسليم عن طريق ميديكوفا" },
       bgColor: "bg-blue-50",
       textColor: "text-blue-600",
     },
@@ -48,8 +56,7 @@ const InfoCards = () => {
           />
         </svg>
       ),
-      title: "High Rated",
-      subtitle: "Seller",
+      title: { en: "High Rated Seller", ar: "بائع ذو تقييم عالٍ" },
       bgColor: "bg-green-50",
       textColor: "text-green-600",
     },
@@ -70,8 +77,7 @@ const InfoCards = () => {
           />
         </svg>
       ),
-      title: "Cash on",
-      subtitle: "Delivery",
+      title: { en: "Cash on Delivery", ar: "الدفع عند التسليم" },
       bgColor: "bg-purple-50",
       textColor: "text-purple-600",
     },
@@ -92,8 +98,7 @@ const InfoCards = () => {
           />
         </svg>
       ),
-      title: "Secure",
-      subtitle: "Transaction",
+      title: { en: "Secure Transaction", ar: "معاملة آمنة" },
       bgColor: "bg-yellow-50",
       textColor: "text-yellow-600",
     },
@@ -110,10 +115,9 @@ const InfoCards = () => {
             <div className="mb-2 rounded-full bg-green-50 text-primary">
               {card.icon}
             </div>
-            <h3 className="text-xs font-medium">{card.title}</h3>
-            <p className="text-[10px] font-semibold sm:text-xs">
-              {card.subtitle}
-            </p>
+            <h3 className="text-center text-xs font-medium">
+              {card.title[locale]}
+            </h3>
           </div>
         ))}
       </div>

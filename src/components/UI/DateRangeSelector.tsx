@@ -1,4 +1,3 @@
-// components/DateRangeSelector.tsx
 import { useState, useEffect, useRef } from "react";
 import {
   formatDate,
@@ -16,6 +15,7 @@ import {
   subMonths,
 } from "@/util/dateUtils";
 import { Calendar } from "lucide-react";
+import { LanguageType } from "@/util/translations";
 
 type DateRange = {
   startDate: Date | null;
@@ -32,6 +32,73 @@ type DateRangeSelectorProps = {
   initialRange?: DateRange;
   formatString?: string;
   className?: string;
+  locale?: LanguageType;
+};
+
+// Translation dictionary
+const translations = {
+  en: {
+    selectDateRange: "Select date range",
+    today: "Today",
+    yesterday: "Yesterday",
+    last7Days: "Last 7 Days",
+    thisWeek: "This Week",
+    lastWeek: "Last Week",
+    thisMonth: "This Month",
+    lastMonth: "Last Month",
+    thisYear: "This Year",
+    customRange: "Custom Range",
+    startDate: "Start Date",
+    endDate: "End Date",
+    selectStartDate: "Select start date",
+    selectEndDate: "Select end date",
+    weekDays: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+    monthNames: [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ],
+  },
+  ar: {
+    selectDateRange: "حدد نطاق التاريخ",
+    today: "اليوم",
+    yesterday: "أمس",
+    last7Days: "آخر 7 أيام",
+    thisWeek: "هذا الأسبوع",
+    lastWeek: "الأسبوع الماضي",
+    thisMonth: "هذا الشهر",
+    lastMonth: "الشهر الماضي",
+    thisYear: "هذه السنة",
+    customRange: "نطاق مخصص",
+    startDate: "تاريخ البدء",
+    endDate: "تاريخ الانتهاء",
+    selectStartDate: "حدد تاريخ البدء",
+    selectEndDate: "حدد تاريخ الانتهاء",
+    weekDays: ["ح", "ن", "ث", "ر", "خ", "ج", "س"],
+    monthNames: [
+      "يناير",
+      "فبراير",
+      "مارس",
+      "أبريل",
+      "مايو",
+      "يونيو",
+      "يوليو",
+      "أغسطس",
+      "سبتمبر",
+      "أكتوبر",
+      "نوفمبر",
+      "ديسمبر",
+    ],
+  },
 };
 
 const DateRangeSelector = ({
@@ -39,6 +106,7 @@ const DateRangeSelector = ({
   initialRange = { startDate: null, endDate: null },
   formatString = "MMM dd, yyyy",
   className = "",
+  locale = "en",
 }: DateRangeSelectorProps) => {
   const [dateRange, setDateRange] = useState<DateRange>(initialRange);
   const [isCustomRange, setIsCustomRange] = useState(false);
@@ -47,6 +115,9 @@ const DateRangeSelector = ({
   const [showEndCalendar, setShowEndCalendar] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const isRTL = locale === "ar";
+  const t = translations[locale];
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -65,63 +136,63 @@ const DateRangeSelector = ({
   // Define preset ranges
   const presetRanges: PresetRange[] = [
     {
-      label: "Today",
+      label: t.today,
       value: () => ({
         startDate: new Date(),
         endDate: new Date(),
       }),
     },
     {
-      label: "Yesterday",
+      label: t.yesterday,
       value: () => ({
         startDate: subDays(new Date(), 1),
         endDate: subDays(new Date(), 1),
       }),
     },
     {
-      label: "Last 7 Days",
+      label: t.last7Days,
       value: () => ({
         startDate: subDays(new Date(), 6),
         endDate: new Date(),
       }),
     },
     {
-      label: "This Week",
+      label: t.thisWeek,
       value: () => ({
         startDate: startOfWeek(new Date()),
         endDate: endOfWeek(new Date()),
       }),
     },
     {
-      label: "Last Week",
+      label: t.lastWeek,
       value: () => ({
         startDate: startOfWeek(subDays(new Date(), 7)),
         endDate: endOfWeek(subDays(new Date(), 7)),
       }),
     },
     {
-      label: "This Month",
+      label: t.thisMonth,
       value: () => ({
         startDate: startOfMonth(new Date()),
         endDate: endOfMonth(new Date()),
       }),
     },
     {
-      label: "Last Month",
+      label: t.lastMonth,
       value: () => ({
         startDate: startOfMonth(subMonths(new Date(), 1)),
         endDate: endOfMonth(subMonths(new Date(), 1)),
       }),
     },
     {
-      label: "This Year",
+      label: t.thisYear,
       value: () => ({
         startDate: startOfYear(new Date()),
         endDate: endOfYear(new Date()),
       }),
     },
     {
-      label: "Custom Range",
+      label: t.customRange,
       value: () => ({
         startDate: null,
         endDate: null,
@@ -140,8 +211,8 @@ const DateRangeSelector = ({
   const applyPresetRange = (preset: PresetRange) => {
     const newRange = preset.value();
     setDateRange(newRange);
-    setIsCustomRange(preset.label === "Custom Range");
-    setActivePreset(preset.label === "Custom Range" ? null : preset.label);
+    setIsCustomRange(preset.label === t.customRange);
+    setActivePreset(preset.label === t.customRange ? null : preset.label);
     setShowStartCalendar(false);
     setShowEndCalendar(false);
   };
@@ -172,7 +243,7 @@ const DateRangeSelector = ({
 
   // Format date display
   const formatDateDisplay = () => {
-    if (!dateRange.startDate || !dateRange.endDate) return "Select date range";
+    if (!dateRange.startDate || !dateRange.endDate) return t.selectDateRange;
 
     if (isSameDay(dateRange.startDate, dateRange.endDate)) {
       return formatDate(dateRange.startDate, formatString);
@@ -250,29 +321,33 @@ const DateRangeSelector = ({
     }
 
     return (
-      <div className="absolute z-20 mt-1 rounded-lg border bg-white p-2 shadow-lg">
+      <div
+        className={`absolute z-20 mt-1 rounded-lg border bg-white p-2 shadow-lg ${
+          isRTL ? "right-0" : "left-0"
+        }`}
+      >
         <div className="flex items-center gap-2">
           <div className="mb-2 flex items-center justify-between">
             <button
               onClick={() => onChange(subMonths(date as Date, 1))}
               className="rounded p-1 hover:bg-gray-100"
             >
-              &lt;
+              {isRTL ? ">" : "<"}
             </button>
             <div className="font-medium">
-              {date.toLocaleString("default", { month: "long" })} {currentYear}
+              {t.monthNames[currentMonth]} {currentYear}
             </div>
             <button
               onClick={() => onChange(addMonths(date as Date, 1))}
               className="rounded p-1 hover:bg-gray-100"
             >
-              &gt;
+              {isRTL ? "<" : ">"}
             </button>
           </div>
         </div>
 
         <div className="mb-1 grid grid-cols-7 gap-1 text-center text-xs">
-          {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
+          {t.weekDays.map((day) => (
             <div key={day} className="w-8 font-medium text-gray-500">
               {day}
             </div>
@@ -284,14 +359,21 @@ const DateRangeSelector = ({
   };
 
   return (
-    <div className={`relative ${className}`} ref={dropdownRef}>
+    <div
+      className={`relative ${className}`}
+      ref={dropdownRef}
+      dir={isRTL ? "rtl" : "ltr"}
+    >
       {/* Main selector button */}
-
       <button
         onClick={() => setShowDropdown(!showDropdown)}
-        className="flex w-full items-center justify-between gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 hover:bg-gray-50"
+        className={`flex w-full items-center justify-between gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 hover:bg-gray-50 ${
+          isRTL ? "flex-row-reverse" : ""
+        }`}
       >
-        <div className="flex items-center gap-2">
+        <div
+          className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}
+        >
           <Calendar size={16} className="text-gray-700" />
           <span className="text-sm font-medium">{formatDateDisplay()}</span>
         </div>
@@ -311,7 +393,11 @@ const DateRangeSelector = ({
 
       {/* Dropdown content */}
       {showDropdown && (
-        <div className="absolute left-0 z-10 mt-2 w-full min-w-[300px] rounded-md border bg-white shadow-lg">
+        <div
+          className={`absolute ${
+            isRTL ? "right-0" : "left-0"
+          } z-10 mt-2 w-full min-w-[300px] rounded-md border bg-white shadow-lg`}
+        >
           <div className="p-4">
             {/* Navigation controls */}
             <div className="mb-4 flex items-center justify-between">
@@ -328,7 +414,11 @@ const DateRangeSelector = ({
                 >
                   <path
                     fillRule="evenodd"
-                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                    d={
+                      isRTL
+                        ? "M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                        : "M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                    }
                     clipRule="evenodd"
                   />
                 </svg>
@@ -338,8 +428,8 @@ const DateRangeSelector = ({
                 {dateRange.startDate &&
                   dateRange.endDate &&
                   (isSameDay(dateRange.startDate, dateRange.endDate)
-                    ? formatDate(dateRange.startDate, "MMMM yyyy")
-                    : `${formatDate(dateRange.startDate, "MMM yyyy")} - ${formatDate(dateRange.endDate, "MMM yyyy")}`)}
+                    ? `${t.monthNames[dateRange.startDate.getMonth()]} ${dateRange.startDate.getFullYear()}`
+                    : `${t.monthNames[dateRange.startDate.getMonth()].slice(0, 3)} ${dateRange.startDate.getFullYear()} - ${t.monthNames[dateRange.endDate.getMonth()].slice(0, 3)} ${dateRange.endDate.getFullYear()}`)}
               </div>
 
               <button
@@ -355,7 +445,11 @@ const DateRangeSelector = ({
                 >
                   <path
                     fillRule="evenodd"
-                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    d={
+                      isRTL
+                        ? "M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                        : "M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    }
                     clipRule="evenodd"
                   />
                 </svg>
@@ -368,11 +462,11 @@ const DateRangeSelector = ({
                 <button
                   key={preset.label}
                   onClick={() => applyPresetRange(preset)}
-                  className={`rounded-md px-3 py-2 text-left text-sm ${
+                  className={`rounded-md px-3 py-2 text-sm ${
                     activePreset === preset.label
                       ? "bg-green-500 text-white"
                       : "bg-gray-100 hover:bg-gray-200"
-                  }`}
+                  } ${isRTL ? "text-right" : "text-left"}`}
                 >
                   {preset.label}
                 </button>
@@ -385,20 +479,20 @@ const DateRangeSelector = ({
                 onClick={() =>
                   applyPresetRange(presetRanges[presetRanges.length - 1])
                 }
-                className={`mb-3 w-full rounded-md px-3 py-2 text-left text-sm ${
+                className={`mb-3 w-full rounded-md px-3 py-2 text-sm ${
                   isCustomRange
                     ? "bg-green-500 text-white"
                     : "bg-gray-100 hover:bg-gray-200"
-                }`}
+                } ${isRTL ? "text-right" : "text-left"}`}
               >
-                Custom Range
+                {t.customRange}
               </button>
 
               {isCustomRange && (
                 <div className="flex flex-col gap-4">
                   <div className="relative">
                     <label className="mb-1 block text-sm font-medium">
-                      Start Date
+                      {t.startDate}
                     </label>
                     <input
                       type="text"
@@ -412,7 +506,7 @@ const DateRangeSelector = ({
                         setShowStartCalendar(!showStartCalendar);
                         setShowEndCalendar(false);
                       }}
-                      placeholder="Select start date"
+                      placeholder={t.selectStartDate}
                       className="w-full rounded-md border p-2 outline-none"
                     />
                     {showStartCalendar &&
@@ -436,7 +530,7 @@ const DateRangeSelector = ({
                   </div>
                   <div className="relative">
                     <label className="mb-1 block text-sm font-medium">
-                      End Date
+                      {t.endDate}
                     </label>
                     <input
                       type="text"
@@ -450,7 +544,7 @@ const DateRangeSelector = ({
                         setShowEndCalendar(!showEndCalendar);
                         setShowStartCalendar(false);
                       }}
-                      placeholder="Select end date"
+                      placeholder={t.selectEndDate}
                       className="w-full rounded-md border p-2 outline-none"
                     />
                     {showEndCalendar &&

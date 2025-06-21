@@ -3,223 +3,420 @@ import { linksHeader } from "@/types";
 export const commonLinks: linksHeader[] = [
   {
     id: "1",
-    title: "Medical Wear & Accessories",
+    title: {
+      en: "Medical Wear & Accessories",
+      ar: "ملابس واكسسوارات طبية",
+    },
     url: "/medical-wear",
     gridLinks: [
       {
-        heading: "Scrubs",
+        heading: {
+          en: "Scrubs",
+          ar: "ملابس طبية",
+        },
         subLinks: [
-          { title: "Men's Scrubs", url: "/medical-wear/mens-scrubs" },
-          { title: "Women's Scrubs", url: "/medical-wear/womens-scrubs" },
-          { title: "Unisex Scrubs", url: "/medical-wear/unisex-scrubs" },
-          { title: "Scrub Sets", url: "/medical-wear/scrub-sets" },
-          { title: "Scrub Tops", url: "/medical-wear/scrub-tops" },
-        ],
-      },
-      {
-        heading: "Lab Coats",
-        subLinks: [
-          { title: "Doctor Coats", url: "/medical-wear/doctor-coats" },
-          { title: "Nurse Coats", url: "/medical-wear/nurse-coats" },
-          { title: "Student Coats", url: "/medical-wear/student-coats" },
-          { title: "Designer Coats", url: "/medical-wear/designer-coats" },
-        ],
-      },
-      {
-        heading: "Shoes",
-        subLinks: [
-          { title: "Clogs", url: "/medical-wear/clogs" },
-          { title: "Sneakers", url: "/medical-wear/sneakers" },
-          { title: "Slip Resistant", url: "/medical-wear/slip-resistant" },
-          { title: "Orthopedic", url: "/medical-wear/orthopedic" },
-        ],
-      },
-      {
-        heading: "Accessories",
-        subLinks: [
-          { title: "Stethoscopes", url: "/medical-wear/stethoscopes" },
-          { title: "Badge Reels", url: "/medical-wear/badge-reels" },
           {
-            title: "Compression Socks",
+            title: { en: "Men's Scrubs", ar: "سكراب رجالي" },
+            url: "/medical-wear/mens-scrubs",
+          },
+          {
+            title: { en: "Women's Scrubs", ar: "سكراب نسائي" },
+            url: "/medical-wear/womens-scrubs",
+          },
+          {
+            title: { en: "Unisex Scrubs", ar: "سكراب للجنسين" },
+            url: "/medical-wear/womens-scrubs",
+          },
+          {
+            title: { en: "Scrub Sets", ar: "أطقم سكراب" },
+            url: "/medical-wear/scrub-sets",
+          },
+          {
+            title: { en: "Scrub Tops", ar: "بلوزات سكراب" },
+            url: "/medical-wear/scrub-tops",
+          },
+        ],
+      },
+      {
+        heading: {
+          en: "Lab Coats",
+          ar: "معاطف المختبر",
+        },
+        subLinks: [
+          {
+            title: { en: "Doctor Coats", ar: "معاطف الأطباء" },
+            url: "/medical-wear/doctor-coats",
+          },
+          {
+            title: { en: "Nurse Coats", ar: "معاطف الممرضات" },
+            url: "/medical-wear/nurse-coats",
+          },
+          {
+            title: { en: "Student Coats", ar: "معاطف الطلاب" },
+            url: "/medical-wear/student-coats",
+          },
+          {
+            title: { en: "Designer Coats", ar: "معاطف مصممة" },
+            url: "/medical-wear/designer-coats",
+          },
+        ],
+      },
+      {
+        heading: {
+          en: "Shoes",
+          ar: "أحذية",
+        },
+        subLinks: [
+          {
+            title: { en: "Clogs", ar: "قباقيب" },
+            url: "/medical-wear/clogs",
+          },
+          {
+            title: { en: "Sneakers", ar: "أحذية رياضية" },
+            url: "/medical-wear/sneakers",
+          },
+          {
+            title: { en: "Slip Resistant", ar: "مقاومة للانزلاق" },
+            url: "/medical-wear/slip-resistant",
+          },
+          {
+            title: { en: "Orthopedic", ar: "طبية" },
+            url: "/medical-wear/orthopedic",
+          },
+        ],
+      },
+      {
+        heading: {
+          en: "Accessories",
+          ar: "اكسسوارات",
+        },
+        subLinks: [
+          {
+            title: { en: "Stethoscopes", ar: "سماعات طبية" },
+            url: "/medical-wear/stethoscopes",
+          },
+          {
+            title: { en: "Badge Reels", ar: "حوامل بطاقات" },
+            url: "/medical-wear/badge-reels",
+          },
+          {
+            title: { en: "Compression Socks", ar: "جوارب ضاغطة" },
             url: "/medical-wear/compression-socks",
           },
-          { title: "Medical Bags", url: "/medical-wear/medical-bags" },
+          {
+            title: { en: "Medical Bags", ar: "حقائب طبية" },
+            url: "/medical-wear/medical-bags",
+          },
         ],
       },
     ],
     banner: {
       active: true,
-      title: "New Scrubs Collection",
-      details: "Comfortable and stylish designs for medical professionals",
+      title: {
+        en: "New Scrubs Collection",
+        ar: "مجموعة السكراب الجديدة",
+      },
+      details: {
+        en: "Comfortable and stylish designs for medical professionals",
+        ar: "تصاميم مريحة وأنيقة للمختصين الطبيين",
+      },
       image: "/images/medical_wear.jpg",
     },
   },
   {
     id: "2",
-    title: "Sports Wear",
+    title: { en: "Sports Wear", ar: "ملابس رياضية" },
     url: "/sports-wear",
     gridLinks: [
       {
-        heading: "Men's Sports Wear",
+        heading: { en: "Men's Sports Wear", ar: "ملابس رياضية رجالية" },
         subLinks: [
-          { title: "Training Tops", url: "/sports-wear/mens-tops" },
-          { title: "Running Shorts", url: "/sports-wear/mens-shorts" },
-          { title: "Compression Wear", url: "/sports-wear/mens-compression" },
-          { title: "Track Pants", url: "/sports-wear/mens-track-pants" },
+          {
+            title: { en: "Training Tops", ar: "بلوزات تدريب" },
+            url: "/sports-wear/mens-tops",
+          },
+          {
+            title: { en: "Running Shorts", ar: "شورتات للجري" },
+            url: "/sports-wear/mens-shorts",
+          },
+          {
+            title: { en: "Compression Wear", ar: "ملابس ضاغطة" },
+            url: "/sports-wear/mens-compression",
+          },
+          {
+            title: { en: "Track Pants", ar: "بناطيل رياضية" },
+            url: "/sports-wear/mens-track-pants",
+          },
         ],
       },
       {
-        heading: "Women's Sports Wear",
+        heading: { en: "Women's Sports Wear", ar: "ملابس رياضية نسائية" },
         subLinks: [
-          { title: "Sports Bras", url: "/sports-wear/womens-bras" },
-          { title: "Leggings", url: "/sports-wear/womens-leggings" },
-          { title: "Tank Tops", url: "/sports-wear/womens-tanks" },
-          { title: "Running Skirts", url: "/sports-wear/womens-skirts" },
+          {
+            title: { en: "Sports Bras", ar: "حمالات صدر رياضية" },
+            url: "/sports-wear/womens-bras",
+          },
+          {
+            title: { en: "Leggings", ar: "ليغينغز" },
+            url: "/sports-wear/womens-leggings",
+          },
+          {
+            title: { en: "Tank Tops", ar: "بلوزات بدون أكمام" },
+            url: "/sports-wear/womens-tanks",
+          },
+          {
+            title: { en: "Running Skirts", ar: "تنانير للجري" },
+            url: "/sports-wear/womens-skirts",
+          },
         ],
       },
       {
-        heading: "Footwear",
+        heading: { en: "Footwear", ar: "أحذية" },
         subLinks: [
-          { title: "Running Shoes", url: "/sports-wear/running-shoes" },
-          { title: "Training Shoes", url: "/sports-wear/training-shoes" },
-          { title: "Walking Shoes", url: "/sports-wear/walking-shoes" },
-          { title: "Cleats", url: "/sports-wear/cleats" },
+          {
+            title: { en: "Running Shoes", ar: "أحذية جري" },
+            url: "/sports-wear/running-shoes",
+          },
+          {
+            title: { en: "Training Shoes", ar: "أحذية تدريب" },
+            url: "/sports-wear/training-shoes",
+          },
+          {
+            title: { en: "Walking Shoes", ar: "أحذية مشي" },
+            url: "/sports-wear/walking-shoes",
+          },
+          {
+            title: { en: "Cleats", ar: "مرابط" },
+            url: "/sports-wear/cleats",
+          },
         ],
       },
       {
-        heading: "Accessories",
+        heading: { en: "Accessories", ar: "اكسسوارات" },
         subLinks: [
-          { title: "Fitness Trackers", url: "/sports-wear/fitness-trackers" },
-          { title: "Water Bottles", url: "/sports-wear/water-bottles" },
-          { title: "Sports Bags", url: "/sports-wear/sports-bags" },
-          { title: "Headbands", url: "/sports-wear/headbands" },
+          {
+            title: { en: "Fitness Trackers", ar: "أجهزة تتبع اللياقة" },
+            url: "/sports-wear/fitness-trackers",
+          },
+          {
+            title: { en: "Water Bottles", ar: "زجاجات ماء" },
+            url: "/sports-wear/water-bottles",
+          },
+          {
+            title: { en: "Sports Bags", ar: "حقائب رياضية" },
+            url: "/sports-wear/sports-bags",
+          },
+          {
+            title: { en: "Headbands", ar: "عصابات رأس" },
+            url: "/sports-wear/headbands",
+          },
         ],
       },
     ],
     banner: {
       active: true,
-      title: "Summer Sports Collection",
-      details: "Stay cool and perform better with our new line",
+      title: {
+        en: "Summer Sports Collection",
+        ar: "مجموعة الصيف الرياضية",
+      },
+      details: {
+        en: "Stay cool and perform better with our new line",
+        ar: "ابقَ منتعشاً وحسّن أداءك مع مجموعتنا الجديدة",
+      },
       image: "/images/Mens_Sports_Wear.jpg",
     },
   },
   {
     id: "3",
-    title: "Medical Devices & Equipment",
+    title: { en: "Medical Devices & Equipment", ar: "أجهزة ومعدات طبية" },
     url: "/medical-devices",
     gridLinks: [
       {
-        heading: "Diagnostic Equipment",
+        heading: { en: "Diagnostic Equipment", ar: "معدات التشخيص" },
         subLinks: [
           {
-            title: "Blood Pressure Monitors",
+            title: { en: "Blood Pressure Monitors", ar: "أجهزة قياس ضغط الدم" },
             url: "/medical-devices/bp-monitors",
           },
-          { title: "Stethoscopes", url: "/medical-devices/stethoscopes" },
-          { title: "Thermometers", url: "/medical-devices/thermometers" },
-          { title: "Otoscopes", url: "/medical-devices/otoscopes" },
+          {
+            title: { en: "Stethoscopes", ar: "سماعات طبية" },
+            url: "/medical-devices/stethoscopes",
+          },
+          {
+            title: { en: "Thermometers", ar: "موازين حرارة" },
+            url: "/medical-devices/thermometers",
+          },
+          {
+            title: { en: "Otoscopes", ar: "منظار الأذن" },
+            url: "/medical-devices/otoscopes",
+          },
         ],
       },
       {
-        heading: "Treatment Equipment",
+        heading: { en: "Treatment Equipment", ar: "معدات العلاج" },
         subLinks: [
-          { title: "Nebulizers", url: "/medical-devices/nebulizers" },
           {
-            title: "Oxygen Concentrators",
+            title: { en: "Nebulizers", ar: "أجهزة استنشاق" },
+            url: "/medical-devices/nebulizers",
+          },
+          {
+            title: { en: "Oxygen Concentrators", ar: "مكثفات الأكسجين" },
             url: "/medical-devices/oxygen-concentrators",
           },
           {
-            title: "Patient Monitors",
+            title: { en: "Patient Monitors", ar: "أجهزة مراقبة المرضى" },
             url: "/medical-devices/patient-monitors",
           },
-          { title: "Infusion Pumps", url: "/medical-devices/infusion-pumps" },
+          {
+            title: { en: "Infusion Pumps", ar: "مضخات التسريب" },
+            url: "/medical-devices/infusion-pumps",
+          },
         ],
       },
       {
-        heading: "Surgical Instruments",
+        heading: { en: "Surgical Instruments", ar: "أدوات جراحية" },
         subLinks: [
-          { title: "Scalpels", url: "/medical-devices/scalpels" },
-          { title: "Forceps", url: "/medical-devices/forceps" },
-          { title: "Scissors", url: "/medical-devices/scissors" },
-          { title: "Retractors", url: "/medical-devices/retractors" },
+          {
+            title: { en: "Scalpels", ar: "مشارط" },
+            url: "/medical-devices/scalpels",
+          },
+          {
+            title: { en: "Forceps", ar: "ملقط" },
+            url: "/medical-devices/forceps",
+          },
+          {
+            title: { en: "Scissors", ar: "مقصات" },
+            url: "/medical-devices/scissors",
+          },
+          {
+            title: { en: "Retractors", ar: "مباعدات" },
+            url: "/medical-devices/retractors",
+          },
         ],
       },
       {
-        heading: "Dental Equipment",
+        heading: { en: "Dental Equipment", ar: "معدات الأسنان" },
         subLinks: [
-          { title: "Dental Chairs", url: "/medical-devices/dental-chairs" },
-          { title: "X-ray Machines", url: "/medical-devices/xray-machines" },
-          { title: "Sterilizers", url: "/medical-devices/sterilizers" },
-          { title: "Dental Lights", url: "/medical-devices/dental-lights" },
+          {
+            title: { en: "Dental Chairs", ar: "كراسي أسنان" },
+            url: "/medical-devices/dental-chairs",
+          },
+          {
+            title: { en: "X-ray Machines", ar: "أجهزة أشعة سينية" },
+            url: "/medical-devices/xray-machines",
+          },
+          {
+            title: { en: "Sterilizers", ar: "معقمات" },
+            url: "/medical-devices/sterilizers",
+          },
+          {
+            title: { en: "Dental Lights", ar: "أضواء أسنان" },
+            url: "/medical-devices/dental-lights",
+          },
         ],
       },
     ],
     banner: {
       active: true,
-      title: "Professional Medical Equipment",
-      details: "High-quality devices for healthcare facilities",
+      title: {
+        en: "Professional Medical Equipment",
+        ar: "معدات طبية احترافية",
+      },
+      details: {
+        en: "High-quality devices for healthcare facilities",
+        ar: "أجهزة عالية الجودة للمرافق الصحية",
+      },
       image: "/images/medical-devices.jpg",
     },
   },
-
   {
     id: "4",
-    title: "Medical Furniture & Clinic Setup",
+    title: {
+      en: "Medical Furniture & Clinic Setup",
+      ar: "أثاث طبي وتجهيز عيادات",
+    },
     url: "/medical-furniture",
     gridLinks: [
       {
-        heading: "Examination Furniture",
+        heading: { en: "Examination Furniture", ar: "أثاث الفحص" },
         subLinks: [
-          { title: "Exam Tables", url: "/medical-furniture/exam-tables" },
           {
-            title: "Procedure Chairs",
+            title: { en: "Exam Tables", ar: "طاولات فحص" },
+            url: "/medical-furniture/exam-tables",
+          },
+          {
+            title: { en: "Procedure Chairs", ar: "كراسي إجراءات" },
             url: "/medical-furniture/procedure-chairs",
           },
-          { title: "Stretchers", url: "/medical-furniture/stretchers" },
-          { title: "Wheelchairs", url: "/medical-furniture/wheelchairs" },
+          {
+            title: { en: "Stretchers", ar: "نقالات" },
+            url: "/medical-furniture/stretchers",
+          },
+          {
+            title: { en: "Wheelchairs", ar: "كراسي متحركة" },
+            url: "/medical-furniture/wheelchairs",
+          },
         ],
       },
       {
-        heading: "Clinic Furniture",
+        heading: { en: "Clinic Furniture", ar: "أثاث العيادات" },
         subLinks: [
           {
-            title: "Reception Desks",
+            title: { en: "Reception Desks", ar: "مكاتب استقبال" },
             url: "/medical-furniture/reception-desks",
           },
-          { title: "Waiting Chairs", url: "/medical-furniture/waiting-chairs" },
           {
-            title: "Medical Cabinets",
+            title: { en: "Waiting Chairs", ar: "كراسي انتظار" },
+            url: "/medical-furniture/waiting-chairs",
+          },
+          {
+            title: { en: "Medical Cabinets", ar: "خزائن طبية" },
             url: "/medical-furniture/medical-cabinets",
           },
-          { title: "Workstations", url: "/medical-furniture/workstations" },
+          {
+            title: { en: "Workstations", ar: "محطات عمل" },
+            url: "/medical-furniture/workstations",
+          },
         ],
       },
       {
-        heading: "Hospital Furniture",
-        subLinks: [
-          { title: "Hospital Beds", url: "/medical-furniture/hospital-beds" },
-          { title: "Overbed Tables", url: "/medical-furniture/overbed-tables" },
-          { title: "Patient Lifts", url: "/medical-furniture/patient-lifts" },
-          { title: "Nurse Stations", url: "/medical-furniture/nurse-stations" },
-        ],
-      },
-      {
-        heading: "Storage Solutions",
+        heading: { en: "Hospital Furniture", ar: "أثاث المستشفيات" },
         subLinks: [
           {
-            title: "Medication Carts",
+            title: { en: "Hospital Beds", ar: "أسرة مستشفيات" },
+            url: "/medical-furniture/hospital-beds",
+          },
+          {
+            title: { en: "Overbed Tables", ar: "طاولات فوق السرير" },
+            url: "/medical-furniture/overbed-tables",
+          },
+          {
+            title: { en: "Patient Lifts", ar: "رافعات المرضى" },
+            url: "/medical-furniture/patient-lifts",
+          },
+          {
+            title: { en: "Nurse Stations", ar: "محطات الممرضات" },
+            url: "/medical-furniture/nurse-stations",
+          },
+        ],
+      },
+      {
+        heading: { en: "Storage Solutions", ar: "حلول تخزين" },
+        subLinks: [
+          {
+            title: { en: "Medication Carts", ar: "عربات الأدوية" },
             url: "/medical-furniture/medication-carts",
           },
           {
-            title: "Supply Cabinets",
+            title: { en: "Supply Cabinets", ar: "خزائن مستلزمات" },
             url: "/medical-furniture/supply-cabinets",
           },
           {
-            title: "Wall-mounted Systems",
+            title: { en: "Wall-mounted Systems", ar: "أنظمة مثبتة على الحائط" },
             url: "/medical-furniture/wall-systems",
           },
           {
-            title: "Mobile Workstations",
+            title: { en: "Mobile Workstations", ar: "محطات عمل متنقلة" },
             url: "/medical-furniture/mobile-workstations",
           },
         ],
@@ -227,51 +424,90 @@ export const commonLinks: linksHeader[] = [
     ],
     banner: {
       active: true,
-      title: "Complete Clinic Solutions",
-      details: "Furnish your medical space with our premium products",
+      title: { en: "Complete Clinic Solutions", ar: "حلول عيادات متكاملة" },
+      details: {
+        en: "Furnish your medical space with our premium products",
+        ar: "جهز مساحتك الطبية بمنتجاتنا الممتازة",
+      },
       image: "/images/medical-furniture.jpg",
     },
   },
   {
     id: "5",
-    title: "Consumables & Disposables",
+    title: {
+      en: "Consumables & Disposables",
+      ar: "مستهلكات ومواد للاستعمال مرة واحدة",
+    },
     url: "/consumables",
     gridLinks: [
       {
-        heading: "Protective Equipment",
+        heading: { en: "Protective Equipment", ar: "معدات الوقاية" },
         subLinks: [
-          { title: "Face Masks", url: "/consumables/face-masks" },
-          { title: "Gloves", url: "/consumables/gloves" },
-          { title: "Gowns", url: "/consumables/gowns" },
-          { title: "Face Shields", url: "/consumables/face-shields" },
-        ],
-      },
-      {
-        heading: "Wound Care",
-        subLinks: [
-          { title: "Bandages", url: "/consumables/bandages" },
-          { title: "Gauze", url: "/consumables/gauze" },
-          { title: "Tapes", url: "/consumables/tapes" },
-          { title: "Dressings", url: "/consumables/dressings" },
-        ],
-      },
-      {
-        heading: "Diagnostic Supplies",
-        subLinks: [
-          { title: "Test Strips", url: "/consumables/test-strips" },
-          { title: "Lancets", url: "/consumables/lancets" },
-          { title: "Swabs", url: "/consumables/swabs" },
-          { title: "Collection Tubes", url: "/consumables/collection-tubes" },
-        ],
-      },
-      {
-        heading: "Infection Control",
-        subLinks: [
-          { title: "Disinfectants", url: "/consumables/disinfectants" },
-          { title: "Hand Sanitizers", url: "/consumables/hand-sanitizers" },
-          { title: "Surface Wipes", url: "/consumables/surface-wipes" },
           {
-            title: "Sterilization Pouches",
+            title: { en: "Face Masks", ar: "كمامات" },
+            url: "/consumables/face-masks",
+          },
+          { title: { en: "Gloves", ar: "قفازات" }, url: "/consumables/gloves" },
+          { title: { en: "Gowns", ar: "أردية" }, url: "/consumables/gowns" },
+          {
+            title: { en: "Face Shields", ar: "واقيات وجه" },
+            url: "/consumables/face-shields",
+          },
+        ],
+      },
+      {
+        heading: { en: "Wound Care", ar: "العناية بالجروح" },
+        subLinks: [
+          {
+            title: { en: "Bandages", ar: "ضمادات" },
+            url: "/consumables/bandages",
+          },
+          { title: { en: "Gauze", ar: "شاش" }, url: "/consumables/gauze" },
+          {
+            title: { en: "Tapes", ar: "شرائط لاصقة" },
+            url: "/consumables/tapes",
+          },
+          {
+            title: { en: "Dressings", ar: "لصقات" },
+            url: "/consumables/dressings",
+          },
+        ],
+      },
+      {
+        heading: { en: "Diagnostic Supplies", ar: "مستلزمات التشخيص" },
+        subLinks: [
+          {
+            title: { en: "Test Strips", ar: "شرائط اختبار" },
+            url: "/consumables/test-strips",
+          },
+          {
+            title: { en: "Lancets", ar: "مباضع" },
+            url: "/consumables/lancets",
+          },
+          { title: { en: "Swabs", ar: "مسحات" }, url: "/consumables/swabs" },
+          {
+            title: { en: "Collection Tubes", ar: "أنابيب جمع العينات" },
+            url: "/consumables/collection-tubes",
+          },
+        ],
+      },
+      {
+        heading: { en: "Infection Control", ar: "مكافحة العدوى" },
+        subLinks: [
+          {
+            title: { en: "Disinfectants", ar: "مطهرات" },
+            url: "/consumables/disinfectants",
+          },
+          {
+            title: { en: "Hand Sanitizers", ar: "معقمات يد" },
+            url: "/consumables/hand-sanitizers",
+          },
+          {
+            title: { en: "Surface Wipes", ar: "مناديل تنظيف الأسطح" },
+            url: "/consumables/surface-wipes",
+          },
+          {
+            title: { en: "Sterilization Pouches", ar: "أكياس تعقيم" },
             url: "/consumables/sterilization-pouches",
           },
         ],
@@ -279,204 +515,413 @@ export const commonLinks: linksHeader[] = [
     ],
     banner: {
       active: true,
-      title: "Essential Medical Supplies",
-      details: "High-quality disposables for healthcare professionals",
+      title: { en: "Essential Medical Supplies", ar: "مستلزمات طبية أساسية" },
+      details: {
+        en: "High-quality disposables for healthcare professionals",
+        ar: "مستلزمات عالية الجودة للمختصين بالرعاية الصحية",
+      },
       image: "/images/consumables.jpg",
     },
   },
   {
     id: "6",
-    title: "Watches",
+    title: { en: "Watches", ar: "ساعات" },
     url: "/watches",
     gridLinks: [
       {
-        heading: "Men's Watches",
+        heading: { en: "Men's Watches", ar: "ساعات رجالية" },
         subLinks: [
-          { title: "Dress Watches", url: "/watches/mens-dress" },
-          { title: "Sports Watches", url: "/watches/mens-sports" },
-          { title: "Smart Watches", url: "/watches/mens-smart" },
-          { title: "Luxury Watches", url: "/watches/mens-luxury" },
+          {
+            title: { en: "Dress Watches", ar: "ساعات رسمية" },
+            url: "/watches/mens-dress",
+          },
+          {
+            title: { en: "Sports Watches", ar: "ساعات رياضية" },
+            url: "/watches/mens-sports",
+          },
+          {
+            title: { en: "Smart Watches", ar: "ساعات ذكية" },
+            url: "/watches/mens-smart",
+          },
+          {
+            title: { en: "Luxury Watches", ar: "ساعات فاخرة" },
+            url: "/watches/mens-luxury",
+          },
         ],
       },
       {
-        heading: "Women's Watches",
+        heading: { en: "Women's Watches", ar: "ساعات نسائية" },
         subLinks: [
-          { title: "Fashion Watches", url: "/watches/womens-fashion" },
-          { title: "Diamond Watches", url: "/watches/womens-diamond" },
-          { title: "Smart Watches", url: "/watches/womens-smart" },
-          { title: "Bangle Watches", url: "/watches/womens-bangle" },
+          {
+            title: { en: "Fashion Watches", ar: "ساعات موضة" },
+            url: "/watches/womens-fashion",
+          },
+          {
+            title: { en: "Diamond Watches", ar: "ساعات ألماس" },
+            url: "/watches/womens-diamond",
+          },
+          {
+            title: { en: "Smart Watches", ar: "ساعات ذكية" },
+            url: "/watches/womens-smart",
+          },
+          {
+            title: { en: "Bangle Watches", ar: "ساعات أساور" },
+            url: "/watches/womens-bangle",
+          },
         ],
       },
       {
-        heading: "Sports Watches",
+        heading: { en: "Sports Watches", ar: "ساعات رياضية" },
         subLinks: [
-          { title: "Running Watches", url: "/watches/running" },
-          { title: "Diving Watches", url: "/watches/diving" },
-          { title: "GPS Watches", url: "/watches/gps" },
-          { title: "Fitness Trackers", url: "/watches/fitness-trackers" },
+          {
+            title: { en: "Running Watches", ar: "ساعات جري" },
+            url: "/watches/running",
+          },
+          {
+            title: { en: "Diving Watches", ar: "ساعات غوص" },
+            url: "/watches/diving",
+          },
+          {
+            title: { en: "GPS Watches", ar: "ساعات GPS" },
+            url: "/watches/gps",
+          },
+          {
+            title: { en: "Fitness Trackers", ar: "أجهزة تتبع اللياقة" },
+            url: "/watches/fitness-trackers",
+          },
         ],
       },
       {
-        heading: "Accessories",
+        heading: { en: "Accessories", ar: "اكسسوارات" },
         subLinks: [
-          { title: "Watch Straps", url: "/watches/straps" },
-          { title: "Watch Winders", url: "/watches/winders" },
-          { title: "Watch Cases", url: "/watches/cases" },
-          { title: "Watch Tools", url: "/watches/tools" },
+          {
+            title: { en: "Watch Straps", ar: "أحزمة ساعات" },
+            url: "/watches/straps",
+          },
+          {
+            title: { en: "Watch Winders", ar: "أجهزة تدوير الساعات" },
+            url: "/watches/winders",
+          },
+          {
+            title: { en: "Watch Cases", ar: "علب ساعات" },
+            url: "/watches/cases",
+          },
+          {
+            title: { en: "Watch Tools", ar: "أدوات ساعات" },
+            url: "/watches/tools",
+          },
         ],
       },
     ],
     banner: {
       active: true,
-      title: "Precision Timepieces",
-      details: "Elegant watches for every occasion",
+      title: { en: "Precision Timepieces", ar: "ساعات دقيقة" },
+      details: {
+        en: "Elegant watches for every occasion",
+        ar: "ساعات أنيقة لكل مناسبة",
+      },
       image: "/images/Watches.jpg",
     },
   },
   {
     id: "7",
-    title: "Perfumes",
+    title: { en: "Perfumes", ar: "عطور" },
     url: "/perfumes",
     gridLinks: [
       {
-        heading: "Men's Fragrances",
+        heading: { en: "Men's Fragrances", ar: "عطور رجالية" },
         subLinks: [
-          { title: "Eau de Parfum", url: "/perfumes/mens-parfum" },
-          { title: "Eau de Toilette", url: "/perfumes/mens-toilette" },
-          { title: "Colognes", url: "/perfumes/mens-cologne" },
-          { title: "Gift Sets", url: "/perfumes/mens-gift-sets" },
+          {
+            title: { en: "Eau de Parfum", ar: "عطر مركز (أو دو بارفان)" },
+            url: "/perfumes/mens-parfum",
+          },
+          {
+            title: { en: "Eau de Toilette", ar: "عطر خفيف (أو دو تواليت)" },
+            url: "/perfumes/mens-toilette",
+          },
+          {
+            title: { en: "Colognes", ar: "كولونيا" },
+            url: "/perfumes/mens-cologne",
+          },
+          {
+            title: { en: "Gift Sets", ar: "مجموعات هدايا" },
+            url: "/perfumes/mens-gift-sets",
+          },
         ],
       },
       {
-        heading: "Women's Fragrances",
+        heading: { en: "Women's Fragrances", ar: "عطور نسائية" },
         subLinks: [
-          { title: "Floral Scents", url: "/perfumes/womens-floral" },
-          { title: "Oriental Scents", url: "/perfumes/womens-oriental" },
-          { title: "Fresh Scents", url: "/perfumes/womens-fresh" },
-          { title: "Luxury Collections", url: "/perfumes/womens-luxury" },
+          {
+            title: { en: "Floral Scents", ar: "روائح زهرية" },
+            url: "/perfumes/womens-floral",
+          },
+          {
+            title: { en: "Oriental Scents", ar: "روائح شرقية" },
+            url: "/perfumes/womens-oriental",
+          },
+          {
+            title: { en: "Fresh Scents", ar: "روائح منعشة" },
+            url: "/perfumes/womens-fresh",
+          },
+          {
+            title: { en: "Luxury Collections", ar: "مجموعات فاخرة" },
+            url: "/perfumes/womens-luxury",
+          },
         ],
       },
       {
-        heading: "Unisex Fragrances",
+        heading: { en: "Unisex Fragrances", ar: "عطور للجنسين" },
         subLinks: [
-          { title: "Citrus Scents", url: "/perfumes/unisex-citrus" },
-          { title: "Woody Scents", url: "/perfumes/unisex-woody" },
-          { title: "Aromatic Scents", url: "/perfumes/unisex-aromatic" },
-          { title: "Niche Perfumes", url: "/perfumes/unisex-niche" },
+          {
+            title: { en: "Citrus Scents", ar: "روائح حمضية" },
+            url: "/perfumes/unisex-citrus",
+          },
+          {
+            title: { en: "Woody Scents", ar: "روائح خشبية" },
+            url: "/perfumes/unisex-woody",
+          },
+          {
+            title: { en: "Aromatic Scents", ar: "روائح عطرية" },
+            url: "/perfumes/unisex-aromatic",
+          },
+          {
+            title: { en: "Niche Perfumes", ar: "عطور نيش" },
+            url: "/perfumes/unisex-niche",
+          },
         ],
       },
       {
-        heading: "Accessories",
+        heading: { en: "Accessories", ar: "اكسسوارات" },
         subLinks: [
-          { title: "Travel Sprays", url: "/perfumes/travel-sprays" },
-          { title: "Perfume Bottles", url: "/perfumes/bottles" },
-          { title: "Scented Candles", url: "/perfumes/scented-candles" },
-          { title: "Diffusers", url: "/perfumes/diffusers" },
+          {
+            title: { en: "Travel Sprays", ar: "بخاخات سفر" },
+            url: "/perfumes/travel-sprays",
+          },
+          {
+            title: { en: "Perfume Bottles", ar: "زجاجات عطر" },
+            url: "/perfumes/bottles",
+          },
+          {
+            title: { en: "Scented Candles", ar: "شموع معطرة" },
+            url: "/perfumes/scented-candles",
+          },
+          {
+            title: { en: "Diffusers", ar: "ناشرات عطر" },
+            url: "/perfumes/diffusers",
+          },
         ],
       },
     ],
     banner: {
       active: true,
-      title: "Luxury Fragrances",
-      details: "Discover your signature scent from our collection",
+      title: { en: "Luxury Fragrances", ar: "عطور فاخرة" },
+      details: {
+        en: "Discover your signature scent from our collection",
+        ar: "اكتشف عطرك المميز من مجموعتنا",
+      },
       image: "/images/Perfumes.jpg",
     },
   },
+  // Note: IDs 8 and 9 are duplicates of ID 7. I've kept them as is for demonstration,
+  // but in a real application, you'd likely want unique IDs and content.
   {
     id: "8",
-    title: "Perfumes",
+    title: { en: "Perfumes", ar: "عطور" },
     url: "/perfumes",
     gridLinks: [
       {
-        heading: "Men's Fragrances",
+        heading: { en: "Men's Fragrances", ar: "عطور رجالية" },
         subLinks: [
-          { title: "Eau de Parfum", url: "/perfumes/mens-parfum" },
-          { title: "Eau de Toilette", url: "/perfumes/mens-toilette" },
-          { title: "Colognes", url: "/perfumes/mens-cologne" },
-          { title: "Gift Sets", url: "/perfumes/mens-gift-sets" },
+          {
+            title: { en: "Eau de Parfum", ar: "عطر مركز (أو دو بارفان)" },
+            url: "/perfumes/mens-parfum",
+          },
+          {
+            title: { en: "Eau de Toilette", ar: "عطر خفيف (أو دو تواليت)" },
+            url: "/perfumes/mens-toilette",
+          },
+          {
+            title: { en: "Colognes", ar: "كولونيا" },
+            url: "/perfumes/mens-cologne",
+          },
+          {
+            title: { en: "Gift Sets", ar: "مجموعات هدايا" },
+            url: "/perfumes/mens-gift-sets",
+          },
         ],
       },
       {
-        heading: "Women's Fragrances",
+        heading: { en: "Women's Fragrances", ar: "عطور نسائية" },
         subLinks: [
-          { title: "Floral Scents", url: "/perfumes/womens-floral" },
-          { title: "Oriental Scents", url: "/perfumes/womens-oriental" },
-          { title: "Fresh Scents", url: "/perfumes/womens-fresh" },
-          { title: "Luxury Collections", url: "/perfumes/womens-luxury" },
+          {
+            title: { en: "Floral Scents", ar: "روائح زهرية" },
+            url: "/perfumes/womens-floral",
+          },
+          {
+            title: { en: "Oriental Scents", ar: "روائح شرقية" },
+            url: "/perfumes/womens-oriental",
+          },
+          {
+            title: { en: "Fresh Scents", ar: "روائح منعشة" },
+            url: "/perfumes/womens-fresh",
+          },
+          {
+            title: { en: "Luxury Collections", ar: "مجموعات فاخرة" },
+            url: "/perfumes/womens-luxury",
+          },
         ],
       },
       {
-        heading: "Unisex Fragrances",
+        heading: { en: "Unisex Fragrances", ar: "عطور للجنسين" },
         subLinks: [
-          { title: "Citrus Scents", url: "/perfumes/unisex-citrus" },
-          { title: "Woody Scents", url: "/perfumes/unisex-woody" },
-          { title: "Aromatic Scents", url: "/perfumes/unisex-aromatic" },
-          { title: "Niche Perfumes", url: "/perfumes/unisex-niche" },
+          {
+            title: { en: "Citrus Scents", ar: "روائح حمضية" },
+            url: "/perfumes/unisex-citrus",
+          },
+          {
+            title: { en: "Woody Scents", ar: "روائح خشبية" },
+            url: "/perfumes/unisex-woody",
+          },
+          {
+            title: { en: "Aromatic Scents", ar: "روائح عطرية" },
+            url: "/perfumes/unisex-aromatic",
+          },
+          {
+            title: { en: "Niche Perfumes", ar: "عطور نيش" },
+            url: "/perfumes/unisex-niche",
+          },
         ],
       },
       {
-        heading: "Accessories",
+        heading: { en: "Accessories", ar: "اكسسوارات" },
         subLinks: [
-          { title: "Travel Sprays", url: "/perfumes/travel-sprays" },
-          { title: "Perfume Bottles", url: "/perfumes/bottles" },
-          { title: "Scented Candles", url: "/perfumes/scented-candles" },
-          { title: "Diffusers", url: "/perfumes/diffusers" },
+          {
+            title: { en: "Travel Sprays", ar: "بخاخات سفر" },
+            url: "/perfumes/travel-sprays",
+          },
+          {
+            title: { en: "Perfume Bottles", ar: "زجاجات عطر" },
+            url: "/perfumes/bottles",
+          },
+          {
+            title: { en: "Scented Candles", ar: "شموع معطرة" },
+            url: "/perfumes/scented-candles",
+          },
+          {
+            title: { en: "Diffusers", ar: "ناشرات عطر" },
+            url: "/perfumes/diffusers",
+          },
         ],
       },
     ],
     banner: {
       active: true,
-      title: "Luxury Fragrances",
-      details: "Discover your signature scent from our collection",
+      title: { en: "Luxury Fragrances", ar: "عطور فاخرة" },
+      details: {
+        en: "Discover your signature scent from our collection",
+        ar: "اكتشف عطرك المميز من مجموعتنا",
+      },
       image: "/images/Perfumes.jpg",
     },
   },
   {
     id: "9",
-    title: "Perfumes",
+    title: { en: "Perfumes", ar: "عطور" },
     url: "/perfumes",
     gridLinks: [
       {
-        heading: "Men's Fragrances",
+        heading: { en: "Men's Fragrances", ar: "عطور رجالية" },
         subLinks: [
-          { title: "Eau de Parfum", url: "/perfumes/mens-parfum" },
-          { title: "Eau de Toilette", url: "/perfumes/mens-toilette" },
-          { title: "Colognes", url: "/perfumes/mens-cologne" },
-          { title: "Gift Sets", url: "/perfumes/mens-gift-sets" },
+          {
+            title: { en: "Eau de Parfum", ar: "عطر مركز (أو دو بارفان)" },
+            url: "/perfumes/mens-parfum",
+          },
+          {
+            title: { en: "Eau de Toilette", ar: "عطر خفيف (أو دو تواليت)" },
+            url: "/perfumes/mens-toilette",
+          },
+          {
+            title: { en: "Colognes", ar: "كولونيا" },
+            url: "/perfumes/mens-cologne",
+          },
+          {
+            title: { en: "Gift Sets", ar: "مجموعات هدايا" },
+            url: "/perfumes/mens-gift-sets",
+          },
         ],
       },
       {
-        heading: "Women's Fragrances",
+        heading: { en: "Women's Fragrances", ar: "عطور نسائية" },
         subLinks: [
-          { title: "Floral Scents", url: "/perfumes/womens-floral" },
-          { title: "Oriental Scents", url: "/perfumes/womens-oriental" },
-          { title: "Fresh Scents", url: "/perfumes/womens-fresh" },
-          { title: "Luxury Collections", url: "/perfumes/womens-luxury" },
+          {
+            title: { en: "Floral Scents", ar: "روائح زهرية" },
+            url: "/perfumes/womens-floral",
+          },
+          {
+            title: { en: "Oriental Scents", ar: "روائح شرقية" },
+            url: "/perfumes/womens-oriental",
+          },
+          {
+            title: { en: "Fresh Scents", ar: "روائح منعشة" },
+            url: "/perfumes/womens-fresh",
+          },
+          {
+            title: { en: "Luxury Collections", ar: "مجموعات فاخرة" },
+            url: "/perfumes/womens-luxury",
+          },
         ],
       },
       {
-        heading: "Unisex Fragrances",
+        heading: { en: "Unisex Fragrances", ar: "عطور للجنسين" },
         subLinks: [
-          { title: "Citrus Scents", url: "/perfumes/unisex-citrus" },
-          { title: "Woody Scents", url: "/perfumes/unisex-woody" },
-          { title: "Aromatic Scents", url: "/perfumes/unisex-aromatic" },
-          { title: "Niche Perfumes", url: "/perfumes/unisex-niche" },
+          {
+            title: { en: "Citrus Scents", ar: "روائح حمضية" },
+            url: "/perfumes/unisex-citrus",
+          },
+          {
+            title: { en: "Woody Scents", ar: "روائح خشبية" },
+            url: "/perfumes/unisex-woody",
+          },
+          {
+            title: { en: "Aromatic Scents", ar: "روائح عطرية" },
+            url: "/perfumes/unisex-aromatic",
+          },
+          {
+            title: { en: "Niche Perfumes", ar: "عطور نيش" },
+            url: "/perfumes/unisex-niche",
+          },
         ],
       },
       {
-        heading: "Accessories",
+        heading: { en: "Accessories", ar: "اكسسوارات" },
         subLinks: [
-          { title: "Travel Sprays", url: "/perfumes/travel-sprays" },
-          { title: "Perfume Bottles", url: "/perfumes/bottles" },
-          { title: "Scented Candles", url: "/perfumes/scented-candles" },
-          { title: "Diffusers", url: "/perfumes/diffusers" },
+          {
+            title: { en: "Travel Sprays", ar: "بخاخات سفر" },
+            url: "/perfumes/travel-sprays",
+          },
+          {
+            title: { en: "Perfume Bottles", ar: "زجاجات عطر" },
+            url: "/perfumes/bottles",
+          },
+          {
+            title: { en: "Scented Candles", ar: "شموع معطرة" },
+            url: "/perfumes/scented-candles",
+          },
+          {
+            title: { en: "Diffusers", ar: "ناشرات عطر" },
+            url: "/perfumes/diffusers",
+          },
         ],
       },
     ],
     banner: {
       active: true,
-      title: "Luxury Fragrances",
-      details: "Discover your signature scent from our collection",
+      title: { en: "Luxury Fragrances", ar: "عطور فاخرة" },
+      details: {
+        en: "Discover your signature scent from our collection",
+        ar: "اكتشف عطرك المميز من مجموعتنا",
+      },
       image: "/images/Perfumes.jpg",
     },
   },

@@ -8,6 +8,7 @@ import { formatDate } from "@/util/dateUtils";
 import Avatar from "@/components/UI/Avatar";
 import { Filters } from "@/components/UI/filter/FilterDrawer";
 import { productFilters } from "@/constants/drawerFilter";
+import { LanguageType } from "@/util/translations";
 
 type InvoiceRow = {
   id: string;
@@ -24,6 +25,53 @@ type InvoiceRow = {
   total: number;
   status: "Paid" | "Pending" | "Canceled";
 };
+
+// Translation dictionary
+const translations = {
+  en: {
+    invoice: "Invoice",
+    customer: "Customer",
+    date: "Date",
+    seller: "Seller",
+    category: "Category",
+    brand: "Brand",
+    unitPrice: "Unit Price",
+    quantity: "Quantity",
+    totalPurchase: "Total Purchase",
+    status: "Status",
+    search: "Search",
+    moreFilters: "More Filters",
+    download: "Download",
+    edit: "Edit",
+    delete: "Delete",
+    paid: "Paid",
+    pending: "Pending",
+    canceled: "Canceled",
+    units: "units",
+  },
+  ar: {
+    invoice: "فاتورة",
+    customer: "العميل",
+    date: "التاريخ",
+    seller: "البائع",
+    category: "الفئة",
+    brand: "العلامة التجارية",
+    unitPrice: "سعر الوحدة",
+    quantity: "الكمية",
+    totalPurchase: "إجمالي الشراء",
+    status: "الحالة",
+    search: "بحث",
+    moreFilters: "المزيد من الفلاتر",
+    download: "تحميل",
+    edit: "تعديل",
+    delete: "حذف",
+    paid: "مدفوع",
+    pending: "قيد الانتظار",
+    canceled: "ملغى",
+    units: "وحدات",
+  },
+};
+
 const invoiceData: InvoiceRow[] = [
   {
     id: "INV001",
@@ -83,11 +131,11 @@ const invoiceData: InvoiceRow[] = [
   },
 ];
 
-const columns = [
-  { key: "id", header: "Invoice", sortable: true },
+const getColumns = (locale: LanguageType) => [
+  { key: "id", header: translations[locale].invoice, sortable: true },
   {
     key: "customer",
-    header: "customer",
+    header: translations[locale].customer,
     render: (item: InvoiceRow) => (
       <div className="flex items-center gap-2">
         <Avatar
@@ -100,28 +148,31 @@ const columns = [
     ),
     sortable: true,
   },
-  { key: "date", header: "Date", sortable: true },
-  { key: "seller", header: "Seller", sortable: true },
-  { key: "category", header: "Category", sortable: true },
-  { key: "brand", header: "Brand", sortable: true },
+  { key: "date", header: translations[locale].date, sortable: true },
+  { key: "seller", header: translations[locale].seller, sortable: true },
+  { key: "category", header: translations[locale].category, sortable: true },
+  { key: "brand", header: translations[locale].brand, sortable: true },
   {
     key: "unitPrice",
-    header: "Unit Price",
-    render: (item: InvoiceRow) => `${item.unitPrice} EGP`,
+    header: translations[locale].unitPrice,
+    render: (item: InvoiceRow) =>
+      `${item.unitPrice} ${locale === "ar" ? "جنيه" : "EG"}`,
   },
   {
     key: "quantity",
-    header: "Quantity",
-    render: (item: InvoiceRow) => `${item.quantity} units`,
+    header: translations[locale].quantity,
+    render: (item: InvoiceRow) =>
+      `${item.quantity} ${translations[locale].units}`,
   },
   {
     key: "total",
-    header: "Total Purchase",
-    render: (item: InvoiceRow) => `${item.total} EGP`,
+    header: translations[locale].totalPurchase,
+    render: (item: InvoiceRow) =>
+      `${item.total} ${locale === "ar" ? "جنيه" : "EG"}`,
   },
   {
     key: "status",
-    header: "Status",
+    header: translations[locale].status,
     render: (item: InvoiceRow) => {
       const statusColor =
         item.status === "Paid"
@@ -134,23 +185,31 @@ const columns = [
         <span
           className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${statusColor}`}
         >
-          {item.status}
+          {
+            translations[locale][
+              item.status.toLowerCase() as keyof (typeof translations)["en"]
+            ]
+          }
         </span>
       );
     },
   },
 ];
 
-export default function OrdersPanel() {
+export default function OrdersPanel({
+  locale = "en",
+}: {
+  locale: LanguageType;
+}) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [seachQuary, setSeachQuary] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const t = translations[locale];
+  const isRTL = locale === "ar";
 
-  // Get current filter values from URL
-
-  const searchQuery = searchParams.get("search")?.toLowerCase() || "";
+  const currentSearchQuery = searchParams.get("search")?.toLowerCase() || "";
 
   const handleDateChange = (range: {
     startDate: Date | null;
@@ -171,11 +230,8 @@ export default function OrdersPanel() {
     }
 
     router.replace(`${pathname}?${params.toString()}`);
-
-    console.log("Selected range:", range);
   };
 
-  // Update URL params when filters change
   const handleFilterChange = (
     filterType: string,
     value: string | Date | null,
@@ -194,35 +250,40 @@ export default function OrdersPanel() {
   };
 
   return (
-    <div className="relative space-y-6">
+    <div className="relative space-y-6" dir={isRTL ? "rtl" : "ltr"}>
       <div className="shadow-xs space-y-6 rounded-lg border border-gray-200 bg-white p-3">
-        {/* search content  */}
+        {/* search content */}
         <div>
           <div className="flex flex-col gap-2 md:flex-row">
             <DateRangeSelector
               onDateChange={handleDateChange}
               formatString="MM/dd/yyyy"
               className="w-full md:w-fit"
+              locale={locale}
             />
             <div className="flex flex-1">
               <div className="relative flex-1">
                 <input
                   type="text"
-                  defaultValue={searchQuery}
-                  onChange={(e) => setSeachQuary(e.target.value)}
-                  placeholder="Search"
-                  className="w-full rounded-s-md border border-r-0 border-gray-300 px-3 py-1.5 pl-10 outline-none placeholder:text-sm"
+                  defaultValue={currentSearchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={t.search}
+                  className={`w-full rounded-s-md border ${isRTL ? "border-l-0" : "border-r-0"} border-gray-300 px-3 py-1.5 outline-none placeholder:text-sm ${
+                    isRTL ? "pr-10" : "pl-10"
+                  }`}
                 />
                 <Search
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600"
+                  className={`absolute top-1/2 -translate-y-1/2 text-gray-600 ${
+                    isRTL ? "right-4" : "left-4"
+                  }`}
                   size={15}
                 />
               </div>
               <button
-                onClick={() => handleFilterChange("search", seachQuary)}
+                onClick={() => handleFilterChange("search", searchQuery)}
                 className="rounded-e-md bg-light-primary px-3 py-1.5 text-sm text-white hover:brightness-90"
               >
-                Search
+                {t.search}
               </button>
             </div>
             <div className="flex gap-2">
@@ -231,10 +292,10 @@ export default function OrdersPanel() {
                 className="flex items-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
               >
                 <SlidersHorizontal size={16} />
-                More Filters
+                {t.moreFilters}
               </button>
               <button className="rounded bg-green-600 px-3 py-1.5 text-sm text-white hover:bg-green-700">
-                Download
+                {t.download}
               </button>
             </div>
           </div>
@@ -245,7 +306,7 @@ export default function OrdersPanel() {
       <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         <DynamicTable
           data={invoiceData}
-          columns={columns}
+          columns={getColumns(locale)}
           pagination={true}
           itemsPerPage={5}
           selectable={true}
@@ -253,14 +314,14 @@ export default function OrdersPanel() {
           defaultSort={{ key: "title", direction: "asc" }}
           actions={[
             {
-              label: "Edit",
+              label: t.edit,
               onClick: () => console.log("edited"),
               className:
                 "bg-white text-gray-700 hover:text-blue-700 hover:bg-blue-50 ",
               icon: <PencilIcon className="h-4 w-4" />,
             },
             {
-              label: "Delete",
+              label: t.delete,
               onClick: () => console.log("Deleted"),
               className:
                 "bg-white text-gray-700 hover:text-red-700 hover:bg-red-50 ",
@@ -279,12 +340,14 @@ export default function OrdersPanel() {
               icon: <TrashIcon className="h-4 w-4" />,
             },
           ]}
+          locale={locale}
         />
       </div>
       <Filters
         filtersData={productFilters}
         isOpen={filtersOpen}
         onClose={() => setFiltersOpen(false)}
+        locale={locale}
       />
     </div>
   );

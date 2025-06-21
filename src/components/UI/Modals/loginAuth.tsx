@@ -3,25 +3,119 @@ import { motion, AnimatePresence } from "framer-motion";
 import Head from "next/head";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { LanguageType } from "@/util/translations";
 
 type FormData = {
   email: string;
   password: string;
   name?: string;
 };
+
 type AuthLoginProps = {
   redirect?: string;
+  locale?: LanguageType;
 };
 
-const AuthLogin: React.FC<AuthLoginProps> = ({ redirect }) => {
+const authMessages = {
+  loginTitle: {
+    en: "Login",
+    ar: "تسجيل الدخول",
+  },
+  signupTitle: {
+    en: "Sign Up",
+    ar: "إنشاء حساب",
+  },
+  loginHeading: {
+    en: "Welcome back!",
+    ar: "مرحبًا بعودتك!",
+  },
+  signupHeading: {
+    en: "Create your account",
+    ar: "إنشاء حساب جديد",
+  },
+  loginSubtitle: {
+    en: "Sign in to access your Medicova account",
+    ar: "سجّل الدخول للوصول إلى حسابك في Medicova",
+  },
+  signupSubtitle: {
+    en: "Join Medicova today",
+    ar: "انضم إلى Medicova اليوم",
+  },
+  loginButton: {
+    en: "Log in",
+    ar: "تسجيل الدخول",
+  },
+  signupButton: {
+    en: "Sign up",
+    ar: "إنشاء حساب",
+  },
+  emailLabel: {
+    en: "Email address",
+    ar: "البريد الإلكتروني",
+  },
+  emailPlaceholder: {
+    en: "your@email.com",
+    ar: "بريدك الإلكتروني",
+  },
+  passwordLabel: {
+    en: "Password",
+    ar: "كلمة المرور",
+  },
+  passwordPlaceholder: {
+    en: "••••••••",
+    ar: "••••••••",
+  },
+  nameLabel: {
+    en: "Full Name",
+    ar: "الاسم الكامل",
+  },
+  namePlaceholder: {
+    en: "Your full name",
+    ar: "اسمك الكامل",
+  },
+  forgotPassword: {
+    en: "Forgot password?",
+    ar: "نسيت كلمة المرور؟",
+  },
+  submitLogin: {
+    en: "Sign In",
+    ar: "تسجيل الدخول",
+  },
+  submitSignup: {
+    en: "Sign Up",
+    ar: "إنشاء الحساب",
+  },
+  submittingLogin: {
+    en: "Signing in...",
+    ar: "جارٍ تسجيل الدخول...",
+  },
+  submittingSignup: {
+    en: "Creating account...",
+    ar: "جارٍ إنشاء الحساب...",
+  },
+  termsText: {
+    en: "By continuing, you agree to our",
+    ar: "بالمتابعة، فإنك توافق على",
+  },
+  terms: {
+    en: "Terms of Service",
+    ar: "شروط الخدمة",
+  },
+  privacy: {
+    en: "Privacy Policy",
+    ar: "سياسة الخصوصية",
+  },
+};
+
+const AuthLogin: React.FC<AuthLoginProps> = ({ redirect, locale = "en" }) => {
+  const t = (key: keyof typeof authMessages) => authMessages[key][locale];
+
   const [isLogin, setIsLogin] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const { data: session } = useSession();
-  console.log(session?.user);
 
   const {
     register,
@@ -42,7 +136,6 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ redirect }) => {
 
     try {
       if (isLogin) {
-        // Handle sign in
         const result = await signIn("credentials", {
           redirect: false,
           email: data.email,
@@ -55,12 +148,9 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ redirect }) => {
           router.push(redirect ?? "/");
         }
       } else {
-        // Handle sign up
         const response = await fetch("/api/auth/signup", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         });
 
@@ -69,7 +159,6 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ redirect }) => {
           throw new Error(errorData.message || "Sign up failed");
         }
 
-        // Auto-login after successful signup
         const loginResult = await signIn("credentials", {
           redirect: false,
           email: data.email,
@@ -92,9 +181,11 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ redirect }) => {
   };
 
   return (
-    <div className="flex items-center justify-center p-4">
+    <div
+      className={`flex items-center justify-center p-4 ${locale === "ar" ? "rtl text-right" : ""}`}
+    >
       <Head>
-        <title>{isLogin ? "Login" : "Sign Up"} | Medicova</title>
+        <title>{isLogin ? t("loginTitle") : t("signupTitle")} | Medicova</title>
       </Head>
 
       <AnimatePresence mode="wait">
@@ -114,12 +205,10 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ redirect }) => {
               className="mb-8 text-center"
             >
               <h1 className="mb-2 text-3xl font-bold text-primary">
-                {isLogin ? "Welcome back!" : "Create your account"}
+                {isLogin ? t("loginHeading") : t("signupHeading")}
               </h1>
               <p className="text-gray-600">
-                {isLogin
-                  ? "Sign in to access your Medicova account"
-                  : "Join Medicova today"}
+                {isLogin ? t("loginSubtitle") : t("signupSubtitle")}
               </p>
             </motion.div>
 
@@ -133,7 +222,7 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ redirect }) => {
                     : "border border-primary bg-transparent text-primary"
                 }`}
               >
-                Log in
+                {t("loginButton")}
               </button>
               <button
                 type="button"
@@ -144,7 +233,7 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ redirect }) => {
                     : "border border-primary bg-transparent text-primary"
                 }`}
               >
-                Sign up
+                {t("signupButton")}
               </button>
             </div>
 
@@ -159,17 +248,12 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ redirect }) => {
             )}
 
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="mb-4"
-              >
+              <motion.div className="mb-4">
                 <label
                   htmlFor="email"
                   className="mb-1 block text-sm font-medium text-gray-700"
                 >
-                  Email address
+                  {t("emailLabel")}
                 </label>
                 <input
                   id="email"
@@ -184,7 +268,7 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ redirect }) => {
                   className={`w-full rounded-lg border px-4 py-3 outline-none transition-all ${
                     errors.email ? "border-red-500" : "border-gray-300"
                   }`}
-                  placeholder="your@email.com"
+                  placeholder={t("emailPlaceholder")}
                 />
                 {errors.email && (
                   <p className="mt-1 text-sm text-red-500">
@@ -193,17 +277,12 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ redirect }) => {
                 )}
               </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="mb-4"
-              >
+              <motion.div className="mb-4">
                 <label
                   htmlFor="password"
                   className="mb-1 block text-sm font-medium text-gray-700"
                 >
-                  Password
+                  {t("passwordLabel")}
                 </label>
                 <input
                   id="password"
@@ -218,7 +297,7 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ redirect }) => {
                   className={`w-full rounded-lg border px-4 py-3 outline-none transition-all ${
                     errors.password ? "border-red-500" : "border-gray-300"
                   }`}
-                  placeholder="••••••••"
+                  placeholder={t("passwordPlaceholder")}
                 />
                 {errors.password && (
                   <p className="mt-1 text-sm text-red-500">
@@ -228,18 +307,12 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ redirect }) => {
               </motion.div>
 
               {!isLogin && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="mb-4 overflow-hidden"
-                >
+                <motion.div className="mb-4">
                   <label
                     htmlFor="name"
                     className="mb-1 block text-sm font-medium text-gray-700"
                   >
-                    Full Name
+                    {t("nameLabel")}
                   </label>
                   <input
                     id="name"
@@ -250,7 +323,7 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ redirect }) => {
                     className={`w-full rounded-lg border px-4 py-3 outline-none transition-all ${
                       errors.name ? "border-red-500" : "border-gray-300"
                     }`}
-                    placeholder="Your full name"
+                    placeholder={t("namePlaceholder")}
                   />
                   {errors.name && (
                     <p className="mt-1 text-sm text-red-500">
@@ -261,31 +334,21 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ redirect }) => {
               )}
 
               {isLogin && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.6 }}
-                  className="mb-6 text-right"
-                >
+                <motion.div className="mb-6 text-right">
                   <Link
                     href="/forgot-password"
                     className="text-sm text-primary hover:underline"
                   >
-                    Forgot password?
+                    {t("forgotPassword")}
                   </Link>
                 </motion.div>
               )}
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.7 }}
-                className="mb-6"
-              >
+              <motion.div className="mb-6">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`flex w-full items-center justify-center rounded-lg bg-primary px-4 py-3 font-medium text-white transition-all duration-300 hover:bg-green-700 ${
+                  className={`flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 font-medium text-white transition-all duration-300 hover:bg-green-700 ${
                     isSubmitting ? "opacity-70" : ""
                   }`}
                 >
@@ -309,37 +372,31 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ redirect }) => {
                           className="opacity-75"
                           fill="currentColor"
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
+                        />
                       </svg>
-                      {isLogin ? "Signing in..." : "Creating account..."}
+                      {isLogin ? t("submittingLogin") : t("submittingSignup")}
                     </>
                   ) : isLogin ? (
-                    "Sign In"
+                    t("submitLogin")
                   ) : (
-                    "Sign Up"
+                    t("submitSignup")
                   )}
                 </button>
               </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8 }}
-                className="text-center text-sm text-gray-500"
-              >
+              <motion.div className="text-center text-sm text-gray-500">
                 <p>
-                  By continuing, you agree to our{" "}
+                  {t("termsText")}{" "}
                   <Link href="/terms" className="text-primary hover:underline">
-                    Terms of Service
+                    {t("terms")}
                   </Link>{" "}
-                  and{" "}
+                  {locale === "ar" ? "و" : "and"}{" "}
                   <Link
                     href="/privacy"
                     className="text-primary hover:underline"
                   >
-                    Privacy Policy
+                    {t("privacy")}
                   </Link>
-                  .
                 </p>
               </motion.div>
             </form>

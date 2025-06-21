@@ -1,6 +1,11 @@
+"use client";
+
+import { useLanguage } from "@/contexts/LanguageContext";
 import Link from "next/link";
 
 export default function NotFound() {
+  const { language } = useLanguage();
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md space-y-2 text-center">
@@ -26,22 +31,24 @@ export default function NotFound() {
           />
         </svg>
 
-        {/* Error Content */}
         <div className="space-y-4">
           <h1 className="text-6xl font-bold text-primary">404</h1>
-          <h2 className="text-2xl font-medium text-gray-600">Page Not Found</h2>
+          <h2 className="text-2xl font-medium text-gray-600">
+            {language === "ar" ? "الصفحة غير موجودة" : "Page Not Found"}
+          </h2>
           <p className="text-gray-500">
-            Oops! The page you are looking for does not exist or has been moved.
+            {language === "ar"
+              ? "عذرًا! الصفحة التي تبحث عنها غير موجودة أو تم نقلها."
+              : "Oops! The page you are looking for does not exist or has been moved."}
           </p>
         </div>
 
-        {/* Back to Home Button */}
         <div className="pt-6">
           <Link
-            href="/"
-            className="inline-flex items-center rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-green-700 focus:outline-none"
+            href={language === "ar" ? "/ar" : "/"}
+            className="inline-flex items-center rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-green-700"
           >
-            Return to Store
+            {language === "ar" ? "العودة إلى المتجر" : "Return to Store"}
           </Link>
         </div>
       </div>

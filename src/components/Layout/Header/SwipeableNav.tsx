@@ -7,9 +7,10 @@ import { linksHeader } from "@/types";
 
 interface SwipeableNavProps {
   links: linksHeader[];
+  locale: "ar" | "en";
 }
 
-const SwipeableNav = ({ links }: SwipeableNavProps) => {
+const SwipeableNav = ({ links, locale }: SwipeableNavProps) => {
   const navRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
@@ -81,7 +82,7 @@ const SwipeableNav = ({ links }: SwipeableNavProps) => {
                   href={link.url}
                   className="block whitespace-nowrap px-4 py-2 text-sm font-semibold capitalize text-gray-700 hover:text-primary"
                 >
-                  {link.title}
+                  {link.title[locale]}
                 </Link>
                 {link.gridLinks && link.gridLinks.length > 0 && (
                   <div className="elementskit-dropdown -left-0 grid w-full grid-cols-1 justify-between !rounded-b-none sm:grid-cols-8 sm:flex-row">
@@ -89,7 +90,7 @@ const SwipeableNav = ({ links }: SwipeableNavProps) => {
                       {link.gridLinks.map((gridLink, gridIndex) => (
                         <li className="p-3" key={gridIndex}>
                           <h2 className="mb-2 text-sm font-bold">
-                            {gridLink.heading}
+                            {gridLink.heading[locale]}
                           </h2>
                           <ul>
                             {gridLink.subLinks.map((link, index) => (
@@ -98,7 +99,7 @@ const SwipeableNav = ({ links }: SwipeableNavProps) => {
                                   className="block p-2 text-xs font-semibold text-gray-600 transition hover:text-primary hover:underline"
                                   href={link.url}
                                 >
-                                  {link.title}
+                                  {link.title[locale]}
                                 </Link>
                               </li>
                             ))}
@@ -117,13 +118,13 @@ const SwipeableNav = ({ links }: SwipeableNavProps) => {
                         />
                         <div className="relative flex h-full w-full flex-col justify-center p-8">
                           <h1 className="mb-2 max-w-[250px] text-4xl font-bold text-white">
-                            {link.banner.title}
+                            {link.banner.title[locale]}
                           </h1>
                           <p className="mb-2 text-white">
-                            {link.banner.details}
+                            {link.banner.details[locale]}
                           </p>
                           <button className="mt-4 rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-100">
-                            Shop Now
+                            {locale === "ar" ? "تسوق الآن" : "Shop Now"}
                           </button>
                         </div>
                       </div>

@@ -122,13 +122,13 @@ const ActionDropdownMenu: React.FC<DropdownMenuProps> = ({
           {items.map((item, index) => (
             <li
               key={item.id}
-              className={`flex cursor-pointer select-none items-center px-4 py-2 text-gray-700 ${item.id === selectedId ? "bg-indigo-100 text-indigo-900" : "hover:bg-gray-100"} ${item.disabled ? "cursor-not-allowed opacity-50" : ""} ${index === focusedIndex ? "bg-gray-100" : ""}`}
+              className={`flex cursor-pointer select-none items-center gap-1 px-4 py-2 text-gray-700 ${item.id === selectedId ? "bg-indigo-100 text-indigo-900" : "hover:bg-gray-100"} ${item.disabled ? "cursor-not-allowed opacity-50" : ""} ${index === focusedIndex ? "bg-gray-100" : ""}`}
               onClick={() => handleItemAction(item)}
               role="option"
               aria-selected={item.id === selectedId}
               aria-disabled={item.disabled}
             >
-              {item.icon && <span className="mr-2">{item.icon}</span>}
+              {item.icon && <span>{item.icon}</span>}
               <span className="flex-1 text-sm">{item.label}</span>
             </li>
           ))}

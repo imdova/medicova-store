@@ -144,11 +144,6 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
           href: "/seller/payments",
           icon: WalletCards,
         },
-        {
-          title: { en: "Wishlist", ar: "المفضلة" },
-          href: "/wishlist",
-          icon: Heart,
-        },
       ],
     },
     {

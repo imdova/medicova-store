@@ -10,8 +10,8 @@ import {
 } from "lucide-react";
 import DynamicTable from "@/components/UI/tables/DTable";
 import BrandApprovalModal from "../components/BrandApprovalModal";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-// Types
 type Brand = {
   id: string;
   name: string;
@@ -20,20 +20,19 @@ type Brand = {
 };
 
 const BrandsPage = () => {
+  const { language } = useLanguage();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [filteredBrands, setFilteredBrands] = useState<Brand[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // New state for brand existence check
   const [brandCheckInput, setBrandCheckInput] = useState("");
   const [brandCheckResult, setBrandCheckResult] = useState<
     "exists" | "not-exists" | null
-  >(null); // null, 'exists', 'not-exists'
+  >(null);
 
   const [searchParams, setSearchParams] = useState({ search: "", status: "" });
 
-  // Sync state with URL changes
   useEffect(() => {
     const getParams = () => {
       const params = new URLSearchParams(window.location.search);
@@ -62,46 +61,37 @@ const BrandsPage = () => {
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
-  // Mock fetch (keep existing)
+
   useEffect(() => {
-    const fetchBrands = async () => {
-      setIsLoading(true);
-      setTimeout(() => {
-        const mockBrands: Brand[] = [
-          {
-            id: "1",
-            name: "Nike",
-            status: "approved",
-            createdAt: "2023-01-15",
-          },
-          {
-            id: "2",
-            name: "Adidas",
-            status: "approved",
-            createdAt: "2023-02-20",
-          },
-          { id: "3", name: "Puma", status: "pending", createdAt: "2023-03-10" },
-          {
-            id: "4",
-            name: "Reebok",
-            status: "rejected",
-            createdAt: "2023-04-05",
-          },
-          {
-            id: "5",
-            name: "Under Armour",
-            status: "pending",
-            createdAt: "2023-05-12",
-          },
-        ];
-        setBrands(mockBrands);
-        setIsLoading(false);
-      }, 500);
-    };
-    fetchBrands();
+    setIsLoading(true);
+    setTimeout(() => {
+      const mockBrands: Brand[] = [
+        { id: "1", name: "Nike", status: "approved", createdAt: "2023-01-15" },
+        {
+          id: "2",
+          name: "Adidas",
+          status: "approved",
+          createdAt: "2023-02-20",
+        },
+        { id: "3", name: "Puma", status: "pending", createdAt: "2023-03-10" },
+        {
+          id: "4",
+          name: "Reebok",
+          status: "rejected",
+          createdAt: "2023-04-05",
+        },
+        {
+          id: "5",
+          name: "Under Armour",
+          status: "pending",
+          createdAt: "2023-05-12",
+        },
+      ];
+      setBrands(mockBrands);
+      setIsLoading(false);
+    }, 500);
   }, []);
 
-  // Apply filtering (keep existing)
   useEffect(() => {
     const { search, status } = searchParams;
     let result = brands;
@@ -120,7 +110,6 @@ const BrandsPage = () => {
     setFilteredBrands(result);
   }, [brands, searchParams]);
 
-  // Handle search form (keep existing)
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
@@ -141,7 +130,6 @@ const BrandsPage = () => {
     window.dispatchEvent(new Event("popstate"));
   };
 
-  // Handle filter (keep existing)
   const handleStatusChange = (newStatus: string) => {
     const params = new URLSearchParams(window.location.search);
     if (newStatus === "all") {
@@ -158,10 +146,9 @@ const BrandsPage = () => {
     window.dispatchEvent(new Event("popstate"));
   };
 
-  // --- NEW: Handle Brand Existence Check ---
   const handleBrandCheck = () => {
     if (!brandCheckInput.trim()) {
-      setBrandCheckResult(null); // Clear result if input is empty
+      setBrandCheckResult(null);
       return;
     }
 
@@ -169,22 +156,24 @@ const BrandsPage = () => {
       (b) => b.name.toLowerCase() === brandCheckInput.trim().toLowerCase(),
     );
 
-    if (exists) {
-      setBrandCheckResult("exists");
-    } else {
-      setBrandCheckResult("not-exists");
-    }
+    setBrandCheckResult(exists ? "exists" : "not-exists");
+  };
+
+  const statusLabels: Record<Brand["status"], { en: string; ar: string }> = {
+    pending: { en: "Pending", ar: "قيد الانتظار" },
+    approved: { en: "Approved", ar: "معتمد" },
+    rejected: { en: "Rejected", ar: "مرفوض" },
   };
 
   const columns = [
     {
       key: "name",
-      header: "Brand Name",
+      header: { en: "Brand Name", ar: "اسم العلامة" }[language],
       sortable: true,
     },
     {
       key: "status",
-      header: "Status",
+      header: { en: "Status", ar: "الحالة" }[language],
       render: (item: Brand) => (
         <span
           className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
@@ -195,13 +184,13 @@ const BrandsPage = () => {
                 : "bg-red-100 text-red-800"
           }`}
         >
-          {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+          {statusLabels[item.status][language]}
         </span>
       ),
     },
     {
       key: "createdAt",
-      header: "Created At",
+      header: { en: "Created At", ar: "تاريخ الإنشاء" }[language],
       sortable: true,
     },
   ];
@@ -209,36 +198,40 @@ const BrandsPage = () => {
   return (
     <div>
       <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Brand Management</h1>
+        <h1 className="text-2xl font-bold text-gray-900">
+          {language === "ar" ? "إدارة العلامات التجارية" : "Brand Management"}
+        </h1>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center justify-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 focus:outline-none"
+          className="inline-flex items-center justify-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
         >
           <Plus className="mr-2 h-4 w-4" />
-          Create Brand
+          {language === "ar" ? "إنشاء علامة" : "Create Brand"}
         </button>
       </div>
 
-      {/* NEW: Brand Existence Check Section */}
       <div className="mb-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         <h2 className="mb-3 text-sm font-semibold text-gray-800">
-          Check if the brand you want to create already exist in Noon Brands
-          list
+          {language === "ar"
+            ? "تحقق مما إذا كانت العلامة موجودة بالفعل في قائمة نون"
+            : "Check if the brand you want to create already exists in Noon Brands list"}
         </h2>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative flex-1">
             <input
               type="text"
               className="block w-full rounded-md border-gray-300 p-2.5 outline-none sm:text-sm"
-              placeholder="Check brand"
+              placeholder={
+                language === "ar" ? "تحقق من العلامة" : "Check brand"
+              }
               value={brandCheckInput}
               onChange={(e) => {
                 setBrandCheckInput(e.target.value);
-                setBrandCheckResult(null); // Clear previous result on change
+                setBrandCheckResult(null);
               }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  e.preventDefault(); // Prevent form submission if this were part of a larger form
+                  e.preventDefault();
                   handleBrandCheck();
                 }
               }}
@@ -248,59 +241,62 @@ const BrandsPage = () => {
             onClick={handleBrandCheck}
             className="inline-flex w-full items-center justify-center rounded-md bg-green-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-green-700 sm:w-auto"
           >
-            Check
+            {language === "ar" ? "تحقق" : "Check"}
           </button>
         </div>
         {brandCheckResult === "exists" && (
           <p className="mt-2 flex items-center text-sm text-red-600">
             <XCircle className="mr-1 h-4 w-4" />
-            Brand <span className="font-semibold">{brandCheckInput}</span>
-            already exists.
+            {language === "ar"
+              ? `العلامة "${brandCheckInput}" موجودة بالفعل.`
+              : `Brand "${brandCheckInput}" already exists.`}
           </p>
         )}
         {brandCheckResult === "not-exists" && (
           <p className="mt-2 flex items-center text-sm text-green-600">
             <CheckCircle className="mr-1 h-4 w-4" />
-            Brand <span className="font-semibold">{brandCheckInput}</span> is
-            available.
+            {language === "ar"
+              ? `العلامة "${brandCheckInput}" متاحة.`
+              : `Brand "${brandCheckInput}" is available.`}
           </p>
         )}
       </div>
 
-      {/* Existing Search and Filter Section */}
       <div className="mb-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <form onSubmit={handleSearch} className="flex-1">
-            <div className="relative max-w-md">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <Search className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                name="search"
-                defaultValue={searchParams.search}
-                className="block w-full rounded-md border-gray-300 p-2 pl-10 outline-none sm:text-sm"
-                placeholder="Search brands..."
-              />
-            </div>
-          </form>
-
-          <div className="flex items-center gap-2">
-            <select
-              value={searchParams.status || "all"}
-              onChange={(e) => handleStatusChange(e.target.value)}
-              className="rounded-md border-gray-300 py-2 pl-3 pr-8 text-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
-            >
-              <option value="all">All Statuses</option>
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
-            </select>
+        <form
+          onSubmit={handleSearch}
+          className="mb-0 flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
+        >
+          <div className="relative w-full rounded-lg border border-gray-200 md:max-w-md">
+            <Search
+              size={17}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            />
+            <input
+              type="text"
+              name="search"
+              defaultValue={searchParams.search}
+              className="w-full rounded-md border-gray-300 p-2 pl-10 outline-none sm:text-sm"
+              placeholder={
+                language === "ar" ? "ابحث عن علامة..." : "Search brands..."
+              }
+            />
           </div>
-        </div>
+          <select
+            value={searchParams.status || "all"}
+            onChange={(e) => handleStatusChange(e.target.value)}
+            className="rounded-md border-gray-300 py-2 pl-3 pr-8 text-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
+          >
+            <option value="all">
+              {language === "ar" ? "كل الحالات" : "All Statuses"}
+            </option>
+            <option value="pending">{statusLabels.pending[language]}</option>
+            <option value="approved">{statusLabels.approved[language]}</option>
+            <option value="rejected">{statusLabels.rejected[language]}</option>
+          </select>
+        </form>
       </div>
 
-      {/* Existing Dynamic Table */}
       <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
         <DynamicTable
           data={filteredBrands}
@@ -308,32 +304,41 @@ const BrandsPage = () => {
           pagination
           itemsPerPage={5}
           selectable
+          locale={language}
           emptyMessage={
             isLoading
-              ? "Loading brands..."
-              : "No brands found matching your criteria"
+              ? {
+                  en: "Loading brands...",
+                  ar: "جارٍ تحميل العلامات...",
+                }
+              : {
+                  en: "No brands found matching your criteria",
+                  ar: "لا توجد علامات تطابق معايير البحث",
+                }
           }
           actions={[
             {
-              label: "Edit",
+              label: { en: "Edit", ar: "تعديل" },
               onClick: () => console.log("Edited"),
               className:
-                "bg-white text-gray-700 hover:text-blue-700 hover:bg-blue-50 ",
+                "bg-white text-gray-700 hover:text-blue-700 hover:bg-blue-50",
               icon: <PencilIcon className="h-4 w-4" />,
             },
             {
-              label: "Delete",
+              label: { en: "Delete", ar: "حذف" },
               onClick: () => console.log("Deleted"),
               className:
-                "bg-white text-gray-700 hover:text-red-700 hover:bg-red-50 ",
+                "bg-white text-gray-700 hover:text-red-700 hover:bg-red-50",
               icon: <TrashIcon className="h-4 w-4" />,
             },
           ]}
         />
       </div>
+
       <BrandApprovalModal
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
+        locale={language}
       />
     </div>
   );

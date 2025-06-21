@@ -14,6 +14,22 @@ import MobileDropdown from "@/components/UI/MobileDropdown";
 import ViewToggle from "@/components/UI/Buttons/ViewToggle";
 import ListProductCard from "@/components/UI/cards/ListProductCard";
 import { leftFilters, sortOptions, tapFilters } from "@/constants/filters";
+import { useLanguage } from "@/contexts/LanguageContext";
+
+const paginationTexts = {
+  en: {
+    page: "Page",
+    of: "of",
+    previous: "Previous",
+    next: "Next",
+  },
+  ar: {
+    page: "الصفحة",
+    of: "من",
+    previous: "السابق",
+    next: "التالي",
+  },
+};
 
 export default function CategoryPage({
   params,
@@ -36,6 +52,7 @@ export default function CategoryPage({
     return initialPage ? parseInt(initialPage, 10) : 1;
   });
   const itemsPerPage = 10;
+  const { language } = useLanguage();
 
   // Get current filters from URL
   const getCurrentFilters = () => {
@@ -156,7 +173,10 @@ export default function CategoryPage({
       ?.options?.find((opt) => opt.id === category);
 
     if (mainCategory) {
-      currentPath.push({ id: mainCategory.id, name: mainCategory.name });
+      currentPath.push({
+        id: mainCategory.id,
+        name: mainCategory.name[language],
+      });
 
       // Handle subcategories if they exist
       if (subcategory && subcategory.length > 0) {
@@ -165,7 +185,10 @@ export default function CategoryPage({
         for (const subId of subcategory) {
           const foundSub = currentSubcategories.find((sub) => sub.id === subId);
           if (foundSub) {
-            currentPath.push({ id: foundSub.id, name: foundSub.name });
+            currentPath.push({
+              id: foundSub.id,
+              name: foundSub.name[language],
+            });
             // Update currentSubcategories to next level for next iteration
             currentSubcategories = foundSub.subcategories || [];
           } else {
@@ -211,6 +234,7 @@ export default function CategoryPage({
           <div className="hidden lg:block">
             <LeftFilter
               filterGroups={leftFilters}
+              locale={language}
               currentFilters={getCurrentFilters()}
               onFilterToggle={(
                 key,
@@ -243,6 +267,7 @@ export default function CategoryPage({
               <LeftFilter
                 filterGroups={leftFilters}
                 currentFilters={getCurrentFilters()}
+                locale={language}
                 onFilterToggle={(
                   key,
                   value,
@@ -266,28 +291,34 @@ export default function CategoryPage({
             </div>
           </Drawer>
 
-          <div className="fixed bottom-20 left-1/2 z-[300] flex -translate-x-1/2 items-center rounded-full bg-primary text-sm text-white md:hidden">
+          <div
+            className="fixed bottom-20 left-1/2 z-[300] flex -translate-x-1/2 items-center rounded-full bg-primary text-sm text-white md:bottom-14 lg:hidden"
+            dir={language === "ar" ? "rtl" : "ltr"}
+          >
             <button
               onClick={() => setIsOpenDropdown(true)}
               className="flex items-center gap-1 px-3 py-2"
             >
-              Sort by <ArrowDownUp size={15} />
+              {language === "ar" ? "ترتيب حسب" : "Sort by"}{" "}
+              <ArrowDownUp size={15} />
             </button>
-            |
+            <span className="px-1">|</span>
             <button
               onClick={() => setIsOpen(true)}
               className="flex items-center gap-1 px-3 py-2"
             >
-              Filter <Filter size={15} />
+              {language === "ar" ? "تصفية" : "Filter"} <Filter size={15} />
             </button>
           </div>
 
           <div className="flex-1">
             <div className="sticky top-0 z-20 mb-4 flex w-full items-center justify-between border-y border-gray-200 bg-white md:relative md:border-none">
               <h1 className="p-3 text-xs text-gray-900 md:text-lg">
-                {totalResults.toLocaleString()} Results for{" "}
-                <span className="text-xs font-semibold md:text-lg">
-                  &#8220;{displayTitle}&#8220;
+                {language === "ar"
+                  ? `نتائج ${totalResults.toLocaleString()} لـ `
+                  : `${totalResults.toLocaleString()} Results for `}
+                <span className="text-xs font-semibold text-primary md:text-lg">
+                  &ldquo;{displayTitle}&rdquo;
                 </span>
               </h1>
               <div className="hidden md:block">
@@ -297,6 +328,7 @@ export default function CategoryPage({
                   options={sortOptions}
                   selected={getCurrentSort()}
                   onSelect={(value) => setSortOption(value.toString())}
+                  locale={language}
                 />
               </div>
               <div className="block md:hidden">
@@ -311,6 +343,7 @@ export default function CategoryPage({
               onSelect={(value) => setSortOption(value.toString())}
               isOpen={isOpenDropdown}
               setIsOpen={setIsOpenDropdown}
+              locale={language}
             />
 
             <div className="mb-4 gap-2 border-b border-gray-100">
@@ -318,6 +351,7 @@ export default function CategoryPage({
                 filterGroups={tapFilters}
                 currentFilters={getCurrentFilters()}
                 onFilterToggle={toggleFilter}
+                locale={language}
               />
             </div>
 
@@ -365,18 +399,28 @@ export default function CategoryPage({
             )}
 
             {totalResults > itemsPerPage && (
-              <div className="mt-6 flex flex-col gap-2 rounded-lg bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+              <div
+                className={`mt-6 flex flex-col gap-2 rounded-lg bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between ${
+                  language === "ar" ? "rtl text-right" : ""
+                }`}
+              >
+                {/* Page Info */}
                 <div className="flex justify-center sm:justify-start">
                   <p className="text-sm text-gray-700">
-                    Page <span className="font-medium">{currentPage}</span> of{" "}
+                    {paginationTexts[language].page}{" "}
+                    <span className="font-medium">{currentPage}</span>{" "}
+                    {paginationTexts[language].of}{" "}
                     <span className="font-medium">
                       {Math.ceil(totalResults / itemsPerPage)}
                     </span>
                   </p>
                 </div>
+
+                {/* Pagination Buttons */}
                 <div className="flex flex-wrap justify-center gap-2">
+                  {/* Previous */}
                   <button
-                    onClick={() => setPage(Math.max(1, currentPage - 1))}
+                    onClick={() => setPage(currentPage - 1)}
                     disabled={currentPage === 1}
                     className={`hidden rounded-md border px-4 py-2 text-sm font-medium md:block ${
                       currentPage === 1
@@ -384,54 +428,49 @@ export default function CategoryPage({
                         : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                     }`}
                   >
-                    Previous
+                    {paginationTexts[language].previous}
                   </button>
-                  {Array.from(
-                    {
-                      length: Math.min(
-                        5,
-                        Math.ceil(totalResults / itemsPerPage),
+
+                  {/* Page Numbers */}
+                  {(() => {
+                    const totalPages = Math.ceil(totalResults / itemsPerPage);
+                    const pagesToShow = 5;
+                    const startPage = Math.max(
+                      1,
+                      Math.min(
+                        currentPage - Math.floor(pagesToShow / 2),
+                        totalPages - pagesToShow + 1,
                       ),
-                    },
-                    (_, i) => {
-                      let pageNum;
-                      if (Math.ceil(totalResults / itemsPerPage) <= 5) {
-                        pageNum = i + 1;
-                      } else if (currentPage <= 3) {
-                        pageNum = i + 1;
-                      } else if (
-                        currentPage >=
-                        Math.ceil(totalResults / itemsPerPage) - 2
-                      ) {
-                        pageNum =
-                          Math.ceil(totalResults / itemsPerPage) - 4 + i;
-                      } else {
-                        pageNum = currentPage - 2 + i;
-                      }
-                      return (
-                        <button
-                          key={pageNum}
-                          onClick={() => setPage(pageNum)}
-                          className={`rounded-md border px-4 py-2 text-sm font-medium ${
-                            currentPage === pageNum
-                              ? "border-green-600 bg-green-600 text-white"
-                              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                          }`}
-                        >
-                          {pageNum}
-                        </button>
-                      );
-                    },
-                  )}
+                    );
+                    const endPage = Math.min(
+                      startPage + pagesToShow - 1,
+                      totalPages,
+                    );
+
+                    return Array.from(
+                      { length: endPage - startPage + 1 },
+                      (_, i) => {
+                        const pageNum = startPage + i;
+                        return (
+                          <button
+                            key={pageNum}
+                            onClick={() => setPage(pageNum)}
+                            className={`rounded-md border px-4 py-2 text-sm font-medium ${
+                              currentPage === pageNum
+                                ? "border-green-600 bg-green-600 text-white"
+                                : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                            }`}
+                          >
+                            {pageNum}
+                          </button>
+                        );
+                      },
+                    );
+                  })()}
+
+                  {/* Next */}
                   <button
-                    onClick={() =>
-                      setPage(
-                        Math.min(
-                          Math.ceil(totalResults / itemsPerPage),
-                          currentPage + 1,
-                        ),
-                      )
-                    }
+                    onClick={() => setPage(currentPage + 1)}
                     disabled={
                       currentPage === Math.ceil(totalResults / itemsPerPage)
                     }
@@ -441,7 +480,7 @@ export default function CategoryPage({
                         : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                     }`}
                   >
-                    Next
+                    {paginationTexts[language].next}
                   </button>
                 </div>
               </div>

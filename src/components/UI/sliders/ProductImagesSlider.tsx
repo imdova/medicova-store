@@ -15,13 +15,19 @@ import {
 import { Product } from "@/types/product";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import CustomAlert from "../CustomAlert";
+import { LanguageType } from "@/util/translations";
 
 type ImagesSliderProps = {
   images?: string[];
   product: Product;
+  locale: LanguageType;
 };
 
-const ProductImagesSlider = ({ images = [], product }: ImagesSliderProps) => {
+const ProductImagesSlider = ({
+  images = [],
+  product,
+  locale,
+}: ImagesSliderProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
@@ -101,7 +107,12 @@ const ProductImagesSlider = ({ images = [], product }: ImagesSliderProps) => {
       e.stopPropagation();
 
       if (!session.data?.user) {
-        showAlert("Please login to add items to your wishlist", "error");
+        showAlert(
+          locale === "ar"
+            ? "يرجى تسجيل الدخول لإضافة العناصر إلى قائمة الرغبات"
+            : "Please login to add items to your wishlist",
+          "error",
+        );
         return;
       }
 
@@ -110,7 +121,12 @@ const ProductImagesSlider = ({ images = [], product }: ImagesSliderProps) => {
       try {
         if (!isInWishlist) {
           dispatch(addToWishlist(product, userId));
-          showAlert("Added to wishlist", "wishlist");
+          showAlert(
+            locale === "ar"
+              ? "تمت الإضافة إلى قائمة الرغبات"
+              : "Added to wishlist",
+            "wishlist",
+          );
         } else {
           dispatch(
             removeFromWishlist({
@@ -118,11 +134,21 @@ const ProductImagesSlider = ({ images = [], product }: ImagesSliderProps) => {
               userId: userId,
             }),
           );
-          showAlert("Removed from wishlist", "wishlist");
+          showAlert(
+            locale === "ar"
+              ? "تمت الإزالة من قائمة الرغبات"
+              : "Removed from wishlist",
+            "wishlist",
+          );
         }
       } catch (error) {
         console.error("Wishlist operation failed:", error);
-        showAlert("Failed to update wishlist", "error");
+        showAlert(
+          locale === "ar"
+            ? "فشل في تحديث قائمة الرغبات"
+            : "Failed to update wishlist",
+          "error",
+        );
       }
     },
     [dispatch, isInWishlist, product, session.data?.user],

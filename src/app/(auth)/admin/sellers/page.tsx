@@ -5,22 +5,25 @@ import OverviewPanel from "./panels/OverviewPanel";
 import SellersListPanel from "./panels/SellersListPanel";
 import { useState } from "react";
 import AddSellerModal from "../components/AddSellerModal";
-
-const tabs = [
-  {
-    label: "Sellers Overview",
-    icon: Eye,
-    content: <OverviewPanel />,
-  },
-  {
-    label: "Sellers List",
-    icon: List,
-    content: <SellersListPanel />,
-  },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function SellersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { language, isArabic } = useLanguage();
+
+  const tabs = [
+    {
+      label: isArabic ? "نظرة عامة على البائعين" : "Sellers Overview",
+      icon: Eye,
+      content: <OverviewPanel locale={language} />,
+    },
+    {
+      label: isArabic ? "قائمة البائعين" : "Sellers List",
+      icon: List,
+      content: <SellersListPanel locale={language} />,
+    },
+  ];
+
   return (
     <main>
       <TabWithIcon
@@ -30,7 +33,7 @@ export default function SellersPage() {
             onClick={() => setIsModalOpen(true)}
           >
             <Plus size={15} />
-            Add New Seller
+            {isArabic ? "إضافة بائع جديد" : "Add New Seller"}
           </button>
         }
         tabs={tabs}
@@ -38,6 +41,7 @@ export default function SellersPage() {
       <AddSellerModal
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
+        locale={language}
       />
     </main>
   );

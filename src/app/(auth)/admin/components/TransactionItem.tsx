@@ -1,5 +1,6 @@
 import React from "react";
 import PlatformIcon from "./PlatformIcon";
+import { LanguageType } from "@/util/translations";
 
 type TransactionType = "payment" | "refund" | "purchase";
 
@@ -10,6 +11,7 @@ interface TransactionItemProps {
   amount: number;
   type: TransactionType;
   date: Date;
+  locale?: LanguageType;
 }
 
 const TransactionItem: React.FC<TransactionItemProps> = ({
@@ -35,7 +37,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
 
   return (
     <div className="flex items-center justify-between border-b border-gray-100 py-3">
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center gap-3">
         <div
           className={`flex h-10 w-10 items-center justify-center rounded-full ${getIconColor()}`}
         >

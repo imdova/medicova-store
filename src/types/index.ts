@@ -2,6 +2,7 @@ import { destinationSurcharges } from "@/constants";
 import { LucideIcon } from "lucide-react";
 import { StaticImageData } from "next/image";
 import { LocalizedTitle } from "./language";
+import { shippingMethod } from "./product";
 
 export interface BaseHeaderProps {
   pathname: string;
@@ -34,43 +35,49 @@ export interface SidebarGroup {
 
 // menus type
 export interface MenuItem {
-  title: string;
+  title: LocalizedTitle;
   href: string;
   icon: LucideIcon;
 }
 
 export interface MenuGroup {
-  title?: string;
+  title?: LocalizedTitle;
   items: MenuItem[];
 }
 
 // header types
 export type link = {
-  title: string;
+  title: LocalizedTitle;
   url: string;
 };
 export type gridLink = {
-  heading: string;
+  heading: LocalizedTitle;
   subLinks: link[];
 };
 export type linksHeader = {
   id: string;
-  title: string;
+  title: LocalizedTitle;
   url: string;
   subLinks?: link[];
   gridLinks?: gridLink[];
   banner?: {
     active: boolean;
-    title: string;
-    details: string;
+    title: LocalizedTitle;
+    details: LocalizedTitle;
     image: string | StaticImageData;
   };
 };
 // Navbar type
 export type NavLink = {
-  name: string;
+  name: LocalizedTitle;
   path: string;
   icon?: React.ElementType;
+};
+
+export type GroupNavLink = {
+  user: NavLink[];
+  seller: NavLink[];
+  admin: NavLink[];
 };
 //footer types
 export interface FooterSection {
@@ -113,7 +120,7 @@ export type Slide = {
 export interface CategoryType {
   id: string;
   slug: string;
-  title: string;
+  title: LocalizedTitle;
   image: string;
   isSale?: boolean;
   subCategories?: CategoryType[];
@@ -126,10 +133,9 @@ export interface CategoryType {
 // Brand type
 export interface Brand {
   id: string;
-  title: string;
+  title: LocalizedTitle;
   url: string;
-  image?: string;
-  isSale?: boolean;
+  image: string;
 }
 
 export interface MultiCategory extends CategoryType {
@@ -148,24 +154,6 @@ export type LiquidSizeType =
   | "400ml"
   | "500ml";
 
-export type ColorType =
-  | "Black"
-  | "White"
-  | "Red"
-  | "Blue"
-  | "Green"
-  | "Yellow"
-  | "Orange"
-  | "Purple"
-  | "Grey"
-  | "Brown"
-  | "Beige"
-  | "Pink"
-  | "Navy"
-  | "Maroon"
-  | "Olive"
-  | "Teal";
-
 // type keywords search
 export interface SearchResult {
   id: string;
@@ -175,7 +163,7 @@ export interface SearchResult {
 
 // Shipping Fee type
 export type ShippingOptions = {
-  shippingMethod: "standard" | "express" | "free";
+  shippingMethod: shippingMethod;
   destination: DestinationKey; // e.g., country code
   cartTotal: number; // total cart value
   weightKg?: number; // optional weight
@@ -205,7 +193,7 @@ export interface Address {
 // filters type
 export type FilterOption = {
   id: string;
-  name: string;
+  name: LocalizedTitle;
   count?: number;
   subcategories?: FilterOption[];
   isRange?: boolean;
@@ -213,7 +201,7 @@ export type FilterOption = {
 
 export type FilterGroup = {
   id: string;
-  name: string;
+  name: LocalizedTitle;
   options?: FilterOption[];
   option?: string;
 };
@@ -224,18 +212,38 @@ export type FilterDrawerOption = {
   count: number;
 };
 
-export type FilterDrawerGroup = {
+export interface FilterDrawerGroup {
   id: string;
-  label: string;
+  label: { en: string; ar: string };
   isSingleSelect: boolean;
-  options: FilterDrawerOption[];
+  options: {
+    id: string;
+    label: { en: string; ar: string };
+    count?: number;
+  }[];
   collapsed: boolean;
-};
+}
 
 // offers type
-export interface Offer {
+export type Offer = {
   id: string;
-  title: string;
   imgUrl: string;
   url: string;
-}
+  title: {
+    en: string;
+    ar: string;
+  };
+};
+
+// locations
+export type Country = {
+  id: string;
+  code: string;
+  name: LocalizedTitle;
+};
+
+export type City = {
+  id: string;
+  code: string;
+  name: LocalizedTitle;
+};

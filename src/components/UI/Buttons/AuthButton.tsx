@@ -6,6 +6,7 @@ import Modal from "../Modals/DynamicModal";
 import AuthLogin from "../Modals/loginAuth";
 import { userType } from "@/types/next-auth";
 import { menuGroups } from "@/constants/menu";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface UserData {
   name: string;
@@ -18,6 +19,7 @@ const AuthButton = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { language } = useLanguage();
 
   // Dummy user data - replace with actual user data from your auth system
   const dummyUserData: UserData = {
@@ -51,7 +53,7 @@ const AuthButton = () => {
       <div className="relative" ref={dropdownRef}>
         <button
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="flex min-w-[170px] items-center justify-center gap-2 border-r border-gray-200 px-4 text-xs font-semibold text-white hover:text-gray-100"
+          className="flex min-w-[170px] items-center justify-center gap-2 border-x border-gray-200 px-4 text-xs font-semibold text-white hover:text-gray-100"
           aria-expanded={isDropdownOpen}
           aria-haspopup="true"
         >
@@ -86,7 +88,7 @@ const AuthButton = () => {
                   <div className="border-t border-gray-100"></div>
                   {group.title && (
                     <div className="px-4 py-2 text-xs font-semibold text-gray-500">
-                      {group.title}
+                      {group.title[language]}
                     </div>
                   )}
                   {group.items.map((item) => {
@@ -95,11 +97,11 @@ const AuthButton = () => {
                       <Link
                         key={item.href}
                         href={item.href}
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         onClick={() => setIsDropdownOpen(false)}
                       >
-                        {Icon && <Icon size={15} className="mr-2" />}
-                        {item.title}
+                        {Icon && <Icon size={15} />}
+                        {item.title[language]}
                       </Link>
                     );
                   })}
@@ -112,10 +114,10 @@ const AuthButton = () => {
                   signOut({ redirect: true, callbackUrl: "/" });
                   setIsDropdownOpen(false);
                 }}
-                className="flex w-full items-center px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
               >
-                <LogOut className="mr-2 h-4 w-4" />
-                Sign out
+                <LogOut className="h-4 w-4" />
+                {language === "ar" ? "تسجيل الخروج" : "Sign out"}
               </button>
             </div>
           </div>
@@ -130,14 +132,14 @@ const AuthButton = () => {
         onClick={() => setIsModalOpen(true)}
         className="flex min-w-[100px] items-center gap-2 border-r border-gray-200 px-4 text-sm font-semibold text-white hover:text-gray-100"
       >
-        Log in <User size={18} />
+        {language === "ar" ? "تسجيل الدخول" : "Log in"} <User size={18} />
       </button>
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         size="lg"
       >
-        <AuthLogin />
+        <AuthLogin locale={language} />
       </Modal>
     </>
   );

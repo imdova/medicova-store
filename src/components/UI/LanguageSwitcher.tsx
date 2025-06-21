@@ -1,7 +1,11 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import React from "react";
 
-const LanguageSwitcher: React.FC = () => {
+type LanguageSwitcherProps = {
+  className?: string;
+};
+
+const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({className}) => {
   const { language, setLanguage, isArabic } = useLanguage();
 
   const toggleLanguage = () => {
@@ -12,9 +16,10 @@ const LanguageSwitcher: React.FC = () => {
   return (
     <button
       onClick={toggleLanguage}
-      className="rounded-md bg-gray-200 px-4 py-2 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
+      className={`rounded-md px-3 text-sm text-gray-700 md:text-white ${className}`}
     >
-      {isArabic ? "English" : "العربية"}
+      <p className="hidden md:block">{isArabic ? "English" : "العربية"}</p>
+      <p className="block font-semibold md:hidden">{isArabic ? "EN" : "AR"}</p>
     </button>
   );
 };

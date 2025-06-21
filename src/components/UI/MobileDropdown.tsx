@@ -1,9 +1,11 @@
 import { useEffect, useRef, ReactNode } from "react";
 import { Check, X } from "lucide-react";
+import { LocalizedTitle } from "@/types/language";
+import { LanguageType } from "@/util/translations";
 
 interface DropdownOption {
   id: string | number;
-  name: string;
+  name: LocalizedTitle;
 }
 
 interface MobileDropdownProps {
@@ -14,6 +16,7 @@ interface MobileDropdownProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   children?: ReactNode; // Allow any custom content
+  locale: LanguageType;
 }
 
 export default function MobileDropdown({
@@ -24,6 +27,7 @@ export default function MobileDropdown({
   setIsOpen,
   isOpen,
   children,
+  locale,
 }: MobileDropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -85,7 +89,7 @@ export default function MobileDropdown({
                   option.id === selected ? "font-semibold text-green-600" : ""
                 }`}
               >
-                {option.name}
+                {option.name[locale]}
                 {option.id === selected && <Check size={16} />}
               </li>
             ))}

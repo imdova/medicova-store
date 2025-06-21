@@ -13,6 +13,9 @@ import {
 } from "@/store/slices/cartSlice";
 import CartButton from "../Buttons/CartButton";
 import CustomAlert from "../CustomAlert";
+import { useLanguage } from "@/contexts/LanguageContext";
+
+//TODO translate List ProductCard
 
 interface ListCardProps {
   loading?: boolean;
@@ -23,6 +26,7 @@ const ListProductCard: React.FC<ListCardProps> = ({ loading, product }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currentNudgeIndex, setCurrentNudgeIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const { language } = useLanguage();
   const [alert, setAlert] = useState<{
     message: string;
     type: "success" | "error" | "info";
@@ -53,7 +57,7 @@ const ListProductCard: React.FC<ListCardProps> = ({ loading, product }) => {
     }
   }, [cartProduct?.quantity]);
 
-  const nudgeCount = product.nudges ? product.nudges.length : 0;
+  const nudgeCount = product.nudges ? product.nudges[language].length : 0;
 
   useEffect(() => {
     if (nudgeCount === 0) return;
@@ -76,7 +80,8 @@ const ListProductCard: React.FC<ListCardProps> = ({ loading, product }) => {
             id: product.id,
             title: product.title ?? "",
             image: product.images?.[0] ?? "/images/placeholder.jpg",
-            description: product.description ?? "No description available",
+            description:
+              product.description[language] ?? "No description available",
             del_price: product.del_price,
             price: product.price ?? 0,
             shipping_fee: product.shipping_fee ?? 0,
@@ -161,7 +166,7 @@ const ListProductCard: React.FC<ListCardProps> = ({ loading, product }) => {
                       product.images?.[currentImageIndex] ||
                       "/images/placeholder.jpg"
                     }
-                    alt={product.title}
+                    alt={product.title[language] ?? "product tilte"}
                     className="h-[150px] w-36 rounded-lg object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
                     priority={currentImageIndex === 0}
                   />
@@ -205,7 +210,7 @@ const ListProductCard: React.FC<ListCardProps> = ({ loading, product }) => {
               <Link href={`/product-details/${product.id}`}>
                 <div className="block">
                   <h3 className="text-sm font-semibold text-gray-800">
-                    {product.title}
+                    {product.title[language]}
                   </h3>
                   {/* Nudges */}
                   <div className="relative mt-1 h-6 overflow-hidden">
@@ -215,7 +220,7 @@ const ListProductCard: React.FC<ListCardProps> = ({ loading, product }) => {
                         transform: `translateY(-${currentNudgeIndex * 24}px)`,
                       }}
                     >
-                      {product.nudges?.map((nudge, index) => (
+                      {product.nudges?.[language].map((nudge, index) => (
                         <div
                           key={index}
                           className="flex h-6 items-center text-xs text-gray-600"
@@ -248,9 +253,9 @@ const ListProductCard: React.FC<ListCardProps> = ({ loading, product }) => {
                       </span>
                     )}
                     {/* Shipping method */}
-                    {product.shippingMethod === "express" && (
+                    {product.shippingMethod && (
                       <div className="rounded bg-light-primary px-2 py-0.5 text-xs font-bold text-white">
-                        Express
+                        {product.shippingMethod[language]}
                       </div>
                     )}
                   </div>

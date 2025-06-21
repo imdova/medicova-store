@@ -12,12 +12,14 @@ import { useSwipeable } from "react-swipeable";
 import MobileDropdown from "../MobileDropdown";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FilterGroup, FilterOption } from "@/types";
+import { LanguageType } from "@/util/translations";
 
 type TapFilterProps = {
   filterGroups: FilterGroup[];
   currentFilters: Record<string, string[]>;
   onFilterToggle: (filterKey: string, filterValue: string) => void;
   onPriceRangeSubmit?: (min: string, max: string) => void;
+  locale: LanguageType;
 };
 
 export default function TapFilter({
@@ -25,6 +27,7 @@ export default function TapFilter({
   currentFilters,
   onFilterToggle,
   onPriceRangeSubmit,
+  locale,
 }: TapFilterProps) {
   const [openTapDropdown, setOpenTapDropdown] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -176,7 +179,7 @@ export default function TapFilter({
     const group = filterGroups.find((g) => g.id === openTapDropdown);
     if (group?.options) {
       const filtered = group.options.filter((option) =>
-        option.name.toLowerCase().includes(term.toLowerCase()),
+        option.name?.[locale].toLowerCase().includes(term.toLowerCase()),
       );
       setFilteredOptions(filtered);
     }
@@ -249,26 +252,26 @@ export default function TapFilter({
       >
         <div className="flex items-center gap-2">
           {filterGroups.map((group) => (
-            <div key={group.name} className="relative shrink-0">
+            <div key={group.name["en"]} className="relative shrink-0">
               <button
                 onClick={(e) =>
                   group.options?.length
                     ? handleToggleDropdown(group, e)
                     : onFilterToggle(group.id, group.option ?? "")
                 }
-                className={`flex items-center rounded-md px-3 py-1 text-sm ${
+                className={`flex items-center gap-1 rounded-md px-3 py-1 text-sm ${
                   isFilterActive(group.id, group.option ?? "")
                     ? "border border-green-300 bg-green-100 text-green-800"
                     : "border border-gray-200 bg-gray-100 text-gray-800"
                 }`}
               >
-                {group.name}
+                {group.name[locale]}
                 {group.options?.length &&
                   group.options.length > 0 &&
                   (openTapDropdown === group.id ? (
-                    <ChevronUp className="ml-1 h-4 w-4" />
+                    <ChevronUp className="h-4 w-4" />
                   ) : (
-                    <ChevronDown className="ml-1 h-4 w-4" />
+                    <ChevronDown className="h-4 w-4" />
                   ))}
               </button>
             </div>
@@ -305,10 +308,15 @@ export default function TapFilter({
                   </div>
                   <input
                     type="text"
-                    placeholder={`Search ${selectedGroup.name}`}
+                    placeholder={
+                      locale === "ar"
+                        ? `بحث في ${selectedGroup.name[locale]}`
+                        : `Search ${selectedGroup.name[locale]}`
+                    }
                     value={searchTerm}
                     onChange={(e) => handleSearch(e.target.value)}
                     className="block w-full rounded-md border border-gray-300 py-2 pl-10 pr-3 leading-5 placeholder-gray-500 focus:outline-none sm:text-sm"
+                    dir={locale === "ar" ? "rtl" : "ltr"}
                   />
                 </div>
               </div>
@@ -316,30 +324,35 @@ export default function TapFilter({
             <div className="max-h-60 overflow-y-auto">
               {selectedGroup.id === "price" ? (
                 <div className="space-y-2 p-3">
-                  <div className="flex items-center gap-2">
+                  <div
+                    className="flex items-center gap-2"
+                    dir={locale === "ar" ? "rtl" : "ltr"}
+                  >
                     <input
                       type="number"
                       name="min"
-                      placeholder="Min"
+                      placeholder={locale === "ar" ? "الحد الأدنى" : "Min"}
                       value={priceRange.min}
                       onChange={handlePriceRangeChange}
-                      className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                      className="w-full rounded border border-gray-300 px-2 py-1 text-sm outline-none"
                     />
-                    <span className="text-gray-500">to</span>
+                    <span className="text-gray-500">
+                      {locale === "ar" ? "إلى" : "to"}
+                    </span>
                     <input
                       type="number"
                       name="max"
-                      placeholder="Max"
+                      placeholder={locale === "ar" ? "الحد الأقصى" : "Max"}
                       value={priceRange.max}
                       onChange={handlePriceRangeChange}
-                      className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                      className="w-full rounded border border-gray-300 px-2 py-1 text-sm outline-none"
                     />
                   </div>
                   <button
                     onClick={handlePriceRangeSubmit}
                     className="w-full rounded bg-green-600 px-3 py-1 text-sm font-medium text-white hover:bg-green-800"
                   >
-                    Apply
+                    {locale === "ar" ? "تطبيق" : "Apply"}
                   </button>
                 </div>
               ) : filteredOptions.length > 0 ? (
@@ -352,7 +365,7 @@ export default function TapFilter({
                       setOpenTapDropdown(null);
                     }}
                   >
-                    <span>{option.name}</span>
+                    <span>{option.name[locale]}</span>
                     {option.count && (
                       <span className="text-xs text-gray-500">
                         {option.count}
@@ -371,54 +384,73 @@ export default function TapFilter({
           {/* Mobile dropdown */}
           <div className="md:hidden">
             <MobileDropdown
-              label={selectedGroup.name}
+              label={selectedGroup.name[locale]}
               isOpen={isDrawerOpen}
               setIsOpen={setIsDrawerOpen}
+              locale={locale}
             >
               <div className="w-full">
                 {selectedGroup.id !== "price" && (
                   <div className="border-b p-2">
-                    <div className="relative">
-                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <div
+                      className="relative"
+                      dir={locale === "ar" ? "rtl" : "ltr"}
+                    >
+                      <div
+                        className={`pointer-events-none absolute inset-y-0 ${
+                          locale === "ar" ? "right-0 pr-3" : "left-0 pl-3"
+                        } flex items-center`}
+                      >
                         <Search className="h-4 w-4 text-gray-400" />
                       </div>
                       <input
                         type="text"
-                        placeholder={`Search ${selectedGroup.name}`}
+                        placeholder={
+                          locale === "ar"
+                            ? `ابحث في ${selectedGroup.name[locale]}`
+                            : `Search ${selectedGroup.name[locale]}`
+                        }
                         value={searchTerm}
                         onChange={(e) => handleSearch(e.target.value)}
-                        className="block w-full rounded-md border border-gray-300 py-2 pl-10 pr-3 leading-5 placeholder-gray-500 focus:outline-none sm:text-sm"
+                        className={`block w-full rounded-md border border-gray-300 py-2 ${
+                          locale === "ar" ? "pl-3 pr-10" : "pl-10 pr-3"
+                        } leading-5 placeholder-gray-500 focus:outline-none sm:text-sm`}
                       />
                     </div>
                   </div>
                 )}
                 <div className="max-h-60 overflow-y-auto">
                   {selectedGroup.id === "price" ? (
-                    <div className="space-y-2 p-3">
+                    <div
+                      className="space-y-2 p-3"
+                      dir={locale === "ar" ? "rtl" : "ltr"}
+                    >
                       <div className="flex items-center gap-2">
                         <input
                           type="number"
                           name="min"
-                          placeholder="Min"
+                          placeholder={locale === "ar" ? "الحد الأدنى" : "Min"}
                           value={priceRange.min}
                           onChange={handlePriceRangeChange}
-                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm outline-none"
+                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm outline-none focus:ring-1 focus:ring-primary"
                         />
-                        <span className="text-gray-500">to</span>
+                        <span className="text-gray-500">
+                          {locale === "ar" ? "إلى" : "to"}
+                        </span>
                         <input
                           type="number"
                           name="max"
-                          placeholder="Max"
+                          placeholder={locale === "ar" ? "الحد الأقصى" : "Max"}
                           value={priceRange.max}
                           onChange={handlePriceRangeChange}
-                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm outline-none"
+                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm outline-none focus:ring-1 focus:ring-primary"
                         />
                       </div>
                       <button
                         onClick={handlePriceRangeSubmit}
                         className="w-full rounded bg-green-600 px-3 py-1 text-sm font-medium text-white hover:bg-green-800"
                       >
-                        Apply
+                        {locale === "ar" ? "تطبيق" : "Apply"}
                       </button>
                     </div>
                   ) : filteredOptions.length > 0 ? (
@@ -432,7 +464,7 @@ export default function TapFilter({
                           setIsDrawerOpen(false);
                         }}
                       >
-                        <span>{option.name}</span>
+                        <span>{option.name[locale]}</span>
                         {option.count && (
                           <span className="text-xs text-gray-500">
                             {option.count}

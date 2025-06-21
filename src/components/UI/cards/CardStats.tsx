@@ -1,3 +1,4 @@
+import { LanguageType } from "@/util/translations";
 import {
   DollarSign,
   ShoppingCart,
@@ -9,22 +10,25 @@ import {
   ArrowUp,
 } from "lucide-react";
 
+export type IconType =
+  | "dollar"
+  | "shoppingCart"
+  | "package"
+  | "star"
+  | "eye"
+  | "award"
+  | "users"
+  | "ArrowUp";
+
 interface CardStatsProps {
   title: string;
   value: string;
   change?: string;
   details?: string;
-  icon:
-    | "dollar"
-    | "shoppingCart"
-    | "package"
-    | "star"
-    | "eye"
-    | "award"
-    | "users"
-    | "ArrowUp";
+  icon: IconType;
   color?: string; // expected format: hex or rgb
   size?: "sm" | "md" | "lg";
+  locale?: LanguageType;
 }
 
 const iconMap = {
@@ -35,7 +39,7 @@ const iconMap = {
   eye: Eye,
   award: Award,
   users: Users,
-  ArrowUp: ArrowUp ,
+  ArrowUp: ArrowUp,
 };
 
 function hexToRgba(hex: string, opacity: number): string {
@@ -64,6 +68,7 @@ export function CardStats({
   color = "#16a34a",
   size = "md",
   details,
+  locale = "en",
 }: CardStatsProps) {
   const Icon = iconMap[icon];
   const isPositive = change?.startsWith("+");
@@ -97,7 +102,7 @@ export function CardStats({
               isPositive ? "text-green-600" : "text-red-600"
             }`}
           >
-            {change} from last month
+            {change} {locale === "ar" ? "من الشهر الماضي" : "from last month"}
           </p>
         )}
       </div>

@@ -4,146 +4,231 @@ import { FilterGroup } from "@/types";
 export const leftFilters: FilterGroup[] = [
   {
     id: "category",
-    name: "Category",
+    name: { en: "Category", ar: "الفئة" },
     options: [
       {
         id: "medical",
-        name: "Medical Supplies & Equipment",
+        name: {
+          en: "Medical Supplies & Equipment",
+          ar: "المستلزمات والمعدات الطبية",
+        },
         subcategories: [
           {
             id: "medical-wear",
-            name: "Medical Wear & Uniforms",
+            name: { en: "Medical Wear & Uniforms", ar: "الملابس الطبية والزي" },
             subcategories: [
-              { id: "scrubs", name: "Surgical Scrubs" },
-              { id: "lab-coats", name: "Lab Coats" },
-              { id: "shoes", name: "Medical Footwear" }, // Matches slug "shoes"
-              { id: "nursing-wear", name: "Nursing Wear" },
-              { id: "medical-accessories", name: "Medical Accessories" },
+              {
+                id: "scrubs",
+                name: { en: "Surgical Scrubs", ar: "ملابس جراحية" },
+              },
+              {
+                id: "lab-coats",
+                name: { en: "Lab Coats", ar: "معاطف المختبر" },
+              },
+              {
+                id: "shoes",
+                name: { en: "Medical Footwear", ar: "أحذية طبية" },
+              },
+              {
+                id: "nursing-wear",
+                name: { en: "Nursing Wear", ar: "ملابس التمريض" },
+              },
+              {
+                id: "medical-accessories",
+                name: { en: "Medical Accessories", ar: "إكسسوارات طبية" },
+              },
             ],
           },
           {
             id: "medical-equipment",
-            name: "Medical Equipment",
+            name: { en: "Medical Equipment", ar: "معدات طبية" },
             subcategories: [
-              { id: "diagnostic", name: "Diagnostic Equipment" },
-              { id: "surgical", name: "Surgical Instruments" },
-              { id: "equipment-dental", name: "Dental Equipment" },
-              { id: "hospital-furniture", name: "Hospital Furniture" },
-              { id: "monitoring", name: "Patient Care Equipment" }, // Matches slug "monitoring"
-              { id: "medical-carts", name: "Medical Carts & Stands" },
+              {
+                id: "diagnostic",
+                name: { en: "Diagnostic Equipment", ar: "معدات التشخيص" },
+              },
+              {
+                id: "surgical",
+                name: { en: "Surgical Instruments", ar: "أدوات جراحية" },
+              },
+              {
+                id: "equipment-dental",
+                name: { en: "Dental Equipment", ar: "معدات الأسنان" },
+              },
+              {
+                id: "hospital-furniture",
+                name: { en: "Hospital Furniture", ar: "أثاث المستشفى" },
+              },
+              {
+                id: "monitoring",
+                name: {
+                  en: "Patient Care Equipment",
+                  ar: "معدات رعاية المرضى",
+                },
+              },
+              {
+                id: "medical-carts",
+                name: { en: "Medical Carts & Stands", ar: "عربات وحوامل طبية" },
+              },
             ],
           },
           {
             id: "medical-consumables",
-            name: "Medical Consumables",
+            name: {
+              en: "Medical Consumables",
+              ar: "المستلزمات الطبية الاستهلاكية",
+            },
             subcategories: [
-              { id: "disposable", name: "Disposable Products" }, // Matches slug "disposable"
-              { id: "face-protection", name: "Face Masks & Shields" },
-              { id: "wound-care", name: "Wound Care Supplies" },
-              { id: "infection-control", name: "Infection Control" },
+              {
+                id: "disposable",
+                name: {
+                  en: "Disposable Products",
+                  ar: "منتجات للاستخدام مرة واحدة",
+                },
+              },
+              {
+                id: "face-protection",
+                name: { en: "Face Masks & Shields", ar: "أقنعة الوجه والدروع" },
+              },
+              {
+                id: "wound-care",
+                name: {
+                  en: "Wound Care Supplies",
+                  ar: "مستلزمات العناية بالجروح",
+                },
+              },
+              {
+                id: "infection-control",
+                name: { en: "Infection Control", ar: "مكافحة العدوى" },
+              },
               {
                 id: "medical-consumables-tapes",
-                name: "Medical Tapes & Dressings",
+                name: {
+                  en: "Medical Tapes & Dressings",
+                  ar: "لاصقات طبية وضمادات",
+                },
               },
-              { id: "syringes-needles", name: "Syringes & Needles" },
+              {
+                id: "syringes-needles",
+                name: { en: "Syringes & Needles", ar: "الحقن والإبر" },
+              },
             ],
           },
         ],
       },
       {
         id: "lifestyle",
-        name: "Lifestyle Products",
+        name: { en: "Lifestyle Products", ar: "منتجات نمط الحياة" },
         subcategories: [
           {
             id: "fashion",
-            name: "Fashion",
+            name: { en: "Fashion", ar: "الأزياء" },
             subcategories: [
-              { id: "casual", name: "Casual Wear" },
-              { id: "formal", name: "Formal Wear" },
-              { id: "athleisure", name: "Athleisure" },
+              { id: "casual", name: { en: "Casual Wear", ar: "ملابس كاجوال" } },
+              { id: "formal", name: { en: "Formal Wear", ar: "ملابس رسمية" } },
+              {
+                id: "athleisure",
+                name: { en: "Athleisure", ar: "ملابس رياضية" },
+              },
             ],
           },
           {
             id: "accessories",
-            name: "Accessories",
+            name: { en: "Accessories", ar: "الإكسسوارات" },
             subcategories: [
-              { id: "watches", name: "Watches" },
-              { id: "jewelry", name: "Jewelry" },
-              { id: "eyewear", name: "Eyewear" },
+              { id: "watches", name: { en: "Watches", ar: "ساعات" } },
+              { id: "jewelry", name: { en: "Jewelry", ar: "مجوهرات" } },
+              { id: "eyewear", name: { en: "Eyewear", ar: "نظارات" } },
             ],
           },
           {
             id: "wellness",
-            name: "Wellness",
+            name: { en: "Wellness", ar: "العناية الذاتية" },
             subcategories: [
-              { id: "fitness", name: "Fitness Equipment" },
-              { id: "massage", name: "Massage Tools" },
-              { id: "relaxation", name: "Relaxation" },
+              {
+                id: "fitness",
+                name: { en: "Fitness Equipment", ar: "معدات اللياقة" },
+              },
+              {
+                id: "massage",
+                name: { en: "Massage Tools", ar: "أدوات التدليك" },
+              },
+              { id: "relaxation", name: { en: "Relaxation", ar: "الاسترخاء" } },
             ],
           },
           {
             id: "personal-care",
-            name: "Personal Care",
+            name: { en: "Personal Care", ar: "العناية الشخصية" },
             subcategories: [
-              { id: "fragrances", name: "Fragrances" },
-              { id: "skincare", name: "Skincare" },
-              { id: "haircare", name: "Haircare" },
+              { id: "fragrances", name: { en: "Fragrances", ar: "العطور" } },
+              {
+                id: "skincare",
+                name: { en: "Skincare", ar: "العناية بالبشرة" },
+              },
+              {
+                id: "haircare",
+                name: { en: "Haircare", ar: "العناية بالشعر" },
+              },
             ],
           },
         ],
       },
       {
         id: "all-medical",
-        name: "All Medical Supplies",
+        name: { en: "All Medical Supplies", ar: "جميع المستلزمات الطبية" },
       },
       {
         id: "all-lifestyle",
-        name: "All Lifestyle Products",
+        name: { en: "All Lifestyle Products", ar: "جميع منتجات نمط الحياة" },
       },
     ],
   },
   {
     id: "brand",
-    name: "Brand",
+    name: { en: "Brand", ar: "العلامة التجارية" },
     options: [
-      { id: "apple", name: "Apple", count: 124 },
-      { id: "samsung", name: "Samsung", count: 89 },
-      { id: "huawei", name: "Huawei", count: 76 },
-      { id: "amazfit", name: "Amazfit", count: 42 },
-      { id: "fitbit", name: "Fitbit", count: 35 },
-      { id: "xiaomi", name: "Xiaomi", count: 28 },
-      { id: "garmin", name: "Garmin", count: 22 },
-      { id: "fossil", name: "Fossil", count: 18 },
+      { id: "apple", name: { en: "Apple", ar: "آبل" }, count: 124 },
+      { id: "samsung", name: { en: "Samsung", ar: "سامسونج" }, count: 89 },
+      { id: "huawei", name: { en: "Huawei", ar: "هواوي" }, count: 76 },
+      { id: "amazfit", name: { en: "Amazfit", ar: "أمازفيت" }, count: 42 },
+      { id: "fitbit", name: { en: "Fitbit", ar: "فيتبيت" }, count: 35 },
+      { id: "xiaomi", name: { en: "Xiaomi", ar: "شاومي" }, count: 28 },
+      { id: "garmin", name: { en: "Garmin", ar: "جارمين" }, count: 22 },
+      { id: "fossil", name: { en: "Fossil", ar: "فوسيل" }, count: 18 },
     ],
   },
   {
     id: "price",
-    name: "Price",
+    name: { en: "Price", ar: "السعر" },
     options: [
       {
         id: "custom-range",
-        name: "Custom Range",
+        name: { en: "Custom Range", ar: "نطاق مخصص" },
         isRange: true,
       },
     ],
   },
   {
     id: "rating",
-    name: "Customer Rating",
+    name: { en: "Customer Rating", ar: "تقييم العملاء" },
     options: [
-      { id: "4.5", name: "4.5 & Up", count: 1245 },
-      { id: "4", name: "4 & Up", count: 1890 },
-      { id: "3.5", name: "3.5 & Up", count: 2345 },
-      { id: "3", name: "3 & Up", count: 2890 },
+      { id: "4.5", name: { en: "4.5 & Up", ar: "4.5 فأعلى" }, count: 1245 },
+      { id: "4", name: { en: "4 & Up", ar: "4 فأعلى" }, count: 1890 },
+      { id: "3.5", name: { en: "3.5 & Up", ar: "3.5 فأعلى" }, count: 2345 },
+      { id: "3", name: { en: "3 & Up", ar: "3 فأعلى" }, count: 2890 },
     ],
   },
   {
     id: "availability",
-    name: "Availability",
+    name: { en: "Availability", ar: "التوفر" },
     options: [
-      { id: "in-stock", name: "In Stock", count: 3456 },
-      { id: "out-of-stock", name: "Out of Stock", count: 123 },
-      { id: "pre-order", name: "Pre-order", count: 45 },
+      { id: "in-stock", name: { en: "In Stock", ar: "متوفر" }, count: 3456 },
+      {
+        id: "out-of-stock",
+        name: { en: "Out of Stock", ar: "غير متوفر" },
+        count: 123,
+      },
+      { id: "pre-order", name: { en: "Pre-order", ar: "طلب مسبق" }, count: 45 },
     ],
   },
 ];
@@ -151,65 +236,75 @@ export const leftFilters: FilterGroup[] = [
 export const tapFilters: FilterGroup[] = [
   {
     id: "brand",
-    name: "Brand",
+    name: { en: "Brand", ar: "العلامة التجارية" },
     options: leftFilters.find((f) => f.id === "brand")?.options || [],
   },
   {
     id: "material",
-    name: "Material",
+    name: { en: "Material", ar: "الخامة" },
     options: [
-      { id: "stainless-steel", name: "Stainless Steel", count: 45 },
-      { id: "aluminum", name: "Aluminum", count: 32 },
-      { id: "plastic", name: "Plastic", count: 28 },
-      { id: "titanium", name: "Titanium", count: 12 },
-      { id: "ceramic", name: "Ceramic", count: 8 },
+      {
+        id: "stainless-steel",
+        name: { en: "Stainless Steel", ar: "الفولاذ المقاوم للصدأ" },
+        count: 45,
+      },
+      { id: "aluminum", name: { en: "Aluminum", ar: "الألمنيوم" }, count: 32 },
+      { id: "plastic", name: { en: "Plastic", ar: "البلاستيك" }, count: 28 },
+      { id: "titanium", name: { en: "Titanium", ar: "التيتانيوم" }, count: 12 },
+      { id: "ceramic", name: { en: "Ceramic", ar: "السيراميك" }, count: 8 },
     ],
   },
   {
     id: "color",
-    name: "Color",
+    name: { en: "Color", ar: "اللون" },
     options: [
-      { id: "black", name: "Black", count: 67 },
-      { id: "silver", name: "Silver", count: 45 },
-      { id: "blue", name: "Blue", count: 32 },
-      { id: "red", name: "Red", count: 24 },
-      { id: "gold", name: "Gold", count: 18 },
-      { id: "white", name: "White", count: 15 },
-      { id: "green", name: "Green", count: 12 },
+      { id: "black", name: { en: "Black", ar: "أسود" }, count: 67 },
+      { id: "silver", name: { en: "Silver", ar: "فضي" }, count: 45 },
+      { id: "blue", name: { en: "Blue", ar: "أزرق" }, count: 32 },
+      { id: "red", name: { en: "Red", ar: "أحمر" }, count: 24 },
+      { id: "gold", name: { en: "Gold", ar: "ذهبي" }, count: 18 },
+      { id: "white", name: { en: "White", ar: "أبيض" }, count: 15 },
+      { id: "green", name: { en: "Green", ar: "أخضر" }, count: 12 },
     ],
   },
   {
     id: "price",
-    name: "Price",
+    name: { en: "Price", ar: "السعر" },
     options: [
       {
         id: "custom-range",
-        name: "Custom Range",
+        name: { en: "Custom Range", ar: "نطاق مخصص" },
         isRange: true,
       },
     ],
   },
   {
     id: "brand",
-    name: "Apple",
+    name: { en: "Apple", ar: "آبل" },
     option: "apple",
   },
   {
     id: "brand",
-    name: "HUAWEI",
+    name: { en: "HUAWEI", ar: "هواوي" },
     option: "huawei",
   },
   {
     id: "category",
-    name: "Fashion",
+    name: { en: "Fashion", ar: "الموضة" },
     option: "fashion",
   },
 ];
 
 export const sortOptions = [
-  { id: "recommended", name: "Recommended" },
-  { id: "price-asc", name: "Price: Low to High" },
-  { id: "price-desc", name: "Price: High to Low" },
-  { id: "rating", name: "Customer Rating" },
-  { id: "newest", name: "Newest Arrivals" },
+  { id: "recommended", name: { en: "Recommended", ar: "موصى به" } },
+  {
+    id: "price-asc",
+    name: { en: "Price: Low to High", ar: "السعر: من الأقل إلى الأعلى" },
+  },
+  {
+    id: "price-desc",
+    name: { en: "Price: High to Low", ar: "السعر: من الأعلى إلى الأقل" },
+  },
+  { id: "rating", name: { en: "Customer Rating", ar: "تقييم العملاء" } },
+  { id: "newest", name: { en: "Newest Arrivals", ar: "الأحدث" } },
 ];

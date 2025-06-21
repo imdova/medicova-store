@@ -19,75 +19,138 @@ import {
 } from "@/constants/categouries";
 import PopularSearches from "@/components/UI/PopularSearches";
 import { slides } from "@/constants/sliders";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const MoreReasons = [
   {
     id: "1",
-    title: "Local finds",
-    details: "Hand-picked brands, locally",
+    title: {
+      en: "Local finds",
+      ar: "منتجات محلية",
+    },
+    details: {
+      en: "Hand-picked brands, locally",
+      ar: "علامات تجارية مختارة محليًا",
+    },
     image: "/images/clothes.jpg",
     url: "#",
   },
   {
     id: "2",
-    title: "Bestsellers",
-    details: "Fill your basket",
+    title: {
+      en: "Bestsellers",
+      ar: "الأكثر مبيعًا",
+    },
+    details: {
+      en: "Fill your basket",
+      ar: "املأ سلتك",
+    },
     image: "/images/electronics.avif",
     url: "#",
   },
   {
     id: "3",
-    title: "Top-rated Products",
-    details: "Stay in trend",
+    title: {
+      en: "Top-rated Products",
+      ar: "المنتجات الأعلى تقييماً",
+    },
+    details: {
+      en: "Stay in trend",
+      ar: "ابق على الموضة",
+    },
     image: "/images/watchss.jpg",
     url: "#",
   },
   {
     id: "4",
-    title: "New arrivals",
-    details: "Fresh takes you need",
+    title: {
+      en: "New arrivals",
+      ar: "وصل حديثًا",
+    },
+    details: {
+      en: "Fresh takes you need",
+      ar: "أحدث المنتجات التي تحتاجها",
+    },
     image: "/images/medical.jpg",
     url: "#",
   },
 ];
+
 const megaDeals = [
   {
-    category: "Fashion deals",
-    title: "summer outfits",
-    discountText: "Up to 70% off",
+    category: {
+      en: "Fashion deals",
+      ar: "عروض الموضة",
+    },
+    title: {
+      en: "Summer outfits",
+      ar: "ملابس صيفية",
+    },
+    discountText: {
+      en: "Up to 70% off",
+      ar: "خصم حتى 70%",
+    },
     imageUrl: "/images/clothes.jpg",
     price: null,
     originalPrice: null,
     url: "#",
   },
   {
-    category: "Accessories deals",
-    title: "Anker 5000 mAh Anker 621 Magnetic Battery (MagGo)...",
-    discountText: "899 EGP",
+    category: {
+      en: "Accessories deals",
+      ar: "عروض الإكسسوارات",
+    },
+    title: {
+      en: "Anker 5000 mAh Anker 621 Magnetic Battery (MagGo)...",
+      ar: "بطارية أنكر 621 مغناطيسية 5000 مللي أمبير...",
+    },
+    discountText: {
+      en: "899 EGP",
+      ar: "٨٩٩ جنيه",
+    },
     imageUrl: "/images/clothes.jpg",
     price: "899 EGP",
     originalPrice: "1799 EGP",
     url: "#",
   },
   {
-    category: "Beauty deals",
-    title: "Trending perfumes",
-    discountText: "Starting from 108...",
+    category: {
+      en: "Beauty deals",
+      ar: "عروض الجمال",
+    },
+    title: {
+      en: "Trending perfumes",
+      ar: "عطور رائجة",
+    },
+    discountText: {
+      en: "Starting from 108...",
+      ar: "ابتداءً من ١٠٨...",
+    },
     imageUrl: "/images/clothes.jpg",
     price: "108 EGP",
     originalPrice: null,
     url: "#",
   },
   {
-    category: "Book deals",
-    title: "Top deals",
-    discountText: "Up to 20% off",
+    category: {
+      en: "Book deals",
+      ar: "عروض الكتب",
+    },
+    title: {
+      en: "Top deals",
+      ar: "أفضل العروض",
+    },
+    discountText: {
+      en: "Up to 20% off",
+      ar: "خصم حتى 20%",
+    },
     imageUrl: "/images/clothes.jpg",
     price: null,
     originalPrice: null,
     url: "#",
   },
 ];
+
 const inFocus = [
   {
     id: "1",
@@ -102,20 +165,26 @@ const inFocus = [
 ];
 
 export default function Home() {
+  const { direction, language, isArabic } = useLanguage();
+
   return (
     <div className="relative">
       <section>
         {/* slider landing content  */}
-        <LandingSlider slides={slides} />
+        <LandingSlider dir={direction} slides={slides} />
         {/* slider Categories content  */}
-        <CategorySlider categories={allCategories} />
+        <CategorySlider
+          cardSize="small"
+          locale={language}
+          categories={allCategories}
+        />
       </section>
       <section className="hidden pb-8 xl:block">
         <div className="container mx-auto p-3 lg:max-w-[1440px]">
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-white p-3 shadow-sm">
               <h2 className="mb-3 text-xl font-bold text-gray-700">
-                More reasons to shop
+                {isArabic ? "أشترى أكتر و بالك مرتاح" : " More reasons to shop"}
               </h2>
               <div className="grid grid-cols-2 gap-3">
                 {MoreReasons.map((reason) => (
@@ -129,12 +198,14 @@ export default function Home() {
                       src={reason.image}
                       width={600}
                       height={600}
-                      alt={reason.title}
+                      alt={reason.title[language]}
                     />
                     <div className="p-2">
-                      <h2 className="font-semibold">{reason.title}</h2>
+                      <h2 className="font-semibold">
+                        {reason.title[language]}
+                      </h2>
                       <p className="text-xs font-medium text-secondary">
-                        {reason.details}
+                        {reason.details[language]}
                       </p>
                     </div>
                   </Link>
@@ -143,7 +214,7 @@ export default function Home() {
             </div>
             <div className="bg-[#a8dabab1] p-4">
               <h2 className="mb-3 text-xl font-bold text-gray-700">
-                Mega deals
+                {isArabic ? "عروض ميجا" : "Mega deals"}
               </h2>
               <div className="grid grid-cols-2 gap-3">
                 {megaDeals.map((deal, index) => (
@@ -153,18 +224,18 @@ export default function Home() {
                     className="relative overflow-hidden rounded-xl bg-gray-100 shadow-sm"
                   >
                     <div className="absolute right-0 top-0 mb-2 w-fit rounded-sm bg-yellow-400 px-2 py-1 text-sm font-semibold text-black">
-                      {deal.category}
+                      {deal.category[language]}
                     </div>
                     <Image
                       src={deal.imageUrl}
-                      alt={deal.title}
+                      alt={deal.title[language]}
                       width={600}
                       height={600}
                       className="h-[140px] w-full object-cover"
                     />
                     <div className="p-2">
                       <p className="truncate text-sm text-gray-700">
-                        {deal.title}
+                        {deal.title[language]}
                       </p>
                       <p className="text-lg font-semibold">
                         {deal.originalPrice && (
@@ -173,7 +244,7 @@ export default function Home() {
                           </span>
                         )}
                         <span className="text-sm">
-                          {deal.price ?? deal.discountText}
+                          {deal.price ?? deal.discountText[language]}
                         </span>
                       </p>
                     </div>
@@ -182,7 +253,9 @@ export default function Home() {
               </div>
             </div>
             <div className="bg-white p-4 shadow-sm">
-              <h2 className="mb-3 text-xl font-bold text-gray-700">In focus</h2>
+              <h2 className="mb-3 text-xl font-bold text-gray-700">
+                {isArabic ? "شوف كل الخصومات" : "In focus"}
+              </h2>
               <div className="flex flex-col space-y-4">
                 {inFocus.map((focus) => (
                   <Link
@@ -207,7 +280,10 @@ export default function Home() {
       {/* recommended for you section  */}
       <section className="bg-white">
         <div className="container mx-auto p-3 lg:max-w-[1440px]">
-          <SectionHeader blackText="Recommended" greenText="for you" />
+          <SectionHeader
+            blackText={isArabic ? "مُقترحة" : "Recommended"}
+            greenText={isArabic ? "عليك" : "for you"}
+          />
           <ProductsSlider>
             {products.map((product) => (
               <div
@@ -227,39 +303,53 @@ export default function Home() {
       <section className="bg-white py-6">
         <div className="container mx-auto p-3 lg:max-w-[1440px]">
           <SectionHeader
-            blackText="Explore"
-            greenText="official brands stores"
+            blackText={isArabic ? "اكتشف" : "Explore"}
+            greenText={
+              isArabic
+                ? "متاجر العلامات التجارية الرسمية"
+                : "official brands stores"
+            }
           />
-          <BrandSlider />
+          <BrandSlider locale={language} />
         </div>
       </section>
       {/* Consumable Category  */}
       <section className="bg-white py-6">
         <div className="container mx-auto p-3 lg:max-w-[1440px]">
           <div className="mb-4 flex items-center justify-between gap-4">
-            <h2 className="text-lg font-bold sm:text-2xl">Consumable</h2>
+            <h2 className="text-lg font-bold sm:text-2xl">
+              {isArabic ? "فئات المواد الاستهلاكية" : "Consumable"}
+            </h2>
             <DynamicButton
               size="sm"
               variant="outline"
               href={"#"}
-              label={"Shop All"}
+              label={isArabic ? "شوف كله" : "Shop All"}
             />
           </div>
           <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-6">
             {consumableCategories.slice(0, 6).map((category) => {
-              return <CategoryCard key={category.id} category={category} />;
+              return (
+                <CategoryCard
+                  locale={language}
+                  key={category.id}
+                  category={category}
+                />
+              );
             })}
           </div>
           <div>
             <div className="mb-4 flex items-center justify-between gap-4">
               <h2 className="text-lg font-bold sm:text-2xl">
-                Consumable bestsellers
+                {isArabic
+                  ? "افضل المواد الاستهلاكية"
+                  : "Consumable bestsellers"}
               </h2>
               <DynamicButton
                 size="sm"
                 variant="outline"
                 href={"#"}
-                label={"Shop Now"}
+                label={isArabic ? "تسوق الان" : "Shop Now"}
               />
             </div>
             <ProductsSlider>
@@ -279,29 +369,39 @@ export default function Home() {
       <section className="bg-white py-6">
         <div className="container mx-auto p-3 lg:max-w-[1440px]">
           <div className="mb-4 flex items-center justify-between gap-4">
-            <h2 className="text-lg font-bold sm:text-2xl">Life Style</h2>
+            <h2 className="text-lg font-bold sm:text-2xl">
+              {isArabic ? " أسلوب الحياة" : "Life Style"}{" "}
+            </h2>
             <DynamicButton
               size="sm"
               variant="outline"
               href={"#"}
-              label={"Shop All"}
+              label={isArabic ? "شوف كله" : "Shop All"}
             />
           </div>
           <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-6">
             {lifestyleCategories.slice(0, 6).map((category) => {
-              return <CategoryCard key={category.id} category={category} />;
+              return (
+                <CategoryCard
+                  locale={language}
+                  key={category.id}
+                  category={category}
+                />
+              );
             })}
           </div>
           <div>
             <div className="mb-4 flex items-center justify-between gap-4">
               <h2 className="text-lg font-bold sm:text-2xl">
-                Life Style bestsellers
+                {isArabic
+                  ? "الأكثر مبيعاً في أسلوب الحياة"
+                  : "Life Style bestsellers"}
               </h2>
               <DynamicButton
                 size="sm"
                 variant="outline"
                 href={"#"}
-                label={"Shop Now"}
+                label={isArabic ? "تسوق الان" : "Shop Now"}
               />
             </div>
             <ProductsSlider>
@@ -324,29 +424,37 @@ export default function Home() {
       <section className="bg-white py-6">
         <div className="container mx-auto p-3 lg:max-w-[1440px]">
           <div className="mb-4 flex items-center justify-between gap-4">
-            <h2 className="text-lg font-bold sm:text-2xl">Equipment</h2>
+            <h2 className="text-lg font-bold sm:text-2xl">
+              {isArabic ? "معدات" : "Equipment"}
+            </h2>
             <DynamicButton
               size="sm"
               variant="outline"
               href={"#"}
-              label={"Shop All"}
+              label={isArabic ? "شوف كله" : "Shop All"}
             />
           </div>
           <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-6">
             {equipmentCategories.slice(0, 6).map((category) => {
-              return <CategoryCard key={category.id} category={category} />;
+              return (
+                <CategoryCard
+                  locale={language}
+                  key={category.id}
+                  category={category}
+                />
+              );
             })}
           </div>
           <div>
             <div className="mb-4 flex items-center justify-between gap-4">
               <h2 className="text-lg font-bold sm:text-2xl">
-                Equipment bestsellers
+                {isArabic ? "المعدات الأكثر مبيع" : "Equipment bestsellers"}
               </h2>
               <DynamicButton
                 size="sm"
                 variant="outline"
                 href={"#"}
-                label={"Shop Now"}
+                label={isArabic ? "تسوق الان" : "Shop Now"}
               />
             </div>
             <ProductsSlider>
@@ -364,7 +472,7 @@ export default function Home() {
       </section>
       <section className="bg-white">
         <div className="container mx-auto p-3 lg:max-w-[1440px]">
-          <PopularSearches />
+          <PopularSearches locale={language} />
         </div>
       </section>
     </div>

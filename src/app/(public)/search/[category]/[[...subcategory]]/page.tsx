@@ -14,6 +14,9 @@ import MobileDropdown from "@/components/UI/MobileDropdown";
 import ViewToggle from "@/components/UI/Buttons/ViewToggle";
 import ListProductCard from "@/components/UI/cards/ListProductCard";
 import { leftFilters, sortOptions, tapFilters } from "@/constants/filters";
+import { useLanguage } from "@/contexts/LanguageContext";
+
+//TODO translate CategoryPage
 
 export default function CategoryPage({
   params,
@@ -25,6 +28,7 @@ export default function CategoryPage({
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+  const { language } = useLanguage();
   const [productsData, setProductsData] = useState<Product[]>([]);
   const [view, setView] = useState<"list" | "grid">("grid");
   const [loading, setLoading] = useState(true);
@@ -156,7 +160,10 @@ export default function CategoryPage({
       ?.options?.find((opt) => opt.id === category);
 
     if (mainCategory) {
-      currentPath.push({ id: mainCategory.id, name: mainCategory.name });
+      currentPath.push({
+        id: mainCategory.id,
+        name: mainCategory.name[language],
+      });
 
       // Handle subcategories if they exist
       if (subcategory && subcategory.length > 0) {
@@ -165,7 +172,10 @@ export default function CategoryPage({
         for (const subId of subcategory) {
           const foundSub = currentSubcategories.find((sub) => sub.id === subId);
           if (foundSub) {
-            currentPath.push({ id: foundSub.id, name: foundSub.name });
+            currentPath.push({
+              id: foundSub.id,
+              name: foundSub.name[language],
+            });
             // Update currentSubcategories to next level for next iteration
             currentSubcategories = foundSub.subcategories || [];
           } else {
@@ -210,6 +220,7 @@ export default function CategoryPage({
         <div className="gap-4 lg:flex">
           <div className="hidden lg:block">
             <LeftFilter
+              locale={language}
               filterGroups={leftFilters}
               currentFilters={getCurrentFilters()}
               onFilterToggle={(
@@ -241,6 +252,7 @@ export default function CategoryPage({
           >
             <div className="mt-6">
               <LeftFilter
+                locale={language}
                 filterGroups={leftFilters}
                 currentFilters={getCurrentFilters()}
                 onFilterToggle={(
@@ -297,6 +309,7 @@ export default function CategoryPage({
                   options={sortOptions}
                   selected={getCurrentSort()}
                   onSelect={(value) => setSortOption(value.toString())}
+                  locale={language}
                 />
               </div>
               <div className="block md:hidden">
@@ -311,6 +324,7 @@ export default function CategoryPage({
               onSelect={(value) => setSortOption(value.toString())}
               isOpen={isOpenDropdown}
               setIsOpen={setIsOpenDropdown}
+              locale={language}
             />
 
             <div className="mb-4 gap-2 border-b border-gray-200 p-4">
@@ -318,6 +332,7 @@ export default function CategoryPage({
                 filterGroups={tapFilters}
                 currentFilters={getCurrentFilters()}
                 onFilterToggle={toggleFilter}
+                locale={language}
               />
             </div>
 

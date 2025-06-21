@@ -14,6 +14,7 @@ type SliderLandingProps = {
   slideDuration?: number;
   showProgressBar?: boolean;
   bannerHeight?: string;
+  dir?: "ltr" | "rtl";
 };
 
 const LandingSlider = ({
@@ -23,6 +24,7 @@ const LandingSlider = ({
   slideDuration = 5000,
   showProgressBar,
   bannerHeight = "h-[150px]",
+  dir = "ltr",
 }: SliderLandingProps) => {
   // Filter slides into banners and sliders
   const sliderSlides = slides.filter((slide) => slide.type === "slider");
@@ -33,6 +35,8 @@ const LandingSlider = ({
   const [isAutoPlaying, setIsAutoPlaying] = useState(autoPlay);
   const [pageLoading, setPageLoading] = useState(true);
   const [progress, setProgress] = useState(0);
+
+  const isRTL = dir === "rtl";
 
   // Show loader only on page reload
   useEffect(() => {
@@ -80,43 +84,54 @@ const LandingSlider = ({
   }, [currentIndex, isAutoPlaying, slideDuration, sliderSlides.length]);
 
   const nextSlide = useCallback(() => {
-    setCurrentIndex([(currentIndex + 1) % sliderSlides.length, 1]);
-  }, [currentIndex, sliderSlides.length]);
+    setCurrentIndex([(currentIndex + 1) % sliderSlides.length, isRTL ? -1 : 1]);
+  }, [currentIndex, sliderSlides.length, isRTL]);
 
   const prevSlide = useCallback(() => {
     setCurrentIndex([
       (currentIndex - 1 + sliderSlides.length) % sliderSlides.length,
-      -1,
+      isRTL ? 1 : -1,
     ]);
-  }, [currentIndex, sliderSlides.length]);
+  }, [currentIndex, sliderSlides.length, isRTL]);
 
   const goToSlide = (index: number) => {
-    const direction = index > currentIndex ? 1 : -1;
+    const direction = index > currentIndex ? (isRTL ? -1 : 1) : isRTL ? 1 : -1;
     setCurrentIndex([index, direction]);
   };
 
   // Swipe handlers for mobile
   const handlers = useSwipeable({
-    onSwipedLeft: () => nextSlide(),
-    onSwipedRight: () => prevSlide(),
+    onSwipedLeft: () => (isRTL ? prevSlide() : nextSlide()),
+    onSwipedRight: () => (isRTL ? nextSlide() : prevSlide()),
     preventScrollOnSwipe: true,
     trackMouse: true,
   });
 
-  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight") nextSlide();
-      if (e.key === "ArrowLeft") prevSlide();
+      if (e.key === "ArrowRight") {
+        if (isRTL) {
+          prevSlide();
+        } else {
+          nextSlide();
+        }
+      }
+      if (e.key === "ArrowLeft") {
+        if (isRTL) {
+          nextSlide();
+        } else {
+          prevSlide();
+        }
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [nextSlide, prevSlide]);
+  }, [isRTL, nextSlide, prevSlide]);
 
   const slideVariants = {
     enter: (direction: number) => ({
-      x: direction > 0 ? "100%" : "-100%",
+      x: direction > 0 ? (isRTL ? "-100%" : "100%") : isRTL ? "100%" : "-100%",
       opacity: 0,
     }),
     center: {
@@ -125,7 +140,7 @@ const LandingSlider = ({
       transition: { duration: 0.5, ease: "easeInOut" },
     },
     exit: (direction: number) => ({
-      x: direction > 0 ? "-100%" : "100%",
+      x: direction > 0 ? (isRTL ? "100%" : "-100%") : isRTL ? "-100%" : "100%",
       opacity: 0,
       transition: { duration: 0.5, ease: "easeInOut" },
     }),
@@ -141,7 +156,7 @@ const LandingSlider = ({
   };
 
   return (
-    <div className="">
+    <div dir={dir} className="">
       <div className="sm:container sm:mx-auto sm:px-6 lg:max-w-[1440px]">
         {/* Banner Section */}
         {bannerSlides.length > 0 && (
@@ -233,49 +248,100 @@ const LandingSlider = ({
               {/* Navigation Arrows - only show if more than one slide */}
               {showNavigation && sliderSlides.length > 1 && (
                 <>
+                  {/* Prev Button */}
                   <button
-                    onClick={prevSlide}
-                    className="group absolute -left-1 top-0 z-20 hidden h-full items-center md:flex"
+                    onClick={isRTL ? nextSlide : prevSlide}
+                    className={`group absolute top-0 z-20 hidden h-full items-center md:flex ${
+                      isRTL ? "-right-11" : "-left-1"
+                    }`}
                   >
-                    <svg
-                      width="44"
-                      height="502"
-                      viewBox="0 0 44 502"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="duration-400 inline-block h-full w-auto origin-left scale-x-0 transition-transform group-hover:scale-x-[2]"
-                    >
-                      <path
-                        className="fill-white/10 transition duration-200 group-hover:fill-white"
-                        d="M0.999973 501C32.9999 301.5 42.9999 308 42.9999 252.5C42.9999 197 29.4999 189 1.00002 0.999996L0.999973 501Z"
-                        fill="rgba(255,255,255,.4)"
-                      ></path>
-                    </svg>
-                    <div className="flex h-10 w-10 translate-x-7 items-center justify-center rounded-full bg-white/25 text-white transition duration-200 group-hover:visible group-hover:-translate-x-7 group-hover:bg-transparent group-hover:text-gray-600 group-hover:opacity-100">
-                      <ChevronsLeft size={25} />
-                    </div>
+                    {!isRTL ? (
+                      <>
+                        <svg
+                          width="44"
+                          height="502"
+                          viewBox="0 0 44 502"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="duration-400 inline-block h-full w-auto origin-left scale-x-0 transition-transform group-hover:scale-x-[2]"
+                        >
+                          <path
+                            className="fill-white/10 transition duration-200 group-hover:fill-white"
+                            d="M0.999973 501C32.9999 301.5 42.9999 308 42.9999 252.5C42.9999 197 29.4999 189 1.00002 0.999996L0.999973 501Z"
+                          />
+                        </svg>
+                        <div className="flex h-10 w-10 translate-x-7 items-center justify-center rounded-full bg-white/25 text-white transition duration-200 group-hover:-translate-x-7 group-hover:bg-transparent group-hover:text-gray-600">
+                          <ChevronsLeft size={25} />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="z-10 flex h-10 w-10 -translate-x-20 items-center justify-center rounded-full bg-white/25 text-white transition duration-200 group-hover:-translate-x-12 group-hover:bg-transparent group-hover:text-gray-600">
+                          <ChevronsRight size={25} />
+                        </div>
+                        <svg
+                          width="44"
+                          height="501"
+                          viewBox="0 0 44 501"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="duration-400 inline-block h-full w-auto origin-right scale-x-0 transition-transform group-hover:scale-x-[2]"
+                        >
+                          <path
+                            className="fill-white/10 transition duration-200 group-hover:fill-white"
+                            d="M42.9999 0.5C11 200 1 193.5 1 249C1 304.5 14.5 312.5 42.9999 500.5V0.5Z"
+                          />
+                        </svg>
+                      </>
+                    )}
                   </button>
+
+                  {/* Next Button */}
                   <button
-                    onClick={nextSlide}
-                    className="group absolute -right-1 top-0 z-20 hidden h-full items-center md:flex"
+                    onClick={isRTL ? prevSlide : nextSlide}
+                    className={`group absolute top-0 z-20 hidden h-full items-center md:flex ${
+                      isRTL ? "-left-11" : "-right-1"
+                    }`}
                   >
-                    <div className="z-10 flex h-10 w-10 -translate-x-7 items-center justify-center rounded-full bg-white/25 text-white transition duration-200 group-hover:visible group-hover:translate-x-7 group-hover:bg-transparent group-hover:text-gray-600 group-hover:opacity-100">
-                      <ChevronsRight size={25} />
-                    </div>
-                    <svg
-                      width="44"
-                      height="501"
-                      viewBox="0 0 44 501"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="duration-400 inline-block h-full w-auto origin-right scale-x-0 transition-transform group-hover:scale-x-[2]"
-                    >
-                      <path
-                        className="fill-white/10 transition duration-200 group-hover:fill-white"
-                        d="M42.9999 0.5C11 200 1 193.5 1 249C1 304.5 14.5 312.5 42.9999 500.5V0.5Z"
-                        fill="rgba(255,255,255,.4)"
-                      ></path>
-                    </svg>
+                    {!isRTL ? (
+                      <>
+                        <div className="z-10 flex h-10 w-10 -translate-x-7 items-center justify-center rounded-full bg-white/25 text-white transition duration-200 group-hover:translate-x-7 group-hover:bg-transparent group-hover:text-gray-600">
+                          <ChevronsRight size={25} />
+                        </div>
+                        <svg
+                          width="44"
+                          height="501"
+                          viewBox="0 0 44 501"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="duration-400 inline-block h-full w-auto origin-right scale-x-0 transition-transform group-hover:scale-x-[2]"
+                        >
+                          <path
+                            className="fill-white/10 transition duration-200 group-hover:fill-white"
+                            d="M42.9999 0.5C11 200 1 193.5 1 249C1 304.5 14.5 312.5 42.9999 500.5V0.5Z"
+                          />
+                        </svg>
+                      </>
+                    ) : (
+                      <>
+                        <svg
+                          width="44"
+                          height="502"
+                          viewBox="0 0 44 502"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="duration-400 inline-block h-full w-auto origin-left scale-x-0 transition-transform group-hover:scale-x-[2]"
+                        >
+                          <path
+                            className="fill-white/10 transition duration-200 group-hover:fill-white"
+                            d="M0.999973 501C32.9999 301.5 42.9999 308 42.9999 252.5C42.9999 197 29.4999 189 1.00002 0.999996L0.999973 501Z"
+                          />
+                        </svg>
+                        <div className="flex h-10 w-10 translate-x-20 items-center justify-center rounded-full bg-white/25 text-white transition duration-200 group-hover:translate-x-12 group-hover:bg-transparent group-hover:text-gray-600">
+                          <ChevronsLeft size={25} />
+                        </div>
+                      </>
+                    )}
                   </button>
                 </>
               )}
@@ -294,7 +360,7 @@ const LandingSlider = ({
 
               {/* Dots Navigation - only show if more than one slide */}
               {showNavigation && sliderSlides.length > 1 && (
-                <div className="absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 gap-2 space-x-2">
+                <div className="absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 gap-3 md:gap-4">
                   {sliderSlides.map((_, index) => (
                     <button
                       key={index}

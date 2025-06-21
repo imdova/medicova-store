@@ -10,6 +10,7 @@ import Image from "next/image";
 import CreditCardModal from "@/components/UI/Modals/CreditCardModal";
 import { calculateShippingFee, getExecuteDateFormatted } from "@/util";
 import { Address, DestinationKey } from "@/types";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type FormData = {
   shippingAddress: string;
@@ -28,6 +29,7 @@ export default function CheckoutPage() {
   const dispatch = useAppDispatch();
 
   const [isClient, setIsClient] = useState(false);
+  const { language } = useLanguage();
 
   useEffect(() => {
     setIsClient(true);
@@ -125,12 +127,18 @@ export default function CheckoutPage() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-7">
           <div className="col-span-1 md:col-span-4">
             {/* Shipping Address Section */}
-            <h2 className="mb-4 text-xl font-semibold">Shipping Address</h2>
+            <h2 className="mb-4 text-xl font-semibold">
+              {language === "ar" ? "عنوان الشحن" : "Shipping Address"}
+            </h2>
             <div className="mb-8 rounded-lg border bg-white p-6 shadow-sm">
               <div className="mb-4">
                 <h3 className="mb-2 text-lg font-medium">
-                  Address <span className="text-xs text-secondary">(Home)</span>
+                  {language === "ar" ? "العنوان" : "Address"}{" "}
+                  <span className="text-xs text-secondary">
+                    ({language === "ar" ? "المنزل" : "Home"})
+                  </span>
                 </h3>
+
                 <div
                   className="flex cursor-pointer items-center justify-between rounded-lg border p-4 hover:bg-gray-50"
                   onClick={() => setShowAddressModal(true)}
@@ -142,13 +150,15 @@ export default function CheckoutPage() {
                           <Image
                             className="w-10"
                             src="/icons/pin.gif"
-                            alt="map-pin"
+                            alt={language === "ar" ? "خريطة" : "map-pin"}
                             width={100}
                             height={100}
                           />
                         </div>
                         <div>
-                          <p className="font-medium">Deliver to</p>
+                          <p className="font-medium">
+                            {language === "ar" ? "التوصيل إلى" : "Deliver to"}
+                          </p>
                           <p className="text-xs text-gray-700 md:text-sm">
                             {selectedAddress.details}
                           </p>
@@ -158,7 +168,11 @@ export default function CheckoutPage() {
                         </div>
                       </div>
                     ) : (
-                      <p className="text-gray-500">Select delivery address</p>
+                      <p className="text-gray-500">
+                        {language === "ar"
+                          ? "اختر عنوان التسليم"
+                          : "Select delivery address"}
+                      </p>
                     )}
                   </div>
                   <ChevronRight className="text-gray-400" />
@@ -166,12 +180,16 @@ export default function CheckoutPage() {
               </div>
 
               <p className="cursor-pointer text-sm text-green-600 hover:underline">
-                Get fewer deliveries
+                {language === "ar"
+                  ? "الحصول على عدد أقل من عمليات التسليم"
+                  : "Get fewer deliveries"}
               </p>
             </div>
 
             {/* Your Order Section */}
-            <h2 className="mb-4 text-xl font-semibold">Your Order</h2>
+            <h2 className="mb-4 text-xl font-semibold">
+              {language === "ar" ? "طلبك" : "Your Order"}
+            </h2>
             <div className="">
               {productData.length > 0 ? (
                 <>
@@ -186,17 +204,21 @@ export default function CheckoutPage() {
                         className="mb-3 rounded-lg border bg-white p-6 shadow-sm"
                       >
                         <div className="mb-2 text-sm font-semibold md:text-lg">
-                          Shipment {index + 1} of {productData.length}{" "}
+                          {language === "ar"
+                            ? `الشحنة ${index + 1} من ${productData.length}`
+                            : `Shipment ${index + 1} of ${productData.length}`}{" "}
                           <span className="ml-2 text-sm text-secondary">
-                            ({item.quantity} item)
+                            ({item.quantity}{" "}
+                            {language === "ar" ? "عنصر" : "item"})
                           </span>
                         </div>
+
                         <div className="flex gap-3">
                           <div className="relative min-w-20">
                             <Image
                               className="h-20 w-20 rounded-md object-cover"
                               src={item.image}
-                              alt={item.title}
+                              alt={item.title[language] ?? "product image"}
                               width={200}
                               height={200}
                             />
@@ -204,30 +226,39 @@ export default function CheckoutPage() {
                               X{item.quantity}
                             </div>
                           </div>
+
                           <div className="space-y-1 text-xs font-semibold md:text-sm">
                             <p className="text-gray-500">
-                              {item.brand?.title || "Generic Brand"}
+                              {item.brand?.title[language] ||
+                                (language === "ar"
+                                  ? "ماركة عامة"
+                                  : "Generic Brand")}
                             </p>
                             <p className="text-xs text-gray-700 md:text-sm">
-                              {item.title}
+                              {item.title[language]}
                             </p>
                             <p className="text-gray-700">
-                              EGP {item.price.toFixed(2)}
+                              {language === "ar" ? "جنيه" : "EGP"}{" "}
+                              {item.price.toFixed(2)}
                             </p>
                             {shippingInfo && (
                               <p className="text-xs text-gray-500">
-                                Shipping: EGP {shippingInfo.fee.toFixed(2)} (
-                                {shippingInfo.shippingMethod})
+                                {language === "ar" ? "الشحن:" : "Shipping:"}{" "}
+                                {language === "ar" ? "جنيه" : "EGP"}{" "}
+                                {shippingInfo.fee.toFixed(2)} (
+                                {shippingInfo.shippingMethod[language]})
                               </p>
                             )}
                           </div>
                         </div>
+
                         <p className="mt-2 text-xs text-gray-500 md:text-sm">
-                          Get it by{" "}
+                          {language === "ar" ? "توصيل بحلول" : "Get it by"}{" "}
                           <span className="text-xs text-primary md:text-sm">
                             {getExecuteDateFormatted(
-                              item.deliveryTime ?? "",
+                              item.deliveryTime?.[language] ?? "",
                               "EEE, MMM d",
+                              language,
                             )}
                           </span>
                         </p>
@@ -236,15 +267,22 @@ export default function CheckoutPage() {
                   })}
                 </>
               ) : (
-                <p className="text-gray-500">Your cart is empty</p>
+                <p className="text-gray-500">
+                  {language === "ar"
+                    ? "سلة التسوق فارغة"
+                    : "Your cart is empty"}
+                </p>
               )}
             </div>
 
             {/* Payment Section */}
             <div className="mb-8 rounded-lg border bg-white p-6 shadow-sm">
-              <h2 className="mb-4 text-xl font-semibold">Payment</h2>
+              <h2 className="mb-4 text-xl font-semibold">
+                {language === "ar" ? "طريقة الدفع" : "Payment"}
+              </h2>
 
               <div className="space-y-4">
+                {/* Card Option */}
                 <div
                   className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 ${
                     paymentMethod === "card"
@@ -254,9 +292,15 @@ export default function CheckoutPage() {
                   onClick={() => handdleSelectMethod("card")}
                 >
                   <div>
-                    <p className="text-sm font-medium">Debit/Credit Card</p>
+                    <p className="text-sm font-medium">
+                      {language === "ar"
+                        ? "بطاقة ائتمان / خصم"
+                        : "Debit/Credit Card"}
+                    </p>
                     <p className="text-xs text-gray-600">
-                      Monthly installments plans available
+                      {language === "ar"
+                        ? "خطط التقسيط الشهرية متوفرة"
+                        : "Monthly installments plans available"}
                     </p>
                   </div>
                   {paymentMethod === "card" && (
@@ -264,6 +308,7 @@ export default function CheckoutPage() {
                   )}
                 </div>
 
+                {/* COD Option */}
                 <div
                   className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 ${
                     paymentMethod === "cod"
@@ -273,9 +318,15 @@ export default function CheckoutPage() {
                   onClick={() => handdleSelectMethod("cod")}
                 >
                   <div>
-                    <p className="text-sm font-medium">Cash On Delivery</p>
+                    <p className="text-sm font-medium">
+                      {language === "ar"
+                        ? "الدفع عند الاستلام"
+                        : "Cash On Delivery"}
+                    </p>
                     <p className="text-xs text-gray-600">
-                      Extra charges may be applied
+                      {language === "ar"
+                        ? "قد يتم فرض رسوم إضافية"
+                        : "Extra charges may be applied"}
                     </p>
                   </div>
                   {paymentMethod === "cod" && (
@@ -289,50 +340,69 @@ export default function CheckoutPage() {
           <div className="col-span-1 md:col-span-3">
             {/* Order Summary */}
             <div className="mb-8 rounded-lg border bg-white p-6 shadow-sm">
-              <h2 className="mb-4 text-xl font-semibold">Order Summary</h2>
+              <h2 className="mb-4 text-xl font-semibold">
+                {language === "ar" ? "ملخص الطلب" : "Order Summary"}
+              </h2>
 
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-xs text-gray-600 md:text-sm">
-                    Subtotal ({productData.length} item
-                    {productData.length !== 1 ? "s" : ""})
+                    {language === "ar"
+                      ? `المجموع الفرعي (${productData.length} عنصر${
+                          productData.length !== 1 ? "ات" : ""
+                        })`
+                      : `Subtotal (${productData.length} item${
+                          productData.length !== 1 ? "s" : ""
+                        })`}
                   </span>
                   <span className="text-xs text-gray-600 md:text-sm">
-                    EGP {subtotal.toFixed(2)}
+                    {subtotal.toFixed(2)} {language === "ar" ? "جنيه" : "EGP"}
                   </span>
                 </div>
+
                 <div className="flex justify-between">
                   <span className="text-xs text-gray-600 md:text-sm">
-                    Shipping Fee
+                    {language === "ar" ? "رسوم الشحن" : "Shipping Fee"}
                   </span>
                   {shippingFee === 0 ? (
                     <span className="text-xs text-primary md:text-sm">
-                      Free
+                      {language === "ar" ? "مجاني" : "Free"}
                     </span>
                   ) : (
                     <span className="text-xs text-gray-600 md:text-sm">
-                      EGP {shippingFee.toFixed(2)}
+                      {shippingFee.toFixed(2)}{" "}
+                      {language === "ar" ? "جنيه" : "EGP"}
                     </span>
                   )}
                 </div>
+
                 {paymentFee > 0 && (
                   <div className="flex justify-between">
                     <span className="text-xs text-gray-600 md:text-sm">
-                      Payment Fee (COD)
+                      {language === "ar"
+                        ? "رسوم الدفع (الدفع عند الاستلام)"
+                        : "Payment Fee (COD)"}
                     </span>
                     <span className="text-xs text-gray-600 md:text-sm">
-                      EGP {paymentFee.toFixed(2)}
+                      {paymentFee.toFixed(2)}{" "}
+                      {language === "ar" ? "جنيه" : "EGP"}
                     </span>
                   </div>
                 )}
+
                 <div className="flex justify-between border-t pt-3 font-medium">
-                  <span className="text-sm text-gray-600">Total Inc.: VAT</span>
                   <span className="text-sm text-gray-600">
-                    EGP {total.toFixed(2)}
+                    {language === "ar"
+                      ? "الإجمالي شامل الضريبة"
+                      : "Total Inc.: VAT"}
+                  </span>
+                  <span className="text-sm text-gray-600">
+                    {total.toFixed(2)} {language === "ar" ? "جنيه" : "EGP"}
                   </span>
                 </div>
               </div>
             </div>
+
             {/* Place Order Button */}
             <div>
               <button
@@ -340,19 +410,24 @@ export default function CheckoutPage() {
                 className="w-full rounded-lg bg-green-600 py-3 text-sm font-medium text-white hover:bg-green-700 disabled:bg-gray-300"
                 disabled={!selectedAddress || productData.length === 0}
               >
-                PLACE ORDER
+                {language === "ar" ? "تأكيد الطلب" : "PLACE ORDER"}
               </button>
 
               <p className="mt-2 text-xs text-gray-500">
-                Our checkout is safe and secure. Your personal and payment
-                information is securely transmitted via 128-bit encryption. We
-                do not store any payment card information on our systems.
+                {language === "ar"
+                  ? "الدفع آمن. يتم تشفير معلوماتك الشخصية ومعلومات الدفع عبر 128 بت. لا نقوم بتخزين بيانات بطاقتك."
+                  : "Our checkout is safe and secure. Your personal and payment information is securely transmitted via 128-bit encryption. We do not store any payment card information on our systems."}
               </p>
 
               <p className="mt-4 text-xs text-gray-500">
-                © 2025 Medicova Store. All Rights Reserved
+                © 2025 Medicova Store.{" "}
+                {language === "ar"
+                  ? "جميع الحقوق محفوظة"
+                  : "All Rights Reserved"}
                 <br />
-                Terms of Use | Terms of Sale | Privacy Policy
+                {language === "ar"
+                  ? "شروط الاستخدام | شروط البيع | سياسة الخصوصية"
+                  : "Terms of Use | Terms of Sale | Privacy Policy"}
               </p>
             </div>
           </div>
@@ -365,9 +440,11 @@ export default function CheckoutPage() {
         onClose={() => setShowAddressModal(false)}
         onAddressSelect={handleAddressSelect}
         currentAddress={selectedAddress || undefined}
+        locale={language}
       />
       {/* Credit Card Modal */}
       <CreditCardModal
+        locale={language}
         isOpen={showCreditCardModal}
         onClose={() => setShowCreditCardModal(false)}
         onSubmit={(data) => {

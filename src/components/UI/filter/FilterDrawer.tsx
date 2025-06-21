@@ -6,20 +6,41 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { Drawer } from "../Drawer";
 import DynamicCheckbox from "../DynamicCheckbox";
 import { FilterDrawerGroup } from "@/types";
+import { LanguageType } from "@/util/translations";
 
 export const Filters = ({
   isOpen,
   onClose,
   filtersData,
+  locale,
 }: {
   isOpen: boolean;
   onClose: () => void;
   filtersData: FilterDrawerGroup[];
+  locale: LanguageType;
 }) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [filters, setFilters] = useState<FilterDrawerGroup[]>(filtersData);
+  const labels = {
+    allFilters: {
+      en: "All filters",
+      ar: "كل الفلاتر",
+    },
+    clearAll: {
+      en: "Clear all",
+      ar: "مسح الكل",
+    },
+    cancel: {
+      en: "Cancel",
+      ar: "إلغاء",
+    },
+    apply: {
+      en: "Apply",
+      ar: "تطبيق",
+    },
+  };
 
   // Initialize filters from URL params
   useEffect(() => {
@@ -87,15 +108,15 @@ export const Filters = ({
       width="w-80"
       position="right"
     >
-      <div className="no-scrollbar h-full max-h-[790px] overflow-y-auto pb-14">
+      <div className="no-scrollbar h-full max-h-[600px] overflow-y-auto pb-14">
         <div className="h-full p-4">
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-xl font-bold">All filters</h2>
+            <h2 className="text-xl font-bold">{labels.allFilters[locale]}</h2>
             <button
               onClick={clearAllFilters}
               className="text-sm text-green-600 hover:text-green-800"
             >
-              Clear all
+              {labels.clearAll[locale]}
             </button>
           </div>
 
@@ -106,7 +127,7 @@ export const Filters = ({
                   className="flex w-full items-center justify-between text-left font-medium"
                   onClick={() => toggleGroup(group.id)}
                 >
-                  <span>{group.label}</span>
+                  <span>{group.label[locale]}</span>
                   {group.collapsed ? (
                     <ChevronDown size={18} />
                   ) : (
@@ -126,7 +147,7 @@ export const Filters = ({
                           className="flex items-center justify-between gap-2"
                         >
                           <DynamicCheckbox
-                            label={option.label}
+                            label={option.label[locale]}
                             checked={isSelected}
                             onChange={() => toggleOption(group.id, option.id)}
                           />
@@ -145,18 +166,18 @@ export const Filters = ({
           </div>
         </div>
         <div className="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-md">
-          <div className="flex space-x-4">
+          <div className="flex gap-4">
             <button
               onClick={onClose}
               className="flex-1 rounded-md border border-gray-300 py-2 hover:bg-gray-50"
             >
-              Cancel
+              {labels.cancel[locale]}
             </button>
             <button
               onClick={applyFilters}
               className="flex-1 rounded-md bg-green-600 py-2 text-white hover:bg-green-700"
             >
-              Apply
+              {labels.apply[locale]}
             </button>
           </div>
         </div>

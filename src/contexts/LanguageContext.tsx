@@ -49,7 +49,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({
     >
       <div
         dir={direction}
-        className={language === "ar" ? "font-arabic" : "font-sans"}
+        className={language === "ar" ? "font-cairo" : "font-sans"}
       >
         {children}
       </div>

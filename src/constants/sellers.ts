@@ -12,8 +12,16 @@ export const Sellers: Seller[] = [
     rating: 1,
     country: "Egypt",
     city: "Cairo",
-    status: "active",
+    status: {
+      en: "Active",
+      ar: "نشط",
+    },
     isActive: true,
+    returnPolicy: {
+      en: "Returns accepted within 14 days with original receipt.",
+      ar: "يُقبل الإرجاع خلال 14 يومًا مع الإيصال الأصلي.",
+    },
+    itemShown: 0,
   },
   {
     id: "2",
@@ -26,8 +34,16 @@ export const Sellers: Seller[] = [
     rating: 2,
     country: "Saudi Arabia",
     city: "Riyadh",
-    status: "active",
+    status: {
+      en: "Active",
+      ar: "نشط",
+    },
     isActive: true,
+    returnPolicy: {
+      en: "Returns accepted within 14 days with original receipt.",
+      ar: "يُقبل الإرجاع خلال 14 يومًا مع الإيصال الأصلي.",
+    },
+    itemShown: 0,
   },
   {
     id: "3",
@@ -40,8 +56,16 @@ export const Sellers: Seller[] = [
     rating: 3,
     country: "UAE",
     city: "Dubai",
-    status: "active",
+    status: {
+      en: "Active",
+      ar: "نشط",
+    },
     isActive: true,
+    returnPolicy: {
+      en: "Returns accepted within 14 days with original receipt.",
+      ar: "يُقبل الإرجاع خلال 14 يومًا مع الإيصال الأصلي.",
+    },
+    itemShown: 0,
   },
   {
     id: "4",
@@ -54,8 +78,16 @@ export const Sellers: Seller[] = [
     rating: 5,
     country: "USA",
     city: "New York",
-    status: "active",
+    status: {
+      en: "Active",
+      ar: "نشط",
+    },
     isActive: true,
+    returnPolicy: {
+      en: "Returns accepted within 14 days with original receipt.",
+      ar: "يُقبل الإرجاع خلال 14 يومًا مع الإيصال الأصلي.",
+    },
+    itemShown: 0,
   },
   {
     id: "5",
@@ -68,8 +100,16 @@ export const Sellers: Seller[] = [
     rating: 4,
     country: "France",
     city: "Paris",
-    status: "active",
+    status: {
+      en: "Active",
+      ar: "نشط",
+    },
     isActive: false,
+    returnPolicy: {
+      en: "Returns accepted within 14 days with original receipt.",
+      ar: "يُقبل الإرجاع خلال 14 يومًا مع الإيصال الأصلي.",
+    },
+    itemShown: 0,
   },
   {
     id: "6",
@@ -82,7 +122,15 @@ export const Sellers: Seller[] = [
     rating: 3,
     country: "Jordan",
     city: "Amman",
-    status: "active",
+    status: {
+      en: "Active",
+      ar: "نشط",
+    },
     isActive: false,
+    returnPolicy: {
+      en: "Returns accepted within 14 days with original receipt.",
+      ar: "يُقبل الإرجاع خلال 14 يومًا مع الإيصال الأصلي.",
+    },
+    itemShown: 0,
   },
 ];

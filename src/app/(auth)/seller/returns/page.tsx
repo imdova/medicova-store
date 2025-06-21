@@ -4,16 +4,18 @@ import { Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { LocalizedTitle } from "@/types/language";
 
 type ReturnItem = {
   id: string;
-  name: string;
+  name: LocalizedTitle;
   image: string;
   price: number;
   quantity: number;
-  reason: string;
-  status: "Requested" | "Approved" | "In Transit" | "Delivered" | "Rejected";
-  returnOption: string;
+  reason: LocalizedTitle;
+  status: LocalizedStatus;
+  returnOption: LocalizedTitle;
   refundAmount?: number;
   estimatedRefundDate?: string;
 };
@@ -23,50 +25,155 @@ type ReturnOrder = {
   orderId: string;
   date: string;
   items: ReturnItem[];
-  status: "Requested" | "Approved" | "In Transit" | "Delivered" | "Rejected";
+  status: LocalizedStatus;
   totalRefund: number;
   trackingNumber?: string;
   carrier?: string;
 };
 
-const ReturnsPage = () => {
-  const [activeTab, setActiveTab] = useState<
-    "All" | "Requested" | "Delivered" | "In Transit" | "Approved" | "Rejected"
-  >("All");
+type LocalizedStatus = {
+  en: "Requested" | "Approved" | "In Transit" | "Delivered" | "Rejected";
+  ar: "تم الطلب" | "تمت الموافقة" | "قيد التوصيل" | "تم التوصيل" | "مرفوض";
+};
 
+const translations = {
+  title: {
+    en: "My Returns",
+    ar: "مرتجعاتي",
+  },
+  createReturn: {
+    en: "Create a new return",
+    ar: "إنشاء طلب إرجاع جديد",
+  },
+  tab: {
+    All: { en: "All", ar: "الكل" },
+    Requested: { en: "Requested", ar: "تم الطلب" },
+    Approved: { en: "Approved", ar: "تمت الموافقة" },
+    "In Transit": { en: "In Transit", ar: "قيد التوصيل" },
+    Delivered: { en: "Delivered", ar: "تم التوصيل" },
+    Rejected: { en: "Rejected", ar: "مرفوض" },
+  },
+  return: {
+    en: "Returns",
+    ar: "المرتجعات",
+  },
+  returnId: {
+    en: "Return #",
+    ar: "المرتجع رقم",
+  },
+  forOrder: {
+    en: "For Order #",
+    ar: "للطلب رقم",
+  },
+  requestedOn: {
+    en: "Requested on",
+    ar: "تم الطلب في",
+  },
+  qty: {
+    en: "Qty",
+    ar: "الكمية",
+  },
+  reason: {
+    en: "Reason",
+    ar: "السبب",
+  },
+  returnOption: {
+    en: "Return Option",
+    ar: "خيار الإرجاع",
+  },
+  refundAmount: {
+    en: "Refund Amount",
+    ar: "مبلغ الاسترداد",
+  },
+  estimatedRefundDate: {
+    en: "Estimated Refund Date",
+    ar: "تاريخ الاسترداد المتوقع",
+  },
+  trackingNumber: {
+    en: "Tracking Number",
+    ar: "رقم التتبع",
+  },
+  totalRefund: {
+    en: "Total Refund",
+    ar: "إجمالي الاسترداد",
+  },
+  noReturnsTitle: {
+    en: "No returns found",
+    ar: "لم يتم العثور على مرتجعات",
+  },
+  noReturnsMessage: {
+    en: "You have not requested any",
+    ar: "لم تقم بطلب أي",
+  },
+  createNow: {
+    en: "CREATE A NEW RETURN",
+    ar: "إنشاء طلب إرجاع",
+  },
+};
+
+const ReturnsPage = () => {
+  const [activeTab, setActiveTab] = useState<ReturnOrder["status"] | "All">(
+    "All",
+  );
+  const { language: locale } = useLanguage();
   const returns: ReturnOrder[] = [
     {
       id: "RET-54321",
       orderId: "ORD-12345",
       date: "2025-05-18",
-      status: "Delivered",
+      status: {
+        en: "Delivered",
+        ar: "تم التوصيل",
+      },
       totalRefund: 189.98,
       trackingNumber: "TRK789012345",
       carrier: "Aramex",
       items: [
         {
           id: "ITEM-001",
-          name: "Wireless Bluetooth Earbuds",
-          image:
-            "https://f.nooncdn.com/p/pzsku/Z5B89BB5A6821441786C5Z/45/_/1736409693/119ae4ae-1362-4d04-845a-9e8d497e1f03.jpg?width=800",
+          name: {
+            en: "Wireless Bluetooth Earbuds",
+            ar: "سماعات بلوتوث لاسلكية",
+          },
+          image: "https://f.nooncdn.com/...",
           price: 59.99,
           quantity: 1,
-          reason: "Changed my mind",
-          returnOption: "Refund to original payment",
-          status: "Delivered",
+          reason: {
+            en: "Changed my mind",
+            ar: "غيرت رأيي",
+          },
+          returnOption: {
+            en: "Refund to original payment",
+            ar: "استرداد على وسيلة الدفع الأصلية",
+          },
+          status: {
+            en: "Delivered",
+            ar: "تم التوصيل",
+          },
           refundAmount: 59.99,
           estimatedRefundDate: "2025-06-05",
         },
         {
           id: "ITEM-002",
-          name: "Smart Watch Series 5",
-          image:
-            "https://f.nooncdn.com/p/pzsku/Z5B89BB5A6821441786C5Z/45/_/1736409693/119ae4ae-1362-4d04-845a-9e8d497e1f03.jpg?width=800",
+          name: {
+            en: "Smart Watch Series 5",
+            ar: "ساعة ذكية الإصدار 5",
+          },
+          image: "https://f.nooncdn.com/...",
           price: 129.99,
           quantity: 1,
-          reason: "Product not as described",
-          returnOption: "noon Credit",
-          status: "Delivered",
+          reason: {
+            en: "Product not as described",
+            ar: "المنتج ليس كما هو موصوف",
+          },
+          returnOption: {
+            en: "noon Credit",
+            ar: "رصيد نون",
+          },
+          status: {
+            en: "Delivered",
+            ar: "تم التوصيل",
+          },
           refundAmount: 129.99,
           estimatedRefundDate: "2025-06-05",
         },
@@ -76,19 +183,33 @@ const ReturnsPage = () => {
       id: "RET-98765",
       orderId: "ORD-67890",
       date: "2025-05-25",
-      status: "Requested",
+      status: {
+        en: "Requested",
+        ar: "تم الطلب",
+      },
       totalRefund: 39.98,
       items: [
         {
           id: "ITEM-003",
-          name: "USB-C Fast Charger",
-          image:
-            "https://f.nooncdn.com/p/pzsku/Z5B89BB5A6821441786C5Z/45/_/1736409693/119ae4ae-1362-4d04-845a-9e8d497e1f03.jpg?width=800",
+          name: {
+            en: "USB-C Fast Charger",
+            ar: "شاحن سريع USB-C",
+          },
+          image: "https://f.nooncdn.com/...",
           price: 19.99,
           quantity: 2,
-          reason: "Product damaged",
-          returnOption: "Replacement",
-          status: "Requested",
+          reason: {
+            en: "Product damaged",
+            ar: "المنتج تالف",
+          },
+          returnOption: {
+            en: "Replacement",
+            ar: "استبدال",
+          },
+          status: {
+            en: "Requested",
+            ar: "تم الطلب",
+          },
         },
       ],
     },
@@ -96,21 +217,35 @@ const ReturnsPage = () => {
       id: "RET-13579",
       orderId: "ORD-24680",
       date: "2025-05-30",
-      status: "In Transit",
+      status: {
+        en: "In Transit",
+        ar: "قيد التوصيل",
+      },
       totalRefund: 75.0,
       trackingNumber: "TRK246813579",
       carrier: "DHL",
       items: [
         {
           id: "ITEM-004",
-          name: "Portable Bluetooth Speaker",
-          image:
-            "https://f.nooncdn.com/p/pzsku/Z5B89BB5A6821441786C5Z/45/_/1736409693/119ae4ae-1362-4d04-845a-9e8d497e1f03.jpg?width=800",
+          name: {
+            en: "Portable Bluetooth Speaker",
+            ar: "مكبر صوت بلوتوث محمول",
+          },
+          image: "https://f.nooncdn.com/...",
           price: 75.0,
           quantity: 1,
-          reason: "Wrong item received",
-          returnOption: "Refund to original payment",
-          status: "In Transit",
+          reason: {
+            en: "Wrong item received",
+            ar: "تم استلام منتج خاطئ",
+          },
+          returnOption: {
+            en: "Refund to original payment",
+            ar: "استرداد على وسيلة الدفع الأصلية",
+          },
+          status: {
+            en: "In Transit",
+            ar: "قيد التوصيل",
+          },
         },
       ],
     },
@@ -141,35 +276,31 @@ const ReturnsPage = () => {
   return (
     <div>
       <div className="mb-6 flex items-center justify-between gap-2">
-        <h1 className="text-2xl font-bold text-gray-700">My Returns</h1>
+        <h1 className="text-2xl font-bold text-gray-700">
+          {translations.title[locale]}
+        </h1>
         <Link
           href="returns/new"
           className="flex items-center gap-1 rounded-md bg-green-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-green-700 md:px-6 md:text-sm"
         >
           <Plus className="h-4 w-4" />
-          Create a new return
+          {translations.createReturn[locale]}
         </Link>
       </div>
 
       <div className="mb-6 flex flex-wrap gap-2">
-        {[
-          "All",
-          "Requested",
-          "Approved",
-          "In Transit",
-          "Delivered",
-          "Rejected",
-        ].map((tab) => (
+        {Object.keys(translations.tab).map((tab) => (
           <button
             key={tab}
-            onClick={() => setActiveTab(tab as typeof activeTab)}
+            onClick={() => setActiveTab(tab as ReturnOrder["status"] | "All")}
             className={`rounded-md px-4 py-2 text-sm transition ${
               activeTab === tab
                 ? "bg-green-600 text-white hover:bg-green-700"
                 : "border bg-white text-gray-700 hover:bg-gray-50"
             }`}
           >
-            {tab} Returns
+            {translations.tab[tab as keyof typeof translations.tab][locale]}{" "}
+            {translations.return[locale]}
           </button>
         ))}
       </div>
@@ -184,21 +315,23 @@ const ReturnsPage = () => {
               <div className="border-b p-4">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                   <div className="mb-2 sm:mb-0">
-                    <h3 className="font-medium">Return #{returnOrder.id}</h3>
+                    <h3 className="font-medium">
+                      {translations.returnId[locale]} {returnOrder.id}
+                    </h3>
                     <p className="text-sm text-gray-500">
-                      For Order #{returnOrder.orderId}
+                      {translations.forOrder[locale]} {returnOrder.orderId}
                     </p>
                   </div>
                   <div className="flex flex-col sm:items-end">
                     <span
                       className={`w-fit rounded-full px-2 py-1 text-xs font-medium ${getStatusColor(
-                        returnOrder.status,
+                        returnOrder.status.en,
                       )}`}
                     >
-                      {returnOrder.status}
+                      {returnOrder.status[locale]}
                     </span>
                     <p className="mt-1 text-sm text-gray-500">
-                      Requested on {returnOrder.date}
+                      {translations.requestedOn[locale]} {returnOrder.date}
                     </p>
                   </div>
                 </div>
@@ -214,25 +347,28 @@ const ReturnsPage = () => {
                       width={300}
                       height={300}
                       src={item.image}
-                      alt={item.name}
+                      alt={item.name[locale] ?? "product image"}
                       className="mr-4 h-20 w-20 rounded object-cover"
                     />
                     <div className="flex-1">
                       <div className="flex flex-col sm:flex-row sm:justify-between">
                         <div>
-                          <p className="font-medium">{item.name}</p>
+                          <p className="font-medium">{item.name[locale]}</p>
                           <p className="text-sm text-gray-600">
-                            Qty: {item.quantity}
+                            {translations.qty[locale]}: {item.quantity}
                           </p>
-                          <p className="text-sm">EGP {item.price.toFixed(2)}</p>
+                          <p className="text-sm">
+                            {item.price.toFixed(2)}{" "}
+                            {locale === "ar" ? "جنيه" : "EGP"}
+                          </p>
                         </div>
                         <div className="mt-2 sm:mt-0 sm:text-right">
                           <span
                             className={`w-fit rounded-full px-2 py-1 text-xs font-medium ${getStatusColor(
-                              item.status,
+                              item.status.en,
                             )}`}
                           >
-                            {item.status}
+                            {item.status[locale]}
                           </span>
                         </div>
                       </div>
@@ -240,30 +376,31 @@ const ReturnsPage = () => {
                       <div className="mt-2 grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div>
                           <p className="text-sm font-medium text-gray-700">
-                            Reason
+                            {translations.reason[locale]}
                           </p>
-                          <p className="text-sm">{item.reason}</p>
+                          <p className="text-sm">{item.reason[locale]}</p>
                         </div>
                         <div>
                           <p className="text-sm font-medium text-gray-700">
-                            Return Option
+                            {translations.returnOption[locale]}
                           </p>
-                          <p className="text-sm">{item.returnOption}</p>
+                          <p className="text-sm">{item.returnOption[locale]}</p>
                         </div>
                         {item.refundAmount && (
                           <div>
                             <p className="text-sm font-medium text-gray-700">
-                              Refund Amount
+                              {translations.refundAmount[locale]}
                             </p>
                             <p className="text-sm">
-                              EGP {item.refundAmount.toFixed(2)}
+                              {item.refundAmount.toFixed(2)}{" "}
+                              {locale === "ar" ? "جنيه" : "EGP"}
                             </p>
                           </div>
                         )}
                         {item.estimatedRefundDate && (
                           <div>
                             <p className="text-sm font-medium text-gray-700">
-                              Estimated Refund Date
+                              {translations.estimatedRefundDate[locale]}
                             </p>
                             <p className="text-sm">
                               {item.estimatedRefundDate}
@@ -282,7 +419,7 @@ const ReturnsPage = () => {
                     {returnOrder.trackingNumber && (
                       <div className="mb-2 sm:mb-0">
                         <p className="text-sm font-medium text-gray-700">
-                          Tracking Number
+                          {translations.trackingNumber[locale]}
                         </p>
                         <p className="text-sm">
                           {returnOrder.trackingNumber} ({returnOrder.carrier})
@@ -292,10 +429,11 @@ const ReturnsPage = () => {
                   </div>
                   <div className="mt-2 sm:mt-0">
                     <p className="text-sm font-medium text-gray-700">
-                      Total Refund
+                      {translations.totalRefund[locale]}
                     </p>
                     <p className="text-lg font-bold">
-                      EGP {returnOrder.totalRefund.toFixed(2)}
+                      {returnOrder.totalRefund.toFixed(2)}{" "}
+                      {locale === "ar" ? "جنيه" : "EGP"}
                     </p>
                   </div>
                 </div>
@@ -305,15 +443,21 @@ const ReturnsPage = () => {
         </div>
       ) : (
         <div className="rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm">
-          <h2 className="mb-2 text-xl font-semibold">No returns found</h2>
+          <h2 className="mb-2 text-xl font-semibold">
+            {translations.noReturnsTitle[locale]}
+          </h2>
           <p className="mb-4 text-gray-600">
-            You have not requested any {activeTab.toLowerCase()} returns
+            {translations.noReturnsMessage[locale]}{" "}
+            {translations.tab[activeTab as keyof typeof translations.tab][
+              locale
+            ].toLowerCase()}{" "}
+            {translations.return[locale].toLowerCase()}
           </p>
           <Link
             href="returns/new"
             className="rounded-md bg-green-600 px-6 py-2 text-white transition hover:bg-green-700"
           >
-            CREATE A NEW RETURN
+            {translations.createNow[locale]}
           </Link>
         </div>
       )}

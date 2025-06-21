@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Modal from "@/components/UI/Modals/DynamicModal";
 import AuthLogin from "@/components/UI/Modals/loginAuth";
 import { NavLink } from "@/types";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -19,6 +20,7 @@ const Navbar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { products } = useAppSelector((state) => state.cart);
   const [productsCount, setProductsCount] = useState(0);
+  const { language } = useLanguage();
 
   useEffect(() => {
     setProductsCount(products.length);
@@ -40,11 +42,8 @@ const Navbar = () => {
 
   const currentLinks = getNavLinks();
 
-  const handleClick = (
-    e: React.MouseEvent<HTMLButtonElement>,
-    link: NavLink,
-  ) => {
-    if (link.name === "Account") {
+  const handleClick = (link: NavLink) => {
+    if (link.name["en"] === "Account") {
       if (session.data?.user) {
         router.push(link.path);
       } else {
@@ -65,11 +64,11 @@ const Navbar = () => {
           const CurrentPage = isCurrentPage(pathname, link.path);
           const IconComponent = link.icon;
 
-          if (link.name === "Account") {
+          if (link.name["en"] === "Account") {
             return (
               <button
-                key={link.name}
-                onClick={(e) => handleClick(e, link)}
+                key={link.name[language]}
+                onClick={() => handleClick(link)}
                 className={`flex h-full w-full flex-col items-center justify-center ${
                   CurrentPage ? "text-primary" : "text-gray-600"
                 }`}
@@ -81,14 +80,16 @@ const Navbar = () => {
                 >
                   {IconComponent && <IconComponent size={18} />}
                 </div>
-                <span className="text-xs font-semibold">{link.name}</span>
+                <span className="text-xs font-semibold">
+                  {link.name[language]}
+                </span>
               </button>
             );
           }
 
           return (
             <Link
-              key={link.name}
+              key={link.name[language]}
               href={link.path}
               className={`flex h-full w-full flex-col items-center justify-center ${
                 CurrentPage ? "text-primary" : "text-gray-600"
@@ -100,7 +101,7 @@ const Navbar = () => {
                 }`}
               >
                 {IconComponent && <IconComponent size={18} />}
-                {link.name === "Cart" && (
+                {link.name["en"] === "Cart" && (
                   <AnimatePresence>
                     {productsCount > 0 && (
                       <motion.span
@@ -121,7 +122,9 @@ const Navbar = () => {
                   </AnimatePresence>
                 )}
               </div>
-              <span className="text-xs font-semibold">{link.name}</span>
+              <span className="text-xs font-semibold">
+                {link.name[language]}
+              </span>
             </Link>
           );
         })}
@@ -134,7 +137,7 @@ const Navbar = () => {
           onClose={() => setIsModalOpen(false)}
           size="lg"
         >
-          <AuthLogin redirect={"/account"} />
+          <AuthLogin locale={language} redirect={"/account"} />
         </Modal>
       </div>
     </nav>

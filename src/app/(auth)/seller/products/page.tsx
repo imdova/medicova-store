@@ -9,133 +9,141 @@ import { useState } from "react";
 import { products } from "@/constants/products";
 import { Product } from "@/types/product";
 import { filtersData } from "@/constants/drawerFilter";
-
-const columns = [
-  {
-    key: "id",
-    header: "Product ID",
-    sortable: true,
-  },
-  {
-    key: "title",
-    header: "Title",
-    sortable: true,
-    render: (item: Product) => (
-      <Link className="hover:underline" href={`/product-details/${item.id}`}>
-        {item.title}
-      </Link>
-    ),
-  },
-  {
-    key: "price",
-    header: "Price",
-    render: (item: Product) => (
-      <div className="flex items-center">
-        ${item.price.toFixed(2)}
-        {item.sale && (
-          <span className="ml-2 rounded bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-800">
-            Offer
-          </span>
-        )}
-      </div>
-    ),
-    sortable: true,
-    align: "left",
-  },
-  {
-    key: "stock",
-    header: "Stock",
-    render: (item: Product) => (
-      <span
-        className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-          (item.stock ?? 0) > 0
-            ? "bg-green-100 text-green-800"
-            : "bg-red-100 text-red-800"
-        }`}
-      >
-        {(item.stock ?? 0) > 0 ? item.stock : "Out of stock"}
-      </span>
-    ),
-    sortable: true,
-    align: "center",
-  },
-  {
-    key: "status",
-    header: "Status",
-    render: (item: Product) => {
-      const statusColor =
-        item.status === "active"
-          ? "bg-green-100 text-green-800"
-          : "bg-gray-100 text-gray-600";
-
-      return (
-        <span
-          className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${statusColor}`}
-        >
-          {item.status?.replace("_", " ")}
-        </span>
-      );
-    },
-    sortable: true,
-    align: "center",
-  },
-  {
-    key: "category",
-    header: "Category",
-    sortable: true,
-    render: (item: Product) => <span>{item.category?.title}</span>,
-  },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const statusOptions = [
-  { id: "all", name: "All Statuses" },
-  { id: "active", name: "Active" },
-  { id: "out_of_stock", name: "Out of Stock" },
+  { id: "all", name: { en: "All Statuses", ar: "كل الحالات" } },
+  { id: "active", name: { en: "Active", ar: "نشط" } },
+  { id: "out_of_stock", name: { en: "Out of Stock", ar: "غير متوفر" } },
 ];
 
 const stockOptions = [
-  { id: "all", name: "All Stock" },
-  { id: "in_stock", name: "In Stock" },
-  { id: "out_of_stock", name: "Out of Stock" },
+  { id: "all", name: { en: "All Stock", ar: "كل المخزون" } },
+  { id: "in_stock", name: { en: "In Stock", ar: "متوفر في المخزون" } },
+  { id: "out_of_stock", name: { en: "Out of Stock", ar: "غير متوفر" } },
 ];
 
 const offerOptions = [
-  { id: "all", name: "All Products" },
-  { id: "yes", name: "On Offer" },
-  { id: "no", name: "Not on Offer" },
+  { id: "all", name: { en: "All Products", ar: "كل المنتجات" } },
+  { id: "yes", name: { en: "On Offer", ar: "ضمن العروض" } },
+  { id: "no", name: { en: "Not on Offer", ar: "ليست ضمن العروض" } },
 ];
 
 export default function ProductsPage() {
   const searchParams = useSearchParams();
+  const { language } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  // Get current filter values from URL
+  const columns = (language: "en" | "ar") => [
+    {
+      key: "id",
+      header: { en: "Product ID", ar: "معرّف المنتج" }[language],
+      sortable: true,
+    },
+    {
+      key: "title",
+      header: { en: "Title", ar: "العنوان" }[language],
+      sortable: true,
+      render: (item: Product) => (
+        <Link className="hover:underline" href={`/product-details/${item.id}`}>
+          {item.title[language]}
+        </Link>
+      ),
+    },
+    {
+      key: "price",
+      header: { en: "Price", ar: "السعر" }[language],
+      sortable: true,
+      render: (item: Product) => (
+        <div className="flex items-center">
+          ${item.price.toFixed(2)}
+          {item.sale && (
+            <span className="ml-2 rounded bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-800">
+              {language === "ar" ? "عرض" : "Offer"}
+            </span>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "stock",
+      header: { en: "Stock", ar: "المخزون" }[language],
+      sortable: true,
+      render: (item: Product) => {
+        const inStock = (item.stock ?? 0) > 0;
+        return (
+          <span
+            className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+              inStock
+                ? "bg-green-100 text-green-800"
+                : "bg-red-100 text-red-800"
+            }`}
+          >
+            {inStock
+              ? item.stock
+              : language === "ar"
+                ? "غير متوفر"
+                : "Out of stock"}
+          </span>
+        );
+      },
+    },
+    {
+      key: "status",
+      header: { en: "Status", ar: "الحالة" }[language],
+      sortable: true,
+      render: (item: Product) => {
+        const status = item.status?.[language];
+        const isActive = status === "Active" || status === "نشط";
+        const statusColor = isActive
+          ? "bg-green-100 text-green-800"
+          : "bg-gray-100 text-gray-600";
+
+        return (
+          <span
+            className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${statusColor}`}
+          >
+            {status}
+          </span>
+        );
+      },
+    },
+    {
+      key: "category",
+      header: { en: "Category", ar: "الفئة" }[language],
+      sortable: true,
+      render: (item: Product) => <span>{item.category?.title[language]}</span>,
+    },
+  ];
+
   const statusFilter = searchParams.get("status") || "all";
   const stockFilter = searchParams.get("stock") || "all";
   const offerFilter = searchParams.get("offer") || "all";
   const searchQuery = searchParams.get("search")?.toLowerCase() || "";
 
-  // Filter products based on URL params
   const filteredProducts = products.filter((product) => {
-    if (statusFilter !== "all" && product.status !== statusFilter) return false;
+    if (statusFilter !== "all" && product.status?.en !== statusFilter)
+      return false;
     if (stockFilter === "in_stock" && (product.stock ?? 0) <= 0) return false;
     if (stockFilter === "out_of_stock" && (product.stock ?? 0) > 0)
       return false;
     if (offerFilter === "yes" && !product.sale) return false;
     if (offerFilter === "no" && product.sale) return false;
-    if (searchQuery && !product.title.toLowerCase().includes(searchQuery))
+    if (
+      searchQuery &&
+      !product.title[language].toLowerCase().includes(searchQuery)
+    )
       return false;
 
     return true;
   });
 
   const handleEditProduct = (slug: string) => {
-    router.push(`products/edit-product/${slug}`);
+    router.push(`/seller/products/edit-product/${slug}`);
   };
 
-  // Update URL params when filters change
   const handleFilterChange = (filterType: string, value: string) => {
     const params = new URLSearchParams(searchParams);
     params.set(filterType, value);
@@ -145,14 +153,20 @@ export default function ProductsPage() {
   return (
     <div className="relative space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Your Products</h2>
+        <h2 className="text-2xl font-bold">
+          {language === "ar" ? "منتجاتك" : "Your Products"}
+        </h2>
         <button className="rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700">
-          <Link href="/seller/products/new" className="flex items-center">
-            <Plus className="mr-2 h-4 w-4" />
-            Add Product
+          <Link
+            href="/seller/create-product"
+            className="flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            {language === "ar" ? "إضافة منتج" : "Add Product"}
           </Link>
         </button>
       </div>
+
       <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         {/* Filter Controls */}
         <div className="flex flex-col items-end gap-4 pb-4 xl:flex-row">
@@ -164,7 +178,9 @@ export default function ProductsPage() {
                 onChange={(e) =>
                   handleFilterChange("search", e.target.value.trim())
                 }
-                placeholder="Search for product"
+                placeholder={
+                  language === "ar" ? "ابحث عن منتج" : "Search for product"
+                }
                 className="w-full rounded-md border border-gray-300 px-3 py-1.5 pl-10 outline-none placeholder:text-sm"
               />
               <Search
@@ -172,6 +188,7 @@ export default function ProductsPage() {
                 size={15}
               />
             </div>
+
             <div className="block lg:hidden">
               <button
                 onClick={() => setFiltersOpen(true)}
@@ -184,15 +201,16 @@ export default function ProductsPage() {
                 filtersData={filtersData}
                 isOpen={filtersOpen}
                 onClose={() => setFiltersOpen(false)}
+                locale={language}
               />
             </div>
           </div>
+
           <div className="flex w-full flex-1 items-end gap-2">
             <div className="grid w-full grid-cols-1 gap-2 lg:grid-cols-3">
-              {/* Status Filter */}
               <div className="w-full min-w-[120px]">
                 <label className="mb-1 block text-xs font-medium text-gray-700">
-                  Status
+                  {language === "ar" ? "الحالة" : "Status"}
                 </label>
                 <Dropdown
                   options={statusOptions}
@@ -200,13 +218,12 @@ export default function ProductsPage() {
                   onSelect={(value) =>
                     handleFilterChange("status", value.toString())
                   }
+                  locale={language}
                 />
               </div>
-
-              {/* Stock Filter */}
               <div className="w-full min-w-[120px]">
                 <label className="mb-1 block text-xs font-medium text-gray-700">
-                  Stock
+                  {language === "ar" ? "المخزون" : "Stock"}
                 </label>
                 <Dropdown
                   options={stockOptions}
@@ -214,13 +231,12 @@ export default function ProductsPage() {
                   onSelect={(value) =>
                     handleFilterChange("stock", value.toString())
                   }
+                  locale={language}
                 />
               </div>
-
-              {/* Offer Filter */}
               <div className="w-full min-w-[120px]">
                 <label className="mb-1 block text-xs font-medium text-gray-700">
-                  On Offer
+                  {language === "ar" ? "ضمن العروض" : "On Offer"}
                 </label>
                 <Dropdown
                   options={offerOptions}
@@ -228,6 +244,7 @@ export default function ProductsPage() {
                   onSelect={(value) =>
                     handleFilterChange("offer", value.toString())
                   }
+                  locale={language}
                 />
               </div>
             </div>
@@ -243,38 +260,37 @@ export default function ProductsPage() {
                 filtersData={filtersData}
                 isOpen={filtersOpen}
                 onClose={() => setFiltersOpen(false)}
+                locale={language}
               />
             </div>
           </div>
         </div>
-        <div>
-          <DynamicTable
-            data={filteredProducts}
-            columns={columns}
-            pagination={true}
-            itemsPerPage={5}
-            selectable={true}
-            defaultSort={{ key: "name", direction: "asc" }}
-            actions={[
-              {
-                label: "Edit",
-                onClick: (product) => handleEditProduct(product.id),
-                className:
-                  "bg-white text-gray-700 hover:text-blue-700 hover:bg-blue-50 ",
-                icon: <PencilIcon className="h-4 w-4" />,
-              },
-              {
-                label: "Delete",
-                onClick: () => console.log("Deleted"),
-                className:
-                  "bg-white text-gray-700 hover:text-red-700 hover:bg-red-50 ",
-                icon: <TrashIcon className="h-4 w-4" />,
-              },
-            ]}
-            actionsColumnHeader="Actions"
-            actionsColumnWidth="40px"
-          />
-        </div>
+
+        <DynamicTable
+          data={filteredProducts}
+          columns={columns(language)}
+          pagination={true}
+          itemsPerPage={5}
+          selectable={true}
+          defaultSort={{ key: "name", direction: "asc" }}
+          locale={language}
+          actions={[
+            {
+              label: { en: "Edit", ar: "تعديل" }[language],
+              onClick: (product: Product) => handleEditProduct(product.id),
+              className:
+                "bg-white text-gray-700 hover:text-blue-700 hover:bg-blue-50",
+              icon: <PencilIcon className="h-4 w-4" />,
+            },
+            {
+              label: { en: "Delete", ar: "حذف" }[language],
+              onClick: (product: Product) => console.log("Deleted", product.id),
+              className:
+                "bg-white text-gray-700 hover:text-red-700 hover:bg-red-50",
+              icon: <TrashIcon className="h-4 w-4" />,
+            },
+          ]}
+        />
       </div>
     </div>
   );

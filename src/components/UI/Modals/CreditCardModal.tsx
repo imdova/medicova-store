@@ -1,7 +1,9 @@
 "use client";
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Modal from "./DynamicModal";
+import { LanguageType, t } from "@/util/translations";
 
 type CreditCardFormData = {
   cardNumber: string;
@@ -15,12 +17,14 @@ type CreditCardModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: CreditCardFormData) => void;
+  locale: LanguageType;
 };
 
 export default function CreditCardModal({
   isOpen,
   onClose,
   onSubmit,
+  locale,
 }: CreditCardModalProps) {
   const {
     register,
@@ -45,10 +49,7 @@ export default function CreditCardModal({
       parts.push(match.substring(i, i + 4));
     }
 
-    if (parts.length) {
-      return parts.join(" ");
-    }
-    return value;
+    return parts.length ? parts.join(" ") : value;
   };
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,19 +80,21 @@ export default function CreditCardModal({
     }
   };
 
+  const currentYear = new Date().getFullYear() % 100;
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="md">
       <div className="space-y-6">
         <div className="text-center">
           <h3 className="text-lg font-medium leading-6 text-gray-900">
-            Payment method
+            {t("paymentMethod", locale)}
           </h3>
         </div>
 
         <form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              CARD NUMBER
+              {t("cardNumber", locale)}
             </label>
             <div className="mt-1">
               <input
@@ -101,16 +104,18 @@ export default function CreditCardModal({
                     ? "border-red-300 focus:border-red-500 focus:ring-red-500"
                     : "border-gray-300"
                 } p-2 shadow-sm`}
-                placeholder="**** **** **** ****"
+                placeholder={t("cardNumberPlaceholder", locale)}
                 {...register("cardNumber", {
-                  required: "Card number is required",
+                  required: t("cardNumberRequired", locale),
                   validate: (value) => {
                     const digits = value.replace(/\s/g, "");
-                    return digits.length === 16 || "Invalid card number";
+                    return (
+                      digits.length === 16 || t("invalidCardNumber", locale)
+                    );
                   },
                 })}
                 onChange={handleCardNumberChange}
-                maxLength={19} // 16 digits + 3 spaces
+                maxLength={19}
               />
               {errors.cardNumber && (
                 <p className="mt-1 text-sm text-red-600">
@@ -123,23 +128,23 @@ export default function CreditCardModal({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                EXPIRY DATE
+                {t("expiryDate", locale)}
               </label>
               <div className="mt-1 flex space-x-2">
                 <input
                   type="text"
+                  placeholder="MM"
                   className={`block w-full rounded-md border outline-none ${
                     errors.expiryMonth
                       ? "border-red-300 focus:border-red-500 focus:ring-red-500"
                       : "border-gray-300"
                   } p-2 shadow-sm`}
-                  placeholder="MM"
                   {...register("expiryMonth", {
-                    required: "Month is required",
+                    required: t("monthRequired", locale),
                     validate: (value) => {
                       const month = parseInt(value, 10);
                       return (
-                        (month >= 1 && month <= 12) || "Invalid month (1-12)"
+                        (month >= 1 && month <= 12) || t("invalidMonth", locale)
                       );
                     },
                   })}
@@ -149,20 +154,21 @@ export default function CreditCardModal({
                 <span className="flex items-center">/</span>
                 <input
                   type="text"
+                  placeholder="YY"
                   className={`block w-full rounded-md border outline-none ${
                     errors.expiryYear
                       ? "border-red-300 focus:border-red-500 focus:ring-red-500"
                       : "border-gray-300"
                   } p-2 shadow-sm`}
-                  placeholder="YY"
                   {...register("expiryYear", {
-                    required: "Year is required",
+                    required: t("yearRequired", locale),
                     validate: (value) => {
-                      const currentYear = new Date().getFullYear() % 100;
                       const year = parseInt(value, 10);
                       return (
                         year >= currentYear ||
-                        `Year must be ${currentYear} or later`
+                        (locale === "ar"
+                          ? `يجب أن تكون السنة ${currentYear} أو أحدث`
+                          : `Year must be ${currentYear} or later`)
                       );
                     },
                   })}
@@ -179,21 +185,21 @@ export default function CreditCardModal({
 
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                CVV
+                {t("cvv", locale)}
               </label>
               <div className="mt-1">
                 <input
                   type="text"
+                  placeholder={t("code", locale)}
                   className={`block w-full rounded-md border outline-none ${
                     errors.cvv
                       ? "border-red-300 focus:border-red-500 focus:ring-red-500"
                       : "border-gray-300"
                   } p-2 shadow-sm`}
-                  placeholder="Code"
                   {...register("cvv", {
-                    required: "CVV is required",
+                    required: t("cvvRequired", locale),
                     validate: (value) => {
-                      return value.length === 3 || "CVV must be 3 digits";
+                      return value.length === 3 || t("cvvInvalid", locale);
                     },
                   })}
                   onChange={handleCvvChange}
@@ -219,10 +225,9 @@ export default function CreditCardModal({
               htmlFor="rememberCard"
               className="ml-2 block text-sm text-gray-700"
             >
-              Remember this card
+              {t("rememberCard", locale)}
               <span className="block text-xs text-gray-500">
-                noon will securely store this card for a faster payment
-                experience. CVV number will not be stored.
+                {t("rememberCardNote", locale)}
               </span>
             </label>
           </div>
@@ -233,7 +238,7 @@ export default function CreditCardModal({
               className="flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none disabled:opacity-50"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Processing..." : "ADD MY CARD"}
+              {isSubmitting ? t("processing", locale) : t("addCard", locale)}
             </button>
           </div>
         </form>

@@ -25,6 +25,8 @@ import { useRouter } from "next/navigation";
 import Modal from "@/components/UI/Modals/DynamicModal";
 import AuthLogin from "@/components/UI/Modals/loginAuth";
 import { AccountPageProps } from "@/app/(auth)/user/types/account";
+import LanguageSwitcher from "@/components/UI/LanguageSwitcher";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type Address = {
   id: string;
@@ -57,6 +59,7 @@ const FullHeader: React.FC<AccountPageProps> = () => {
   });
   const [productsCount, setProductsCount] = useState(0);
   const [productsCountWishlist, setProductsCountWishlist] = useState(0);
+  const { language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const { products } = useAppSelector((state) => state.cart);
   const { products: wishlistData } = useAppSelector((state) => state.wishlist);
@@ -102,8 +105,8 @@ const FullHeader: React.FC<AccountPageProps> = () => {
                   </span>
                 </div>
               </div>
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-2">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
                   <button onClick={() => setIsOpen(true)}>
                     <Menu size={18} className="text-gray-600 md:hidden" />
                   </button>
@@ -120,7 +123,7 @@ const FullHeader: React.FC<AccountPageProps> = () => {
                     className="hidden max-w-20 cursor-pointer text-xs text-white lg:block"
                     onClick={() => setIsModalOpen(true)}
                   >
-                    Delivery to{" "}
+                    {language === "ar" ? "التسليم إلى" : "Delivery to"}
                     <span className="flex items-center gap-1 font-semibold">
                       {selectedAddress?.city} <ChevronDown size={12} />
                     </span>
@@ -129,16 +132,18 @@ const FullHeader: React.FC<AccountPageProps> = () => {
                 {/* search component  */}
                 <div className="w-full md:max-w-2xl">
                   <Suspense>
-                    <SearchComponent />
+                    <SearchComponent locale={language} />
                   </Suspense>
                 </div>
 
                 {/* Right-side Icons */}
                 <div className="flex">
+                  <div>
+                    <LanguageSwitcher />
+                  </div>
                   <div className="hidden lg:block">
                     <AuthButton />
                   </div>
-
                   <div className="flex items-center gap-4 md:px-4">
                     <button
                       onClick={handdleLogin}
@@ -201,7 +206,7 @@ const FullHeader: React.FC<AccountPageProps> = () => {
                 <span>
                   <MapPin size={14} />
                 </span>
-                Delivery to{" "}
+                {language === "ar" ? "التسليم إلى" : "Delivery to"}
                 <span className="flex items-center gap-1 font-semibold">
                   {selectedAddress?.city} <ChevronDown size={12} />
                 </span>
@@ -211,7 +216,7 @@ const FullHeader: React.FC<AccountPageProps> = () => {
         </div>
         {/* Categories Navigation  */}
         <div className="hidden flex-1 md:block">
-          <SwipeableNav links={commonLinks} />
+          <SwipeableNav locale={language} links={commonLinks} />
         </div>
       </header>
       <div className="relative">
@@ -223,7 +228,7 @@ const FullHeader: React.FC<AccountPageProps> = () => {
             setSelectedAddress(address);
             localStorage.setItem("userAddress", JSON.stringify(address));
           }}
-          locale="en"
+          locale={language}
         />
       </div>
       {/* Mobile Navigation */}
@@ -246,7 +251,11 @@ const FullHeader: React.FC<AccountPageProps> = () => {
               >
                 {/* sublinks links */}
                 {link.subLinks && link.subLinks.length > 0 && (
-                  <Collapse url={link.url} key={link.title} title={link.title}>
+                  <Collapse
+                    url={link.url}
+                    key={link.title[language]}
+                    title={link.title[language]}
+                  >
                     <ul>
                       {link.subLinks.map((subLink, subIndex) => (
                         <li
@@ -257,7 +266,7 @@ const FullHeader: React.FC<AccountPageProps> = () => {
                             className="block p-1 text-xs"
                             href={subLink.url}
                           >
-                            {subLink.title}
+                            {subLink.title[language]}
                           </Link>
                         </li>
                       ))}
@@ -266,13 +275,17 @@ const FullHeader: React.FC<AccountPageProps> = () => {
                 )}
                 {/* grid list links */}
                 {link.gridLinks && link.gridLinks.length > 0 && (
-                  <Collapse url={link.url} key={link.title} title={link.title}>
+                  <Collapse
+                    url={link.url}
+                    key={link.title[language]}
+                    title={link.title[language]}
+                  >
                     <div>
                       <ul className="text-xs">
                         {link.gridLinks.map((gridLink, gridIndex) => (
                           <Collapse
                             url={link.url}
-                            title={gridLink.heading}
+                            title={gridLink.heading[language]}
                             key={gridIndex}
                             size="sm"
                             fontSize="sm"
@@ -286,7 +299,7 @@ const FullHeader: React.FC<AccountPageProps> = () => {
                                         className="block p-2 text-xs text-gray-600 transition hover:text-primary"
                                         href={link.url}
                                       >
-                                        {link.title}
+                                        {link.title[language]}
                                       </Link>
                                     </li>
                                   );
@@ -307,7 +320,7 @@ const FullHeader: React.FC<AccountPageProps> = () => {
                         className="block p-2 text-xs font-semibold text-gray-800"
                         href={link.url}
                       >
-                        {link.title}
+                        {link.title[language]}
                       </Link>
                     </li>
                   </ul>
@@ -322,7 +335,7 @@ const FullHeader: React.FC<AccountPageProps> = () => {
         onClose={() => setIsModalLogOpen(false)}
         size="lg"
       >
-        <AuthLogin redirect="/account/wishlist" />
+        <AuthLogin locale={language} redirect="/account/wishlist" />
       </Modal>
     </>
   );

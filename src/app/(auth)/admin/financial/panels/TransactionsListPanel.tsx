@@ -15,16 +15,19 @@ import { Filters } from "@/components/UI/filter/FilterDrawer";
 import DateRangeSelector from "@/components/UI/DateRangeSelector";
 import { formatDate } from "@/util/dateUtils";
 import Dropdown from "@/components/UI/DropDownMenu";
+import { LocalizedTitle } from "@/types/language";
+import { LanguageType } from "@/util/translations";
+
 type PaymentMethod = "visa" | "paypal" | "mastercard" | "cash";
 
 type Customer = {
   name: string;
   phone: string;
-  location: string;
+  location: LocalizedTitle;
 };
 
 type Product = {
-  name: string;
+  name: LocalizedTitle;
   image: string;
 };
 
@@ -34,9 +37,9 @@ type CustomerTransaction = {
   product: Product;
   customer: Customer;
   seller: string;
-  unitPrice: string;
-  quantity: string;
-  total: string;
+  unitPrice: LocalizedTitle;
+  quantity: LocalizedTitle;
+  total: LocalizedTitle;
   payment: {
     method: PaymentMethod;
     last4: string;
@@ -51,9 +54,121 @@ type SellerTransaction = {
   email: string;
   phone: string;
   productCount: number;
-  totalSales: string;
-  location: string;
+  totalSales: LocalizedTitle;
+  location: LocalizedTitle;
   status: "Paid" | "Pending" | "Failed" | "Refunded";
+};
+type TranslationValue = string | { [key: string]: TranslationValue };
+
+// Translation data
+const translations: Record<"en" | "ar", TranslationValue> = {
+  en: {
+    invoice: "Invoice",
+    date: "Date",
+    product: "Product",
+    customer: "Customer",
+    seller: "Seller",
+    unitPrice: "Unit Price",
+    quantity: "Quantity",
+    totalSales: "Total Sales",
+    paymentMethod: "Payment Method",
+    status: "Status",
+    receipt: "Receipt",
+    transactionID: "Transaction ID",
+    products: "Products",
+    location: "Location",
+    customersTransactions: "Customers Transactions",
+    sellersTransactions: "Sellers Transactions",
+    searchTransactions: "Search transactions",
+    moreFilters: "More Filters",
+    download: "Download",
+    showData: "Show Data",
+    reset: "Reset",
+    viewAll: "View All",
+    edit: "Edit",
+    delete: "Delete",
+    allSellers: "All Sellers",
+    allCustomers: "All Customers",
+    allProducts: "All Products",
+    allMethods: "All Methods",
+    allStatuses: "All Statuses",
+    paid: "Paid",
+    pending: "Pending",
+    failed: "Failed",
+    refunded: "Refunded",
+    visa: "Visa",
+    mastercard: "Mastercard",
+    paypal: "PayPal",
+    cash: "Cash",
+    search: "Search",
+    filter: {
+      seller: "Seller",
+      customer: "Customer",
+      product: "Product",
+      paymentMethod: "Payment Method",
+      status: "Status",
+    },
+  },
+  ar: {
+    invoice: "فاتورة",
+    date: "التاريخ",
+    product: "المنتج",
+    customer: "العميل",
+    seller: "البائع",
+    unitPrice: "سعر الوحدة",
+    quantity: "الكمية",
+    totalSales: "إجمالي المبيعات",
+    paymentMethod: "طريقة الدفع",
+    status: "الحالة",
+    receipt: "إيصال",
+    transactionID: "معرف المعاملة",
+    products: "المنتجات",
+    location: "الموقع",
+    customersTransactions: "معاملات العملاء",
+    sellersTransactions: "معاملات البائعين",
+    searchTransactions: "بحث في المعاملات",
+    moreFilters: "المزيد من الفلاتر",
+    download: "تحميل",
+    showData: "عرض البيانات",
+    reset: "إعادة تعيين",
+    viewAll: "عرض الكل",
+    edit: "تعديل",
+    delete: "حذف",
+    allSellers: "كل البائعين",
+    allCustomers: "كل العملاء",
+    allProducts: "كل المنتجات",
+    allMethods: "كل الطرق",
+    allStatuses: "كل الحالات",
+    paid: "مدفوع",
+    pending: "قيد الانتظار",
+    failed: "فشل",
+    refunded: "تم الاسترداد",
+    visa: "فيزا",
+    mastercard: "ماستركارد",
+    paypal: "باي بال",
+    cash: "نقدي",
+    search: "بحث",
+    filter: {
+      seller: "البائع",
+      customer: "العميل",
+      product: "المنتج",
+      paymentMethod: "طريقة الدفع",
+      status: "الحالة",
+    },
+  },
+};
+
+const getTranslation = (key: string, locale: "en" | "ar"): string => {
+  const keys = key.split(".");
+  let result: TranslationValue = translations[locale];
+
+  for (const k of keys) {
+    if (typeof result === "string") return key; // Not navigable
+    result = result[k];
+    if (result === undefined) return key;
+  }
+
+  return typeof result === "string" ? result : key;
 };
 
 const customerTransactions: CustomerTransaction[] = [
@@ -61,44 +176,25 @@ const customerTransactions: CustomerTransaction[] = [
     id: "142548",
     date: "15/5/2025",
     product: {
-      name: "Norton Utilities Ultimate 2023 for Windows",
+      name: {
+        en: "Norton Utilities Ultimate 2023 for Windows",
+        ar: "نورتون يوتيليتيز ألتيميت 2023 لويندوز",
+      },
       image: "/images/products/norton.png",
     },
     customer: {
       name: "Ahmed Mohamed",
       phone: "012454526885",
-      location: "Nasr City, Cairo",
+      location: {
+        en: "Nasr City, Cairo",
+        ar: "مدينة نصر، القاهرة",
+      },
     },
     seller: "Brandova",
-    unitPrice: "800 EGP",
-    quantity: "4 units",
-    total: "3200 EGP",
-    payment: {
-      method: "visa",
-      last4: "1452",
-    },
-    status: "Paid",
-  },
-  {
-    id: "142549",
-    date: "14/5/2025",
-    product: {
-      name: "Adobe Photoshop 2023 License",
-      image: "/images/products/photoshop.png",
-    },
-    customer: {
-      name: "Fatma Said",
-      phone: "01001234567",
-      location: "Maadi, Cairo",
-    },
-    seller: "SoftMart",
-    unitPrice: "1200 EGP",
-    quantity: "1 unit",
-    total: "1200 EGP",
-    payment: {
-      method: "visa",
-      last4: "9901",
-    },
+    unitPrice: { en: "800 EGP", ar: "٨٠٠ جنيه" },
+    quantity: { en: "4 units", ar: "٤ وحدات" },
+    total: { en: "3200 EGP", ar: "٣٢٠٠ جنيه" },
+    payment: { method: "visa", last4: "1452" },
     status: "Paid",
   },
 ];
@@ -111,8 +207,8 @@ const sellerTransactions: SellerTransaction[] = [
     email: "brandova@example.com",
     phone: "01099887766",
     productCount: 52,
-    totalSales: "160,000 EGP",
-    location: "Alexandria",
+    totalSales: { en: "160,000 EGP", ar: "١٦٠,٠٠٠ جنيه" },
+    location: { en: "Alexandria", ar: "الإسكندرية" },
     status: "Paid",
   },
   {
@@ -122,188 +218,17 @@ const sellerTransactions: SellerTransaction[] = [
     email: "softmart@example.com",
     phone: "01233445566",
     productCount: 38,
-    totalSales: "112,500 EGP",
-    location: "Giza",
+    totalSales: { en: "112,500 EGP", ar: "١١٢,٥٠٠ جنيه" },
+    location: { en: "Giza", ar: "الجيزة" },
     status: "Pending",
   },
 ];
 
-// Filter options
-const sellerOptions = [
-  { id: "all", name: "All Sellers" },
-  { id: "brandova", name: "Brandova" },
-  { id: "softmart", name: "SoftMart" },
-];
-
-const customerOptions = [
-  { id: "all", name: "All Customers" },
-  { id: "ahmed", name: "Ahmed Mohamed" },
-  { id: "fatma", name: "Fatma Said" },
-];
-
-const productOptions = [
-  { id: "all", name: "All Products" },
-  { id: "norton", name: "Norton Utilities" },
-  { id: "photoshop", name: "Adobe Photoshop" },
-];
-
-const paymentMethodOptions = [
-  { id: "all", name: "All Methods" },
-  { id: "visa", name: "Visa" },
-  { id: "mastercard", name: "Mastercard" },
-  { id: "paypal", name: "PayPal" },
-  { id: "cash", name: "Cash" },
-];
-
-const statusOptions = [
-  { id: "all", name: "All Statuses" },
-  { id: "paid", name: "Paid" },
-  { id: "pending", name: "Pending" },
-  { id: "failed", name: "Failed" },
-  { id: "refunded", name: "Refunded" },
-];
-
-// Table columns remain the same as before
-const customerColumns = [
-  {
-    key: "id",
-    header: "Invoice",
-    sortable: true,
-  },
-  {
-    key: "date",
-    header: "Date",
-    sortable: true,
-  },
-  {
-    key: "product",
-    header: "Product",
-    render: (item: CustomerTransaction) => (
-      <div className="flex items-center gap-2">
-        <Image
-          className="h-10 w-10 rounded object-cover"
-          src={item.product.image}
-          alt={item.product.name}
-          width={40}
-          height={40}
-        />
-        <span className="line-clamp-2 text-sm">{item.product.name}</span>
-      </div>
-    ),
-  },
-  {
-    key: "customer",
-    header: "Customer",
-    render: (item: CustomerTransaction) => (
-      <div className="text-sm leading-5">
-        <div className="font-medium">{item.customer.name}</div>
-        <div className="text-xs text-gray-500">{item.customer.phone}</div>
-        <div className="text-xs text-gray-500">{item.customer.location}</div>
-      </div>
-    ),
-  },
-  {
-    key: "seller",
-    header: "Seller",
-  },
-  {
-    key: "unitPrice",
-    header: "Unit Price",
-  },
-  {
-    key: "quantity",
-    header: "Quantity",
-  },
-  {
-    key: "total",
-    header: "Total Sales",
-  },
-  {
-    key: "payment",
-    header: "Payment Method",
-    render: (item: CustomerTransaction) => (
-      <div className="flex items-center gap-1">
-        <Image src="/icons/card-visa.svg" alt="visa" width={24} height={16} />
-        <span className="text-xs text-gray-600">{item.payment.last4}</span>
-      </div>
-    ),
-  },
-  {
-    key: "status",
-    header: "Status",
-    render: (item: CustomerTransaction) => (
-      <span className="inline-block rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
-        {item.status}
-      </span>
-    ),
-  },
-  {
-    key: "receipt",
-    header: "Receipt",
-    render: () => (
-      <button className="rounded border p-1 hover:bg-gray-100">
-        <Download className="h-4 w-4 text-gray-600" />
-      </button>
-    ),
-  },
-];
-
-const sellerColumns = [
-  {
-    key: "id",
-    header: "Transaction ID",
-    sortable: true,
-  },
-  {
-    key: "date",
-    header: "Date",
-    sortable: true,
-  },
-  {
-    key: "seller",
-    header: "Seller",
-    render: (item: SellerTransaction) => (
-      <div>
-        <div className="font-medium">{item.seller}</div>
-        <div className="text-xs text-gray-500">{item.email}</div>
-        <div className="text-xs text-gray-500">{item.phone}</div>
-      </div>
-    ),
-  },
-  {
-    key: "productCount",
-    header: "Products",
-    sortable: true,
-  },
-  {
-    key: "totalSales",
-    header: "Total Sales",
-    sortable: true,
-  },
-  {
-    key: "location",
-    header: "Location",
-  },
-  {
-    key: "status",
-    header: "Status",
-    render: (item: SellerTransaction) => {
-      const color =
-        item.status === "Paid"
-          ? "bg-green-100 text-green-700"
-          : "bg-yellow-100 text-yellow-700";
-      return (
-        <span
-          className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${color}`}
-        >
-          {item.status}
-        </span>
-      );
-    },
-  },
-];
-
-export default function TransactionsListPanel() {
+export default function TransactionsListPanel({
+  locale = "en",
+}: {
+  locale: LanguageType;
+}) {
   const [activeTab, setActiveTab] = useState<"customers" | "sellers">(
     "customers",
   );
@@ -321,8 +246,203 @@ export default function TransactionsListPanel() {
   const statusFilter = searchParams.get("status") || "all";
 
   const tabs = [
-    { key: "customers", label: "Customers Transactions", count: 35 },
-    { key: "sellers", label: "Sellers Transactions", count: 20 },
+    {
+      key: "customers",
+      label: getTranslation("customersTransactions", locale),
+      count: 35,
+    },
+    {
+      key: "sellers",
+      label: getTranslation("sellersTransactions", locale),
+      count: 20,
+    },
+  ];
+
+  const sellerOptions = [
+    { id: "all", name: { en: "All Sellers", ar: "كل البائعين" } },
+    { id: "brandova", name: { en: "Brandova", ar: "براندوفا" } },
+    { id: "softmart", name: { en: "SoftMart", ar: "سوفت مارت" } },
+  ];
+
+  const customerOptions = [
+    { id: "all", name: { en: "All Customers", ar: "كل العملاء" } },
+    { id: "ahmed", name: { en: "Ahmed Mohamed", ar: "أحمد محمد" } },
+    { id: "fatma", name: { en: "Fatma Said", ar: "فاطمة سعيد" } },
+  ];
+
+  const productOptions = [
+    { id: "all", name: { en: "All Products", ar: "كل المنتجات" } },
+    { id: "norton", name: { en: "Norton Utilities", ar: "نورتون يوتيليتيز" } },
+    { id: "photoshop", name: { en: "Adobe Photoshop", ar: "أدوبي فوتوشوب" } },
+  ];
+
+  const paymentMethodOptions = [
+    { id: "all", name: { en: "All Methods", ar: "كل الطرق" } },
+    { id: "visa", name: { en: "Visa", ar: "فيزا" } },
+    { id: "mastercard", name: { en: "Mastercard", ar: "ماستركارد" } },
+    { id: "paypal", name: { en: "PayPal", ar: "باي بال" } },
+    { id: "cash", name: { en: "Cash", ar: "نقداً" } },
+  ];
+
+  const statusOptions = [
+    { id: "all", name: { en: "All Statuses", ar: "كل الحالات" } },
+    { id: "paid", name: { en: "Paid", ar: "مدفوع" } },
+    { id: "pending", name: { en: "Pending", ar: "قيد الانتظار" } },
+    { id: "failed", name: { en: "Failed", ar: "فشل" } },
+    { id: "refunded", name: { en: "Refunded", ar: "تم الاسترجاع" } },
+  ];
+
+  const customerColumns = [
+    {
+      key: "id",
+      header: getTranslation("invoice", locale),
+      sortable: true,
+    },
+    {
+      key: "date",
+      header: getTranslation("date", locale),
+      sortable: true,
+    },
+    {
+      key: "product",
+      header: getTranslation("product", locale),
+      render: (item: CustomerTransaction) => (
+        <div className="flex items-center gap-2">
+          <Image
+            className="h-10 w-10 rounded object-cover"
+            src={item.product.image}
+            alt={item.product.name[locale]}
+            width={40}
+            height={40}
+          />
+          <span className="line-clamp-2 text-sm">
+            {item.product.name[locale]}
+          </span>
+        </div>
+      ),
+    },
+    {
+      key: "customer",
+      header: getTranslation("customer", locale),
+      render: (item: CustomerTransaction) => (
+        <div className="text-sm leading-5">
+          <div className="font-medium">{item.customer.name}</div>
+          <div className="text-xs text-gray-500">{item.customer.phone}</div>
+          <div className="text-xs text-gray-500">
+            {item.customer.location[locale]}
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: "seller",
+      header: getTranslation("seller", locale),
+    },
+    {
+      key: "unitPrice",
+      header: getTranslation("unitPrice", locale),
+      render: (item: CustomerTransaction) => item.unitPrice[locale],
+    },
+    {
+      key: "quantity",
+      header: getTranslation("quantity", locale),
+      render: (item: CustomerTransaction) => item.quantity[locale],
+    },
+    {
+      key: "total",
+      header: getTranslation("totalSales", locale),
+      render: (item: CustomerTransaction) => item.total[locale],
+    },
+    {
+      key: "payment",
+      header: getTranslation("paymentMethod", locale),
+      render: (item: CustomerTransaction) => (
+        <div className="flex items-center gap-1">
+          <Image
+            src={`/icons/card-${item.payment.method}.svg`}
+            alt={item.payment.method}
+            width={24}
+            height={16}
+          />
+          <span className="text-xs text-gray-600">{item.payment.last4}</span>
+        </div>
+      ),
+    },
+    {
+      key: "status",
+      header: getTranslation("status", locale),
+      render: (item: CustomerTransaction) => (
+        <span className="inline-block rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+          {getTranslation(item.status.toLowerCase(), locale)}
+        </span>
+      ),
+    },
+    {
+      key: "receipt",
+      header: getTranslation("receipt", locale),
+      render: () => (
+        <button className="rounded border p-1 hover:bg-gray-100">
+          <Download className="h-4 w-4 text-gray-600" />
+        </button>
+      ),
+    },
+  ];
+
+  const sellerColumns = [
+    {
+      key: "id",
+      header: getTranslation("transactionID", locale),
+      sortable: true,
+    },
+    {
+      key: "date",
+      header: getTranslation("date", locale),
+      sortable: true,
+    },
+    {
+      key: "seller",
+      header: getTranslation("seller", locale),
+      render: (item: SellerTransaction) => (
+        <div>
+          <div className="font-medium">{item.seller}</div>
+          <div className="text-xs text-gray-500">{item.email}</div>
+          <div className="text-xs text-gray-500">{item.phone}</div>
+        </div>
+      ),
+    },
+    {
+      key: "productCount",
+      header: getTranslation("products", locale),
+      sortable: true,
+    },
+    {
+      key: "totalSales",
+      header: getTranslation("totalSales", locale),
+      sortable: true,
+      render: (item: SellerTransaction) => item.totalSales[locale],
+    },
+    {
+      key: "location",
+      header: getTranslation("location", locale),
+      render: (item: SellerTransaction) => item.location[locale],
+    },
+    {
+      key: "status",
+      header: getTranslation("status", locale),
+      render: (item: SellerTransaction) => {
+        const color =
+          item.status === "Paid"
+            ? "bg-green-100 text-green-700"
+            : "bg-yellow-100 text-yellow-700";
+        return (
+          <span
+            className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${color}`}
+          >
+            {getTranslation(item.status.toLowerCase(), locale)}
+          </span>
+        );
+      },
+    },
   ];
 
   const handleDateChange = (range: {
@@ -356,20 +476,21 @@ export default function TransactionsListPanel() {
           minWidth={1000}
           pagination={true}
           itemsPerPage={5}
+          locale={locale}
           selectable={true}
           actions={[
             {
-              label: "Edit",
+              label: getTranslation("edit", locale),
               onClick: () => console.log("edited"),
               className:
-                "bg-white text-gray-700 hover:text-blue-700 hover:bg-blue-50 ",
+                "bg-white text-gray-700 hover:text-blue-700 hover:bg-blue-50",
               icon: <PencilIcon className="h-4 w-4" />,
             },
             {
-              label: "Delete",
+              label: getTranslation("delete", locale),
               onClick: () => console.log("Deleted"),
               className:
-                "bg-white text-gray-700 hover:text-red-700 hover:bg-red-50 ",
+                "bg-white text-gray-700 hover:text-red-700 hover:bg-red-50",
               icon: <TrashIcon className="h-4 w-4" />,
             },
           ]}
@@ -384,19 +505,20 @@ export default function TransactionsListPanel() {
           pagination={true}
           itemsPerPage={5}
           selectable={true}
+          locale={locale}
           actions={[
             {
-              label: "Edit",
+              label: getTranslation("edit", locale),
               onClick: () => console.log("edited"),
               className:
-                "bg-white text-gray-700 hover:text-blue-700 hover:bg-blue-50 ",
+                "bg-white text-gray-700 hover:text-blue-700 hover:bg-blue-50",
               icon: <PencilIcon className="h-4 w-4" />,
             },
             {
-              label: "Delete",
+              label: getTranslation("delete", locale),
               onClick: () => console.log("Deleted"),
               className:
-                "bg-white text-gray-700 hover:text-red-700 hover:bg-red-50 ",
+                "bg-white text-gray-700 hover:text-red-700 hover:bg-red-50",
               icon: <TrashIcon className="h-4 w-4" />,
             },
           ]}
@@ -406,13 +528,16 @@ export default function TransactionsListPanel() {
   };
 
   return (
-    <div className="relative space-y-6">
+    <div
+      className={`relative space-y-6 ${locale === "ar" ? "text-right" : "text-left"}`}
+    >
       <div className="shadow-xs space-y-6 rounded-lg border border-gray-200 bg-white p-3">
         <div className="flex flex-col gap-2 md:flex-row">
           <DateRangeSelector
             onDateChange={handleDateChange}
             formatString="MM/dd/yyyy"
             className="w-full md:w-fit"
+            locale={locale}
           />
           <div className="flex flex-1">
             <div className="relative flex-1">
@@ -420,11 +545,15 @@ export default function TransactionsListPanel() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search transactions"
-                className="w-full rounded-s-md border border-r-0 border-gray-300 px-3 py-1.5 pl-10 outline-none placeholder:text-sm"
+                placeholder={getTranslation("searchTransactions", locale)}
+                className={`w-full rounded-s-md border ${locale === "ar" ? "border-l-0" : "border-r-0"} border-gray-300 px-3 py-1.5 outline-none placeholder:text-sm ${
+                  locale === "ar" ? "pl-3 pr-10" : "pl-10 pr-3"
+                }`}
               />
               <Search
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600"
+                className={`absolute top-1/2 -translate-y-1/2 text-gray-600 ${
+                  locale === "ar" ? "right-4" : "left-4"
+                }`}
                 size={15}
               />
             </div>
@@ -432,7 +561,7 @@ export default function TransactionsListPanel() {
               onClick={() => handleFilterChange("search", searchQuery)}
               className="rounded-e-md bg-light-primary px-3 py-1.5 text-sm text-white hover:brightness-90"
             >
-              Search
+              {getTranslation("search", locale)}
             </button>
           </div>
           <div className="flex gap-2">
@@ -441,10 +570,10 @@ export default function TransactionsListPanel() {
               className="flex items-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
             >
               <SlidersHorizontal size={16} />
-              More Filters
+              {getTranslation("moreFilters", locale)}
             </button>
             <button className="rounded bg-green-600 px-3 py-1.5 text-sm text-white hover:bg-green-700">
-              Download
+              {getTranslation("download", locale)}
             </button>
           </div>
         </div>
@@ -454,7 +583,9 @@ export default function TransactionsListPanel() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {/* Seller Filter */}
             <div>
-              <h3 className="mb-2 text-sm font-medium">Seller</h3>
+              <h3 className="mb-2 text-sm font-medium">
+                {getTranslation("filter.seller", locale)}
+              </h3>
               <div className="mt-2">
                 <Dropdown
                   options={sellerOptions}
@@ -462,6 +593,7 @@ export default function TransactionsListPanel() {
                   onSelect={(value) =>
                     handleFilterChange("seller", value.toString())
                   }
+                  locale={locale}
                 />
               </div>
             </div>
@@ -469,7 +601,9 @@ export default function TransactionsListPanel() {
             {/* Customer Filter */}
             {activeTab === "customers" && (
               <div>
-                <h3 className="mb-2 text-sm font-medium">Customer</h3>
+                <h3 className="mb-2 text-sm font-medium">
+                  {getTranslation("filter.customer", locale)}
+                </h3>
                 <div className="mt-2">
                   <Dropdown
                     options={customerOptions}
@@ -477,6 +611,7 @@ export default function TransactionsListPanel() {
                     onSelect={(value) =>
                       handleFilterChange("customer", value.toString())
                     }
+                    locale={locale}
                   />
                 </div>
               </div>
@@ -484,39 +619,48 @@ export default function TransactionsListPanel() {
 
             {/* Product Filter */}
             <div>
-              <h3 className="mb-2 text-sm font-medium">Product</h3>
+              <h3 className="mb-2 text-sm font-medium">
+                {getTranslation("filter.product", locale)}
+              </h3>
               <Dropdown
                 options={productOptions}
                 selected={productFilter}
                 onSelect={(value) =>
                   handleFilterChange("product", value.toString())
                 }
+                locale={locale}
               />
             </div>
 
             {/* Payment Method Filter */}
             {activeTab === "customers" && (
               <div>
-                <h3 className="mb-2 text-sm font-medium">Payment Method</h3>
+                <h3 className="mb-2 text-sm font-medium">
+                  {getTranslation("filter.paymentMethod", locale)}
+                </h3>
                 <Dropdown
                   options={paymentMethodOptions}
                   selected={paymentMethodFilter}
                   onSelect={(value) =>
                     handleFilterChange("paymentMethod", value.toString())
                   }
+                  locale={locale}
                 />
               </div>
             )}
 
             {/* Status Filter */}
             <div>
-              <h3 className="mb-2 text-sm font-medium">Status</h3>
+              <h3 className="mb-2 text-sm font-medium">
+                {getTranslation("filter.status", locale)}
+              </h3>
               <Dropdown
                 options={statusOptions}
                 selected={statusFilter}
                 onSelect={(value) =>
                   handleFilterChange("status", value.toString())
                 }
+                locale={locale}
               />
             </div>
           </div>
@@ -525,6 +669,7 @@ export default function TransactionsListPanel() {
             isOpen={filtersOpen}
             onClose={() => setFiltersOpen(false)}
             filtersData={[]}
+            locale={locale}
           />
         </div>
 
@@ -540,7 +685,7 @@ export default function TransactionsListPanel() {
                     : "border-gray-200 bg-white text-gray-500"
                 }`}
               >
-                {option.name}
+                {option.name[locale]}
               </button>
             ))}
           </div>
@@ -549,10 +694,10 @@ export default function TransactionsListPanel() {
               onClick={resetFilters}
               className="rounded border border-primary px-3 py-1.5 text-sm text-primary transition hover:bg-primary hover:text-white"
             >
-              Reset
+              {getTranslation("reset", locale)}
             </button>
             <button className="rounded bg-light-primary px-3 py-1.5 text-sm text-white transition hover:brightness-95">
-              Show Data
+              {getTranslation("showData", locale)}
             </button>
           </div>
         </div>
@@ -590,7 +735,8 @@ export default function TransactionsListPanel() {
             href="#"
             className="flex items-center gap-1 text-sm font-medium text-green-600 hover:text-green-700"
           >
-            View All <ChevronRight size={14} />
+            {getTranslation("viewAll", locale)}
+            <ChevronRight size={14} />
           </Link>
         </div>
 

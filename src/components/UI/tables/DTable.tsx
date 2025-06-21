@@ -1,23 +1,32 @@
+import { LanguageType } from "@/util/translations";
 import { MoreVertical } from "lucide-react";
 import React, { useState, useMemo, useRef, useEffect } from "react";
+
+export type alignType = "left" | "center" | "right";
 
 type ColumnDefinition<T> = {
   key: string;
   header: string;
   render?: (item: T, index: number) => React.ReactNode | void;
   width?: string;
-  align?: string;
+  align?: alignType;
   sortable?: boolean;
   sortFn?: (a: T, b: T) => number;
 };
 
 type ActionButton<T> = {
-  label: string | React.ReactNode;
+  label:
+    | {
+        en: string;
+        ar: string;
+      }
+    | React.ReactNode;
   onClick: (item: T, index: number) => void;
   className?: string;
   icon?: React.ReactNode;
   hide?: (item: T) => boolean;
 };
+
 type ActionSolidButton<T> = {
   onClick: (item: T, index: number) => void;
   className?: string;
@@ -38,7 +47,10 @@ type DynamicTableProps<T> = {
   headerClassName?: string;
   rowClassName?: string;
   cellClassName?: string;
-  emptyMessage?: string;
+  emptyMessage?: {
+    en: string;
+    ar: string;
+  };
   selectable?: boolean;
   onSelectionChange?: (selectedItems: T[]) => void;
   rowIdKey?: keyof T;
@@ -48,8 +60,12 @@ type DynamicTableProps<T> = {
   };
   actions?: ActionButton<T>[];
   solidActions?: ActionSolidButton<T>[];
-  actionsColumnHeader?: string;
+  actionsColumnHeader?: {
+    en: string;
+    ar: string;
+  };
   actionsColumnWidth?: string;
+  locale?: LanguageType;
 };
 
 const DynamicTable = <T extends object>({
@@ -61,7 +77,7 @@ const DynamicTable = <T extends object>({
   headerClassName = "bg-gray-100 text-gray-700 text-sm",
   rowClassName = "hover:bg-gray-50 text-sm",
   cellClassName = "py-3 px-2",
-  emptyMessage = "No data available",
+  emptyMessage = { en: "No data available", ar: "لا توجد بيانات متاحة" },
   selectable = false,
   onSelectionChange,
   rowIdKey = "id" as keyof T,
@@ -69,8 +85,9 @@ const DynamicTable = <T extends object>({
   minWidth = 900,
   actions = [],
   solidActions = [],
-  actionsColumnHeader = "Actions",
+  actionsColumnHeader = { en: "Actions", ar: "إجراءات" },
   actionsColumnWidth = "50px",
+  locale = "en",
 }: DynamicTableProps<T>) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRows, setSelectedRows] = useState<Set<T[keyof T]>>(new Set());
@@ -282,10 +299,16 @@ const DynamicTable = <T extends object>({
                   action.onClick(item, index);
                   setOpenDropdownIndex(null);
                 }}
-                className={`mb-1 flex w-full items-center rounded-md px-4 py-2 text-sm text-gray-700 transition duration-200 last:mb-0 hover:bg-gray-100 ${action.className || ""}`}
+                className={`mb-1 flex w-full items-center gap-1 rounded-md px-4 py-2 text-sm text-gray-700 transition duration-200 last:mb-0 hover:bg-gray-100 ${action.className || ""}`}
               >
-                {action.icon && <span className="mr-2">{action.icon}</span>}
-                {action.label}
+                {action.icon && <span>{action.icon}</span>}
+                {action.label &&
+                typeof action.label === "object" &&
+                !React.isValidElement(action.label) &&
+                "en" in action.label &&
+                "ar" in action.label
+                  ? action.label[locale]
+                  : action.label}
               </button>
             ))}
           </div>
@@ -293,8 +316,9 @@ const DynamicTable = <T extends object>({
       </div>
     );
   };
-  // Render action buttons in a dropdown menu
-  const renderSoldActions = (item: T) => {
+
+  // Render solid action buttons
+  const renderSolidActions = (item: T) => {
     if (solidActions.length === 0) return null;
 
     const visibleActions = solidActions.filter(
@@ -309,7 +333,7 @@ const DynamicTable = <T extends object>({
           return (
             <button
               key={index}
-              onClick={() => action.onClick}
+              onClick={() => action.onClick(item, index)}
               style={{ color: action.color }}
               className="mr-1 inline-flex items-center text-gray-500 focus:outline-none"
               aria-label="Actions"
@@ -322,8 +346,13 @@ const DynamicTable = <T extends object>({
     );
   };
 
+  // Apply RTL styles if Arabic is selected
+  const tableDirection = locale === "ar" ? "rtl" : "ltr";
   return (
-    <div className={`relative flex flex-col rounded-md ${className}`}>
+    <div
+      className={`relative flex flex-col rounded-md ${className}`}
+      dir={tableDirection}
+    >
       <div className="grid grid-cols-1 overflow-x-auto">
         <table
           style={{ minWidth: minWidth }}
@@ -359,7 +388,6 @@ const DynamicTable = <T extends object>({
                       }`}
                     >
                       {allSelectedOnPage && displayedData.length > 0 ? (
-                        //  Checked Icon
                         <svg
                           className="h-3.5 w-3.5 text-white"
                           viewBox="0 0 24 24"
@@ -372,7 +400,6 @@ const DynamicTable = <T extends object>({
                           <path d="M20 6L9 17l-5-5" />
                         </svg>
                       ) : someSelectedOnPage ? (
-                        // Indeterminate Icon
                         <svg
                           className="h-3.5 w-3.5 text-white"
                           viewBox="0 0 24 24"
@@ -393,7 +420,8 @@ const DynamicTable = <T extends object>({
                 <th
                   key={column.key}
                   scope="col"
-                  className={`${cellClassName} text-${column.align || "left"} ${
+                  style={{ textAlign: `${locale === "ar" ? "right" : "left"}` }}
+                  className={`${cellClassName} text-${column.align || (locale === "ar" ? "right" : "left")} ${
                     column.width ? column.width : ""
                   } select-none font-medium ${
                     column.sortable ? "cursor-pointer hover:bg-gray-200" : ""
@@ -407,7 +435,7 @@ const DynamicTable = <T extends object>({
                         : column.align === "right"
                           ? "justify-end"
                           : "justify-start"
-                    }`}
+                    } `}
                   >
                     {column.header}
                     {column.sortable && renderSortIndicator(column.key)}
@@ -417,10 +445,10 @@ const DynamicTable = <T extends object>({
               {actions.length > 0 && (
                 <th
                   scope="col"
-                  className={`${cellClassName} text-right text-sm font-semibold`}
+                  className={`${cellClassName} ${locale === "ar" ? "text-left" : "text-right"} text-sm font-semibold`}
                   style={{ width: actionsColumnWidth }}
                 >
-                  {actionsColumnHeader}
+                  {actionsColumnHeader[locale]}
                 </th>
               )}
             </tr>
@@ -471,9 +499,7 @@ const DynamicTable = <T extends object>({
                   {columns.map((column) => (
                     <td
                       key={`${rowIndex}-${column.key}`}
-                      className={`${cellClassName} text-${
-                        column.align || "left"
-                      }`}
+                      className={`${cellClassName} text-${column.align || (locale === "ar" ? "right" : "left")}`}
                     >
                       {column.render
                         ? column.render(item, rowIndex) ||
@@ -483,11 +509,11 @@ const DynamicTable = <T extends object>({
                   ))}
                   {actions.length > 0 && (
                     <td
-                      className={`${cellClassName} `}
+                      className={`${cellClassName} ${locale === "ar" ? "text-left" : "text-right"}`}
                       style={{ width: actionsColumnWidth }}
                     >
                       <div className="flex gap-1">
-                        {renderSoldActions(item)}
+                        {renderSolidActions(item)}
                         {renderActions(item, rowIndex)}
                       </div>
                     </td>
@@ -504,7 +530,7 @@ const DynamicTable = <T extends object>({
                   }
                   className={`${cellClassName} text-center text-sm text-gray-600`}
                 >
-                  {emptyMessage}
+                  {emptyMessage[locale]}
                 </td>
               </tr>
             )}
@@ -513,36 +539,59 @@ const DynamicTable = <T extends object>({
       </div>
 
       {pagination && sortedData.length > itemsPerPage && (
-        <div className="mt-4 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+        <div
+          className="mt-4 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
+          dir={tableDirection}
+        >
           <div className="flex flex-1 justify-between sm:hidden">
             <button
               onClick={handlePrevious}
               disabled={currentPage === 1}
               className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Previous
+              {locale === "ar" ? "التالي" : "Previous"}
             </button>
             <button
               onClick={handleNext}
               disabled={currentPage === totalPages}
               className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Next
+              {locale === "ar" ? "السابق" : "Next"}
             </button>
           </div>
           <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
-                Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
-                <span className="font-medium">
-                  {Math.min(endIndex, sortedData.length)}
-                </span>{" "}
-                of <span className="font-medium">{sortedData.length}</span>{" "}
-                results
-                {selectable && selectedRows.size > 0 && (
-                  <span className="ml-2 font-medium text-green-600">
-                    ({selectedRows.size} selected)
-                  </span>
+                {locale === "ar" ? (
+                  <>
+                    عرض <span className="font-medium">{startIndex + 1}</span>{" "}
+                    إلى{" "}
+                    <span className="font-medium">
+                      {Math.min(endIndex, sortedData.length)}
+                    </span>{" "}
+                    من <span className="font-medium">{sortedData.length}</span>{" "}
+                    نتائج
+                    {selectable && selectedRows.size > 0 && (
+                      <span className="mx-2 font-medium text-green-600">
+                        ({selectedRows.size} محددة)
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    Showing{" "}
+                    <span className="font-medium">{startIndex + 1}</span> to{" "}
+                    <span className="font-medium">
+                      {Math.min(endIndex, sortedData.length)}
+                    </span>{" "}
+                    of <span className="font-medium">{sortedData.length}</span>{" "}
+                    results
+                    {selectable && selectedRows.size > 0 && (
+                      <span className="ml-2 font-medium text-green-600">
+                        ({selectedRows.size} selected)
+                      </span>
+                    )}
+                  </>
                 )}
               </p>
             </div>
@@ -554,10 +603,12 @@ const DynamicTable = <T extends object>({
                 <button
                   onClick={handlePrevious}
                   disabled={currentPage === 1}
-                  className="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  className={`relative inline-flex items-center ${locale === "ar" ? "rounded-r-md" : "rounded-l-md"} border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50`}
                 >
-                  <span className="sr-only">Previous</span>
-                  &larr;
+                  <span className="sr-only">
+                    {locale === "ar" ? "التالي" : "Previous"}
+                  </span>
+                  {locale === "ar" ? "→" : "←"}
                 </button>
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                   (page) => (
@@ -577,10 +628,12 @@ const DynamicTable = <T extends object>({
                 <button
                   onClick={handleNext}
                   disabled={currentPage === totalPages}
-                  className="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  className={`relative inline-flex items-center ${locale === "ar" ? "rounded-l-md" : "rounded-r-md"} border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50`}
                 >
-                  <span className="sr-only">Next</span>
-                  &rarr;
+                  <span className="sr-only">
+                    {locale === "ar" ? "السابق" : "Next"}
+                  </span>
+                  {locale === "ar" ? "←" : "→"}
                 </button>
               </nav>
             </div>

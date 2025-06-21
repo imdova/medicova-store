@@ -1,5 +1,6 @@
 "use client";
 
+import { LanguageType } from "@/util/translations";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useCallback } from "react";
 
@@ -7,12 +8,25 @@ interface PaginationProps {
   totalItems: number;
   itemsPerPage: number;
   currentPage: number;
+  locale?: LanguageType;
 }
+
+const paginationLabels = {
+  en: {
+    previous: "Previous",
+    next: "Next",
+  },
+  ar: {
+    previous: "السابق",
+    next: "التالي",
+  },
+};
 
 export const Pagination = ({
   totalItems,
   itemsPerPage,
   currentPage,
+  locale = "en",
 }: PaginationProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -29,7 +43,6 @@ export const Pagination = ({
 
   const handlePageChange = (page: number) => {
     const queryString = createQueryString("page", page.toString());
-    // Use router.push with a full URL string
     router.push(`?${queryString}`);
   };
 
@@ -42,7 +55,7 @@ export const Pagination = ({
         disabled={currentPage === 1}
         className="rounded-md border px-3 py-1 disabled:opacity-50"
       >
-        Previous
+        {paginationLabels[locale].previous}
       </button>
 
       {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
@@ -62,7 +75,7 @@ export const Pagination = ({
         disabled={currentPage === totalPages}
         className="rounded-md border px-3 py-1 disabled:opacity-50"
       >
-        Next
+        {paginationLabels[locale].next}
       </button>
     </div>
   );

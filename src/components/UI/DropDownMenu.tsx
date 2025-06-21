@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronDown, Check } from "lucide-react";
+import { LanguageType } from "@/util/translations";
+import { LocalizedTitle } from "@/types/language";
 
 interface DropdownOption {
   id: string;
-  name: string;
+  name: LocalizedTitle;
 }
 interface DropdownProps {
   label?: string;
@@ -13,6 +15,7 @@ interface DropdownProps {
   onSelect: (value: string | number) => void;
   className?: string;
   placeholder?: string;
+  locale: LanguageType;
 }
 
 export default function Dropdown({
@@ -23,6 +26,7 @@ export default function Dropdown({
   onSelect,
   className,
   placeholder,
+  locale,
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -53,7 +57,11 @@ export default function Dropdown({
         {icon}
 
         <span>
-          {selectedOption ? selectedOption.name : label ? label : placeholder}
+          {selectedOption
+            ? selectedOption.name[locale]
+            : label
+              ? label
+              : placeholder}
         </span>
 
         <ChevronDown size={16} />
@@ -74,7 +82,7 @@ export default function Dropdown({
                 }`}
               >
                 {option.id === selected && <Check size={16} />}
-                {option.name}
+                {option.name[locale]}
               </li>
             ))}
           </ul>

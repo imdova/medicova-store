@@ -1,6 +1,7 @@
 import { Star } from "lucide-react";
 import React, { useState } from "react";
 import Avatar from "./Avatar";
+import { LanguageType } from "@/util/translations";
 
 type Review = {
   id: string;
@@ -16,9 +17,10 @@ type Review = {
 
 type ProductReviewsProps = {
   reviews: Review[];
+  locale: LanguageType;
 };
 
-const ProductReviews: React.FC<ProductReviewsProps> = ({ reviews }) => {
+const ProductReviews: React.FC<ProductReviewsProps> = ({ reviews, locale }) => {
   const [showAllReviews, setShowAllReviews] = useState(false);
   const initialReviewsToShow = 3; // Number of reviews to show initially
 
@@ -68,7 +70,7 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ reviews }) => {
         <section className="col-span-1 md:col-span-3">
           <section className="mb-8 mt-4">
             <h2 className="mb-2 text-xl font-bold text-gray-600">
-              Overall Rating
+              {locale === "ar" ? "التقييم العام" : "Overall Rating"}
             </h2>
             <div className="flex flex-col gap-2">
               <div className="text-4xl font-bold">
@@ -77,8 +79,17 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ reviews }) => {
               <div>
                 {renderStars(Math.round(averageRating), 20)}
                 <p className="text-xs text-gray-600">
-                  Based on {totalReviews}{" "}
-                  {totalReviews === 1 ? "rating" : "ratings"}
+                  {locale === "ar" ? (
+                    <>
+                      بناءً على {totalReviews}{" "}
+                      {totalReviews === 1 ? "تقييم" : "تقييمات"}
+                    </>
+                  ) : (
+                    <>
+                      Based on {totalReviews}{" "}
+                      {totalReviews === 1 ? "rating" : "ratings"}
+                    </>
+                  )}
                 </p>
               </div>
             </div>
@@ -112,7 +123,9 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ reviews }) => {
 
                   return (
                     <div key={rating} className="flex items-center gap-2">
-                      <span className="flex w-8 items-center font-semibold text-gray-700">
+                      <span
+                        className={`flex ${locale === "ar" && "flex-row-reverse"} w-8 items-center font-semibold text-gray-700`}
+                      >
                         {rating}
                         <Star
                           size={14}
@@ -145,11 +158,24 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ reviews }) => {
                     <Star size={13} />
                   </span>
                 </div>
-                <h3 className="font-semibold">How do I review this product?</h3>
+                <h3 className="font-semibold">
+                  {locale === "ar"
+                    ? "كيف أقيم هذا المنتج؟"
+                    : "How do I review this product?"}
+                </h3>
               </div>
               <p className="text-xs text-gray-600">
-                If you recently purchased this product from noon, you can go to
-                your Orders page and click on the Submit Review button.
+                {locale === "ar" ? (
+                  <>
+                    إذا كنت قد اشتريت هذا المنتج مؤخرًا من نون، يمكنك الذهاب إلى
+                    صفحة الطلبات الخاصة بك والنقر على زر إرسال التقييم.
+                  </>
+                ) : (
+                  <>
+                    If you recently purchased this product from noon, you can go
+                    to your Orders page and click on the Submit Review button.
+                  </>
+                )}
               </p>
             </div>
             <div className="p-2">
@@ -160,18 +186,23 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ reviews }) => {
                   </span>
                 </div>
                 <h3 className="font-semibold">
-                  Where do the reviews come from
+                  {locale === "ar"
+                    ? "من أين تأتي التقييمات؟"
+                    : "Where do the reviews come from"}
                 </h3>
               </div>
               <p className="text-xs text-gray-600">
-                Our reviews are from noon customers who purchased the product
-                and submitted a review.
+                {locale === "ar"
+                  ? "تقييماتنا تأتي من عملاء نون الذين اشتروا المنتج وقدموا مراجعة."
+                  : "Our reviews are from noon customers who purchased the product and submitted a review."}
               </p>
             </div>
           </div>
           {reviews.length > 0 ? (
             <div>
-              <h2 className="mb-4 text-xl font-semibold">Customer Reviews</h2>
+              <h2 className="mb-4 text-xl font-semibold">
+                {locale === "ar" ? "مراجعات العملاء" : "Customer Reviews"}
+              </h2>
               <div className="space-y-6">
                 {displayedReviews.map((review) => (
                   <div key={review.id} className="border-b border-gray-100 p-4">
@@ -206,9 +237,13 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ reviews }) => {
                       onClick={() => setShowAllReviews(!showAllReviews)}
                       className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                     >
-                      {showAllReviews
-                        ? "Show Less"
-                        : `View All Reviews (${reviews.length})`}
+                      {locale === "ar"
+                        ? showAllReviews
+                          ? "عرض أقل"
+                          : `عرض جميع التقييمات (${reviews.length})`
+                        : showAllReviews
+                          ? "Show Less"
+                          : `View All Reviews (${reviews.length})`}
                     </button>
                   </div>
                 )}

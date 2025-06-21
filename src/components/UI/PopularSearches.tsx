@@ -10,7 +10,7 @@ interface PopularSearch {
   popularity: number;
 }
 
-const PopularSearches = () => {
+const PopularSearches = ({ locale }: { locale: "en" | "ar" }) => {
   const [searches, setSearches] = useState<PopularSearch[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -198,11 +198,11 @@ const PopularSearches = () => {
     <section className="bg-white px-2 py-8">
       <div>
         <h2 className="mb-6 text-lg font-bold text-gray-900 md:text-3xl">
-          Popular Searches
+          {locale === "ar" ? "عمليات البحث الرائجة" : "Popular Searches"}
         </h2>
 
         {/* Searches Grid */}
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-3 gap-y-5">
           {displayedSearches.map((search, index) => (
             <motion.div
               key={search.id}
@@ -229,7 +229,11 @@ const PopularSearches = () => {
         {sortedSearches.length > 18 && (
           <div className="mt-6 text-sm font-bold text-primary">
             <button onClick={() => setIsExpanded(!isExpanded)} className="">
-              {isExpanded ? <>View Less</> : <>View More</>}
+              {isExpanded ? (
+                <>{locale === "ar" ? "عرض أقل" : "View Less"}</>
+              ) : (
+                <> {locale === "ar" ? "عرض المزيد" : "View More"} </>
+              )}
             </button>
           </div>
         )}

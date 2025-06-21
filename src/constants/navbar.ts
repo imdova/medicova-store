@@ -1,3 +1,4 @@
+import { GroupNavLink } from "@/types";
 import {
   Home,
   Grid,
@@ -9,23 +10,59 @@ import {
   LayoutDashboard,
 } from "lucide-react";
 
-export const NavbarLinks = {
+export const NavbarLinks: GroupNavLink = {
   user: [
-    { name: "Home", path: "/", icon: Home },
-    { name: "Categories", path: "/categories", icon: Grid },
-    { name: "Account", path: "/user/profile", icon: User },
-    { name: "Cart", path: "/cart", icon: ShoppingCart },
+    { name: { en: "Home", ar: "الرئيسية" }, path: "/", icon: Home },
+    {
+      name: { en: "Categories", ar: "الفئات" },
+      path: "/categories",
+      icon: Grid,
+    },
+    {
+      name: { en: "Account", ar: "الحساب" },
+      path: "/user/profile",
+      icon: User,
+    },
+    { name: { en: "Cart", ar: "السلة" }, path: "/cart", icon: ShoppingCart },
   ],
   seller: [
-    { name: "Home", path: "/", icon: Home },
-    { name: "Products", path: "/seller/products", icon: Package },
-    { name: "Dashboard", path: "/seller", icon: LayoutDashboard },
-    { name: "Settings", path: "/seller/settings", icon: Settings },
+    { name: { en: "Home", ar: "الرئيسية" }, path: "/", icon: Home },
+    {
+      name: { en: "Products", ar: "المنتجات" },
+      path: "/seller/products",
+      icon: Package,
+    },
+    {
+      name: { en: "Dashboard", ar: "لوحة التحكم" },
+      path: "/seller",
+      icon: LayoutDashboard,
+    },
+    {
+      name: { en: "Settings", ar: "الإعدادات" },
+      path: "/seller/settings",
+      icon: Settings,
+    },
   ],
   admin: [
-    { name: "Dashboard", path: "/admin", icon: Home },
-    { name: "Users", path: "/admin/users", icon: Users },
-    { name: "Account", path: "/account/profile", icon: User },
-    { name: "Settings", path: "/admin/settings", icon: Settings },
+    {
+      name: { en: "Dashboard", ar: "لوحة التحكم" },
+      path: "/admin",
+      icon: Home,
+    },
+    {
+      name: { en: "Users", ar: "المستخدمين" },
+      path: "/admin/users",
+      icon: Users,
+    },
+    {
+      name: { en: "Account", ar: "الحساب" },
+      path: "/account/profile",
+      icon: User,
+    },
+    {
+      name: { en: "Settings", ar: "الإعدادات" },
+      path: "/admin/settings",
+      icon: Settings,
+    },
   ],
 };

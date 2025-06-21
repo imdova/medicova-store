@@ -1,4 +1,4 @@
-import { Raleway } from "next/font/google";
+import { Raleway, Cairo } from "next/font/google";
 import "./globals.css";
 import DynamicHeaderWrapper from "@/components/Layout/Header/DynamicHeaderWrapper";
 import { Suspense } from "react";
@@ -9,8 +9,17 @@ import DynamicFooter from "@/components/Layout/Footer/DynamicFooter";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 
 const raleway = Raleway({
-  variable: "--font-raleway",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-raleway",
+  display: "swap",
+});
+
+const cairo = Cairo({
+  subsets: ["arabic", "latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-cairo",
+  display: "swap",
 });
 
 export default function RootLayout({
@@ -19,19 +28,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <LanguageProvider>
-      <html lang="en" className={raleway.variable}>
-        <body className="bg-gray-50 antialiased">
-          <StoreProvider>
-            <NextAuthProvider>
-              <DynamicHeaderWrapper>
-                <Suspense fallback={<LoadingAnimation />}>{children}</Suspense>
-              </DynamicHeaderWrapper>
-              <DynamicFooter />
-            </NextAuthProvider>
-          </StoreProvider>
-        </body>
-      </html>
-    </LanguageProvider>
+    <main className={`${raleway.variable} ${cairo.variable}`}>
+      <LanguageProvider>
+        <html lang="en">
+          <body className="bg-gray-50 antialiased">
+            <StoreProvider>
+              <NextAuthProvider>
+                <DynamicHeaderWrapper>
+                  <Suspense fallback={<LoadingAnimation />}>
+                    {children}
+                  </Suspense>
+                </DynamicHeaderWrapper>
+                <DynamicFooter />
+              </NextAuthProvider>
+            </StoreProvider>
+          </body>
+        </html>
+      </LanguageProvider>
+    </main>
   );
 }

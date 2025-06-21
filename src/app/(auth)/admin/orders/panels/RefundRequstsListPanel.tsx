@@ -13,8 +13,8 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Filters } from "@/components/UI/filter/FilterDrawer";
 import DateRangeSelector from "@/components/UI/DateRangeSelector";
 import { formatDate } from "@/util/dateUtils";
+import { LanguageType } from "@/util/translations";
 import Dropdown from "@/components/UI/DropDownMenu";
-
 type Product = {
   name: string;
   image: string;
@@ -220,126 +220,44 @@ const refunds: Refund[] = [
 
 // Filter options
 const sellerOptions = [
-  { id: "all", name: "All Sellers" },
-  { id: "brandova", name: "Brandova" },
-  { id: "softmart", name: "SoftMart" },
-  { id: "techgear", name: "TechGear" },
+  { id: "all", name: { en: "All Sellers", ar: "كل البائعين" } },
+  { id: "brandova", name: { en: "Brandova", ar: "براندوفا" } },
+  { id: "softmart", name: { en: "SoftMart", ar: "سوفت مارت" } },
+  { id: "techgear", name: { en: "TechGear", ar: "تيك جير" } },
 ];
 
 const customerOptions = [
-  { id: "all", name: "All Customers" },
-  { id: "ahmed", name: "Ahmed Mohamed" },
-  { id: "fatma", name: "Fatma Said" },
-  { id: "mohamed", name: "Mohamed Ali" },
+  { id: "all", name: { en: "All Customers", ar: "كل العملاء" } },
+  { id: "ahmed", name: { en: "Ahmed Mohamed", ar: "أحمد محمد" } },
+  { id: "fatma", name: { en: "Fatma Said", ar: "فاطمة سعيد" } },
+  { id: "mohamed", name: { en: "Mohamed Ali", ar: "محمد علي" } },
 ];
 
 const statusOptions = [
-  { id: "all", name: "All Status" },
-  { id: "pending", name: "Pending" },
-  { id: "processed", name: "Processed" },
+  { id: "all", name: { en: "All Status", ar: "كل الحالات" } },
+  { id: "pending", name: { en: "Pending", ar: "قيد الانتظار" } },
+  { id: "processed", name: { en: "Processed", ar: "تمت المعالجة" } },
 ];
 
 const productsOptions = [
-  { id: "all", name: "All Products" },
-  { id: "standard", name: "Standard" },
-  { id: "express", name: "Express" },
-  { id: "priority", name: "Priority" },
+  { id: "all", name: { en: "All Products", ar: "كل المنتجات" } },
+  { id: "standard", name: { en: "Standard", ar: "عادي" } },
+  { id: "express", name: { en: "Express", ar: "سريع" } },
+  { id: "priority", name: { en: "Priority", ar: "أولوية" } },
 ];
 
-// Orders table columns
-const orderColumns = [
-  {
-    key: "id",
-    header: "Refund ID",
-    sortable: true,
-  },
-  {
-    key: "order_id",
-    header: "Order ID",
-    sortable: true,
-  },
-  {
-    key: "date",
-    header: "Date",
-    sortable: true,
-  },
-  {
-    key: "products",
-    header: "Products",
-    render: (item: Refund) => (
-      <div className="space-y-2">
-        {item.products.map((product: Product, index: number) => (
-          <div key={index} className="flex items-center gap-2">
-            <Image
-              className="h-8 w-8 rounded object-cover"
-              src={product.image}
-              alt={product.name}
-              width={32}
-              height={32}
-            />
-            <Link href={"#"} className="text-sm hover:underline">
-              {product.name}
-            </Link>
-          </div>
-        ))}
-      </div>
-    ),
-  },
-  {
-    key: "customer",
-    header: "Customer",
-    render: (item: Refund) => (
-      <div className="text-sm leading-5">
-        <div className="font-medium">{item.customer.name}</div>
-        <div className="text-xs text-gray-500">{item.customer.phone}</div>
-        <div className="text-xs text-gray-500">{item.customer.location}</div>
-      </div>
-    ),
-  },
-
-  {
-    key: "seller",
-    header: "Seller",
-  },
-  {
-    key: "unit_price",
-    header: "Unit price",
-  },
-  {
-    key: "quantity",
-    header: "Quantity",
-  },
-  {
-    key: "total",
-    header: "Total Sales",
-    sortable: true,
-  },
-  {
-    key: "status",
-    header: "Status",
-    render: (item: Refund) => {
-      let color = "bg-gray-100 text-gray-700";
-
-      if (item.status === "Pending") color = "bg-yellow-100 text-yellow-700";
-      if (item.status === "Processed") color = "bg-green-100 text-green-700";
-
-      return (
-        <span className={`inline-block rounded-full px-2 text-[10px] ${color}`}>
-          {item.status}
-        </span>
-      );
-    },
-  },
-];
-
-export default function OrdersListPanel() {
+export default function RefundRequstsListPanel({
+  locale = "en",
+}: {
+  locale: LanguageType;
+}) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeStatus, setActiveStatus] = useState("all");
-
+  console.log(filtersOpen);
   // Get current filter values from URL
   const sellerFilter = searchParams.get("seller") || "all";
   const customerFilter = searchParams.get("customer") || "all";
@@ -402,6 +320,102 @@ export default function OrdersListPanel() {
     setActiveStatus("all");
     router.replace(pathname);
   };
+  // Orders table columns
+  const orderColumns = [
+    {
+      key: "id",
+      header: locale === "ar" ? "معرف الاسترداد" : "Refund ID",
+      sortable: true,
+    },
+    {
+      key: "order_id",
+      header: locale === "ar" ? "معرف الطلب" : "Order ID",
+      sortable: true,
+    },
+    {
+      key: "date",
+      header: locale === "ar" ? "التاريخ" : "Date",
+      sortable: true,
+    },
+    {
+      key: "products",
+      header: locale === "ar" ? "المنتجات" : "Products",
+      render: (item: Refund) => (
+        <div className="space-y-2">
+          {item.products.map((product: Product, index: number) => (
+            <div key={index} className="flex items-center gap-2">
+              <Image
+                className="h-8 w-8 rounded object-cover"
+                src={product.image}
+                alt={product.name}
+                width={32}
+                height={32}
+              />
+              <Link href="#" className="text-sm hover:underline">
+                {product.name}
+              </Link>
+            </div>
+          ))}
+        </div>
+      ),
+    },
+    {
+      key: "customer",
+      header: locale === "ar" ? "العميل" : "Customer",
+      render: (item: Refund) => (
+        <div className="text-sm leading-5">
+          <div className="font-medium">{item.customer.name}</div>
+          <div className="text-xs text-gray-500">{item.customer.phone}</div>
+          <div className="text-xs text-gray-500">{item.customer.location}</div>
+        </div>
+      ),
+    },
+    {
+      key: "seller",
+      header: locale === "ar" ? "البائع" : "Seller",
+    },
+    {
+      key: "unit_price",
+      header: locale === "ar" ? "سعر الوحدة" : "Unit Price",
+    },
+    {
+      key: "quantity",
+      header: locale === "ar" ? "الكمية" : "Quantity",
+    },
+    {
+      key: "total",
+      header: locale === "ar" ? "إجمالي المبيعات" : "Total Sales",
+      sortable: true,
+    },
+    {
+      key: "status",
+      header: locale === "ar" ? "الحالة" : "Status",
+      render: (item: Refund) => {
+        let color = "bg-gray-100 text-gray-700";
+        if (item.status === "Pending") color = "bg-yellow-100 text-yellow-700";
+        if (item.status === "Processed") color = "bg-green-100 text-green-700";
+
+        const statusLabel =
+          item.status === "Pending"
+            ? locale === "ar"
+              ? "قيد الانتظار"
+              : "Pending"
+            : item.status === "Processed"
+              ? locale === "ar"
+                ? "تمت المعالجة"
+                : "Processed"
+              : item.status;
+
+        return (
+          <span
+            className={`inline-block rounded-full px-2 text-[10px] ${color}`}
+          >
+            {statusLabel}
+          </span>
+        );
+      },
+    },
+  ];
 
   return (
     <div className="relative space-y-6">
@@ -411,6 +425,7 @@ export default function OrdersListPanel() {
             onDateChange={handleDateChange}
             formatString="MM/dd/yyyy"
             className="w-full md:w-fit"
+            locale={locale}
           />
           <div className="flex flex-1">
             <div className="relative flex-1">
@@ -418,8 +433,12 @@ export default function OrdersListPanel() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by seller name..."
-                className="w-full rounded-s-md border border-r-0 border-gray-300 px-3 py-1.5 pl-10 outline-none placeholder:text-sm"
+                placeholder={
+                  locale === "en"
+                    ? "Search by seller name..."
+                    : "البحث باسم البائع..."
+                }
+                className={`w-full rounded-s-md border ${locale === "ar" ? "border-l-0" : "border-r-0"} border-gray-300 px-3 py-1.5 pl-10 outline-none placeholder:text-sm`}
               />
               <Search
                 className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600"
@@ -430,7 +449,7 @@ export default function OrdersListPanel() {
               onClick={() => handleFilterChange("search", searchQuery)}
               className="rounded-e-md bg-light-primary px-3 py-1.5 text-sm text-white hover:brightness-90"
             >
-              Search
+              {locale === "en" ? "Search" : "بحث"}
             </button>
           </div>
           <div className="flex gap-2">
@@ -439,10 +458,10 @@ export default function OrdersListPanel() {
               className="flex items-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
             >
               <SlidersHorizontal size={16} />
-              More Filters
+              {locale === "en" ? "More Filters" : "المزيد من الفلاتر"}
             </button>
             <button className="rounded bg-green-600 px-3 py-1.5 text-sm text-white hover:bg-green-700">
-              Download
+              {locale === "en" ? "Download" : "تحميل"}
             </button>
           </div>
         </div>
@@ -452,7 +471,9 @@ export default function OrdersListPanel() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {/* Seller Filter */}
             <div>
-              <h3 className="mb-2 text-sm font-medium">Seller</h3>
+              <h3 className="mb-2 text-sm font-medium">
+                {locale === "en" ? "Seller" : "البائع"}
+              </h3>
               <div className="mt-2">
                 <Dropdown
                   options={sellerOptions}
@@ -460,13 +481,16 @@ export default function OrdersListPanel() {
                   onSelect={(value) =>
                     handleFilterChange("seller", value.toString())
                   }
+                  locale={locale}
                 />
               </div>
             </div>
 
             {/* Customer Filter */}
             <div>
-              <h3 className="mb-2 text-sm font-medium">Customer</h3>
+              <h3 className="mb-2 text-sm font-medium">
+                {locale === "en" ? "Customer" : "العميل"}
+              </h3>
               <div className="mt-2">
                 <Dropdown
                   options={customerOptions}
@@ -474,30 +498,37 @@ export default function OrdersListPanel() {
                   onSelect={(value) =>
                     handleFilterChange("customer", value.toString())
                   }
+                  locale={locale}
                 />
               </div>
             </div>
 
             {/* Products Filter */}
             <div>
-              <h3 className="mb-2 text-sm font-medium">Product</h3>
+              <h3 className="mb-2 text-sm font-medium">
+                {locale === "en" ? "Product" : "المنتج"}
+              </h3>
               <Dropdown
                 options={productsOptions}
                 selected={productsFilter}
                 onSelect={(value) =>
                   handleFilterChange("product", value.toString())
                 }
+                locale={locale}
               />
             </div>
             {/* status Filter */}
             <div>
-              <h3 className="mb-2 text-sm font-medium">Status</h3>
+              <h3 className="mb-2 text-sm font-medium">
+                {locale === "en" ? "Status" : "الحالة"}
+              </h3>
               <Dropdown
                 options={statusOptions}
                 selected={statusFilter}
                 onSelect={(value) =>
                   handleFilterChange("status", value.toString())
                 }
+                locale={locale}
               />
             </div>
           </div>
@@ -506,6 +537,7 @@ export default function OrdersListPanel() {
             isOpen={filtersOpen}
             onClose={() => setFiltersOpen(false)}
             filtersData={[]}
+            locale={locale}
           />
         </div>
 
@@ -522,7 +554,7 @@ export default function OrdersListPanel() {
                     : "border-gray-200 bg-white text-gray-500"
                 }`}
               >
-                {option.name} (
+                {option.name[locale]} (
                 {orderCounts[option.id as keyof typeof orderCounts]})
               </button>
             ))}
@@ -532,10 +564,10 @@ export default function OrdersListPanel() {
               onClick={resetFilters}
               className="rounded border border-primary px-3 py-1.5 text-sm text-primary transition hover:bg-primary hover:text-white"
             >
-              Reset
+              {locale === "en" ? "Reset" : "إعادة تعيين"}
             </button>
             <button className="rounded bg-light-primary px-3 py-1.5 text-sm text-white transition hover:brightness-95">
-              Show Data
+              {locale === "en" ? "Show Data" : "عرض البيانات"}
             </button>
           </div>
         </div>
@@ -543,12 +575,15 @@ export default function OrdersListPanel() {
 
       <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Orders</h2>
+          <h2 className="text-lg font-semibold">
+            {locale === "en" ? "Orders" : "الطلبات"}
+          </h2>
           <Link
             href="#"
             className="flex items-center gap-1 text-sm font-medium text-green-600 hover:text-green-700"
           >
-            View All <ChevronRight size={14} />
+            {locale === "en" ? "View All" : "عرض الكل"}{" "}
+            <ChevronRight size={14} />
           </Link>
         </div>
 
@@ -561,14 +596,14 @@ export default function OrdersListPanel() {
           selectable={true}
           actions={[
             {
-              label: "Edit",
+              label: { en: "Edit", ar: "تعديل" },
               onClick: () => console.log("edited"),
               className:
                 "bg-white text-gray-700 hover:text-blue-700 hover:bg-blue-50",
               icon: <PencilIcon className="h-4 w-4" />,
             },
             {
-              label: "Delete",
+              label: { en: "Delete", ar: "حذف" },
               onClick: () => console.log("Deleted"),
               className:
                 "bg-white text-gray-700 hover:text-red-700 hover:bg-red-50",
@@ -587,6 +622,7 @@ export default function OrdersListPanel() {
               icon: <TrashIcon className="h-4 w-4" />,
             },
           ]}
+          locale={locale}
         />
       </div>
     </div>

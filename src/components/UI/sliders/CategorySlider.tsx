@@ -6,6 +6,8 @@ import { motion, PanInfo, useAnimation } from "framer-motion";
 import { useSwipeable } from "react-swipeable";
 import Image from "next/image";
 import { MultiCategory } from "@/types";
+import { LanguageType } from "@/util/translations";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type CardSize = "small" | "medium" | "large";
 type DisplayMode = "default" | "numbered";
@@ -16,6 +18,7 @@ type CategorySliderProps = {
   cardSize?: CardSize;
   displayMode?: DisplayMode;
   path?: string;
+  locale: LanguageType;
 };
 
 const CategorySlider: React.FC<CategorySliderProps> = ({
@@ -23,6 +26,7 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
   inCategory = false,
   cardSize = "medium",
   displayMode = "default",
+  locale = "en",
   path,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -32,6 +36,8 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const controls = useAnimation();
   const autoPlayTimeoutRef = useRef<number | null>(null);
+
+  const isRTL = locale === "ar";
 
   // Get card dimensions based on size prop
   const getCardDimensions = () => {
@@ -114,7 +120,7 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
       if (!containerRef.current) return;
 
       const containerWidth = containerRef.current.clientWidth;
-      const newPosition = -clampedIndex * containerWidth;
+      const newPosition = -clampedIndex * containerWidth * (isRTL ? -1 : 1);
 
       controls.start({
         x: newPosition,
@@ -123,16 +129,16 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
 
       setCurrentIndex(clampedIndex);
     },
-    [controls, totalSlides],
+    [controls, totalSlides, isRTL],
   );
 
   const nextSlide = useCallback(() => {
-    scrollToIndex(currentIndex + 1);
-  }, [currentIndex, scrollToIndex]);
+    scrollToIndex(currentIndex + (isRTL ? -1 : 1));
+  }, [currentIndex, scrollToIndex, isRTL]);
 
   const prevSlide = useCallback(() => {
-    scrollToIndex(currentIndex - 1);
-  }, [currentIndex, scrollToIndex]);
+    scrollToIndex(currentIndex + (isRTL ? 1 : -1));
+  }, [currentIndex, scrollToIndex, isRTL]);
 
   // Handle drag events with momentum
   const handleDragStart = () => {
@@ -159,11 +165,11 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
 
     // Combine factors to determine slide change
     if (velocityFactor + distanceFactor > 0.5) {
-      scrollToIndex(currentIndex + direction);
+      scrollToIndex(currentIndex + (isRTL ? -direction : direction));
     } else {
       // Return to current slide
       controls.start({
-        x: -currentIndex * containerWidth,
+        x: -currentIndex * containerWidth * (isRTL ? -1 : 1),
         transition: { duration: 0.3 },
       });
     }
@@ -171,8 +177,8 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
 
   // Swipe handlers for touch devices
   const handlers = useSwipeable({
-    onSwipedLeft: () => nextSlide(),
-    onSwipedRight: () => prevSlide(),
+    onSwipedLeft: () => (isRTL ? prevSlide() : nextSlide()),
+    onSwipedRight: () => (isRTL ? nextSlide() : prevSlide()),
     preventScrollOnSwipe: true,
     trackMouse: false,
     delta: 50,
@@ -191,7 +197,7 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
   };
 
   const buttonVariants = {
-    hidden: { opacity: 0, x: -20 },
+    hidden: { opacity: 0, x: isRTL ? 20 : -20 },
     visible: { opacity: 1, x: 0 },
     hover: { scale: 1.1, backgroundColor: "rgba(255,255,255,0.9)" },
   };
@@ -202,64 +208,43 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
     <div
       className="container relative mx-auto overflow-hidden p-3 pt-4 lg:max-w-[1440px]"
       {...handlers}
+      dir={isRTL ? "rtl" : "ltr"}
     >
       {/* Navigation Arrows */}
       <motion.button
         onClick={prevSlide}
-        className="absolute left-2 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white/80 shadow-sm hover:bg-white/90 md:flex"
-        aria-label="Previous categories"
+        className={`absolute top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white/80 shadow-sm hover:bg-white/90 md:flex ${
+          isRTL ? "left-2" : "right-2"
+        }`}
+        aria-label={isRTL ? "Next categories" : "Previous categories"}
         variants={buttonVariants}
         initial="hidden"
         animate="visible"
         whileHover="hover"
         style={{ backdropFilter: "blur(4px)" }}
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 text-gray-700"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
+        {isRTL ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
       </motion.button>
 
       <motion.button
         onClick={nextSlide}
-        className="absolute right-2 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white/80 shadow-sm hover:bg-white/90 md:flex"
-        aria-label="Next categories"
+        className={`absolute top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white/80 shadow-sm hover:bg-white/90 md:flex ${
+          isRTL ? "right-2" : "left-2"
+        }`}
+        aria-label={isRTL ? "Previous categories" : "Next categories"}
         variants={buttonVariants}
         initial="hidden"
         animate="visible"
         whileHover="hover"
         style={{ backdropFilter: "blur(4px)" }}
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 text-gray-700"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 5l7 7-7 7"
-          />
-        </svg>
+        {isRTL ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
       </motion.button>
 
       {/* Slider container */}
       <div
         ref={containerRef}
-        className="relative w-full overflow-hidden py-2"
+        className="relative w-full py-2"
         style={{
           cursor: isDragging ? "grabbing" : "grab",
         }}
@@ -272,11 +257,12 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
           }}
           drag="x"
           dragConstraints={{
-            left: -(
-              (totalSlides - 1) *
-              (containerRef.current?.clientWidth || 0)
-            ),
-            right: 0,
+            left: isRTL
+              ? 0
+              : -((totalSlides - 1) * (containerRef.current?.clientWidth || 0)),
+            right: isRTL
+              ? (totalSlides - 1) * (containerRef.current?.clientWidth || 0)
+              : 0,
           }}
           dragElastic={0.05}
           onDragStart={handleDragStart}
@@ -342,14 +328,14 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
                               src={category.image}
                               width={80}
                               height={80}
-                              alt={category.title}
+                              alt={category.title[locale]}
                               loading="lazy"
                             />
                           )}
                         </motion.div>
                         {category.isSale && (
                           <div className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded-3xl bg-red-600 px-4 text-xs font-bold text-white">
-                            Sale
+                            {locale === "ar" ? "عروض" : "Sale"}
                           </div>
                         )}
                       </div>
@@ -357,7 +343,7 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
                       <motion.h3
                         className={`text-center font-medium text-gray-800 transition hover:text-primary ${textSize}`}
                       >
-                        {category.title}
+                        {category.title[locale]}
                       </motion.h3>
                     </Link>
                   </motion.div>

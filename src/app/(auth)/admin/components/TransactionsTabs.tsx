@@ -4,28 +4,104 @@ import { ChevronRight, PencilIcon, TrashIcon } from "lucide-react";
 import Image from "next/image";
 import { Download } from "lucide-react";
 import DynamicTable from "@/components/UI/tables/DTable";
+import { LanguageType } from "@/util/translations";
+import { LocalizedTitle } from "@/types/language";
+
+// Translation object
+const translations = {
+  overview: {
+    seller: {
+      en: "Seller",
+      ar: "بائع",
+    },
+    invoice: {
+      en: "Invoice",
+      ar: "فاتورة",
+    },
+    date: {
+      en: "Date",
+      ar: "تاريخ",
+    },
+    product: {
+      en: "Product",
+      ar: "منتج",
+    },
+    customer: {
+      en: "Customer",
+      ar: "عميل",
+    },
+    unitPrice: {
+      en: "Unit Price",
+      ar: "سعر الوحدة",
+    },
+    quantity: {
+      en: "Quantity",
+      ar: "الكمية",
+    },
+    totalSales: {
+      en: "Total Sales",
+      ar: "إجمالي المبيعات",
+    },
+    paymentMethod: {
+      en: "Payment Method",
+      ar: "طريقة الدفع",
+    },
+    status: {
+      en: "Status",
+      ar: "حالة",
+    },
+    receipt: {
+      en: "Receipt",
+      ar: "إيصال",
+    },
+    transactionId: {
+      en: "Transaction ID",
+      ar: "معرف المعاملة",
+    },
+    products: {
+      en: "Products",
+      ar: "منتجات",
+    },
+    location: {
+      en: "Location",
+      ar: "موقع",
+    },
+    customersTransactions: {
+      en: "Customers Transactions",
+      ar: "معاملات العملاء",
+    },
+    sellersTransactions: {
+      en: "Sellers Transactions",
+      ar: "معاملات البائعين",
+    },
+    viewAll: {
+      en: "View All",
+      ar: "عرض الكل",
+    },
+  },
+};
 
 type CustomerTransaction = {
   id: string;
   date: string;
   product: {
-    name: string;
+    name: LocalizedTitle;
     image: string;
   };
   customer: {
     name: string;
     phone: string;
-    location: string;
+    location: LocalizedTitle;
   };
   seller: string;
-  unitPrice: string;
-  quantity: string;
-  total: string;
+  unitPrice: LocalizedTitle;
+  quantity: LocalizedTitle;
+  total: LocalizedTitle;
   payment: {
-    method: "visa" | "paypal" | "cash"; // extend as needed
+    method: "visa" | "paypal" | "cash";
     last4: string;
   };
-  status: "Paid" | "Pending" | "Failed"; // extend as needed
+  status: "Paid" | "Pending" | "Failed";
 };
 
 type SellerTransaction = {
@@ -35,28 +111,42 @@ type SellerTransaction = {
   email: string;
   phone: string;
   productCount: number;
-  totalSales: string;
-  location: string;
-  status: "Paid" | "Pending" | "Failed"; // extend as needed
+  totalSales: LocalizedTitle;
+  location: LocalizedTitle;
+  status: "Paid" | "Pending" | "Failed";
 };
-
 const customerTransactions: CustomerTransaction[] = [
   {
     id: "142548",
     date: "15/5/2025",
     product: {
-      name: "Norton Utilities Ultimate 2023 for Windows",
+      name: {
+        en: "Norton Utilities Ultimate 2023 for Windows",
+        ar: "نورتون يوتيليتيز ألتيميت 2023 لويندوز",
+      },
       image: "/images/products/norton.png",
     },
     customer: {
       name: "Ahmed Mohamed",
       phone: "012454526885",
-      location: "Nasr City, Cairo",
+      location: {
+        en: "Nasr City, Cairo",
+        ar: "مدينة نصر، القاهرة",
+      },
     },
     seller: "Brandova",
-    unitPrice: "800 EGP",
-    quantity: "4 units",
-    total: "3200 EGP",
+    unitPrice: {
+      en: "800 EGP",
+      ar: "٨٠٠ جنيه",
+    },
+    quantity: {
+      en: "4 units",
+      ar: "٤ وحدات",
+    },
+    total: {
+      en: "3200 EGP",
+      ar: "٣٢٠٠ جنيه",
+    },
     payment: {
       method: "visa",
       last4: "1452",
@@ -67,18 +157,33 @@ const customerTransactions: CustomerTransaction[] = [
     id: "142549",
     date: "14/5/2025",
     product: {
-      name: "Adobe Photoshop 2023 License",
+      name: {
+        en: "Adobe Photoshop 2023 License",
+        ar: "ترخيص أدوبي فوتوشوب 2023",
+      },
       image: "/images/products/photoshop.png",
     },
     customer: {
       name: "Fatma Said",
       phone: "01001234567",
-      location: "Maadi, Cairo",
+      location: {
+        en: "Maadi, Cairo",
+        ar: "المعادي، القاهرة",
+      },
     },
     seller: "SoftMart",
-    unitPrice: "1200 EGP",
-    quantity: "1 unit",
-    total: "1200 EGP",
+    unitPrice: {
+      en: "1200 EGP",
+      ar: "١٢٠٠ جنيه",
+    },
+    quantity: {
+      en: "1 unit",
+      ar: "١ وحدة",
+    },
+    total: {
+      en: "1200 EGP",
+      ar: "١٢٠٠ جنيه",
+    },
     payment: {
       method: "visa",
       last4: "9901",
@@ -95,8 +200,14 @@ const sellerTransactions: SellerTransaction[] = [
     email: "brandova@example.com",
     phone: "01099887766",
     productCount: 52,
-    totalSales: "160,000 EGP",
-    location: "Alexandria",
+    totalSales: {
+      en: "160,000 EGP",
+      ar: "١٦٠٬٠٠٠ جنيه",
+    },
+    location: {
+      en: "Alexandria",
+      ar: "الإسكندرية",
+    },
     status: "Paid",
   },
   {
@@ -106,69 +217,84 @@ const sellerTransactions: SellerTransaction[] = [
     email: "softmart@example.com",
     phone: "01233445566",
     productCount: 38,
-    totalSales: "112,500 EGP",
-    location: "Giza",
+    totalSales: {
+      en: "112,500 EGP",
+      ar: "١١٢٬٥٠٠ جنيه",
+    },
+    location: {
+      en: "Giza",
+      ar: "الجيزة",
+    },
     status: "Pending",
   },
 ];
 
-const customerColumns = [
+const getCustomerColumns = (locale: LanguageType) => [
   {
     key: "id",
-    header: "Invoice",
+    header: translations.overview.invoice[locale],
     sortable: true,
   },
   {
     key: "date",
-    header: "Date",
+    header: translations.overview.date[locale],
     sortable: true,
   },
   {
     key: "product",
-    header: "Product",
+    header: translations.overview.product[locale],
     render: (item: CustomerTransaction) => (
       <div className="flex items-center gap-2">
         <Image
           className="h-10 w-10 rounded object-cover"
           src={item.product.image}
-          alt={item.product.name}
+          alt={item.product.name[locale] ?? "image product"}
           width={40}
           height={40}
         />
-        <span className="line-clamp-2 text-sm">{item.product.name}</span>
+        <span className="line-clamp-2 text-sm">
+          {item.product.name[locale]}
+        </span>
       </div>
     ),
   },
   {
     key: "customer",
-    header: "Customer",
+    header: translations.overview.customer[locale],
     render: (item: CustomerTransaction) => (
       <div className="text-sm leading-5">
         <div className="font-medium">{item.customer.name}</div>
         <div className="text-xs text-gray-500">{item.customer.phone}</div>
-        <div className="text-xs text-gray-500">{item.customer.location}</div>
+        <div className="text-xs text-gray-500">
+          {item.customer.location[locale]}
+        </div>
       </div>
     ),
   },
   {
     key: "seller",
-    header: "Seller",
+    header: translations.overview.seller[locale],
   },
   {
     key: "unitPrice",
-    header: "Unit Price",
+    header: translations.overview.unitPrice[locale],
+    render: (item: CustomerTransaction) => (
+      <span>{item.unitPrice[locale]}</span>
+    ),
   },
   {
     key: "quantity",
-    header: "Quantity",
+    header: translations.overview.quantity[locale],
+    render: (item: CustomerTransaction) => <span>{item.quantity[locale]}</span>,
   },
   {
     key: "total",
-    header: "Total Sales",
+    header: translations.overview.totalSales[locale],
+    render: (item: CustomerTransaction) => <span>{item.total[locale]}</span>,
   },
   {
     key: "payment",
-    header: "Payment Method",
+    header: translations.overview.paymentMethod[locale],
     render: (item: CustomerTransaction) => (
       <div className="flex items-center gap-1">
         <Image src="/icons/card-visa.svg" alt="visa" width={24} height={16} />
@@ -178,7 +304,7 @@ const customerColumns = [
   },
   {
     key: "status",
-    header: "Status",
+    header: translations.overview.status[locale],
     render: (item: CustomerTransaction) => (
       <span className="inline-block rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
         {item.status}
@@ -187,7 +313,7 @@ const customerColumns = [
   },
   {
     key: "receipt",
-    header: "Receipt",
+    header: translations.overview.receipt[locale],
     render: () => (
       <button className="rounded border p-1 hover:bg-gray-100">
         <Download className="h-4 w-4 text-gray-600" />
@@ -196,18 +322,18 @@ const customerColumns = [
   },
 ];
 
-export const sellerColumns = [
+const getSellerColumns = (locale: LanguageType) => [
   {
     key: "id",
-    header: "Transaction ID",
+    header: translations.overview.transactionId[locale],
   },
   {
     key: "date",
-    header: "Date",
+    header: translations.overview.date[locale],
   },
   {
     key: "seller",
-    header: "Seller",
+    header: translations.overview.seller[locale],
     render: (item: SellerTransaction) => (
       <div>
         <div className="font-medium">{item.seller}</div>
@@ -218,19 +344,21 @@ export const sellerColumns = [
   },
   {
     key: "productCount",
-    header: "Products",
+    header: translations.overview.products[locale],
   },
   {
     key: "totalSales",
-    header: "Total Sales",
+    header: translations.overview.totalSales[locale],
+    render: (item: SellerTransaction) => <span>{item.totalSales[locale]}</span>,
   },
   {
     key: "location",
-    header: "Location",
+    header: translations.overview.location[locale],
+    render: (item: SellerTransaction) => <span>{item.location[locale]}</span>,
   },
   {
     key: "status",
-    header: "Status",
+    header: translations.overview.status[locale],
     render: (item: SellerTransaction) => {
       const color =
         item.status === "Paid"
@@ -247,14 +375,22 @@ export const sellerColumns = [
   },
 ];
 
-const TransactionsTabs = () => {
+const TransactionsTabs = ({ locale = "en" }: { locale: LanguageType }) => {
   const [activeTab, setActiveTab] = useState<"customers" | "sellers">(
     "customers",
   );
 
   const tabs = [
-    { key: "customers", label: "Customers Transactions", count: 35 },
-    { key: "sellers", label: "Sellers Transactions", count: 20 },
+    {
+      key: "customers",
+      label: translations.overview.customersTransactions[locale],
+      count: 35,
+    },
+    {
+      key: "sellers",
+      label: translations.overview.sellersTransactions[locale],
+      count: 20,
+    },
   ];
 
   const renderTable = () => {
@@ -262,24 +398,24 @@ const TransactionsTabs = () => {
       return (
         <DynamicTable
           data={customerTransactions}
-          columns={customerColumns}
+          columns={getCustomerColumns(locale)}
           minWidth={1000}
           pagination={true}
           itemsPerPage={5}
           selectable={true}
           actions={[
             {
-              label: "Edit",
+              label: locale === "ar" ? "تعديل" : "Edit",
               onClick: () => console.log("edited"),
               className:
-                "bg-white text-gray-700 hover:text-blue-700 hover:bg-blue-50 ",
+                "bg-white text-gray-700 hover:text-blue-700 hover:bg-blue-50",
               icon: <PencilIcon className="h-4 w-4" />,
             },
             {
-              label: "Delete",
+              label: locale === "ar" ? "حذف" : "Delete",
               onClick: () => console.log("Deleted"),
               className:
-                "bg-white text-gray-700 hover:text-red-700 hover:bg-red-50 ",
+                "bg-white text-gray-700 hover:text-red-700 hover:bg-red-50",
               icon: <TrashIcon className="h-4 w-4" />,
             },
           ]}
@@ -295,30 +431,31 @@ const TransactionsTabs = () => {
               icon: <TrashIcon className="h-4 w-4" />,
             },
           ]}
+          locale={locale}
         />
       );
     } else {
       return (
         <DynamicTable
           data={sellerTransactions}
-          columns={sellerColumns}
+          columns={getSellerColumns(locale)}
           minWidth={1000}
           pagination={true}
           itemsPerPage={5}
           selectable={true}
           actions={[
             {
-              label: "Edit",
+              label: locale === "ar" ? "تعديل" : "Edit",
               onClick: () => console.log("edited"),
               className:
-                "bg-white text-gray-700 hover:text-blue-700 hover:bg-blue-50 ",
+                "bg-white text-gray-700 hover:text-blue-700 hover:bg-blue-50",
               icon: <PencilIcon className="h-4 w-4" />,
             },
             {
-              label: "Delete",
+              label: locale === "ar" ? "حذف" : "Delete",
               onClick: () => console.log("Deleted"),
               className:
-                "bg-white text-gray-700 hover:text-red-700 hover:bg-red-50 ",
+                "bg-white text-gray-700 hover:text-red-700 hover:bg-red-50",
               icon: <TrashIcon className="h-4 w-4" />,
             },
           ]}
@@ -334,13 +471,17 @@ const TransactionsTabs = () => {
               icon: <TrashIcon className="h-4 w-4" />,
             },
           ]}
+          locale={locale}
         />
       );
     }
   };
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+    <div
+      className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+      dir={locale === "ar" ? "rtl" : "ltr"}
+    >
       {/* Tabs */}
       <div className="mb-4 flex flex-col items-center justify-between gap-3 sm:flex-row">
         <div className="flex flex-col gap-6 sm:flex-row">
@@ -348,7 +489,7 @@ const TransactionsTabs = () => {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key as "customers" | "sellers")}
-              className={`relative pb-2 text-sm font-medium transition ${
+              className={`relative flex items-center gap-1 pb-2 text-sm font-medium transition ${
                 activeTab === tab.key
                   ? "text-green-600"
                   : "text-gray-500 hover:text-green-600"
@@ -372,7 +513,7 @@ const TransactionsTabs = () => {
           href="#"
           className="flex items-center gap-1 text-sm font-medium text-green-600 hover:text-green-700"
         >
-          View All <ChevronRight size={14} />
+          {translations.overview.viewAll[locale]} <ChevronRight size={14} />
         </Link>
       </div>
 

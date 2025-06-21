@@ -1,8 +1,8 @@
-import { Product } from "@/types/product";
+import { CartItem } from "@/types/cart";
 import { Middleware } from "redux";
 
 interface CartStateForMiddleware {
-  products: Product[];
+  products: CartItem[];
   totalPrice: number;
 }
 

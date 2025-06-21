@@ -1,3 +1,5 @@
+"use client";
+
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
@@ -14,6 +16,87 @@ import { Filters } from "@/components/UI/filter/FilterDrawer";
 import DateRangeSelector from "@/components/UI/DateRangeSelector";
 import { formatDate } from "@/util/dateUtils";
 import Dropdown from "@/components/UI/DropDownMenu";
+import { LanguageType } from "@/util/translations";
+
+// Translation dictionaries
+const translations = {
+  en: {
+    orderId: "Order ID",
+    date: "Date",
+    customer: "Customer",
+    products: "Products",
+    seller: "Seller",
+    totalSales: "Total Sales",
+    payment: "Payment",
+    status: "Status",
+    unitPrice: "Unit price",
+    quantity: "Quantity",
+    searchPlaceholder: "Search by seller name...",
+    search: "Search",
+    moreFilters: "More Filters",
+    download: "Download",
+    reset: "Reset",
+    showData: "Show Data",
+    viewAll: "View All",
+    orders: "Orders",
+    edit: "Edit",
+    delete: "Delete",
+    statusOptions: {
+      all: "All orders",
+      pending: "Pending",
+      packaging: "Packaging",
+      for_delivery: "For Delivery",
+      delivered: "Delivered",
+      returned: "Returned",
+      cancelled: "Cancelled",
+    },
+    filterLabels: {
+      seller: "Seller",
+      customer: "Customer",
+      category: "Category",
+      brand: "Brand",
+      status: "Status",
+    },
+  },
+  ar: {
+    orderId: "رقم الطلب",
+    date: "التاريخ",
+    customer: "العميل",
+    products: "المنتجات",
+    seller: "البائع",
+    totalSales: "إجمالي المبيعات",
+    payment: "طريقة الدفع",
+    status: "الحالة",
+    unitPrice: "سعر الوحدة",
+    quantity: "الكمية",
+    searchPlaceholder: "البحث باسم البائع...",
+    search: "بحث",
+    moreFilters: "المزيد من الفلاتر",
+    download: "تحميل",
+    reset: "إعادة تعيين",
+    showData: "عرض البيانات",
+    viewAll: "عرض الكل",
+    orders: "الطلبات",
+    edit: "تعديل",
+    delete: "حذف",
+    statusOptions: {
+      all: "جميع الطلبات",
+      pending: "قيد الانتظار",
+      packaging: "تعبئة",
+      for_delivery: "جاهز للتسليم",
+      delivered: "تم التسليم",
+      returned: "مرتجع",
+      cancelled: "ملغى",
+    },
+    filterLabels: {
+      seller: "البائع",
+      customer: "العميل",
+      category: "الفئة",
+      brand: "الماركة",
+      status: "الحالة",
+    },
+  },
+};
 
 type Product = {
   name: string;
@@ -21,6 +104,7 @@ type Product = {
   quantity: number;
   price: string;
 };
+
 type Order = {
   id: string;
   date: string;
@@ -216,167 +300,54 @@ const orders: Order[] = [
   },
 ];
 
-// Filter options
+// Filter options with translations
 const sellerOptions = [
-  { id: "all", name: "All Sellers" },
-  { id: "brandova", name: "Brandova" },
-  { id: "softmart", name: "SoftMart" },
-  { id: "techgear", name: "TechGear" },
+  { id: "all", name: { en: "All Sellers", ar: "كل البائعين" } },
+  { id: "brandova", name: { en: "Brandova", ar: "Brandova" } },
+  { id: "softmart", name: { en: "SoftMart", ar: "SoftMart" } },
+  { id: "techgear", name: { en: "TechGear", ar: "TechGear" } },
 ];
 
 const customerOptions = [
-  { id: "all", name: "All Customers" },
-  { id: "ahmed", name: "Ahmed Mohamed" },
-  { id: "fatma", name: "Fatma Said" },
-  { id: "mohamed", name: "Mohamed Ali" },
+  { id: "all", name: { en: "All Customers", ar: "كل العملاء" } },
+  { id: "ahmed", name: { en: "Ahmed Mohamed", ar: "Ahmed Mohamed" } },
+  { id: "fatma", name: { en: "Fatma Said", ar: "Fatma Said" } },
+  { id: "mohamed", name: { en: "Mohamed Ali", ar: "Mohamed Ali" } },
 ];
 
 const statusOptions = [
-  { id: "all", name: "All orders" },
-  { id: "pending", name: "Pending" },
-  { id: "packaging", name: "Packaging" },
-  { id: "for_delivery", name: "For Delivery" },
-  { id: "delivered", name: "Delivered" },
-  { id: "returned", name: "Returned" },
-  { id: "cancelled", name: "Cancelled" },
+  { id: "all", name: { en: "All", ar: "الكل" } },
+  { id: "pending", name: { en: "Pending", ar: "قيد الانتظار" } },
+  { id: "packaging", name: { en: "Packaging", ar: "جاري التغليف" } },
+  { id: "for_delivery", name: { en: "For Delivery", ar: "قيد التوصيل" } },
+  { id: "delivered", name: { en: "Delivered", ar: "تم التوصيل" } },
+  { id: "returned", name: { en: "Returned", ar: "تم الإرجاع" } },
+  { id: "cancelled", name: { en: "Cancelled", ar: "تم الإلغاء" } },
 ];
 
 const categoryOptions = [
-  { id: "all", name: "All Category" },
-  { id: "visa", name: "Visa" },
-  { id: "mastercard", name: "Mastercard" },
-  { id: "paypal", name: "PayPal" },
-  { id: "cash", name: "Cash" },
+  { id: "all", name: { en: "All Category", ar: "كل الفئات" } },
+  { id: "visa", name: { en: "Visa", ar: "Visa" } },
+  { id: "mastercard", name: { en: "Mastercard", ar: "Mastercard" } },
+  { id: "paypal", name: { en: "PayPal", ar: "PayPal" } },
+  { id: "cash", name: { en: "Cash", ar: "نقدي" } },
 ];
 
 const brandOptions = [
-  { id: "all", name: "All Brands" },
-  { id: "nike", name: "Nike" },
-  { id: "adidas", name: "Adidas" },
-  { id: "priority", name: "Priority" },
+  { id: "all", name: { en: "All Brands", ar: "كل الماركات" } },
+  { id: "nike", name: { en: "Nike", ar: "Nike" } },
+  { id: "adidas", name: { en: "Adidas", ar: "Adidas" } },
+  { id: "priority", name: { en: "Priority", ar: "Priority" } },
 ];
 
-// Orders table columns
-const orderColumns = [
-  {
-    key: "id",
-    header: "Order ID",
-    sortable: true,
-  },
-  {
-    key: "date",
-    header: "Date",
-    sortable: true,
-  },
-  {
-    key: "customer",
-    header: "Customer",
-    render: (item: Order) => (
-      <div className="text-sm leading-5">
-        <div className="font-medium">{item.customer.name}</div>
-        <div className="text-xs text-gray-500">{item.customer.phone}</div>
-        <div className="text-xs text-gray-500">{item.customer.location}</div>
-      </div>
-    ),
-  },
-  {
-    key: "products",
-    header: "Products",
-    render: (item: Order) => (
-      <div className="space-y-2">
-        {item.products.map((product: Product, index: number) => (
-          <div key={index} className="flex items-center gap-2">
-            <Image
-              className="h-8 w-8 rounded object-cover"
-              src={product.image}
-              alt={product.name}
-              width={32}
-              height={32}
-            />
-            <div>
-              <div className="text-sm">{product.name}</div>
-              <div className="text-xs text-gray-500">
-                {product.quantity} × {product.price}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    ),
-  },
-  {
-    key: "seller",
-    header: "Seller",
-  },
-  {
-    key: "total",
-    header: "Total Sales",
-    sortable: true,
-  },
-  {
-    key: "payment",
-    header: "Payment",
-    render: (item: Order) => (
-      <div className="flex items-center gap-1">
-        {item.payment.method === "visa" && (
-          <Image src="/icons/card-visa.svg" alt="visa" width={24} height={16} />
-        )}
-        {item.payment.method === "mastercard" && (
-          <Image
-            src="/icons/card-mastercard.svg"
-            alt="mastercard"
-            width={24}
-            height={16}
-          />
-        )}
-        {item.payment.method === "paypal" && (
-          <Image
-            src="/icons/google-play.svg"
-            alt="paypal"
-            width={24}
-            height={16}
-          />
-        )}
-        <span className="text-xs capitalize">
-          {item.payment.method}
-          {item.payment.last4 && ` •••• ${item.payment.last4}`}
-        </span>
-      </div>
-    ),
-  },
-  {
-    key: "status",
-    header: "Status",
-    render: (item: Order) => {
-      let color = "bg-gray-100 text-gray-700";
-      if (item.status === "For Delivery") color = "bg-blue-100 text-blue-700";
-      if (item.status === "Packaging") color = "bg-indigo-100 text-indigo-700";
-      if (item.status === "Pending") color = "bg-yellow-100 text-yellow-700";
-      if (item.status === "Delivered") color = "bg-green-100 text-green-700";
-      if (item.status === "Cancelled") color = "bg-red-100 text-red-700";
-      if (item.status === "Returned") color = "bg-orange-100 text-orange-700";
+export default function OrdersListPanel({
+  locale = "en",
+}: {
+  locale: LanguageType;
+}) {
+  const isRTL = locale === "ar";
+  const t = translations[locale];
 
-      return (
-        <span className={`inline-block rounded-full px-2 text-[10px] ${color}`}>
-          {item.status}
-        </span>
-      );
-    },
-  },
-  {
-    key: "unit_price",
-    header: "Unit price",
-  },
-  {
-    key: "quantity",
-    header: "Quantity",
-    render: (item: Order) => (
-      <span className="text-xs capitalize">{item.quantity}</span>
-    ),
-  },
-];
-
-export default function OrdersListPanel() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -430,6 +401,154 @@ export default function OrdersListPanel() {
     });
   }, [activeStatus]);
 
+  // Orders table columns with translations
+  const orderColumns = useMemo(
+    () => [
+      {
+        key: "id",
+        header: t.orderId,
+        sortable: true,
+      },
+      {
+        key: "date",
+        header: t.date,
+        sortable: true,
+      },
+      {
+        key: "customer",
+        header: t.customer,
+        render: (item: Order) => (
+          <div
+            className={`text-sm leading-5 ${isRTL ? "text-right" : "text-left"}`}
+          >
+            <div className="font-medium">{item.customer.name}</div>
+            <div className="text-xs text-gray-500">{item.customer.phone}</div>
+            <div className="text-xs text-gray-500">
+              {item.customer.location}
+            </div>
+          </div>
+        ),
+      },
+      {
+        key: "products",
+        header: t.products,
+        render: (item: Order) => (
+          <div className="space-y-2">
+            {item.products.map((product: Product, index: number) => (
+              <div
+                key={index}
+                className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}
+              >
+                <Image
+                  className="h-8 w-8 rounded object-cover"
+                  src={product.image}
+                  alt={product.name}
+                  width={32}
+                  height={32}
+                />
+                <div className={isRTL ? "text-right" : "text-left"}>
+                  <div className="text-sm">{product.name}</div>
+                  <div className="text-xs text-gray-500">
+                    {product.quantity} × {product.price}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ),
+      },
+      {
+        key: "seller",
+        header: t.seller,
+      },
+      {
+        key: "total",
+        header: t.totalSales,
+        sortable: true,
+      },
+      {
+        key: "payment",
+        header: t.payment,
+        render: (item: Order) => (
+          <div
+            className={`flex items-center gap-1 ${isRTL ? "flex-row-reverse" : ""}`}
+          >
+            {item.payment.method === "visa" && (
+              <Image
+                src="/icons/card-visa.svg"
+                alt="visa"
+                width={24}
+                height={16}
+              />
+            )}
+            {item.payment.method === "mastercard" && (
+              <Image
+                src="/icons/card-mastercard.svg"
+                alt="mastercard"
+                width={24}
+                height={16}
+              />
+            )}
+            {item.payment.method === "paypal" && (
+              <Image
+                src="/icons/google-play.svg"
+                alt="paypal"
+                width={24}
+                height={16}
+              />
+            )}
+            <span className="text-xs capitalize">
+              {item.payment.method}
+              {item.payment.last4 && ` •••• ${item.payment.last4}`}
+            </span>
+          </div>
+        ),
+      },
+      {
+        key: "status",
+        header: t.status,
+        render: (item: Order) => {
+          let color = "bg-gray-100 text-gray-700";
+          if (item.status === "For Delivery")
+            color = "bg-blue-100 text-blue-700";
+          if (item.status === "Packaging")
+            color = "bg-indigo-100 text-indigo-700";
+          if (item.status === "Pending")
+            color = "bg-yellow-100 text-yellow-700";
+          if (item.status === "Delivered")
+            color = "bg-green-100 text-green-700";
+          if (item.status === "Cancelled") color = "bg-red-100 text-red-700";
+          if (item.status === "Returned")
+            color = "bg-orange-100 text-orange-700";
+
+          return (
+            <span
+              className={`inline-block rounded-full px-2 text-[10px] ${color}`}
+            >
+              {
+                t.statusOptions[
+                  item.status.toLowerCase() as keyof typeof t.statusOptions
+                ]
+              }
+            </span>
+          );
+        },
+      },
+      {
+        key: "unit_price",
+        header: t.unitPrice,
+      },
+      {
+        key: "quantity",
+        header: t.quantity,
+        render: (item: Order) => (
+          <span className="text-xs capitalize">{item.quantity}</span>
+        ),
+      },
+    ],
+    [t, isRTL],
+  );
+
   const handleDateChange = (range: {
     startDate: Date | null;
     endDate: Date | null;
@@ -461,13 +580,14 @@ export default function OrdersListPanel() {
   };
 
   return (
-    <div className="relative space-y-6">
+    <div className="relative space-y-6" dir={isRTL ? "rtl" : "ltr"}>
       <div className="shadow-xs space-y-6 rounded-lg border border-gray-200 bg-white p-3">
-        <div className="flex flex-col gap-2 md:flex-row">
+        <div className={`flex flex-col gap-2 md:flex-row`}>
           <DateRangeSelector
             onDateChange={handleDateChange}
             formatString="MM/dd/yyyy"
             className="w-full md:w-fit"
+            locale={locale}
           />
           <div className="flex flex-1">
             <div className="relative flex-1">
@@ -475,31 +595,31 @@ export default function OrdersListPanel() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by seller name..."
-                className="w-full rounded-s-md border border-r-0 border-gray-300 px-3 py-1.5 pl-10 outline-none placeholder:text-sm"
+                placeholder={t.searchPlaceholder}
+                className={`w-full rounded-s-md border ${locale === "ar" ? "border-l-0" : "border-r-0"} border-gray-300 px-3 py-1.5 pl-10 outline-none placeholder:text-sm`}
               />
               <Search
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600"
+                className={`absolute left-4 top-1/2 -translate-y-1/2 text-gray-600`}
                 size={15}
               />
             </div>
             <button
               onClick={() => handleFilterChange("search", searchQuery)}
-              className="rounded-e-md bg-light-primary px-3 py-1.5 text-sm text-white hover:brightness-90"
+              className={`rounded-e-md bg-light-primary px-3 py-1.5 text-sm text-white hover:brightness-90`}
             >
-              Search
+              {t.search}
             </button>
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => setFiltersOpen(true)}
-              className="flex items-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+              className={`flex items-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50`}
             >
               <SlidersHorizontal size={16} />
-              More Filters
+              {t.moreFilters}
             </button>
             <button className="rounded bg-green-600 px-3 py-1.5 text-sm text-white hover:bg-green-700">
-              Download
+              {t.download}
             </button>
           </div>
         </div>
@@ -509,7 +629,9 @@ export default function OrdersListPanel() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {/* Seller Filter */}
             <div>
-              <h3 className="mb-2 text-sm font-medium">Seller</h3>
+              <h3 className="mb-2 text-sm font-medium">
+                {t.filterLabels.seller}
+              </h3>
               <div className="mt-2">
                 <Dropdown
                   options={sellerOptions}
@@ -517,13 +639,16 @@ export default function OrdersListPanel() {
                   onSelect={(value) =>
                     handleFilterChange("seller", value.toString())
                   }
+                  locale={locale}
                 />
               </div>
             </div>
 
             {/* Customer Filter */}
             <div>
-              <h3 className="mb-2 text-sm font-medium">Customer</h3>
+              <h3 className="mb-2 text-sm font-medium">
+                {t.filterLabels.customer}
+              </h3>
               <div className="mt-2">
                 <Dropdown
                   options={customerOptions}
@@ -531,41 +656,51 @@ export default function OrdersListPanel() {
                   onSelect={(value) =>
                     handleFilterChange("customer", value.toString())
                   }
+                  locale={locale}
                 />
               </div>
             </div>
 
             {/* Category Filter */}
             <div>
-              <h3 className="mb-2 text-sm font-medium">Category</h3>
+              <h3 className="mb-2 text-sm font-medium">
+                {t.filterLabels.category}
+              </h3>
               <Dropdown
                 options={categoryOptions}
                 selected={CategoryFilter}
                 onSelect={(value) =>
                   handleFilterChange("category", value.toString())
                 }
+                locale={locale}
               />
             </div>
             {/* Brands Method Filter */}
             <div>
-              <h3 className="mb-2 text-sm font-medium">Brand</h3>
+              <h3 className="mb-2 text-sm font-medium">
+                {t.filterLabels.brand}
+              </h3>
               <Dropdown
                 options={brandOptions}
                 selected={brandFilter}
                 onSelect={(value) =>
                   handleFilterChange("brand", value.toString())
                 }
+                locale={locale}
               />
             </div>
             {/* status Filter */}
             <div>
-              <h3 className="mb-2 text-sm font-medium">status</h3>
+              <h3 className="mb-2 text-sm font-medium">
+                {t.filterLabels.status}
+              </h3>
               <Dropdown
                 options={statusOptions}
                 selected={statusFilter}
                 onSelect={(value) =>
                   handleFilterChange("status", value.toString())
                 }
+                locale={locale}
               />
             </div>
           </div>
@@ -574,12 +709,13 @@ export default function OrdersListPanel() {
             isOpen={filtersOpen}
             onClose={() => setFiltersOpen(false)}
             filtersData={[]}
+            locale={locale}
           />
         </div>
 
-        <div className="flex flex-col justify-between gap-4 md:flex-row">
+        <div className={`flex flex-col justify-between gap-4 md:flex-row`}>
           {/* Status Tabs */}
-          <div className="flex flex-wrap gap-2">
+          <div className={`flex flex-wrap gap-2 ${isRTL ? "justify-end" : ""}`}>
             {statusOptions.map((option) => (
               <button
                 key={option.id}
@@ -588,22 +724,22 @@ export default function OrdersListPanel() {
                   activeStatus === option.id
                     ? "border-primary bg-primary text-white"
                     : "border-gray-200 bg-white text-gray-500"
-                }`}
+                } ${isRTL ? "flex-row-reverse" : ""}`}
               >
-                {option.name} (
+                {option.name[locale]} (
                 {orderCounts[option.id as keyof typeof orderCounts]})
               </button>
             ))}
           </div>
-          <div className="flex gap-2">
+          <div className={`flex gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
             <button
               onClick={resetFilters}
               className="rounded border border-primary px-3 py-1.5 text-sm text-primary transition hover:bg-primary hover:text-white"
             >
-              Reset
+              {t.reset}
             </button>
             <button className="rounded bg-light-primary px-3 py-1.5 text-sm text-white transition hover:brightness-95">
-              Show Data
+              {t.showData}
             </button>
           </div>
         </div>
@@ -611,12 +747,12 @@ export default function OrdersListPanel() {
 
       <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Orders</h2>
+          <h2 className="text-lg font-semibold">{t.orders}</h2>
           <Link
             href="#"
-            className="flex items-center gap-1 text-sm font-medium text-green-600 hover:text-green-700"
+            className={`flex items-center gap-1 text-sm font-medium text-green-600 hover:text-green-700 ${isRTL ? "flex-row-reverse" : ""}`}
           >
-            View All <ChevronRight size={14} />
+            {t.viewAll} <ChevronRight size={14} />
           </Link>
         </div>
 
@@ -629,14 +765,14 @@ export default function OrdersListPanel() {
           selectable={true}
           actions={[
             {
-              label: "Edit",
+              label: t.edit,
               onClick: () => console.log("edited"),
               className:
                 "bg-white text-gray-700 hover:text-blue-700 hover:bg-blue-50",
               icon: <PencilIcon className="h-4 w-4" />,
             },
             {
-              label: "Delete",
+              label: t.delete,
               onClick: () => console.log("Deleted"),
               className:
                 "bg-white text-gray-700 hover:text-red-700 hover:bg-red-50",
@@ -655,6 +791,7 @@ export default function OrdersListPanel() {
               icon: <TrashIcon className="h-4 w-4" />,
             },
           ]}
+          locale={locale}
         />
       </div>
     </div>

@@ -1,11 +1,12 @@
 "use client";
 
-import { CardStats } from "@/components/UI/cards/CardStats";
+import { CardStats, IconType } from "@/components/UI/cards/CardStats";
 import GenericChart from "@/components/UI/charts/GenericChart";
 import DynamicTable from "@/components/UI/tables/DTable";
 import TopProducts from "./components/TopProducts";
 import { dummyCards, dummyChartData } from "@/constants/sellerDashboardMock";
 import { PencilIcon, TrashIcon } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type Order = {
   id: string;
@@ -32,28 +33,38 @@ const orders: Order[] = [
   },
 ];
 
-const columns = [
+const columns = (locale: "en" | "ar") => [
   {
     key: "id",
-    header: "Order ID",
+    header: {
+      en: "Order ID",
+      ar: "رقم الطلب",
+    }[locale],
     sortable: true,
   },
   {
     key: "customer",
-    header: "Customer",
+    header: {
+      en: "Customer",
+      ar: "العميل",
+    }[locale],
     sortable: true,
-    align: "center",
   },
   {
     key: "total",
-    header: "Total",
+    header: {
+      en: "Total",
+      ar: "الإجمالي",
+    }[locale],
     render: (item: Order) => `$${item.total.toFixed(2)}`,
     sortable: true,
-    align: "center",
   },
   {
     key: "status",
-    header: "Status",
+    header: {
+      en: "Status",
+      ar: "الحالة",
+    }[locale],
     render: (item: Order) => {
       const statusColor =
         item.status === "pending"
@@ -62,57 +73,93 @@ const columns = [
             ? "bg-blue-100 text-blue-800"
             : "bg-green-100 text-green-800";
 
+      const statusLabel = {
+        pending: { en: "Pending", ar: "قيد الانتظار" },
+        shipped: { en: "Shipped", ar: "تم الشحن" },
+        delivered: { en: "Delivered", ar: "تم التوصيل" },
+      }[item.status][locale];
+
       return (
         <span
           className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${statusColor}`}
         >
-          {item.status}
+          {statusLabel}
         </span>
       );
     },
     sortable: true,
-    align: "center",
   },
   {
     key: "date",
-    header: "Date",
+    header: {
+      en: "Date",
+      ar: "التاريخ",
+    }[locale],
     sortable: true,
-    align: "center",
   },
 ];
 
+const statsData: {
+  title: { en: string; ar: string };
+  value: string;
+  change: string;
+  icon: IconType;
+}[] = [
+  {
+    title: { en: "Total Revenue", ar: "إجمالي الإيرادات" },
+    value: "$12,345",
+    change: "+12.5%",
+    icon: "dollar",
+  },
+  {
+    title: { en: "Total Orders", ar: "إجمالي الطلبات" },
+    value: "156",
+    change: "+8.2%",
+    icon: "shoppingCart",
+  },
+  {
+    title: { en: "Products", ar: "المنتجات" },
+    value: "42",
+    change: "+3.1%",
+    icon: "package",
+  },
+  {
+    title: { en: "Avg. Rating", ar: "متوسط التقييم" },
+    value: "4.6",
+    change: "+0.3",
+    icon: "star",
+  },
+];
 export default function SellerDashboard() {
+  const { language } = useLanguage();
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <CardStats
-          title="Total Revenue"
-          value="$12,345"
-          change="+12.5%"
-          icon="dollar"
-        />
-        <CardStats
-          title="Total Orders"
-          value="156"
-          change="+8.2%"
-          icon="shoppingCart"
-        />
-        <CardStats title="Products" value="42" change="+3.1%" icon="package" />
-        <CardStats title="Avg. Rating" value="4.6" change="+0.3" icon="star" />
+        {statsData.map((stat, i) => (
+          <CardStats
+            key={i}
+            title={stat.title[language]}
+            value={stat.value}
+            change={stat.change}
+            icon={stat.icon}
+            locale={language}
+          />
+        ))}
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="overflow-hidden rounded-lg border border-gray-200 bg-white p-4 shadow-sm lg:col-span-2">
+        <div className="h-fit overflow-hidden rounded-lg border border-gray-200 bg-white p-4 shadow-sm lg:col-span-2">
           <GenericChart
             chartTitle="Sales Overview"
             data={dummyChartData}
             showCards={true}
             cards={dummyCards}
+            locale={language}
           />
         </div>
         <div>
           <div className="overflow-hidden rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-            <TopProducts />
+            <TopProducts locale={language} />
           </div>
         </div>
       </div>
@@ -120,16 +167,17 @@ export default function SellerDashboard() {
       <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
         <div className="p-4">
           <h3 className="mb-4 text-lg font-bold text-gray-900">
-            Recent Orders
+            {language == "ar" ? "الطلبات الأخيرة" : "Recent Orders"}
           </h3>
           <div className="overflow-x-auto">
             <DynamicTable
               data={orders}
-              columns={columns}
+              columns={columns(language)}
               pagination={true}
               itemsPerPage={5}
               selectable
               defaultSort={{ key: "date", direction: "desc" }}
+              locale={language}
               actions={[
                 {
                   label: "Edit",

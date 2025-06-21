@@ -125,7 +125,7 @@ const FullFooter = () => {
             <h3 className="mb-4 text-sm font-bold uppercase">
               {language === "ar" ? "تواصل معنا" : "Connect With Us"}
             </h3>
-            <div className="mb-4 flex items-center space-x-4 md:mb-0">
+            <div className="mb-4 flex items-center gap-3 md:mb-0">
               {socialMedia.map((social, index) => (
                 <Link
                   key={index}

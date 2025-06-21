@@ -4,12 +4,21 @@ import { ApexOptions } from "apexcharts";
 import { ChartColumn, List } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useState } from "react";
+import { LanguageType } from "@/util/translations";
 
-// Dynamically import ApexCharts to avoid SSR issues
+// Dynamically import ApexCharts
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-// Dummy data
-const topProductsData = [
+type Product = {
+  id: string;
+  name: string;
+  sales: number;
+  revenue: number;
+  stock: number;
+  rating: number;
+};
+
+const topProductsData: Product[] = [
   {
     id: "1",
     name: "Wireless Headphones",
@@ -50,89 +59,86 @@ const topProductsData = [
     stock: 18,
     rating: 4.6,
   },
-  {
-    id: "6",
-    name: "Ergonomic Mouse",
-    sales: 76,
-    revenue: 1140,
-    stock: 18,
-    rating: 4.6,
-  },
-  {
-    id: "7",
-    name: "Ergonomic Mouse",
-    sales: 76,
-    revenue: 1140,
-    stock: 18,
-    rating: 4.6,
-  },
-  {
-    id: "8",
-    name: "Ergonomic Mouse",
-    sales: 76,
-    revenue: 1140,
-    stock: 18,
-    rating: 4.6,
-  },
 ];
 
-const TopProducts = () => {
+type Props = {
+  locale?: LanguageType;
+};
+
+const translations = {
+  en: {
+    topProducts: "Top Products",
+    bySales: "By Sales",
+    byRevenue: "By Revenue",
+    product: "Product",
+    sales: "Sales",
+    revenue: "Revenue",
+    stock: "Stock",
+    rating: "Rating",
+  },
+  ar: {
+    topProducts: "أفضل المنتجات",
+    bySales: "حسب المبيعات",
+    byRevenue: "حسب الإيرادات",
+    product: "المنتج",
+    sales: "المبيعات",
+    revenue: "الإيرادات",
+    stock: "المخزون",
+    rating: "التقييم",
+  },
+};
+
+const TopProducts = ({ locale = "en" }: Props) => {
+  const t = translations[locale];
   const [view, setView] = useState<"list" | "chart">("list");
   const [sortBy, setSortBy] = useState<"sales" | "revenue">("sales");
 
-  // Sort products based on current sort option
   const sortedProducts = [...topProductsData].sort(
     (a, b) => b[sortBy] - a[sortBy],
   );
 
-  // Chart options
   const chartOptions: ApexOptions = {
-    chart: {
-      type: "bar",
-      toolbar: {
-        show: false,
-      },
-    },
-    plotOptions: {
-      bar: {
-        borderRadius: 4,
-        horizontal: true,
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    xaxis: {
-      categories: sortedProducts.map((product) => product.name),
-    },
+    chart: { type: "bar", toolbar: { show: false } },
+    plotOptions: { bar: { borderRadius: 4, horizontal: true } },
+    dataLabels: { enabled: false },
+    xaxis: { categories: sortedProducts.map((product) => product.name) },
     colors: ["#82c341"],
   };
 
   const chartSeries = [
     {
-      name: sortBy === "sales" ? "Sales" : "Revenue ($)",
-      data: sortedProducts.map((product) =>
-        sortBy === "sales" ? product.sales : product.revenue,
+      name: sortBy === "sales" ? t.sales : t.revenue,
+      data: sortedProducts.map((p) =>
+        sortBy === "sales" ? p.sales : p.revenue,
       ),
     },
   ];
 
   return (
     <div>
-      <h3 className="mb-4 text-lg font-bold text-gray-900">Top Products</h3>
+      <h3 className="mb-4 text-lg font-bold text-gray-900">{t.topProducts}</h3>
+
       <div className="mb-4 flex items-center justify-between">
-        <div className="flex space-x-2">
+        <div className="flex gap-2">
           <button
             onClick={() => setSortBy("sales")}
-            className={`rounded-md px-3 py-1 text-sm ${sortBy === "sales" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"}`}
+            className={`rounded-md px-3 py-1 text-sm ${
+              sortBy === "sales"
+                ? "bg-green-100 text-green-700"
+                : "bg-gray-100 text-gray-700"
+            }`}
           >
-            By Sales
+            {t.bySales}
           </button>
           <button
             onClick={() => setSortBy("revenue")}
-            className={`rounded-md px-3 py-1 text-sm ${sortBy === "revenue" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"}`}
+            className={`rounded-md px-3 py-1 text-sm ${
+              sortBy === "revenue"
+                ? "bg-green-100 text-green-700"
+                : "bg-gray-100 text-gray-700"
+            }`}
           >
-            By Revenue
+            {t.byRevenue}
           </button>
           <button
             onClick={() => setView(view === "list" ? "chart" : "list")}
@@ -148,21 +154,16 @@ const TopProducts = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Product
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Sales
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Revenue
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Stock
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Rating
-                </th>
+                {[t.product, t.sales, t.revenue, t.stock, t.rating].map(
+                  (label) => (
+                    <th
+                      key={label}
+                      className={`px-4 py-3 ${locale === "ar" ? "text-right" : "text-left"} text-xs font-medium uppercase tracking-wider text-gray-500`}
+                    >
+                      {label}
+                    </th>
+                  ),
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">

@@ -12,6 +12,7 @@ import {
 import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { FilterGroup, FilterOption } from "@/types";
+import { LanguageType } from "@/util/translations";
 
 type LeftFilterProps = {
   filterGroups: FilterGroup[];
@@ -27,6 +28,7 @@ type LeftFilterProps = {
   onClearFilters: () => void;
   onPriceRangeSubmit?: (min: string, max: string) => void;
   currentCategoryPath?: string[];
+  locale: LanguageType;
 };
 
 export default function LeftFilter({
@@ -35,6 +37,7 @@ export default function LeftFilter({
   onFilterToggle,
   onClearFilters,
   onPriceRangeSubmit,
+  locale,
   currentCategoryPath = [],
 }: LeftFilterProps) {
   const router = useRouter();
@@ -146,7 +149,7 @@ export default function LeftFilter({
         {subcategories.map((sub) => (
           <div key={sub.id} className="relative cursor-pointer">
             <div className="flex items-center justify-between">
-              <label className="flex cursor-pointer items-center">
+              <label className="flex cursor-pointer items-center gap-3">
                 <div className="relative h-5 w-5 cursor-pointer">
                   <input
                     id={`subcategory-${sub.id}`}
@@ -169,7 +172,9 @@ export default function LeftFilter({
                     <Check className="text-white" size={13} />
                   </span>
                 </div>
-                <span className="ml-3 text-sm text-gray-600">{sub.name}</span>
+                <span className="text-sm text-gray-600">
+                  {sub.name[locale]}
+                </span>
               </label>
               {sub.subcategories && (
                 <button
@@ -206,7 +211,10 @@ export default function LeftFilter({
     <div className="w-full flex-shrink-0 md:w-72">
       <div className="rounded-lg bg-white p-4 shadow-sm">
         {hasActiveFilters && (
-          <div className="mb-4 flex justify-end">
+          <div
+            className="mb-4 flex justify-end"
+            dir={locale === "ar" ? "rtl" : "ltr"}
+          >
             <button
               onClick={() => {
                 router.push(`/search`);
@@ -215,7 +223,7 @@ export default function LeftFilter({
               }}
               className="flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-200"
             >
-              Clear all
+              {locale === "ar" ? "مسح الكل" : "Clear all"}
               <X className="h-3 w-3" />
             </button>
           </div>
@@ -227,7 +235,9 @@ export default function LeftFilter({
               className="mb-4 flex cursor-pointer items-center justify-between"
               onClick={() => toggleFilterGroup(group.id)}
             >
-              <h3 className="text-md font-bold text-gray-600">{group.name}</h3>
+              <h3 className="text-md font-bold text-gray-600">
+                {group.name[locale]}
+              </h3>
               {openFilterGroups[group.id] ? (
                 <ChevronUp className="h-4 w-4 text-gray-500" />
               ) : (
@@ -240,21 +250,31 @@ export default function LeftFilter({
                 {group.options?.map((option) => {
                   if (group.id === "price" && option.isRange) {
                     return (
-                      <div key="custom-price-range" className="space-y-2">
+                      <div
+                        key="custom-price-range"
+                        className="space-y-2"
+                        dir={locale === "ar" ? "rtl" : "ltr"}
+                      >
                         <div className="flex items-center gap-2">
                           <input
                             type="number"
                             name="min"
-                            placeholder="Min"
+                            placeholder={
+                              locale === "ar" ? "الحد الأدنى" : "Min"
+                            }
                             value={priceRange.min}
                             onChange={handlePriceRangeChange}
                             className="w-full rounded border border-gray-300 px-2 py-1 text-sm outline-none"
                           />
-                          <span className="text-gray-500">to</span>
+                          <span className="text-gray-500">
+                            {locale === "ar" ? "إلى" : "to"}
+                          </span>
                           <input
                             type="number"
                             name="max"
-                            placeholder="Max"
+                            placeholder={
+                              locale === "ar" ? "الحد الأقصى" : "Max"
+                            }
                             value={priceRange.max}
                             onChange={handlePriceRangeChange}
                             className="w-full rounded border border-gray-300 px-2 py-1 text-sm outline-none"
@@ -264,7 +284,7 @@ export default function LeftFilter({
                           onClick={handlePriceRangeSubmit}
                           className="w-full rounded bg-green-600 px-3 py-1 text-sm font-medium text-white hover:bg-green-800"
                         >
-                          Go
+                          {locale === "ar" ? "اذهب" : "Go"}
                         </button>
                       </div>
                     );
@@ -274,7 +294,7 @@ export default function LeftFilter({
                     <div key={option.id}>
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center">
-                          <label className="flex cursor-pointer items-center">
+                          <label className="flex cursor-pointer items-center gap-3">
                             <div className="relative h-5 w-5 cursor-pointer">
                               <input
                                 id={`${group.id}-${option.id}`}
@@ -290,10 +310,10 @@ export default function LeftFilter({
                                 <Check className="text-white" size={13} />
                               </span>
                             </div>
-                            <span className="ml-3 text-xs font-semibold text-gray-600">
+                            <span className="text-xs font-semibold text-gray-600">
                               {group.id === "rating"
                                 ? renderRatingStars(option.id)
-                                : option.name}
+                                : option.name[locale]}
                             </span>
                           </label>
                         </div>

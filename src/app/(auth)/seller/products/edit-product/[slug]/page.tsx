@@ -14,6 +14,7 @@ import { Brand, MultiCategory } from "@/types";
 import Image from "next/image";
 import DynamicButton from "@/components/UI/Buttons/DynamicButton";
 import { products } from "@/constants/products"; // Assuming you have a products constant
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type PricingMethod = "manual" | "auto";
 
@@ -65,8 +66,37 @@ const colorOptions = [
 ] as const;
 
 const HealthStatus = ({ product }: { product: ProductDetails }) => {
-  // Check each health condition
-  const invoicingValid = true; // Placeholder, assuming invoicing is always valid for now
+  const { language } = useLanguage();
+
+  const translations = {
+    title: { en: "Health", ar: "الحالة" },
+    summary: {
+      allValid: { en: "All checks passed", ar: "تم اجتياز جميع الفحوصات" },
+      notValid: {
+        en: "Fix the following to go online",
+        ar: "يرجى تصحيح التالي للنشر",
+      },
+    },
+    labels: {
+      invoicing: { en: "Invoicing", ar: "الفوترة" },
+      price: { en: "Price", ar: "السعر" },
+      psku: { en: "PSKU Active", ar: "رمز المنتج مفعل" },
+      stock: { en: "Stock Check", ar: "الكمية المتوفرة" },
+      product: { en: "Product Active", ar: "المنتج مفعل" },
+    },
+    errors: {
+      invalidInvoicing: { en: "Invalid invoicing", ar: "الفوترة غير صالحة" },
+      invalidPrice: { en: "Price is invalid", ar: "السعر غير صالح" },
+      pskuNotActive: { en: "PSKU not active", ar: "رمز المنتج غير مفعل" },
+      noStock: { en: "Stock not available", ar: "لا يوجد كمية متوفرة" },
+      productInactive: { en: "Product not active", ar: "المنتج غير مفعل" },
+    },
+    learnMore: { en: "Learn more", ar: "اعرف المزيد" },
+  };
+
+  const t = (key: { en: string; ar: string }): string => key[language];
+
+  const invoicingValid = true;
   const priceValid = product.price !== undefined && product.price >= 0;
   const pskuActive = !!product.sku && product.sku.length >= 3;
   const stockAvailable = product.stock !== undefined && product.stock > 0;
@@ -82,150 +112,94 @@ const HealthStatus = ({ product }: { product: ProductDetails }) => {
     stockAvailable &&
     productActive;
 
+  const renderCheck = (valid: boolean) =>
+    valid ? (
+      <Check className="mr-2 h-5 w-5 text-green-500" />
+    ) : (
+      <X className="mr-2 h-5 w-5 text-red-500" />
+    );
+
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Health</h2>
+        <h2 className="text-xl font-semibold">{t(translations.title)}</h2>
       </div>
 
       <div className="my-4">
         <div
-          className={`mb-2 rounded-md p-3 ${
-            allValid
-              ? "bg-green-50 text-green-700"
-              : "bg-yellow-50 text-yellow-700"
-          }`}
+          className={`mb-2 rounded-md p-3 ${allValid ? "bg-green-50 text-green-700" : "bg-yellow-50 text-yellow-700"}`}
         >
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
             {allValid ? (
               <Check className="mr-2 h-4 w-4" />
             ) : (
               <AlertCircle className="mr-2 h-4 w-4" />
             )}
             <span className="text-sm font-medium">
-              {allValid
-                ? "All checks passed"
-                : "Fix the following to go online"}
+              {t(
+                allValid
+                  ? translations.summary.allValid
+                  : translations.summary.notValid,
+              )}
             </span>
           </div>
         </div>
 
         <div className="space-y-2">
-          <div
-            className={`rounded-md p-3 ${invoicingValid ? "bg-gray-50" : "bg-red-50"}`}
-          >
-            <div className="flex items-center">
-              {invoicingValid ? (
-                <Check className="mr-2 h-5 w-5 text-green-500" />
-              ) : (
-                <X className="mr-2 h-5 w-5 text-red-500" />
-              )}
-              <span className="font-medium">Invoicing</span>
-            </div>
-            {!invoicingValid && (
-              <div className="mt-1 text-sm">Invalid invoicing</div>
-            )}
-          </div>
-
-          <div
-            className={`rounded-md p-3 ${priceValid ? "bg-gray-50" : "bg-red-50"}`}
-          >
-            <div className="flex items-center">
-              {priceValid ? (
-                <Check className="mr-2 h-5 w-5 text-green-500" />
-              ) : (
-                <X className="mr-2 h-5 w-5 text-red-500" />
-              )}
-              <span className="font-medium">Price</span>
-            </div>
-            {!priceValid && (
-              <div className="mt-1 flex items-center text-xs">
-                <span className="text-xs">Price is invalid</span>
-                <button
-                  type="button"
-                  className="ml-2 flex items-center text-xs text-blue-500 hover:text-blue-700"
-                >
-                  <Info className="mr-1 h-4 w-4" />
-                  Learn more
-                </button>
+          {[
+            {
+              valid: invoicingValid,
+              label: translations.labels.invoicing,
+              error: translations.errors.invalidInvoicing,
+              showError: !invoicingValid,
+            },
+            {
+              valid: priceValid,
+              label: translations.labels.price,
+              error: translations.errors.invalidPrice,
+              showError: !priceValid,
+            },
+            {
+              valid: pskuActive,
+              label: translations.labels.psku,
+              error: translations.errors.pskuNotActive,
+              showError: !pskuActive,
+            },
+            {
+              valid: stockAvailable,
+              label: translations.labels.stock,
+              error: translations.errors.noStock,
+              showError: !stockAvailable,
+            },
+            {
+              valid: productActive,
+              label: translations.labels.product,
+              error: translations.errors.productInactive,
+              showError: !productActive,
+            },
+          ].map(({ valid, label, error, showError }, i) => (
+            <div
+              key={i}
+              className={`rounded-md p-3 ${valid ? "bg-gray-50" : "bg-red-50"}`}
+            >
+              <div className="flex items-center gap-2">
+                {renderCheck(valid)}
+                <span className="font-medium">{t(label)}</span>
               </div>
-            )}
-          </div>
-
-          <div
-            className={`rounded-md p-3 ${pskuActive ? "bg-gray-50" : "bg-red-50"}`}
-          >
-            <div className="flex items-center">
-              {pskuActive ? (
-                <Check className="mr-2 h-5 w-5 text-green-500" />
-              ) : (
-                <X className="mr-2 h-5 w-5 text-red-500" />
+              {showError && (
+                <div className="mt-1 flex items-center gap-3 text-xs">
+                  <span>{t(error)}</span>
+                  <button
+                    type="button"
+                    className="ml-2 flex items-center gap-1 text-blue-500 hover:text-blue-700"
+                  >
+                    <Info className="mr-1 h-3 w-3" />
+                    {t(translations.learnMore)}
+                  </button>
+                </div>
               )}
-              <span className="font-medium">PSKU Active</span>
             </div>
-            {!pskuActive && (
-              <div className="mt-1 flex items-center text-xs">
-                <span className="text-xs">PSKU not active</span>
-                <button
-                  type="button"
-                  className="ml-2 flex items-center text-xs text-blue-500 hover:text-blue-700"
-                >
-                  <Info className="mr-1 h-4 w-4" />
-                  Learn more
-                </button>
-              </div>
-            )}
-          </div>
-
-          <div
-            className={`rounded-md p-3 ${stockAvailable ? "bg-gray-50" : "bg-red-50"}`}
-          >
-            <div className="flex items-center">
-              {stockAvailable ? (
-                <Check className="mr-2 h-5 w-5 text-green-500" />
-              ) : (
-                <X className="mr-2 h-5 w-5 text-red-500" />
-              )}
-              <span className="font-medium">Stock Check</span>
-            </div>
-            {!stockAvailable && (
-              <div className="mt-1 flex items-center text-xs">
-                <span className="text-xs">Stock not available</span>
-                <button
-                  type="button"
-                  className="ml-2 flex items-center text-xs text-blue-500 hover:text-blue-700"
-                >
-                  <Info className="mr-1 h-4 w-4" />
-                  Learn more
-                </button>
-              </div>
-            )}
-          </div>
-
-          <div
-            className={`rounded-md p-3 ${productActive ? "bg-gray-50" : "bg-red-50"}`}
-          >
-            <div className="flex items-center">
-              {productActive ? (
-                <Check className="mr-2 h-5 w-5 text-green-500" />
-              ) : (
-                <X className="mr-2 h-5 w-5 text-red-500" />
-              )}
-              <span className="font-medium">Product Active</span>
-            </div>
-            {!productActive && (
-              <div className="mt-1 flex items-center text-xs">
-                <span className="text-xs">Product not active</span>
-                <button
-                  type="button"
-                  className="ml-2 flex items-center text-blue-500 hover:text-blue-700"
-                >
-                  <Info className="mr-1 h-4 w-4" />
-                  Learn more
-                </button>
-              </div>
-            )}
-          </div>
+          ))}
         </div>
       </div>
     </div>
@@ -243,11 +217,122 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
     sizes: [],
     colors: [],
   });
+  const { language } = useLanguage();
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [newSpec, setNewSpec] = useState<Specification>({ key: "", value: "" });
   const [newFeature, setNewFeature] = useState("");
   const [newHighlight, setNewHighlight] = useState("");
   const { slug } = use(params);
+
+  // Translation dictionary
+  const translations = {
+    en: {
+      editProduct: "Edit Product",
+      viewOnStore: "View on store",
+      saveProduct: "Save Product",
+      productDetails: "Product Details",
+      productTitle: "Product Title",
+      enterProductTitle: "Enter product title",
+      productDescription: "Product Description",
+      enterDescription: "Enter detailed product description...",
+      keyFeatures: "Key Features",
+      addFeature: "Add a feature",
+      add: "Add",
+      remove: "Remove",
+      deliveryInfo: "Delivery Information",
+      deliveryTime: "Delivery Time",
+      deliveryPlaceholder: "e.g. 3-5 business days",
+      productHighlights: "Product Highlights",
+      addHighlight: "Add a highlight",
+      pricing: "Pricing",
+      price: "Price ($)",
+      salePrice: "Sale Price ($) (Optional)",
+      saleStart: "Sale Start Date (Optional)",
+      saleEnd: "Sale End Date (Optional)",
+      inventoryWeight: "Inventory & Weight",
+      stockQuantity: "Stock Quantity",
+      weight: "Weight (kg)",
+      sizes: "Sizes",
+      colors: "Colors",
+      specifications: "Specifications",
+      specKeyPlaceholder: "Key (e.g., Material)",
+      specValuePlaceholder: "Value (e.g., Cotton)",
+      productImages: "Product Images",
+      clickToUpload: "Click to upload",
+      maxImages: "Max 10 images • JPG, PNG, WebP",
+      notFoundSku: "Not found SKU",
+      product: "Product",
+      category: "category",
+      titleRequired: "Product title is required",
+      titleTooShort: "Title must be at least 3 characters",
+      priceRequired: "Price is required",
+      priceInvalid: "Price must be a positive number",
+      salePriceRequired: "Sale price is required when sale dates are set",
+      salePriceInvalid: "Sale price must be a positive number",
+      salePriceTooHigh: "Sale price must be less than regular price",
+      saleEndRequired: "Sale end date is required when sale start is set",
+      saleEndInvalid: "Sale end date must be after start date",
+      descriptionRequired: "Description is required",
+      descriptionTooShort: "Description must be at least 20 characters",
+      weightInvalid: "Weight must be a positive number",
+      stockInvalid: "Stock must be a positive number",
+      productUpdated: "Product updated successfully!",
+    },
+    ar: {
+      editProduct: "تعديل المنتج",
+      viewOnStore: "عرض في المتجر",
+      saveProduct: "حفظ المنتج",
+      productDetails: "تفاصيل المنتج",
+      productTitle: "عنوان المنتج",
+      enterProductTitle: "أدخل عنوان المنتج",
+      productDescription: "وصف المنتج",
+      enterDescription: "أدخل وصف مفصل للمنتج...",
+      keyFeatures: "الميزات الرئيسية",
+      addFeature: "أضف ميزة",
+      add: "إضافة",
+      remove: "إزالة",
+      deliveryInfo: "معلومات التوصيل",
+      deliveryTime: "وقت التوصيل",
+      deliveryPlaceholder: "مثال: 3-5 أيام عمل",
+      productHighlights: "أبرز ميزات المنتج",
+      addHighlight: "أضف نقطة بارزة",
+      pricing: "التسعير",
+      price: "السعر ($)",
+      salePrice: "سعر البيع ($) (اختياري)",
+      saleStart: "تاريخ بدء البيع (اختياري)",
+      saleEnd: "تاريخ انتهاء البيع (اختياري)",
+      inventoryWeight: "المخزون والوزن",
+      stockQuantity: "الكمية المتاحة",
+      weight: "الوزن (كجم)",
+      sizes: "المقاسات",
+      colors: "الألوان",
+      specifications: "المواصفات",
+      specKeyPlaceholder: "المفتاح (مثال: المادة)",
+      specValuePlaceholder: "القيمة (مثال: قطن)",
+      productImages: "صور المنتج",
+      clickToUpload: "انقر للتحميل",
+      maxImages: "10 صور كحد أقصى • JPG, PNG, WebP",
+      notFoundSku: "لم يتم العثور على SKU",
+      product: "المنتج",
+      category: "الفئة",
+      titleRequired: "عنوان المنتج مطلوب",
+      titleTooShort: "يجب أن يكون العنوان 3 أحرف على الأقل",
+      priceRequired: "السعر مطلوب",
+      priceInvalid: "يجب أن يكون السعر رقمًا موجبًا",
+      salePriceRequired: "سعر البيع مطلوب عند تعيين تواريخ البيع",
+      salePriceInvalid: "يجب أن يكون سعر البيع رقمًا موجبًا",
+      salePriceTooHigh: "يجب أن يكون سعر البيع أقل من السعر العادي",
+      saleEndRequired: "تاريخ انتهاء البيع مطلوب عند تعيين تاريخ البدء",
+      saleEndInvalid: "يجب أن يكون تاريخ انتهاء البيع بعد تاريخ البدء",
+      descriptionRequired: "الوصف مطلوب",
+      descriptionTooShort: "يجب أن يكون الوصف 20 حرفًا على الأقل",
+      weightInvalid: "يجب أن يكون الوزن رقمًا موجبًا",
+      stockInvalid: "يجب أن يكون المخزون رقمًا موجبًا",
+      productUpdated: "تم تحديث المنتج بنجاح!",
+    },
+  };
+
+  const t = translations[language];
 
   // Find the product by slug from constants
   useEffect(() => {
@@ -257,20 +342,20 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
       const editableProduct: ProductDetails = {
         id: foundProduct.id,
         sku: foundProduct.sku,
-        title: foundProduct.title,
+        title: foundProduct.title[language],
         price: foundProduct.price,
         del_price: foundProduct.del_price,
-        description: foundProduct.description,
-        features: foundProduct.features,
-        highlights: foundProduct.highlights,
-        deliveryTime: foundProduct.deliveryTime,
+        description: foundProduct.description[language],
+        features: foundProduct.features[language],
+        highlights: foundProduct.highlights[language],
+        deliveryTime: foundProduct.deliveryTime?.[language],
         weightKg: foundProduct.weightKg,
         stock: foundProduct.stock,
         sizes: foundProduct.sizes?.map((s) => s),
-        colors: foundProduct.colors?.map((c) => c),
+        colors: foundProduct.colors?.[language]?.map((c) => c),
         specifications: foundProduct.specifications?.map((s) => ({
-          key: s.label,
-          value: s.content,
+          key: s.label[language],
+          value: s.content[language],
         })),
         // You'll need to map other fields as needed
         pricingMethod: "manual",
@@ -446,15 +531,14 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
     setErrors(currentErrors);
 
     if (Object.keys(currentErrors).length === 0) {
-      // Here you would typically send the updated product to your API
       console.log("Product updated:", product);
-      alert("Product updated successfully!");
+      alert(t.productUpdated);
     }
-  }, [product]);
+  }, [product, t.productUpdated]);
 
   return (
-    <div>
-      <h1 className="mb-6 text-2xl font-bold md:text-3xl">Edit Product</h1>
+    <div className={language === "ar" ? "text-right" : "text-left"}>
+      <h1 className="mb-6 text-2xl font-bold md:text-3xl">{t.editProduct}</h1>
 
       <div className="mb-4 flex flex-col justify-between gap-3 rounded-lg border border-gray-200 bg-white p-2 lg:flex-row">
         <div className="flex gap-2">
@@ -487,10 +571,10 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
           </div>
           <div>
             <h2 className="font-semibold">
-              {product.brand?.title || "Product"}
+              {product.brand?.title[language] || t.product}
             </h2>
             <span className="text-sm">
-              {product.category?.title || "category"}
+              {product.category?.title[language] || t.category}
             </span>
           </div>
         </div>
@@ -499,28 +583,28 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
             variant="outlineSussces"
             size="sm"
             icon={<Eye size={15} />}
-            label={"View on store"}
+            label={t.viewOnStore}
           />
           <DynamicButton
             variant="success"
             size="sm"
             icon={<Save size={15} />}
             onClick={handleSave}
-            label={"Save Product"}
+            label={t.saveProduct}
           />
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-9">
         <div className="col-span-1 rounded-xl border border-gray-200 bg-white p-6 lg:col-span-6">
-          <h1 className="mb-4 text-2xl font-bold">Product Details</h1>
+          <h1 className="mb-4 text-2xl font-bold">{t.productDetails}</h1>
           <div className="mb-6 rounded-md border border-gray-200 p-3">
             <div className="font-mono text-sm font-medium">
-              {product.sku ?? "Not found SKU"}
+              {product.sku ?? t.notFoundSku}
             </div>
           </div>
 
-          <h2 className="mb-4 text-xl font-semibold">Product Title</h2>
+          <h2 className="mb-4 text-xl font-semibold">{t.productTitle}</h2>
           {errors.title && (
             <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
               {errors.title}
@@ -529,13 +613,14 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
           <input
             type="text"
             className="mb-6 w-full rounded-md border border-gray-300 p-3 focus:outline-none"
-            placeholder="Enter product title"
+            placeholder={t.enterProductTitle}
             value={product.title || ""}
             onChange={(e) => setProduct({ ...product, title: e.target.value })}
-            aria-label="Product title"
+            aria-label={t.productTitle}
+            dir={language === "ar" ? "rtl" : "ltr"}
           />
 
-          <h2 className="mb-4 text-xl font-semibold">Product Description</h2>
+          <h2 className="mb-4 text-xl font-semibold">{t.productDescription}</h2>
           {errors.description && (
             <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
               {errors.description}
@@ -544,32 +629,34 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
           <textarea
             className="mb-6 w-full resize-none rounded-md border border-gray-300 p-3 focus:outline-none"
             rows={5}
-            placeholder="Enter detailed product description..."
+            placeholder={t.enterDescription}
             value={product.description || ""}
             onChange={(e) =>
               setProduct({ ...product, description: e.target.value })
             }
-            aria-label="Product description"
+            aria-label={t.productDescription}
+            dir={language === "ar" ? "rtl" : "ltr"}
           />
 
-          <h2 className="mb-4 text-xl font-semibold">Key Features</h2>
+          <h2 className="mb-4 text-xl font-semibold">{t.keyFeatures}</h2>
           <div className="mb-6">
             <div className="mb-2 flex">
               <input
                 type="text"
-                className="flex-grow rounded-l-md border border-gray-300 p-2 focus:outline-none"
-                placeholder="Add a feature"
+                className={`flex-grow border border-gray-300 p-2 focus:outline-none ${language === "ar" ? "rounded-r-md" : "rounded-l-md"}`}
+                placeholder={t.addFeature}
                 value={newFeature}
                 onChange={(e) => setNewFeature(e.target.value)}
-                aria-label="Add feature"
+                aria-label={t.addFeature}
+                dir={language === "ar" ? "rtl" : "ltr"}
               />
               <button
                 type="button"
-                className="rounded-r-md bg-green-600 px-3 text-white hover:bg-green-700"
+                className={`rounded-md bg-green-600 px-3 text-white hover:bg-green-700 ${language === "ar" ? "rounded-l-md" : "rounded-r-md"}`}
                 onClick={handleAddFeature}
                 disabled={!newFeature.trim()}
               >
-                Add
+                {t.add}
               </button>
             </div>
             {product.features?.map((feature, index) => (
@@ -582,48 +669,52 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
                   type="button"
                   className="text-red-500 hover:text-red-700"
                   onClick={() => handleRemoveFeature(index)}
-                  aria-label="Remove feature"
+                  aria-label={t.remove}
                 >
                   <X size={16} />
                 </button>
               </div>
             ))}
           </div>
-          <h2 className="mb-4 text-xl font-semibold">Delivery Information</h2>
+
+          <h2 className="mb-4 text-xl font-semibold">{t.deliveryInfo}</h2>
           <div className="mb-6">
             <label htmlFor="deliveryTime" className="mb-1 block text-gray-700">
-              Delivery Time
+              {t.deliveryTime}
             </label>
             <input
               type="text"
               id="deliveryTime"
               className="focus:ring-500 w-full rounded-md border border-gray-300 p-2 focus:outline-none"
-              placeholder="e.g. 3-5 business days"
+              placeholder={t.deliveryPlaceholder}
               value={product.deliveryTime || ""}
               onChange={(e) =>
                 setProduct({ ...product, deliveryTime: e.target.value })
               }
-              aria-label="Delivery time"
+              aria-label={t.deliveryTime}
+              dir={language === "ar" ? "rtl" : "ltr"}
             />
           </div>
-          <h2 className="mb-4 text-xl font-semibold">Product Highlights</h2>
+
+          <h2 className="mb-4 text-xl font-semibold">{t.productHighlights}</h2>
           <div className="mb-6">
             <div className="mb-2 flex">
               <input
                 type="text"
-                className="flex-grow rounded-l-md border border-gray-300 p-2 focus:outline-none"
-                placeholder="Add a feature"
+                className={`flex-grow border border-gray-300 p-2 focus:outline-none ${language === "ar" ? "rounded-r-md" : "rounded-l-md"}`}
+                placeholder={t.addHighlight}
                 value={newHighlight}
-                onChange={(e) => setNewFeature(e.target.value)}
-                aria-label="Add feature"
+                onChange={(e) => setNewHighlight(e.target.value)}
+                aria-label={t.addHighlight}
+                dir={language === "ar" ? "rtl" : "ltr"}
               />
               <button
                 type="button"
-                className="rounded-r-md bg-green-600 px-3 text-white hover:bg-green-700"
+                className={`rounded-md bg-green-600 px-3 text-white hover:bg-green-700 ${language === "ar" ? "rounded-l-md" : "rounded-r-md"}`}
                 onClick={handleAddHighlight}
                 disabled={!newHighlight.trim()}
               >
-                Add
+                {t.add}
               </button>
             </div>
             {product.highlights?.map((highlight, index) => (
@@ -636,7 +727,7 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
                   type="button"
                   className="text-red-500 hover:text-red-700"
                   onClick={() => handleRemoveHighlight(index)}
-                  aria-label="Remove Highlight"
+                  aria-label={t.remove}
                 >
                   <X size={16} />
                 </button>
@@ -644,15 +735,15 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
             ))}
           </div>
 
-          <h2 className="mb-4 text-xl font-semibold">Pricing</h2>
+          <h2 className="mb-4 text-xl font-semibold">{t.pricing}</h2>
           {errors.price && (
             <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
               {errors.price}
             </div>
           )}
-          {errors.price && (
+          {errors.salePrice && (
             <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
-              {errors.price}
+              {errors.salePrice}
             </div>
           )}
           {errors.saleEnd && (
@@ -662,31 +753,32 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
           )}
           <div className="mb-4">
             <label htmlFor="price" className="mb-1 block text-gray-700">
-              Price ($)
+              {t.price}
             </label>
             <input
               type="number"
-              id="de"
+              id="price"
               className="w-full rounded-md border border-gray-300 p-2 focus:outline-none"
               placeholder="e.g. 99.99"
               value={product.del_price ?? ""}
               onChange={(e) =>
                 setProduct({
                   ...product,
-                  price: parseFloat(e.target.value),
+                  del_price: parseFloat(e.target.value),
                 })
               }
               step="0.01"
-              aria-label="Product price"
+              aria-label={t.price}
+              dir={language === "ar" ? "rtl" : "ltr"}
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="price" className="mb-1 block text-gray-700">
-              Sale Price ($) (Optional)
+            <label htmlFor="salePrice" className="mb-1 block text-gray-700">
+              {t.salePrice}
             </label>
             <input
               type="number"
-              id="price"
+              id="salePrice"
               className="w-full rounded-md border border-gray-300 p-2 focus:outline-none"
               placeholder="e.g. 79.99"
               value={product.price ?? ""}
@@ -697,11 +789,44 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
                 })
               }
               step="0.01"
-              aria-label="Product sale price"
+              aria-label={t.salePrice}
+              dir={language === "ar" ? "rtl" : "ltr"}
             />
           </div>
+          <div className="mb-6 grid gap-4 md:grid-cols-2">
+            <div>
+              <label htmlFor="saleStart" className="mb-1 block text-gray-700">
+                {t.saleStart}
+              </label>
+              <input
+                type="date"
+                id="saleStart"
+                className="w-full rounded-md border border-gray-300 p-2 focus:outline-none"
+                value={product.saleStart || ""}
+                onChange={(e) =>
+                  setProduct({ ...product, saleStart: e.target.value })
+                }
+                aria-label={t.saleStart}
+              />
+            </div>
+            <div>
+              <label htmlFor="saleEnd" className="mb-1 block text-gray-700">
+                {t.saleEnd}
+              </label>
+              <input
+                type="date"
+                id="saleEnd"
+                className="w-full rounded-md border border-gray-300 p-2 focus:outline-none"
+                value={product.saleEnd || ""}
+                onChange={(e) =>
+                  setProduct({ ...product, saleEnd: e.target.value })
+                }
+                aria-label={t.saleEnd}
+              />
+            </div>
+          </div>
 
-          <h2 className="mb-4 text-xl font-semibold">Inventory & Weight</h2>
+          <h2 className="mb-4 text-xl font-semibold">{t.inventoryWeight}</h2>
           {errors.stock && (
             <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
               {errors.stock}
@@ -715,7 +840,7 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
           <div className="mb-6 grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="stock" className="mb-1 block text-gray-700">
-                Stock Quantity
+                {t.stockQuantity}
               </label>
               <input
                 type="number"
@@ -729,12 +854,13 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
                     stock: parseInt(e.target.value, 10),
                   })
                 }
-                aria-label="Stock quantity"
+                aria-label={t.stockQuantity}
+                dir={language === "ar" ? "rtl" : "ltr"}
               />
             </div>
             <div>
               <label htmlFor="weightKg" className="mb-1 block text-gray-700">
-                Weight (kg)
+                {t.weight}
               </label>
               <input
                 type="number"
@@ -749,12 +875,13 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
                   })
                 }
                 step="0.01"
-                aria-label="Product weight in kilograms"
+                aria-label={t.weight}
+                dir={language === "ar" ? "rtl" : "ltr"}
               />
             </div>
           </div>
 
-          <h2 className="mb-4 text-xl font-semibold">Sizes</h2>
+          <h2 className="mb-4 text-xl font-semibold">{t.sizes}</h2>
           <div className="mb-6 flex flex-wrap gap-2">
             {sizeOptions.map((size) => (
               <button
@@ -773,7 +900,7 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
             ))}
           </div>
 
-          <h2 className="mb-4 text-xl font-semibold">Colors</h2>
+          <h2 className="mb-4 text-xl font-semibold">{t.colors}</h2>
           <div className="mb-6 flex flex-wrap gap-2">
             {colorOptions.map((color) => (
               <button
@@ -793,28 +920,30 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
             ))}
           </div>
 
-          <h2 className="mb-4 text-xl font-semibold">Specifications</h2>
+          <h2 className="mb-4 text-xl font-semibold">{t.specifications}</h2>
           <div className="mb-6">
             <div className="mb-2 flex flex-wrap gap-2">
               <input
                 type="text"
-                className="flex-grow rounded-l-md border border-gray-300 p-2 focus:outline-none"
-                placeholder="Key (e.g., Material)"
+                className={`flex-grow rounded-md border border-gray-300 p-2 focus:outline-none ${language === "ar" ? "rounded-r-md" : "rounded-l-md"}`}
+                placeholder={t.specKeyPlaceholder}
                 value={newSpec.key}
                 onChange={(e) =>
                   setNewSpec({ ...newSpec, key: e.target.value })
                 }
-                aria-label="Specification key"
+                aria-label={t.specKeyPlaceholder}
+                dir={language === "ar" ? "rtl" : "ltr"}
               />
               <input
                 type="text"
-                className="flex-grow rounded-r-md border border-gray-300 p-2 focus:outline-none"
-                placeholder="Value (e.g., Cotton)"
+                className={`flex-grow rounded-md border border-gray-300 p-2 focus:outline-none ${language === "ar" ? "rounded-l-md" : "rounded-r-md"}`}
+                placeholder={t.specValuePlaceholder}
                 value={newSpec.value}
                 onChange={(e) =>
                   setNewSpec({ ...newSpec, value: e.target.value })
                 }
-                aria-label="Specification value"
+                aria-label={t.specValuePlaceholder}
+                dir={language === "ar" ? "rtl" : "ltr"}
               />
               <button
                 type="button"
@@ -822,7 +951,7 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
                 onClick={handleAddSpecification}
                 disabled={!newSpec.key || !newSpec.value}
               >
-                Add
+                {t.add}
               </button>
             </div>
             {product.specifications?.map((spec, index) => (
@@ -837,7 +966,7 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
                   type="button"
                   className="text-red-500 hover:text-red-700"
                   onClick={() => handleRemoveSpecification(index)}
-                  aria-label="Remove specification"
+                  aria-label={t.remove}
                 >
                   <X size={16} />
                 </button>
@@ -845,7 +974,7 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
             ))}
           </div>
 
-          <h2 className="mb-4 text-xl font-semibold">Product Images</h2>
+          <h2 className="mb-4 text-xl font-semibold">{t.productImages}</h2>
           {errors.images && (
             <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-600">
               {errors.images}
@@ -859,7 +988,7 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
               accept="image/*"
               className="hidden"
               onChange={(e) => handleImageUpload(e.target.files)}
-              aria-label="Upload images"
+              aria-label={t.productImages}
             />
             <label
               htmlFor="image-upload"
@@ -869,10 +998,8 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
                 className="mb-3 text-gray-400 transition-transform group-hover:scale-110"
                 size={32}
               />
-              <p className="text-base font-medium">Click to upload</p>
-              <span className="text-sm text-gray-400">
-                Max 10 images • JPG, PNG, WebP
-              </span>
+              <p className="text-base font-medium">{t.clickToUpload}</p>
+              <span className="text-sm text-gray-400">{t.maxImages}</span>
             </label>
           </div>
 
@@ -890,7 +1017,7 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
                   type="button"
                   className="absolute right-1 top-1 rounded-full bg-black bg-opacity-50 p-1 text-white hover:bg-opacity-75"
                   onClick={() => handleRemoveImage(index, true)}
-                  aria-label={`Remove existing image ${index + 1}`}
+                  aria-label={`${t.remove} ${index + 1}`}
                 >
                   <X size={16} />
                 </button>
@@ -909,7 +1036,7 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
                   type="button"
                   className="absolute right-1 top-1 rounded-full bg-black bg-opacity-50 p-1 text-white hover:bg-opacity-75"
                   onClick={() => handleRemoveImage(index, false)}
-                  aria-label={`Remove new image ${index + 1}`}
+                  aria-label={`${t.remove} ${index + 1}`}
                 >
                   <X size={16} />
                 </button>

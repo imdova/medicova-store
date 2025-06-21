@@ -2,6 +2,7 @@
 
 import WishlistCard from "@/components/UI/cards/WishlistCard";
 import CustomAlert from "@/components/UI/CustomAlert";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useAppSelector } from "@/store/hooks";
 import {
   clearWishlist,
@@ -15,6 +16,7 @@ import { useDispatch } from "react-redux";
 
 const WishlistPage: React.FC = () => {
   const { products: wishlistData } = useAppSelector((state) => state.wishlist);
+  const { language } = useLanguage();
   const [alert, setAlert] = useState<{
     message: string;
     type: "success" | "error" | "info" | "cart" | "wishlist";
@@ -58,12 +60,15 @@ const WishlistPage: React.FC = () => {
           />
         )}
         <div className="mb-6 flex items-center justify-between gap-2">
-          <h2 className="text-2xl font-bold text-gray-700">My WishList</h2>
+          <h2 className="text-2xl font-bold text-gray-700">
+            {language === "ar" ? "قائمتي المفضلة" : "My Wishlist"}
+          </h2>
           <button
             onClick={handleClearWishlist}
             className="shadow-xs flex items-center gap-1 rounded-md border border-gray-200 px-3 py-2 text-xs text-gray-600"
           >
-            <LucideHeartOff size={15} /> Clear Wishlist
+            <LucideHeartOff size={15} />
+            {language === "ar" ? "مسح المفضلة" : "Clear Wishlist"}
           </button>
         </div>
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-4">
@@ -72,6 +77,7 @@ const WishlistPage: React.FC = () => {
               <WishlistCard
                 key={product.id}
                 product={product}
+                locale={language}
                 handleDelete={() => handleDeleteFromWishlist(product.id)}
               />
             ))
@@ -92,17 +98,20 @@ const WishlistPage: React.FC = () => {
                 />
               </svg>
               <h3 className="text-lg font-medium text-gray-900">
-                Your wishlist is empty
+                {language === "ar"
+                  ? "قائمة المفضلة فارغة"
+                  : "Your wishlist is empty"}
               </h3>
               <p className="max-w-md text-gray-500">
-                You havent added any products to your wishlist yet. Start
-                exploring and add items you love!
+                {language === "ar"
+                  ? "لم تقم بإضافة أي منتجات إلى قائمة المفضلة بعد. ابدأ بالتصفح وأضف ما تحبه!"
+                  : "You haven't added any products to your wishlist yet. Start exploring and add items you love!"}
               </p>
               <Link
                 href="/"
                 className="mt-4 rounded-md bg-green-600 px-4 py-2 text-white transition-colors hover:bg-green-700"
               >
-                Browse Products
+                {language === "ar" ? "تصفح المنتجات" : "Browse Products"}
               </Link>
             </div>
           )}

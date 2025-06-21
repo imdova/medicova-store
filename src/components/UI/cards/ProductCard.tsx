@@ -21,6 +21,7 @@ import {
 } from "@/store/slices/wishlistSlice";
 import WishlistButton from "../Buttons/WishlistButton";
 import { useSession } from "next-auth/react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ProductCardProps {
   loading?: boolean;
@@ -36,6 +37,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
     message: string;
     type: "success" | "error" | "info" | "cart" | "wishlist";
   } | null>(null);
+  const { language } = useLanguage();
   const dispatch = useAppDispatch();
   const { products } = useAppSelector((state) => state.cart);
   const { products: wishlistData } = useAppSelector((state) => state.wishlist);
@@ -70,7 +72,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
     }
   }, [cartProduct?.quantity]);
   // Auto-rotate nudges every 3 seconds
-  const nudgeCount = product.nudges ? product.nudges.length : 0;
+  const nudgeCount = product.nudges ? product.nudges[language].length : 0;
 
   useEffect(() => {
     if (nudgeCount === 0) return;
@@ -92,13 +94,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
         dispatch(
           addItem({
             id: product.id,
-            title: product.title ?? "",
+            title: product.title,
             image: product.images?.[0] ?? "/images/placeholder.jpg",
-            description: product.description ?? "No description available",
+            description: product.description.en ?? "No description available",
             del_price: product.del_price,
             price: product.price ?? 0,
             shipping_fee: product.shipping_fee ?? 0,
-            quantity: Math.min(quantity, product.stock ?? 1), // Ensure we don't exceed stock
+            quantity: Math.min(quantity, product.stock ?? 1),
             brand: product.brand,
             deliveryTime: product.deliveryTime,
             sellers: product.sellers,
@@ -107,9 +109,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
             weightKg: product.weightKg,
           }),
         );
-        showAlert("Added to cart", "cart");
+        showAlert(
+          language === "ar" ? "تمت الإضافة إلى السلة" : "Added to cart",
+          "success",
+        );
       } else {
-        showAlert("Product Already in cart!", "cart");
+        showAlert(
+          language === "ar"
+            ? "المنتج موجود بالفعل في السلة!"
+            : "Product already in cart!",
+          "cart",
+        );
       }
     },
     [dispatch, isInCart, product, quantity],
@@ -120,7 +130,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
       e.stopPropagation();
 
       if (!session.data?.user) {
-        showAlert("Please login to add items to your wishlist", "error");
+        showAlert(
+          language === "ar"
+            ? "يرجى تسجيل الدخول لإضافة العناصر إلى قائمة الرغبات"
+            : "Please login to add items to your wishlist",
+          "error",
+        );
         return;
       }
 
@@ -129,7 +144,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
       try {
         if (!isInWishlist) {
           dispatch(addToWishlist(product, userId));
-          showAlert("Added to wishlist", "wishlist");
+          showAlert(
+            language === "ar"
+              ? "تمت الإضافة إلى قائمة الرغبات"
+              : "Added to wishlist",
+            "wishlist",
+          );
         } else {
           dispatch(
             removeFromWishlist({
@@ -137,11 +157,21 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
               userId: userId,
             }),
           );
-          showAlert("Removed from wishlist", "wishlist");
+          showAlert(
+            language === "ar"
+              ? "تمت الازالة من قائمة الرغبات"
+              : "Remove From wishlist",
+            "wishlist",
+          );
         }
       } catch (error) {
         console.error("Wishlist operation failed:", error);
-        showAlert("Failed to update wishlist", "error");
+        showAlert(
+          language === "ar"
+            ? "فشل في تحديث قائمة الرغبات"
+            : "Failed to update wishlist",
+          "error",
+        );
       }
     },
     [dispatch, isInWishlist, product, quantity, session.data?.user],
@@ -153,7 +183,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
 
       if (validatedQuantity === 0) {
         dispatch(removeItem(product.id));
-        showAlert("Deleted from cart", "error");
+        showAlert(
+          language === "ar" ? "تم الحذف من السلة" : "Deleted from cart",
+          "error",
+        );
       } else if (validatedQuantity > quantity) {
         const increaseAmount = validatedQuantity - quantity;
         dispatch(increaseQuantity({ id: product.id, amount: increaseAmount }));
@@ -197,7 +230,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
           <div className="flex h-full flex-col">
             {product.isBestSaller && (
               <span className="absolute left-3 top-3 z-[2] rounded-full bg-gray-800 px-3 py-1 text-[10px] font-semibold text-white">
-                Best Saller
+                {language === "ar" ? "أفضل المنتجات" : "Best Saller"}
               </span>
             )}
             {/* Product Slider */}
@@ -212,7 +245,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
                       product.images?.[currentImageIndex] ||
                       "/images/placeholder.jpg"
                     }
-                    alt={product.title}
+                    alt={product.title[language]}
                     className="h-48 w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105 sm:h-64"
                     priority={currentImageIndex === 0} // Only prioritize first image
                   />
@@ -282,19 +315,22 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
               {/* Product Info */}
               <div className="p-1">
                 <h3 className="mt-2 text-sm font-semibold text-gray-700">
-                  {product.title}
+                  {product.title[language]}
                 </h3>
 
                 <div className="m-2 flex flex-wrap items-center gap-1 text-sm sm:gap-3">
-                  <p>
-                    EGP{" "}
+                  <p
+                    className={`flex items-center gap-1 ${language === "ar" ? "flex-row-reverse" : ""}`}
+                  >
+                    {language === "ar" ? "جنيه" : "EGP"}{" "}
                     <span className="text-lg font-bold">
                       {product.price.toLocaleString()}
                     </span>
                   </p>
                   {product.del_price && (
                     <del className="text-sm text-gray-600">
-                      {product.del_price.toLocaleString()} EGP
+                      {product.del_price.toLocaleString()}{" "}
+                      {language === "ar" ? "جنيه" : "EGP"}
                     </del>
                   )}
                   {product.sale && (
@@ -312,7 +348,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
                       transform: `translateY(-${currentNudgeIndex * 24}px)`,
                     }}
                   >
-                    {product.nudges?.map((nudge, index) => (
+                    {product.nudges?.[language]?.map((nudge, index) => (
                       <div
                         key={index}
                         className="flex h-6 items-center text-xs text-gray-600"
@@ -323,7 +359,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
                   </div>
                 </div>
               </div>
-              {product.shippingMethod === "express" && (
+              {product.shippingMethod?.[language] === "express" && (
                 <div className="mt-2 flex items-center text-xs font-semibold">
                   <span className="rounded bg-light-primary px-2 py-1 text-white">
                     Express

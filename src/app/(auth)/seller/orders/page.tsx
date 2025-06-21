@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 import { Search } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Order } from "../../user/types/account";
 import OrderList from "../components/OrderList";
 
@@ -17,28 +18,26 @@ const mockOrders: Order[] = [
     time: "06:50 PM",
     productName: "Jeep Buluo Leather Cross Body Bag Black",
     orderId: "NEBHIB0642330781",
-    createdAt: new Date("2023-05-27").getTime(), // Added for filtering
+    createdAt: new Date("2023-05-27").getTime(),
   },
   {
     id: "2",
     status: "cancelled",
     productImage:
       "https://f.nooncdn.com/p/v1640702431/N52265998A_1.jpg?format=avif&width=original",
-
     date: "Tuesday, 27th May",
     time: "06:50 PM",
     productName: "B.S COLLECTION: Ywingo waterproof bag shoulder or backpack",
     productBrand: "B.S",
     productDescription: "Cafe color",
     orderId: "NEBHIB0642330782",
-    createdAt: new Date("2023-05-27").getTime(), // Added for filtering
+    createdAt: new Date("2023-05-27").getTime(),
   },
   {
     id: "3",
     status: "completed",
     productImage:
       "https://f.nooncdn.com/p/v1640702431/N52265998A_1.jpg?format=avif&width=original",
-
     date: "Monday, 15th June",
     time: "10:30 AM",
     productName: "Wireless greentooth Headphones",
@@ -60,31 +59,79 @@ const mockOrders: Order[] = [
   },
 ];
 
+const translations = {
+  title: {
+    en: "Orders",
+    ar: "الطلبات",
+  },
+  subtitle: {
+    en: "View the delivery status for items and your order history",
+    ar: "عرض حالة التسليم وسجل الطلبات الخاص بك",
+  },
+  searchPlaceholder: {
+    en: "Search by product, brand, or order ID...",
+    ar: "ابحث حسب المنتج أو الماركة أو رقم الطلب...",
+  },
+  allOrders: {
+    en: "All Orders",
+    ar: "كل الطلبات",
+  },
+  last3months: {
+    en: "Last 3 Months",
+    ar: "آخر 3 شهور",
+  },
+  orderFound: {
+    en: "order found",
+    ar: "طلب تم العثور عليه",
+  },
+  ordersFound: {
+    en: "orders found",
+    ar: "طلبات تم العثور عليها",
+  },
+  prev: {
+    en: "Prev",
+    ar: "السابق",
+  },
+  next: {
+    en: "Next",
+    ar: "التالي",
+  },
+  pageLabel: {
+    en: "Page",
+    ar: "الصفحة",
+  },
+  ofLabel: {
+    en: "of",
+    ar: "من",
+  },
+};
+
 const OrdersPage: React.FC = () => {
+  const { language } = useLanguage();
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const searchTerm = searchParams.get("search") || "";
   const timeFilter =
     (searchParams.get("timeFilter") as "all" | "last3months") || "all";
-  const page = parseInt(searchParams.get("page") || "1", 10); // default page 1
-  const pageSize = 8; // Show 2 orders per page
+  const page = parseInt(searchParams.get("page") || "1", 10);
+  const pageSize = 8;
 
-  // Update URL params helper
   const updateSearchParam = (param: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (value) {
+
+    if (value.trim()) {
       params.set(param, value);
     } else {
       params.delete(param);
     }
-    // Reset page to 1 if changing filters
-    if (param === "search" || param === "timeFilter") {
+
+    if (["search", "timeFilter"].includes(param)) {
       params.set("page", "1");
     }
-    router.push(`/account/orders?${params.toString()}`);
-  };
 
+    router.push(`/user/orders?${params.toString()}`);
+  };
   const filteredOrders = useMemo(() => {
     const threeMonthsAgo = new Date();
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
@@ -103,7 +150,7 @@ const OrdersPage: React.FC = () => {
   }, [searchTerm, timeFilter]);
 
   const totalPages = Math.ceil(filteredOrders.length / pageSize);
-  const currentPage = Math.min(Math.max(page, 1), totalPages); // Keep page in bounds
+  const currentPage = Math.min(Math.max(page, 1), totalPages);
   const paginatedOrders = filteredOrders.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize,
@@ -112,24 +159,26 @@ const OrdersPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-700">Orders</h2>
+        <h2 className="text-2xl font-bold text-gray-700">
+          {translations.title[language]}
+        </h2>
         <p className="text-sm text-secondary">
-          View the delivery status for items and your order history
+          {translations.subtitle[language]}
         </p>
       </div>
 
-      {/* Search and Filter Controls */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        {/* Order Count */}
         <div className="w-1/3 text-sm text-gray-500">
           {filteredOrders.length}{" "}
-          {filteredOrders.length === 1 ? "order" : "orders"} found
+          {filteredOrders.length === 1
+            ? translations.orderFound[language]
+            : translations.ordersFound[language]}
         </div>
         <div className="flex w-full gap-3">
           <div className="relative w-full">
             <input
               type="text"
-              placeholder="Search by product, brand, or order ID..."
+              placeholder={translations.searchPlaceholder[language]}
               className="w-full rounded-md border border-gray-300 px-4 py-2 pl-10 placeholder:text-sm focus:outline-none"
               value={searchTerm}
               onChange={(e) => updateSearchParam("search", e.target.value)}
@@ -146,17 +195,17 @@ const OrdersPage: React.FC = () => {
               value={timeFilter}
               onChange={(e) => updateSearchParam("timeFilter", e.target.value)}
             >
-              <option value="all">All Orders</option>
-              <option value="last3months">Last 3 Months</option>
+              <option value="all">{translations.allOrders[language]}</option>
+              <option value="last3months">
+                {translations.last3months[language]}
+              </option>
             </select>
           </div>
         </div>
       </div>
 
-      {/* Order List */}
-      <OrderList orders={paginatedOrders} />
+      <OrderList orders={paginatedOrders} locale={language} />
 
-      {/* Pagination Controls */}
       {totalPages > 1 && (
         <div className="mt-4 flex justify-center gap-2">
           <button
@@ -168,10 +217,11 @@ const OrdersPage: React.FC = () => {
                 : "bg-green-600 text-white"
             }`}
           >
-            Prev
+            {translations.prev[language]}
           </button>
           <span className="px-4 py-2 text-sm">
-            Page {currentPage} of {totalPages}
+            {translations.pageLabel[language]} {currentPage}{" "}
+            {translations.ofLabel[language]} {totalPages}
           </span>
           <button
             disabled={currentPage === totalPages}
@@ -182,7 +232,7 @@ const OrdersPage: React.FC = () => {
                 : "bg-green-600 text-white"
             }`}
           >
-            Next
+            {translations.next[language]}
           </button>
         </div>
       )}

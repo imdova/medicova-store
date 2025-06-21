@@ -4,21 +4,36 @@ import { Eye, List, Plus } from "lucide-react";
 import Link from "next/link";
 import OverviewPanel from "./panels/OverviewPanel";
 import ProductListPanel from "./panels/ProductListPanel";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-const tabs = [
-  {
-    label: "Product Overview",
-    icon: Eye,
-    content: <OverviewPanel />,
+const t = {
+  en: {
+    overview: "Product Overview",
+    list: "Product List",
+    add: "Add New Product",
   },
-  {
-    label: "Product List",
-    icon: List,
-    content: <ProductListPanel />,
+  ar: {
+    overview: "نظرة عامة على المنتجات",
+    list: "قائمة المنتجات",
+    add: "إضافة منتج جديد",
   },
-];
+};
 
 export default function ProductsPage() {
+  const { language } = useLanguage();
+  const tabs = [
+    {
+      label: t[language].overview,
+      icon: Eye,
+      content: <OverviewPanel locale={language} />,
+    },
+    {
+      label: t[language].list,
+      icon: List,
+      content: <ProductListPanel locale={language} />,
+    },
+  ];
+
   return (
     <main>
       <TabWithIcon
@@ -28,7 +43,7 @@ export default function ProductsPage() {
             href="/create-product"
           >
             <Plus size={15} />
-            Add New Product
+            {t[language].add}
           </Link>
         }
         tabs={tabs}

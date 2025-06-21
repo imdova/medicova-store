@@ -6,13 +6,21 @@ import Link from "next/link";
 type DynamicOffersProps = {
   category: MultiCategory;
   offers: Offer[];
+  locale: "en" | "ar";
 };
-const DynamicOffers: React.FC<DynamicOffersProps> = ({ category, offers }) => {
+const DynamicOffers: React.FC<DynamicOffersProps> = ({
+  category,
+  offers,
+  locale,
+}) => {
   return (
     <div className="bg-green-100 p-4">
       <div className="mb-8 text-center">
-        <p className="text-4xl font-bold uppercase text-gray-600">
-          <span className="text-green-500">{category.title}</span> Offers
+        <p
+          className={`flex items-center justify-center gap-2 text-4xl font-bold uppercase ${locale === "ar" ? "flex-row-reverse" : ""} text-gray-600`}
+        >
+          <span className="text-green-500">{category.title[locale]}</span>{" "}
+          {locale === "ar" ? "عروض" : "Offers"}
         </p>
       </div>
 
@@ -26,7 +34,7 @@ const DynamicOffers: React.FC<DynamicOffersProps> = ({ category, offers }) => {
             <Image
               className="h-full w-full"
               src={offer.imgUrl}
-              alt={offer.title}
+              alt={offer.title[locale]}
               width={300}
               height={300}
             />

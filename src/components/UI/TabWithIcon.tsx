@@ -24,7 +24,7 @@ export const TabWithIcon = ({ tabs, leftbutton }: TabsProps) => {
 
   return (
     <div className="w-full">
-      <div className="flex flex-col gap-3 rounded-lg border border-gray-300 bg-white p-2 sm:items-center sm:justify-between lg:flex-row">
+      <div className="flex w-full flex-col gap-3 rounded-lg border border-gray-300 bg-white p-2 sm:items-center sm:justify-between lg:flex-row">
         {/* Tabs List */}
         <div className="flex w-full flex-col flex-wrap gap-2 sm:flex-row lg:w-fit">
           {tabs.map((tab, index) => {
@@ -50,9 +50,7 @@ export const TabWithIcon = ({ tabs, leftbutton }: TabsProps) => {
 
         {/* Optional Button */}
         {leftbutton && (
-          <div className="w-full sm:ml-auto sm:flex-shrink-0 lg:w-fit">
-            {leftbutton}
-          </div>
+          <div className="w-full sm:flex-shrink-0 lg:w-fit">{leftbutton}</div>
         )}
       </div>
 

@@ -11,6 +11,7 @@ import { useGetProductsByCategory } from "@/hooks/useGetProductsByCategory";
 import { MultiCategory, Offer } from "@/types";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface RenderComponentProps {
   category: MultiCategory;
@@ -22,47 +23,66 @@ const offers: Offer[] = [
     imgUrl:
       "https://f.nooncdn.com/mpcms/EN0003/assets/5a62d1b8-b3d5-4018-abca-86913ca9b7dd.png",
     url: "#",
-    title: "Lighting & Tables",
+    title: {
+      en: "Lighting & Tables",
+      ar: "الإضاءة والطاولات",
+    },
   },
   {
     id: "2",
     imgUrl:
       "https://f.nooncdn.com/mpcms/EN0003/assets/5a62d1b8-b3d5-4018-abca-86913ca9b7dd.png",
     url: "#",
-    title: "Vases & Dried Grass",
+    title: {
+      en: "Vases & Dried Grass",
+      ar: "المزهريات والعشب المجفف",
+    },
   },
   {
     id: "3",
     imgUrl:
       "https://f.nooncdn.com/mpcms/EN0003/assets/5a62d1b8-b3d5-4018-abca-86913ca9b7dd.png",
     url: "#",
-    title: "Plants & Bathroom Accessories",
+    title: {
+      en: "Plants & Bathroom Accessories",
+      ar: "النباتات وإكسسوارات الحمام",
+    },
   },
   {
     id: "4",
     imgUrl:
       "https://f.nooncdn.com/mpcms/EN0003/assets/5a62d1b8-b3d5-4018-abca-86913ca9b7dd.png",
     url: "#",
-    title: "Relaxscent Candles",
+    title: {
+      en: "Relaxscent Candles",
+      ar: "شموع الاسترخاء",
+    },
   },
   {
     id: "5",
     imgUrl:
       "https://f.nooncdn.com/mpcms/EN0003/assets/5a62d1b8-b3d5-4018-abca-86913ca9b7dd.png",
     url: "#",
-    title: "Kitchen Storage & Mugs",
+    title: {
+      en: "Kitchen Storage & Mugs",
+      ar: "تخزين المطبخ والأكواب",
+    },
   },
   {
     id: "6",
     imgUrl:
       "https://f.nooncdn.com/mpcms/EN0003/assets/5a62d1b8-b3d5-4018-abca-86913ca9b7dd.png",
     url: "#",
-    title: "Home Essentials",
+    title: {
+      en: "Home Essentials",
+      ar: "أساسيات المنزل",
+    },
   },
 ];
 
 export default function RenderComponent({ category }: RenderComponentProps) {
   const searchParams = useSearchParams();
+  const { language, isArabic } = useLanguage();
 
   const categorySlugParam = searchParams.get("categorySlug");
   const slug = categorySlugParam ?? undefined; // Ensure it’s string | undefined
@@ -95,6 +115,7 @@ export default function RenderComponent({ category }: RenderComponentProps) {
       <div className="container mx-auto p-3 lg:max-w-[1440px]">
         {category.subCategories && (
           <CategorySlider
+            locale={language}
             path={`${category.slug}`}
             cardSize="large"
             inCategory
@@ -105,13 +126,14 @@ export default function RenderComponent({ category }: RenderComponentProps) {
         <div className="my-4">
           <div className="mb-6 flex items-center justify-between gap-4">
             <h2 className="text-lg font-bold sm:text-2xl">
-              Shop your favorite {category.title}
+              {isArabic ? "تسوق المفضللات لديك" : "Shop your favorite"}{" "}
+              {category.title[language]}
             </h2>
             <DynamicButton
               size="sm"
               variant="outline"
               href="#"
-              label="Shop Now"
+              label={language === "ar" ? "تسوق الان" : "Shop Now"}
             />
           </div>
           <ProductsSlider>
@@ -131,7 +153,13 @@ export default function RenderComponent({ category }: RenderComponentProps) {
             url={category.banner?.url ?? "#"}
           />
         </div>
-        {offers && <DynamicOffers offers={offers} category={category} />}
+        {offers && (
+          <DynamicOffers
+            locale={language}
+            offers={offers}
+            category={category}
+          />
+        )}
         <div>
           {category.subCategories &&
             category.subCategories.map((category) => {
@@ -139,13 +167,13 @@ export default function RenderComponent({ category }: RenderComponentProps) {
                 <div key={category.id} className="my-4">
                   <div className="mb-6 flex items-center justify-between gap-4">
                     <h2 className="text-lg font-bold sm:text-2xl">
-                      {category.title}
+                      {category.title[language]}
                     </h2>
                     <DynamicButton
                       size="sm"
                       variant="outline"
                       href="#"
-                      label="Shop Now"
+                      label={language === "ar" ? "تسوق الان" : "Shop Now"}
                     />
                   </div>
                   <ProductsSlider>
@@ -166,7 +194,8 @@ export default function RenderComponent({ category }: RenderComponentProps) {
           <div className="my-4">
             <div className="mb-6 flex items-center justify-between gap-4">
               <h2 className="text-lg font-bold uppercase sm:text-2xl">
-                Shop all in {category.title}
+                {isArabic ? "تسوق الكل في" : "Shop all in"}{" "}
+                {category.title[language]}
               </h2>
             </div>
             <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">

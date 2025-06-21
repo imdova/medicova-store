@@ -21,13 +21,88 @@ import { Pagination } from "@/components/UI/Pagination";
 import { formatDate } from "@/util/dateUtils";
 import { productFilters } from "@/constants/drawerFilter";
 import Image from "next/image";
+import { LanguageType } from "@/util/translations";
 
 type Status = "active" | "pending" | "draft";
 
-const columns = [
+// Translation dictionary
+const translations = {
+  en: {
+    productName: "Product Name",
+    date: "Date",
+    sku: "SKU",
+    seller: "Seller",
+    category: "Category",
+    subCategory: "Sub Category",
+    brand: "Brand",
+    unitPrice: "Unit Price",
+    totalPurchase: "Total Purchase",
+    status: "Status",
+    searchPlaceholder: "Search",
+    search: "Search",
+    moreFilters: "More Filters",
+    download: "Download",
+    allStatuses: "All Statuses",
+    active: "Active",
+    pending: "Pending",
+    draft: "Draft",
+    allStock: "All Stock",
+    inStock: "In Stock",
+    outOfStock: "Out of Stock",
+    selectCategory: "Select Category",
+    medicalWear: "Medical Wear",
+    selectSubCategory: "Select Sub Category",
+    scrubs: "Scrubs",
+    allBrand: "All brand",
+    landeu: "Landeu",
+    allSellers: "All Sellers",
+    reset: "Reset",
+    showData: "Show Data",
+    unknown: "Unknown",
+    delete: "Delete",
+    edit: "Edit",
+  },
+  ar: {
+    productName: "اسم المنتج",
+    date: "التاريخ",
+    sku: "SKU",
+    seller: "البائع",
+    category: "الفئة",
+    subCategory: "الفئة الفرعية",
+    brand: "العلامة التجارية",
+    unitPrice: "سعر الوحدة",
+    totalPurchase: "إجمالي المشتريات",
+    status: "الحالة",
+    searchPlaceholder: "بحث",
+    search: "بحث",
+    moreFilters: "المزيد من الفلاتر",
+    download: "تحميل",
+    allStatuses: "كل الحالات",
+    active: "نشط",
+    pending: "قيد الانتظار",
+    draft: "مسودة",
+    allStock: "كل المخزون",
+    inStock: "متوفر",
+    outOfStock: "غير متوفر",
+    selectCategory: "اختر الفئة",
+    medicalWear: "ملابس طبية",
+    selectSubCategory: "اختر الفئة الفرعية",
+    scrubs: "سكراب",
+    allBrand: "كل العلامات",
+    landeu: "لاندو",
+    allSellers: "كل البائعين",
+    reset: "إعادة تعيين",
+    showData: "عرض البيانات",
+    unknown: "غير معروف",
+    delete: "حذف",
+    edit: "تعديل",
+  },
+};
+
+const getColumns = (locale: LanguageType) => [
   {
     key: "title",
-    header: "Product Name",
+    header: translations[locale].productName,
     sortable: true,
     render: (item: Product) => (
       <div className="flex gap-2">
@@ -36,136 +111,159 @@ const columns = [
           src={item.images?.[0] || "/images/placeholder.jpg"}
           width={300}
           height={300}
-          alt={item.title}
+          alt={item.title[locale]}
         />
         <Link
           className="line-clamp-2 hover:underline"
           href={`products/${item.id}`}
         >
-          {item.title}
+          {item.title[locale]}
         </Link>
       </div>
     ),
   },
   {
     key: "date",
-    header: "Date",
+    header: translations[locale].date,
     sortable: true,
     render: () => "15/5/2023",
   },
   {
     key: "id",
-    header: "SKU",
+    header: translations[locale].sku,
     sortable: true,
   },
   {
     key: "seller",
-    header: "Seller",
+    header: translations[locale].seller,
     sortable: true,
-    render: () => "Brandona", // Placeholder - replace with actual seller from your data
+    render: () => "Brandona",
   },
   {
     key: "category",
-    header: "Category",
+    header: translations[locale].category,
     sortable: true,
     render: (item: Product) => (
-      <span>{item.category?.title || "Medical Wear"}</span>
+      <span>
+        {item.category?.title[locale] || translations[locale].medicalWear}
+      </span>
     ),
   },
   {
     key: "subcategory",
-    header: "Sub Category",
+    header: translations[locale].subCategory,
     sortable: true,
-    render: () => "Scrubs", // Placeholder - replace with actual subcategory from your data
+    render: () => translations[locale].scrubs,
   },
   {
     key: "brand",
-    header: "Brand",
+    header: translations[locale].brand,
     sortable: true,
-    render: () => "Landeu", // Placeholder - replace with actual brand from your data
+    render: () => translations[locale].landeu,
   },
   {
     key: "price",
-    header: "Unit Price",
+    header: translations[locale].unitPrice,
     render: (item: Product) => `${item.price} EGP`,
     sortable: true,
-    align: "left",
   },
   {
     key: "totalPurchase",
-    header: "Total Purchase",
-    render: () => "160000 EGP", // Placeholder - replace with actual total purchase from your data
+    header: translations[locale].totalPurchase,
+    render: () => "160000 EGP",
     sortable: true,
-    align: "left",
   },
   {
     key: "status",
-    header: "Status",
+    header: translations[locale].status,
     render: (item: Product) => {
       const statusColor =
-        item.status === "active"
+        item.status?.en === "active"
           ? "bg-green-100 text-green-800"
-          : item.status === "pending"
+          : item.status?.en === "pending"
             ? "bg-yellow-100 text-yellow-800"
             : "bg-gray-100 text-gray-600";
+
+      const statusText = item.status?.[locale] || translations[locale].unknown;
+      const displayStatus =
+        statusText.charAt(0).toUpperCase() + statusText.slice(1);
 
       return (
         <span
           className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${statusColor}`}
         >
-          {(item.status ?? "unknown").charAt(0).toUpperCase() +
-            (item.status ?? "unknown").slice(1)}
+          {displayStatus}
         </span>
       );
     },
     sortable: true,
-    align: "center",
   },
 ];
 
-const statusOptions = [
-  { id: "all", name: "All Statuses" },
-  { id: "active", name: "Active" },
-  { id: "pending", name: "Pending" },
-  { id: "draft", name: "Draft" },
+const getStatusOptions = (): {
+  id: string;
+  name: { en: string; ar: string };
+}[] => [
+  { id: "all", name: { en: "All Statuses", ar: "كل الحالات" } },
+  { id: "active", name: { en: "Active", ar: "نشط" } },
+  { id: "pending", name: { en: "Pending", ar: "قيد الانتظار" } },
+  { id: "draft", name: { en: "Draft", ar: "مسودة" } },
 ];
 
-const stockOptions = [
-  { id: "all", name: "All Stock" },
-  { id: "in_stock", name: "In Stock" },
-  { id: "out_of_stock", name: "Out of Stock" },
+const getStockOptions = (): {
+  id: string;
+  name: { en: string; ar: string };
+}[] => [
+  { id: "all", name: { en: "All Stock", ar: "كل المخزون" } },
+  { id: "in_stock", name: { en: "In Stock", ar: "متوفر" } },
+  { id: "out_of_stock", name: { en: "Out of Stock", ar: "غير متوفر" } },
 ];
 
-const categoryOptions = [
-  { id: "all", name: "Select Category" },
-  { id: "medical", name: "Medical Wear" },
-  // Add more categories as needed
+const getCategoryOptions = (): {
+  id: string;
+  name: { en: string; ar: string };
+}[] => [
+  { id: "all", name: { en: "All Categories", ar: "كل الفئات" } },
+  { id: "medical", name: { en: "Medical Wear", ar: "ملابس طبية" } },
 ];
 
-const subCategoryOptions = [
-  { id: "all", name: "Select Sub Category" },
-  { id: "scrubs", name: "Scrubs" },
-  // Add more subcategories as needed
+const getSubCategoryOptions = (): {
+  id: string;
+  name: { en: string; ar: string };
+}[] => [
+  { id: "all", name: { en: "All Subcategories", ar: "كل الفئات الفرعية" } },
+  { id: "scrubs", name: { en: "Scrubs", ar: "الملابس الطبية" } },
 ];
 
-const brandOptions = [
-  { id: "all", name: "All brand" },
-  { id: "landeu", name: "Landeu" },
-  // Add more brands as needed
-];
-const sellers = [
-  { id: "all", name: "All Sellers" },
-  { id: "mohamed", name: "mohamed" },
-  // Add more brands as needed
+const getBrandOptions = (): {
+  id: string;
+  name: { en: string; ar: string };
+}[] => [
+  { id: "all", name: { en: "All Brands", ar: "كل العلامات التجارية" } },
+  { id: "landeu", name: { en: "Landeu", ar: "لاندو" } },
 ];
 
-export default function ProductListPanel() {
+const getSellersOptions = (): {
+  id: string;
+  name: { en: string; ar: string };
+}[] => [
+  { id: "all", name: { en: "All Sellers", ar: "كل البائعين" } },
+  { id: "mohamed", name: { en: "Mohamed", ar: "محمد" } },
+];
+
+export default function ProductListPanel({
+  locale = "en",
+}: {
+  locale: LanguageType;
+}) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [seachQuary, setSeachQuary] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+  const t = translations[locale];
+  const isRTL = locale === "ar";
 
   // Get current filter values from URL
   const statusFilter = searchParams.get("status") || "all";
@@ -174,7 +272,7 @@ export default function ProductListPanel() {
   const subCategoryFilter = searchParams.get("subcategory") || "all";
   const brandFilter = searchParams.get("brand") || "all";
   const sellersFilter = searchParams.get("sellerId") || "all";
-  const searchQuery = searchParams.get("search")?.toLowerCase() || "";
+  const currentSearchQuery = searchParams.get("search")?.toLowerCase() || "";
   const currentPage = Number(searchParams.get("page")) || 1;
   const ITEMS_PER_PAGE = 6;
 
@@ -197,19 +295,17 @@ export default function ProductListPanel() {
     }
 
     router.replace(`${pathname}?${params.toString()}`);
-
-    console.log("Selected range:", range);
   };
 
   // Count products by status for the summary cards
   const statusCounts = products.reduce(
     (acc: Record<Status, number>, product) => {
       if (
-        product.status === "active" ||
-        product.status === "pending" ||
-        product.status === "draft"
+        product.status?.[locale] === "active" ||
+        product.status?.[locale] === "pending" ||
+        product.status?.[locale] === "draft"
       ) {
-        acc[product.status] += 1;
+        acc[product.status[locale]] += 1;
       }
       return acc;
     },
@@ -218,13 +314,17 @@ export default function ProductListPanel() {
 
   // Filter products based on URL params
   const filteredProducts = products.filter((product) => {
-    if (statusFilter !== "all" && product.status !== statusFilter) return false;
+    if (statusFilter !== "all" && product.status?.[locale] !== statusFilter)
+      return false;
     if (stockFilter === "in_stock" && (product.stock ?? 0) <= 0) return false;
     if (stockFilter === "out_of_stock" && (product.stock ?? 0) > 0)
       return false;
     if (categoryFilter !== "all" && product.category?.id !== categoryFilter)
       return false;
-    if (searchQuery && !product.title.toLowerCase().includes(searchQuery))
+    if (
+      currentSearchQuery &&
+      !product.title[locale].toLowerCase().includes(currentSearchQuery)
+    )
       return false;
     if (stockFilter === "in_stock" && (product.stock ?? 0) <= 0) return false;
     if (stockFilter === "out_of_stock" && (product.stock ?? 0) > 0)
@@ -233,14 +333,11 @@ export default function ProductListPanel() {
     return true;
   });
 
-  //   const handleEditProduct = (slug: string) => {
-  //     router.push(`products/edit-product/${slug}`);
-  //   };
   // handle pagination
   const paginatedProducts = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [products, currentPage]);
+  }, [filteredProducts, currentPage]);
 
   // Update URL params when filters change
   const handleFilterChange = (
@@ -281,7 +378,7 @@ export default function ProductListPanel() {
   };
 
   return (
-    <div className="relative space-y-6">
+    <div className="relative space-y-6" dir={isRTL ? "rtl" : "ltr"}>
       <div className="shadow-xs space-y-6 rounded-lg border border-gray-200 bg-white p-3">
         {/* search content  */}
         <div>
@@ -290,26 +387,31 @@ export default function ProductListPanel() {
               onDateChange={handleDateChange}
               formatString="MM/dd/yyyy"
               className="w-full md:w-fit"
+              locale={locale}
             />
             <div className="flex flex-1">
               <div className="relative flex-1">
                 <input
                   type="text"
-                  defaultValue={searchQuery}
-                  onChange={(e) => setSeachQuary(e.target.value)}
-                  placeholder="Search"
-                  className="w-full rounded-s-md border border-r-0 border-gray-300 px-3 py-1.5 pl-10 outline-none placeholder:text-sm"
+                  defaultValue={currentSearchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={t.searchPlaceholder}
+                  className={`w-full rounded-s-md border ${isRTL ? "border-l-0" : "border-r-0"} border-gray-300 px-3 py-1.5 outline-none placeholder:text-sm ${
+                    isRTL ? "pr-10" : "pl-10"
+                  }`}
                 />
                 <Search
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600"
+                  className={`absolute top-1/2 -translate-y-1/2 text-gray-600 ${
+                    isRTL ? "right-4" : "left-4"
+                  }`}
                   size={15}
                 />
               </div>
               <button
-                onClick={() => handleFilterChange("search", seachQuary)}
+                onClick={() => handleFilterChange("search", searchQuery)}
                 className="rounded-e-md bg-light-primary px-3 py-1.5 text-sm text-white hover:brightness-90"
               >
-                Search
+                {t.search}
               </button>
             </div>
             <div className="flex gap-2">
@@ -318,10 +420,10 @@ export default function ProductListPanel() {
                 className="flex items-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
               >
                 <SlidersHorizontal size={16} />
-                More Filters
+                {t.moreFilters}
               </button>
               <button className="rounded bg-green-600 px-3 py-1.5 text-sm text-white hover:bg-green-700">
-                Download
+                {t.download}
               </button>
             </div>
           </div>
@@ -331,63 +433,68 @@ export default function ProductListPanel() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {/* Brand */}
             <div>
-              <h3 className="mb-2 text-sm font-medium">Sellers</h3>
+              <h3 className="mb-2 text-sm font-medium">{t.seller}</h3>
               <div className="mt-2">
                 <Dropdown
-                  options={sellers}
+                  options={getSellersOptions()}
                   selected={sellersFilter}
                   onSelect={(value) =>
                     handleFilterChange("sellerId", value.toString())
                   }
+                  locale={locale}
                 />
               </div>
             </div>
             {/* Brand */}
             <div>
-              <h3 className="mb-2 text-sm font-medium">Brand</h3>
+              <h3 className="mb-2 text-sm font-medium">{t.brand}</h3>
               <div className="mt-2">
                 <Dropdown
-                  options={brandOptions}
+                  options={getBrandOptions()}
                   selected={brandFilter}
                   onSelect={(value) =>
                     handleFilterChange("brand", value.toString())
                   }
+                  locale={locale}
                 />
               </div>
             </div>
 
             {/* Category */}
             <div>
-              <h3 className="mb-2 text-sm font-medium">Category</h3>
+              <h3 className="mb-2 text-sm font-medium">{t.category}</h3>
               <Dropdown
-                options={categoryOptions}
+                options={getCategoryOptions()}
                 selected={categoryFilter}
                 onSelect={(value) =>
                   handleFilterChange("category", value.toString())
                 }
+                locale={locale}
               />
             </div>
 
             {/* Sub Category */}
             <div>
-              <h3 className="mb-2 text-sm font-medium">Sub Category</h3>
+              <h3 className="mb-2 text-sm font-medium">{t.subCategory}</h3>
               <Dropdown
-                options={subCategoryOptions}
+                options={getSubCategoryOptions()}
                 selected={subCategoryFilter}
                 onSelect={(value) =>
                   handleFilterChange("subcategory", value.toString())
                 }
+                locale={locale}
               />
             </div>
             {/* Stock Level */}
             <div>
-              <h3 className="mb-2 text-sm font-medium">Stock Level</h3>
+              <h3 className="mb-2 text-sm font-medium">{t.inStock}</h3>
               <Dropdown
-                options={stockOptions}
+                options={getStockOptions()}
                 selected={stockFilter}
                 onSelect={(value) =>
                   handleFilterChange("stock", value.toString())
                 }
+                locale={locale}
               />
             </div>
           </div>
@@ -396,12 +503,13 @@ export default function ProductListPanel() {
             filtersData={productFilters}
             isOpen={filtersOpen}
             onClose={() => setFiltersOpen(false)}
+            locale={locale}
           />
         </div>
         <div className="flex flex-col justify-between gap-4 md:flex-row">
           {/* Status Summary Cards */}
           <div className="flex flex-col items-center gap-4 sm:flex-row">
-            {statusOptions.map((option) => (
+            {getStatusOptions().map((option) => (
               <button
                 key={option.id}
                 onClick={() => handleStatusClick(option.id)}
@@ -412,7 +520,7 @@ export default function ProductListPanel() {
                 }`}
               >
                 <h3 className="text-xs font-medium">
-                  {option.name} (
+                  {option.name[locale]} (
                   {statusCounts[option.id as keyof typeof statusCounts] || 0})
                 </h3>
               </button>
@@ -422,27 +530,31 @@ export default function ProductListPanel() {
             <div className="flex gap-2">
               <button
                 onClick={() => setViewMode("list")}
-                className={`flex h-9 w-9 items-center justify-center rounded border border-primary text-sm text-primary transition hover:bg-primary hover:text-white ${viewMode === "list" ? "bg-primary text-white" : ""}`}
+                className={`flex h-9 w-9 items-center justify-center rounded border border-primary text-sm text-primary transition hover:bg-primary hover:text-white ${
+                  viewMode === "list" ? "bg-primary text-white" : ""
+                }`}
               >
                 <List size={16} />
               </button>
               <button
                 onClick={() => setViewMode("grid")}
-                className={`flex h-9 w-9 items-center justify-center rounded border border-primary text-sm text-primary transition hover:bg-primary hover:text-white ${viewMode === "grid" ? "bg-primary text-white" : ""}`}
+                className={`flex h-9 w-9 items-center justify-center rounded border border-primary text-sm text-primary transition hover:bg-primary hover:text-white ${
+                  viewMode === "grid" ? "bg-primary text-white" : ""
+                }`}
               >
                 <LayoutGrid size={16} />
               </button>
             </div>
             {/* Filters */}
-            <div className="flex gap-2">
+            <div className={`flex gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
               <button
                 onClick={resetFilters}
                 className="rounded border border-primary px-3 py-1.5 text-sm text-primary transition hover:bg-primary hover:text-white"
               >
-                Reset
+                {t.reset}
               </button>
               <button className="rounded bg-light-primary px-3 py-1.5 text-sm text-white transition hover:brightness-95">
-                Show Data
+                {t.showData}
               </button>
             </div>
           </div>
@@ -454,21 +566,21 @@ export default function ProductListPanel() {
         {viewMode === "list" && (
           <DynamicTable
             data={filteredProducts}
-            columns={columns}
+            columns={getColumns(locale)}
             pagination={true}
             itemsPerPage={5}
             selectable={true}
             defaultSort={{ key: "title", direction: "asc" }}
             actions={[
               {
-                label: "Edit",
+                label: t.edit,
                 onClick: () => console.log("edited"),
                 className:
                   "bg-white text-gray-700 hover:text-blue-700 hover:bg-blue-50 ",
                 icon: <PencilIcon className="h-4 w-4" />,
               },
               {
-                label: "Delete",
+                label: t.delete,
                 onClick: () => console.log("Deleted"),
                 className:
                   "bg-white text-gray-700 hover:text-red-700 hover:bg-red-50 ",
@@ -487,6 +599,7 @@ export default function ProductListPanel() {
                 icon: <TrashIcon className="h-4 w-4" />,
               },
             ]}
+            locale={locale}
           />
         )}
         {viewMode === "grid" && (
@@ -498,9 +611,10 @@ export default function ProductListPanel() {
             </div>
             {/* Pagination */}
             <Pagination
-              totalItems={products.length}
+              totalItems={filteredProducts.length}
               itemsPerPage={ITEMS_PER_PAGE}
               currentPage={currentPage}
+              locale={locale}
             />
           </div>
         )}

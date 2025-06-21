@@ -4,7 +4,33 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { SearchResult } from "@/types";
 import { dummyKeywords } from "@/constants/keywords";
 
-const SearchComponent = () => {
+const translations = {
+  en: {
+    placeholder: "What are you looking for?",
+    recent: "Recent Searches",
+    clear: "Clear all",
+    suggestions: "Suggestions",
+    noResults: "No suggestions found for",
+    searchFor: "Search for",
+  },
+  ar: {
+    placeholder: "عن ماذا تبحث؟",
+    recent: "عمليات البحث الأخيرة",
+    clear: "مسح الكل",
+    suggestions: "اقتراحات",
+    noResults: "لم يتم العثور على اقتراحات لـ",
+    searchFor: "البحث عن",
+  },
+};
+
+interface SearchComponentProps {
+  locale?: "en" | "ar";
+}
+
+const SearchComponent = ({ locale = "en" }: SearchComponentProps) => {
+  const t = translations[locale];
+  const isRtl = locale === "ar";
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
@@ -15,13 +41,11 @@ const SearchComponent = () => {
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Initialize search query from URL
   useEffect(() => {
     const query = searchParams.get("q") || "";
     setSearchQuery(query);
   }, [searchParams]);
 
-  // Load recent searches from localStorage on component mount
   useEffect(() => {
     const savedSearches = localStorage.getItem("recentSearches");
     if (savedSearches) {
@@ -29,20 +53,17 @@ const SearchComponent = () => {
     }
   }, []);
 
-  // Save recent searches to localStorage when they change
   useEffect(() => {
     if (recentSearches.length > 0) {
       localStorage.setItem("recentSearches", JSON.stringify(recentSearches));
     }
   }, [recentSearches]);
 
-  // Handle search input changes
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
 
     if (query.length > 0) {
-      // Match against dummy keywords
       const matchedKeywords = dummyKeywords
         .filter((keyword) =>
           keyword.toLowerCase().includes(query.toLowerCase()),
@@ -53,7 +74,6 @@ const SearchComponent = () => {
           type: "recent" as const,
         }));
 
-      // Also include recent searches that match
       const matchedRecentSearches = recentSearches
         .filter((item) =>
           item.title.toLowerCase().includes(query.toLowerCase()),
@@ -72,9 +92,7 @@ const SearchComponent = () => {
     setSelectedResultIndex(-1);
   };
 
-  // Save a search to recent searches
   const saveToRecentSearches = (title: string) => {
-    // Avoid duplicates
     if (
       !recentSearches.some(
         (item) => item.title.toLowerCase() === title.toLowerCase(),
@@ -82,12 +100,11 @@ const SearchComponent = () => {
     ) {
       setRecentSearches((prev) => [
         { id: `recent-${Date.now()}`, title, type: "recent" },
-        ...prev.slice(0, 4), // Keep only 5 most recent
+        ...prev.slice(0, 4),
       ]);
     }
   };
 
-  // Perform search and update URL
   const performSearch = (query: string) => {
     if (query.trim()) {
       saveToRecentSearches(query);
@@ -97,7 +114,6 @@ const SearchComponent = () => {
     setSearchResults([]);
   };
 
-  // Handle keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -119,7 +135,6 @@ const SearchComponent = () => {
     }
   };
 
-  // Handle click outside to close results
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -136,26 +151,35 @@ const SearchComponent = () => {
     };
   }, []);
 
-  // Clear recent searches
   const clearRecentSearches = () => {
     setRecentSearches([]);
     localStorage.removeItem("recentSearches");
   };
 
   return (
-    <div className="static w-full md:relative" ref={searchRef}>
+    <div
+      className="static w-full md:relative"
+      ref={searchRef}
+      dir={isRtl ? "rtl" : "ltr"}
+    >
       <div className="relative">
         <input
           ref={inputRef}
           type="text"
-          placeholder="What are you looking for?"
-          className="w-full rounded-sm border border-gray-300 py-1 pl-10 pr-8 outline-none transition-all duration-200 placeholder:text-sm focus:outline-none"
+          placeholder={t.placeholder}
+          className={`w-full rounded-sm border border-gray-300 py-1 ${
+            isRtl ? "pl-8 pr-10" : "pl-10 pr-8"
+          } outline-none placeholder:text-sm`}
           value={searchQuery}
           onChange={handleSearchChange}
           onFocus={() => setIsFocused(true)}
           onKeyDown={handleKeyDown}
         />
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+        <div
+          className={`absolute top-1/2 -translate-y-1/2 text-gray-400 ${
+            isRtl ? "right-3" : "left-3"
+          }`}
+        >
           <Search size={18} />
         </div>
         {searchQuery && (
@@ -165,29 +189,29 @@ const SearchComponent = () => {
               setSearchResults([]);
               inputRef.current?.focus();
             }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className={`absolute top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 ${
+              isRtl ? "left-3" : "right-3"
+            }`}
           >
             <X size={18} />
           </button>
         )}
       </div>
 
-      {/* Search results dropdown */}
       {isFocused && (
         <div className="absolute left-0 right-0 top-full z-50 w-full">
-          {/* Show recent searches and keyword suggestions when there's no query */}
           {!searchQuery && recentSearches.length > 0 && (
             <div className="border border-t-0 border-gray-200 bg-white p-2 shadow-lg md:rounded-sm">
               <div className="mb-2 flex items-center justify-between px-2 py-1">
                 <div className="flex items-center text-xs font-semibold uppercase tracking-wider text-gray-500">
-                  <Clock className="mr-2 h-3 w-3" />
-                  Recent Searches
+                  <Clock className={`${isRtl ? "ml-2" : "mr-2"} h-3 w-3`} />
+                  {t.recent}
                 </div>
                 <button
                   onClick={clearRecentSearches}
                   className="text-xs text-gray-400 hover:text-gray-600"
                 >
-                  Clear all
+                  {t.clear}
                 </button>
               </div>
               {recentSearches.map((result) => (
@@ -208,18 +232,21 @@ const SearchComponent = () => {
             </div>
           )}
 
-          {/* Show keyword suggestions when there's a query */}
           {searchQuery && (
             <div className="rounded-sm border border-gray-200 bg-white p-2 shadow-lg">
               {searchResults.length > 0 ? (
                 <>
                   <div className="px-2 py-1 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                    Suggestions
+                    {t.suggestions}
                   </div>
                   {searchResults.map((result, index) => (
                     <div
                       key={`result-${result.id}`}
-                      className={`cursor-pointer rounded px-3 py-2 ${selectedResultIndex === index ? "bg-gray-100" : "hover:bg-gray-100"}`}
+                      className={`cursor-pointer rounded px-3 py-2 ${
+                        selectedResultIndex === index
+                          ? "bg-gray-100"
+                          : "hover:bg-gray-100"
+                      }`}
                       onClick={() => {
                         setSearchQuery(result.title);
                         performSearch(result.title);
@@ -231,7 +258,7 @@ const SearchComponent = () => {
                 </>
               ) : (
                 <div className="p-3 text-center text-sm text-gray-500">
-                  No suggestions found for {searchQuery}
+                  {t.noResults} {searchQuery}
                 </div>
               )}
 
@@ -239,7 +266,7 @@ const SearchComponent = () => {
                 className="mt-1 cursor-pointer rounded bg-gray-50 px-3 py-2 text-sm font-medium hover:bg-gray-100"
                 onClick={() => performSearch(searchQuery)}
               >
-                Search for {searchQuery}
+                {t.searchFor} {searchQuery}
               </div>
             </div>
           )}

@@ -1,28 +1,25 @@
+import { Country } from "@/types";
+import { LanguageType } from "@/util/translations";
 import { Check, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
-
-type Country = {
-  id: string;
-  code: string;
-  name: string;
-};
 
 export const CountryDropdown: React.FC<{
   options: Country[];
   selected: string;
   onSelect: (value: string) => void;
+  locale: LanguageType;
   icon?: React.ReactNode;
-}> = ({ options, selected, onSelect }) => {
+}> = ({ options, selected, onSelect, locale }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const filteredOptions = useMemo(() => {
     return options.filter((option) =>
-      option.name.toLowerCase().includes(searchTerm.toLowerCase()),
+      option.name?.[locale]?.toLowerCase().includes(searchTerm.toLowerCase()),
     );
-  }, [options, searchTerm]);
+  }, [options, searchTerm, locale]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -52,10 +49,10 @@ export const CountryDropdown: React.FC<{
             width={300}
             height={300}
             src={`https://flagcdn.com/h20/${selectedOption?.code.toLowerCase()}.png`}
-            alt={selectedOption?.name ?? "country image"}
+            alt={selectedOption?.name[locale] ?? "country image"}
             className="mr-1 h-4 w-4 rounded-full"
           />
-          <span>{selectedOption?.name}</span>
+          <span>{selectedOption?.name[locale]}</span>
         </div>
         <ChevronDown
           size={16}
@@ -91,14 +88,16 @@ export const CountryDropdown: React.FC<{
                 {option.id === selected && (
                   <Check size={16} className="text-green-600" />
                 )}
-                <Image
-                  width={300}
-                  height={300}
-                  src={`https://flagcdn.com/h20/${option.code.toLowerCase()}.png`}
-                  alt={option?.name ?? "country image"}
-                  className="mr-1 h-4 w-4 rounded-full"
-                />{" "}
-                <span className="flex-1">{option.name}</span>
+                <div className="flex items-center gap-1">
+                  <Image
+                    width={300}
+                    height={300}
+                    src={`https://flagcdn.com/h20/${option.code.toLowerCase()}.png`}
+                    alt={option?.name[locale] ?? "country image"}
+                    className="mr-1 h-4 w-4 rounded-full"
+                  />{" "}
+                  <span className="flex-1">{option.name[locale]}</span>
+                </div>
               </li>
             ))}
           </ul>
