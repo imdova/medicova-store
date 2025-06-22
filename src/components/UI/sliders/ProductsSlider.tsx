@@ -44,8 +44,8 @@ const ProductsSlider: React.FC<ProductsSliderProps> = ({ children }) => {
 
   // Swipe handlers with RTL support
   const swipeHandlers = useSwipeable({
-    onSwipedLeft: () => handleScrollBy(isRTL ? "prev" : "next"),
-    onSwipedRight: () => handleScrollBy(isRTL ? "next" : "prev"),
+    onSwipedLeft: () => handleScrollBy("next"),
+    onSwipedRight: () => handleScrollBy("prev"),
     preventScrollOnSwipe: true,
     trackMouse: true,
   });
