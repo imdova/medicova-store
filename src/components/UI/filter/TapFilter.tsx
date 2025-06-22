@@ -375,7 +375,9 @@ export default function TapFilter({
                 ))
               ) : (
                 <div className="px-4 py-2 text-sm text-gray-500">
-                  No options found
+                  {locale === "ar"
+                    ? "لم يتم العثور على خيارات"
+                    : " No options found"}{" "}
                 </div>
               )}
             </div>
@@ -474,7 +476,9 @@ export default function TapFilter({
                     ))
                   ) : (
                     <div className="px-4 py-2 text-sm text-gray-500">
-                      No options found
+                      {locale === "ar"
+                        ? "لم يتم العثور على خيارات"
+                        : " No options found"}
                     </div>
                   )}
                 </div>

@@ -42,6 +42,19 @@ type Address = {
   };
 };
 
+const labels = {
+  en: {
+    returns: "Free & Easy Returns",
+    deals: "Best Deals",
+    delivery: "Delivery to",
+  },
+  ar: {
+    returns: "إرجاع مجاني وسهل",
+    deals: "أفضل العروض",
+    delivery: "التوصيل إلى",
+  },
+};
+
 const FullHeader: React.FC<AccountPageProps> = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalLogOpen, setIsModalLogOpen] = useState(false);
@@ -87,24 +100,27 @@ const FullHeader: React.FC<AccountPageProps> = () => {
               <div className="mb-4 hidden flex-col items-center justify-between gap-6 sm:flex-row md:flex lg:hidden">
                 <div className="flex w-full items-center justify-between gap-3 sm:w-fit">
                   <h3 className="flex items-center gap-1 text-xs font-semibold text-white">
-                    <RotateCcw size={18} />
-                    Free & Easy Returns
+                    <RotateCcw size={18} className="shrink-0" />
+                    {labels[language].returns}
                   </h3>
+
                   <h3 className="flex items-center gap-1 text-xs font-semibold text-white">
-                    <CirclePercent size={18} />
-                    Best Deals
+                    <CirclePercent size={18} className="shrink-0" />
+                    {labels[language].deals}
                   </h3>
+
                   <span
                     className="flex cursor-pointer flex-wrap items-center gap-1 text-xs text-white"
                     onClick={() => setIsModalOpen(true)}
                   >
-                    Delivery to{" "}
+                    {labels[language].delivery}{" "}
                     <span className="flex items-center gap-1 font-semibold">
                       {selectedAddress?.city} <ChevronDown size={12} />
                     </span>
                   </span>
                 </div>
               </div>
+
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <button onClick={() => setIsOpen(true)}>
@@ -130,87 +146,158 @@ const FullHeader: React.FC<AccountPageProps> = () => {
                   </span>
                 </div>
                 {/* search component  */}
-                <div className="w-full md:max-w-2xl">
+                <div className="hidden w-full md:block md:max-w-2xl">
                   <Suspense>
-                    <SearchComponent locale={language} />
+                    <SearchComponent
+                      inputClassName="md:border-0 md:text-white border border-gray-200  text-gray-800 md:placeholder:text-white placeholder:text-gray-800"
+                      iconClassName="text-gray-800 md:text-white"
+                      locale={language}
+                    />
                   </Suspense>
                 </div>
 
                 {/* Right-side Icons */}
                 <div className="flex">
                   <div>
-                    <LanguageSwitcher />
+                    <LanguageSwitcher className="text-gray-700 md:text-white" />
                   </div>
-                  <div className="hidden lg:block">
+                  <div className="hidden md:block">
                     <AuthButton />
                   </div>
-                  <div className="flex items-center gap-4 md:px-4">
-                    <button
+                  <div className="flex items-center gap-4">
+                    {/* Wishlist Button */}
+                    <motion.button
                       onClick={handdleLogin}
-                      className="relative items-center gap-2 text-sm font-semibold text-primary md:text-white"
+                      className="hover:text-primary/80 group relative flex items-center gap-1.5 text-sm font-semibold text-primary transition-colors md:text-white md:hover:text-white/90"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      <Heart size={20} />
-                      {/* Animate cart badge */}
-                      <AnimatePresence>
-                        {productsCountWishlist > 0 && (
-                          <motion.span
-                            key="cart-badge"
-                            initial={{ scale: 0, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0, opacity: 0 }}
-                            transition={{
-                              type: "spring",
-                              stiffness: 300,
-                              damping: 20,
-                            }}
-                            className="absolute -right-2 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-white md:bg-white md:text-primary"
-                          >
-                            {productsCountWishlist}
-                          </motion.span>
-                        )}
-                      </AnimatePresence>
-                    </button>
-                    <Link
-                      href={`/cart`}
-                      className="relative hidden items-center gap-2 text-sm font-semibold hover:text-gray-100 md:text-white lg:flex"
-                    >
-                      <ShoppingCart size={20} />
+                      <motion.div
+                        animate={{
+                          scale: [1, 1.1, 1],
+                          transition: { duration: 0.5 },
+                        }}
+                        className="relative p-1"
+                      >
+                        <Heart
+                          size={22}
+                          className={`fill-transparent ${
+                            productsCountWishlist > 0
+                              ? "md:group-hover:fill-primary/20 group-hover:fill-white/20"
+                              : ""
+                          } transition-colors duration-300`}
+                        />
 
-                      {/* Animate cart badge */}
-                      <AnimatePresence>
-                        {productsCount > 0 && (
-                          <motion.span
-                            key="cart-badge"
-                            initial={{ scale: 0, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0, opacity: 0 }}
-                            transition={{
-                              type: "spring",
-                              stiffness: 300,
-                              damping: 20,
-                            }}
-                            className="absolute -right-2 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-white text-xs text-primary"
-                          >
-                            {productsCount}
-                          </motion.span>
-                        )}
-                      </AnimatePresence>
-                    </Link>
+                        <AnimatePresence>
+                          {productsCountWishlist > 0 && (
+                            <motion.span
+                              key="wishlist-badge"
+                              initial={{ scale: 0, opacity: 0 }}
+                              animate={{
+                                scale: 1,
+                                opacity: 1,
+                                rotate: [0, 15, -15, 0],
+                              }}
+                              exit={{ scale: 0, opacity: 0 }}
+                              transition={{
+                                type: "spring",
+                                stiffness: 500,
+                                damping: 15,
+                                rotate: { duration: 0.6 },
+                              }}
+                              className="ring-primary/20 absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-white shadow-sm ring-2 md:bg-white md:text-primary md:ring-white/20"
+                            >
+                              {productsCountWishlist > 9
+                                ? "9+"
+                                : productsCountWishlist}
+                            </motion.span>
+                          )}
+                        </AnimatePresence>
+                      </motion.div>
+                    </motion.button>
+
+                    {/* Cart Button */}
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      className="relative"
+                    >
+                      <Link
+                        href="/cart"
+                        className="hover:text-primary/80 group relative flex items-center gap-1.5 text-sm font-semibold text-primary transition-colors md:text-white md:hover:text-white/90"
+                      >
+                        <motion.div
+                          animate={{
+                            scale: [1, 1.1, 1],
+                            transition: { duration: 0.5 },
+                          }}
+                          className="relative p-1"
+                        >
+                          <ShoppingCart
+                            size={22}
+                            className="text-primary transition-colors md:text-white"
+                          />
+
+                          <AnimatePresence>
+                            {productsCount > 0 && (
+                              <motion.span
+                                key="cart-badge"
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{
+                                  scale: 1,
+                                  opacity: 1,
+                                  rotate: [0, 15, -15, 0],
+                                }}
+                                exit={{ scale: 0, opacity: 0 }}
+                                transition={{
+                                  type: "spring",
+                                  stiffness: 500,
+                                  damping: 15,
+                                  rotate: { duration: 0.6 },
+                                }}
+                                className="ring-primary/20 absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-white shadow-sm ring-2 md:bg-white md:text-primary md:ring-white/20"
+                              >
+                                {productsCount > 9 ? "9+" : productsCount}
+                              </motion.span>
+                            )}
+                          </AnimatePresence>
+                        </motion.div>
+
+                        {/* Underline animation */}
+                        <motion.div
+                          className="absolute bottom-0 left-0 h-0.5 bg-white"
+                          initial={{ width: 0 }}
+                          whileHover={{ width: "100%" }}
+                          transition={{ duration: 0.3, ease: "easeOut" }}
+                        />
+                      </Link>
+                    </motion.div>
                   </div>
                 </div>
               </div>
-              <span
-                className="mt-2 flex cursor-pointer items-center gap-1 text-xs text-primary md:hidden md:text-white"
-                onClick={() => setIsModalOpen(true)}
-              >
-                <span>
-                  <MapPin size={14} />
+              <div className="mt-1 flex flex-col-reverse gap-2">
+                <span
+                  className="mt-2 flex cursor-pointer items-center gap-1 text-xs text-primary md:hidden md:text-white"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  <span>
+                    <MapPin size={14} />
+                  </span>
+                  {language === "ar" ? "التسليم إلى" : "Delivery to"}
+                  <span className="flex items-center gap-1 font-semibold">
+                    {selectedAddress?.city} <ChevronDown size={12} />
+                  </span>
                 </span>
-                {language === "ar" ? "التسليم إلى" : "Delivery to"}
-                <span className="flex items-center gap-1 font-semibold">
-                  {selectedAddress?.city} <ChevronDown size={12} />
-                </span>
-              </span>
+                {/* search component  */}
+                <div className="block w-full flex-1 md:hidden">
+                  <Suspense>
+                    <SearchComponent
+                      inputClassName="md:border-0 md:text-white border border-gray-200  text-gray-800 md:placeholder:text-white placeholder:text-gray-800"
+                      iconClassName="text-gray-800 md:text-white"
+                      locale={language}
+                    />
+                  </Suspense>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -241,6 +328,7 @@ const FullHeader: React.FC<AccountPageProps> = () => {
         position="left"
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
+        locale={language}
       >
         <nav>
           <div className="flex flex-col p-2">

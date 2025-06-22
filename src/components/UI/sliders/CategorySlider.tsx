@@ -22,7 +22,7 @@ type CategorySliderProps = {
 };
 
 const CategorySlider: React.FC<CategorySliderProps> = ({
-  categories,
+  categories = [],
   inCategory = false,
   cardSize = "medium",
   displayMode = "default",
@@ -36,8 +36,6 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const controls = useAnimation();
   const autoPlayTimeoutRef = useRef<number | null>(null);
-
-  const isRTL = locale === "ar";
 
   // Get card dimensions based on size prop
   const getCardDimensions = () => {
@@ -70,14 +68,15 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
     let cards = 4;
 
     if (cardSize === "large") {
-      if (width < 400) cards = 3;
+      if (width < 400)
+        cards = 2; // Reduced for better mobile display
       else if (width < 640) cards = 3;
       else if (width < 768) cards = 4;
       else if (width < 1024) cards = 5;
       else if (width < 1280) cards = 6;
       else cards = 8;
     } else if (cardSize === "small") {
-      if (width < 400) cards = 6;
+      if (width < 400) cards = 4;
       else if (width < 640) cards = 6;
       else if (width < 768) cards = 8;
       else if (width < 1024) cards = 10;
@@ -85,12 +84,12 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
       else cards = 16;
     } else {
       // medium
-      if (width < 400) cards = 4;
+      if (width < 400) cards = 3;
       else if (width < 640) cards = 4;
       else if (width < 768) cards = 5;
       else if (width < 1024) cards = 6;
       else if (width < 1280) cards = 8;
-      else cards = 12;
+      else cards = 10;
     }
 
     setVisibleCards(cards);
@@ -100,6 +99,8 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
     updateVisibleCards();
     const handleResize = () => {
       updateVisibleCards();
+      // Reset position on resize to prevent misalignment
+      scrollToIndex(currentIndex);
     };
 
     window.addEventListener("resize", handleResize);
@@ -109,9 +110,9 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
         window.clearTimeout(autoPlayTimeoutRef.current);
       }
     };
-  }, [updateVisibleCards]);
+  }, [updateVisibleCards, currentIndex]);
 
-  const totalSlides = Math.ceil((categories?.length ?? 0) / visibleCards);
+  const totalSlides = Math.ceil(categories.length / visibleCards);
 
   // Scroll to specific index with boundary checks
   const scrollToIndex = useCallback(
@@ -120,7 +121,7 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
       if (!containerRef.current) return;
 
       const containerWidth = containerRef.current.clientWidth;
-      const newPosition = -clampedIndex * containerWidth * (isRTL ? -1 : 1);
+      const newPosition = -clampedIndex * containerWidth;
 
       controls.start({
         x: newPosition,
@@ -129,21 +130,21 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
 
       setCurrentIndex(clampedIndex);
     },
-    [controls, totalSlides, isRTL],
+    [controls, totalSlides],
   );
 
   const nextSlide = useCallback(() => {
-    scrollToIndex(currentIndex + (isRTL ? -1 : 1));
-  }, [currentIndex, scrollToIndex, isRTL]);
+    scrollToIndex(currentIndex + 1);
+  }, [currentIndex, scrollToIndex]);
 
   const prevSlide = useCallback(() => {
-    scrollToIndex(currentIndex + (isRTL ? 1 : -1));
-  }, [currentIndex, scrollToIndex, isRTL]);
+    scrollToIndex(currentIndex - 1);
+  }, [currentIndex, scrollToIndex]);
 
   // Handle drag events with momentum
   const handleDragStart = () => {
     setIsDragging(true);
-    controls.stop(); // Stop any ongoing animations
+    controls.stop();
   };
 
   const handleDragEnd = (
@@ -163,22 +164,21 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
     const velocityFactor = Math.min(Math.abs(dragVelocity) / 1000, 2);
     const distanceFactor = Math.abs(dragDistance) / containerWidth;
 
-    // Combine factors to determine slide change
     if (velocityFactor + distanceFactor > 0.5) {
-      scrollToIndex(currentIndex + (isRTL ? -direction : direction));
+      scrollToIndex(currentIndex + direction);
     } else {
       // Return to current slide
       controls.start({
-        x: -currentIndex * containerWidth * (isRTL ? -1 : 1),
+        x: -currentIndex * containerWidth,
         transition: { duration: 0.3 },
       });
     }
   };
 
-  // Swipe handlers for touch devices
+  // Simplified swipe handlers - direction is now consistent
   const handlers = useSwipeable({
-    onSwipedLeft: () => (isRTL ? prevSlide() : nextSlide()),
-    onSwipedRight: () => (isRTL ? nextSlide() : prevSlide()),
+    onSwipedLeft: () => nextSlide(),
+    onSwipedRight: () => prevSlide(),
     preventScrollOnSwipe: true,
     trackMouse: false,
     delta: 50,
@@ -197,7 +197,7 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
   };
 
   const buttonVariants = {
-    hidden: { opacity: 0, x: isRTL ? 20 : -20 },
+    hidden: { opacity: 0, x: -20 },
     visible: { opacity: 1, x: 0 },
     hover: { scale: 1.1, backgroundColor: "rgba(255,255,255,0.9)" },
   };
@@ -208,37 +208,33 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
     <div
       className="container relative mx-auto overflow-hidden p-3 pt-4 lg:max-w-[1440px]"
       {...handlers}
-      dir={isRTL ? "ltr" : "rtl"}
+      dir="ltr"
     >
-      {/* Navigation Arrows */}
+      {/* Navigation Arrows - simplified direction logic */}
       <motion.button
         onClick={prevSlide}
-        className={`absolute top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white/80 shadow-sm hover:bg-white/90 md:flex ${
-          isRTL ? "left-2" : "right-2"
-        }`}
-        aria-label={isRTL ? "Next categories" : "Previous categories"}
+        className={`absolute left-2 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white/80 shadow-sm hover:bg-white/90 md:flex`}
+        aria-label={locale === "ar" ? "السابق" : "Previous categories"}
         variants={buttonVariants}
         initial="hidden"
         animate="visible"
         whileHover="hover"
         style={{ backdropFilter: "blur(4px)" }}
       >
-        {isRTL ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+        <ChevronLeft size={16} />
       </motion.button>
 
       <motion.button
         onClick={nextSlide}
-        className={`absolute top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white/80 shadow-sm hover:bg-white/90 md:flex ${
-          isRTL ? "right-2" : "left-2"
-        }`}
-        aria-label={isRTL ? "Previous categories" : "Next categories"}
+        className={`absolute right-2 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white/80 shadow-sm hover:bg-white/90 md:flex`}
+        aria-label={locale === "ar" ? "التالي" : "Next categories"}
         variants={buttonVariants}
         initial="hidden"
         animate="visible"
         whileHover="hover"
         style={{ backdropFilter: "blur(4px)" }}
       >
-        {isRTL ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+        <ChevronRight size={16} />
       </motion.button>
 
       {/* Slider container */}
@@ -257,12 +253,11 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
           }}
           drag="x"
           dragConstraints={{
-            left: isRTL
-              ? 0
-              : -((totalSlides - 1) * (containerRef.current?.clientWidth || 0)),
-            right: isRTL
-              ? (totalSlides - 1) * (containerRef.current?.clientWidth || 0)
-              : 0,
+            left: -(
+              (totalSlides - 1) *
+              (containerRef.current?.clientWidth || 0)
+            ),
+            right: 0,
           }}
           dragElastic={0.05}
           onDragStart={handleDragStart}
@@ -277,10 +272,11 @@ const CategorySlider: React.FC<CategorySliderProps> = ({
               style={{
                 minWidth: `${100 / totalSlides}%`,
                 flex: `0 0 ${100 / totalSlides}%`,
+                direction: "ltr",
               }}
             >
               {categories
-                ?.slice(
+                .slice(
                   slideIndex * visibleCards,
                   (slideIndex + 1) * visibleCards,
                 )

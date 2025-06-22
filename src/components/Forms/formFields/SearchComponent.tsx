@@ -1,6 +1,7 @@
 import { Search, X, Clock, ArrowUpLeft } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import { SearchResult } from "@/types";
 import { dummyKeywords } from "@/constants/keywords";
 
@@ -25,9 +26,15 @@ const translations = {
 
 interface SearchComponentProps {
   locale?: "en" | "ar";
+  inputClassName?: string;
+  iconClassName?: string;
 }
 
-const SearchComponent = ({ locale = "en" }: SearchComponentProps) => {
+const SearchComponent = ({
+  locale = "en",
+  inputClassName,
+  iconClassName,
+}: SearchComponentProps) => {
   const t = translations[locale];
   const isRtl = locale === "ar";
 
@@ -157,121 +164,147 @@ const SearchComponent = ({ locale = "en" }: SearchComponentProps) => {
   };
 
   return (
-    <div
-      className="static w-full md:relative"
-      ref={searchRef}
-      dir={isRtl ? "rtl" : "ltr"}
-    >
-      <div className="relative">
+    <div className="w-full md:relative" ref={searchRef}>
+      <motion.div
+        className="relative"
+        transition={{ type: "spring", stiffness: 400 }}
+      >
         <input
           ref={inputRef}
           type="text"
           placeholder={t.placeholder}
-          className={`w-full rounded-sm border border-gray-300 py-1 ${
-            isRtl ? "pl-8 pr-10" : "pl-10 pr-8"
-          } outline-none placeholder:text-sm`}
+          className={`w-full rounded-lg ${inputClassName} bg-white/10 py-2 backdrop-blur-sm transition-all duration-300 focus:bg-white/20 focus:ring-2 focus:ring-white/30 md:py-3 ${
+            isRtl ? "pl-10 pr-12" : "pl-12 pr-10"
+          } outline-none`}
           value={searchQuery}
           onChange={handleSearchChange}
           onFocus={() => setIsFocused(true)}
           onKeyDown={handleKeyDown}
         />
         <div
-          className={`absolute top-1/2 -translate-y-1/2 text-gray-400 ${
-            isRtl ? "right-3" : "left-3"
-          }`}
+          className={`absolute top-1/2 -translate-y-1/2 ${isRtl ? "right-4" : "left-4"}`}
         >
-          <Search size={18} />
+          <Search className={iconClassName} size={15} />
         </div>
+
         {searchQuery && (
-          <button
+          <motion.button
             onClick={() => {
               setSearchQuery("");
               setSearchResults([]);
               inputRef.current?.focus();
             }}
-            className={`absolute top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 ${
-              isRtl ? "left-3" : "right-3"
+            className={`absolute top-1/2 -translate-y-1/2 text-white/60 hover:text-white ${
+              isRtl ? "left-4" : "right-4"
             }`}
+            whileHover={{ scale: 1.1 }}
           >
-            <X size={18} />
-          </button>
+            <X size={20} />
+          </motion.button>
         )}
-      </div>
+      </motion.div>
 
-      {isFocused && (
-        <div className="absolute left-0 right-0 top-full z-50 w-full">
-          {!searchQuery && recentSearches.length > 0 && (
-            <div className="border border-t-0 border-gray-200 bg-white p-2 shadow-lg md:rounded-sm">
-              <div className="mb-2 flex items-center justify-between px-2 py-1">
-                <div className="flex items-center text-xs font-semibold uppercase tracking-wider text-gray-500">
-                  <Clock className={`${isRtl ? "ml-2" : "mr-2"} h-3 w-3`} />
-                  {t.recent}
-                </div>
-                <button
-                  onClick={clearRecentSearches}
-                  className="text-xs text-gray-400 hover:text-gray-600"
-                >
-                  {t.clear}
-                </button>
-              </div>
-              {recentSearches.map((result) => (
-                <div
-                  key={`recent-${result.id}`}
-                  className="flex cursor-pointer items-center justify-between rounded px-3 py-2 hover:bg-gray-100"
-                  onClick={() => {
-                    setSearchQuery(result.title);
-                    performSearch(result.title);
-                  }}
-                >
-                  <div className="flex items-center">
-                    <span className="text-sm">{result.title}</span>
+      <AnimatePresence>
+        {isFocused && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="absolute left-0 right-0 z-50 mt-2 w-full md:top-full"
+          >
+            {!searchQuery && recentSearches.length > 0 && (
+              <motion.div
+                className="bg-white/90 p-4 shadow-xl backdrop-blur-xl md:rounded-xl"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                <div className="mb-3 flex items-center justify-between">
+                  <div className="flex items-center text-sm font-medium text-gray-600">
+                    <Clock className={`${isRtl ? "ml-2" : "mr-2"} h-4 w-4`} />
+                    {t.recent}
                   </div>
-                  <ArrowUpLeft className="text-gray-400" size={15} />
+                  <button
+                    onClick={clearRecentSearches}
+                    className="text-sm text-gray-400 hover:text-gray-600"
+                  >
+                    {t.clear}
+                  </button>
                 </div>
-              ))}
-            </div>
-          )}
-
-          {searchQuery && (
-            <div className="rounded-sm border border-gray-200 bg-white p-2 shadow-lg">
-              {searchResults.length > 0 ? (
-                <>
-                  <div className="px-2 py-1 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                    {t.suggestions}
-                  </div>
-                  {searchResults.map((result, index) => (
-                    <div
-                      key={`result-${result.id}`}
-                      className={`cursor-pointer rounded px-3 py-2 ${
-                        selectedResultIndex === index
-                          ? "bg-gray-100"
-                          : "hover:bg-gray-100"
-                      }`}
+                <div className="space-y-2">
+                  {recentSearches.map((result) => (
+                    <motion.div
+                      key={`recent-${result.id}`}
+                      whileHover={{ x: isRtl ? -5 : 5 }}
+                      className="flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 hover:bg-gray-100"
                       onClick={() => {
                         setSearchQuery(result.title);
                         performSearch(result.title);
                       }}
                     >
-                      <div className="text-sm">{result.title}</div>
-                    </div>
+                      <div className="flex items-center">
+                        <span className="text-gray-800">{result.title}</span>
+                      </div>
+                      <ArrowUpLeft className="text-gray-400" size={16} />
+                    </motion.div>
                   ))}
-                </>
-              ) : (
-                <div className="p-3 text-center text-sm text-gray-500">
-                  {t.noResults} {searchQuery}
                 </div>
-              )}
+              </motion.div>
+            )}
 
-              <div
-                className="mt-1 cursor-pointer rounded bg-gray-50 px-3 py-2 text-sm font-medium hover:bg-gray-100"
-                onClick={() => performSearch(searchQuery)}
+            {searchQuery && (
+              <motion.div
+                className="bg-white/90 p-4 shadow-xl backdrop-blur-xl md:rounded-xl"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
               >
-                {t.searchFor} {searchQuery}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+                {searchResults.length > 0 ? (
+                  <>
+                    <div className="mb-3 px-2 text-sm font-medium text-gray-600">
+                      {t.suggestions}
+                    </div>
+                    <div className="space-y-1">
+                      {searchResults.map((result, index) => (
+                        <motion.div
+                          key={`result-${result.id}`}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                          className={`cursor-pointer rounded-lg px-3 py-2 ${
+                            selectedResultIndex === index
+                              ? "bg-gray-100"
+                              : "hover:bg-gray-100"
+                          }`}
+                          onClick={() => {
+                            setSearchQuery(result.title);
+                            performSearch(result.title);
+                          }}
+                        >
+                          <div className="text-gray-800">{result.title}</div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <div className="p-3 text-center text-sm text-gray-500">
+                    {t.noResults}{" "}
+                    <span className="font-medium">{searchQuery}</span>
+                  </div>
+                )}
+
+                <motion.div
+                  whileHover={{ scale: 1.01 }}
+                  className="mt-3 cursor-pointer rounded-lg bg-gray-100 px-4 py-3 text-center font-medium text-gray-800 hover:bg-gray-200"
+                  onClick={() => performSearch(searchQuery)}
+                >
+                  {t.searchFor}{" "}
+                  <span className="font-semibold">{searchQuery}</span>
+                </motion.div>
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

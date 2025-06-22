@@ -1,8 +1,10 @@
 "use client";
 import { useRef, useState, useEffect, ReactNode } from "react";
 import { useSwipeable } from "react-swipeable";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { products } from "@/constants/products";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type ProductsSliderProps = {
   children: ReactNode;
@@ -12,6 +14,8 @@ const ProductsSlider: React.FC<ProductsSliderProps> = ({ children }) => {
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
+  const { language } = useLanguage();
+  const isRTL = language === "ar";
 
   // Handle scroll to update arrow visibility
   const handleScroll = () => {
@@ -22,46 +26,39 @@ const ProductsSlider: React.FC<ProductsSliderProps> = ({ children }) => {
     }
   };
 
-  // Handle next button click
-  const handleNext = () => {
+  // Handle navigation
+  const handleScrollBy = (direction: "next" | "prev") => {
     if (sliderRef.current) {
       const cardWidth = sliderRef.current.scrollWidth / products.length;
       const visibleCards = Math.floor(
         sliderRef.current.clientWidth / cardWidth,
       );
+      const scrollAmount = cardWidth * visibleCards;
+
       sliderRef.current.scrollBy({
-        left: cardWidth * visibleCards,
+        left: direction === "next" ? scrollAmount : -scrollAmount,
         behavior: "smooth",
       });
     }
   };
 
-  // Handle previous button click
-  const handlePrev = () => {
-    if (sliderRef.current) {
-      const cardWidth = sliderRef.current.scrollWidth / products.length;
-      const visibleCards = Math.floor(
-        sliderRef.current.clientWidth / cardWidth,
-      );
-      sliderRef.current.scrollBy({
-        left: -cardWidth * visibleCards,
-        behavior: "smooth",
-      });
-    }
-  };
-
-  // Swipe handlers
+  // Swipe handlers with RTL support
   const swipeHandlers = useSwipeable({
-    onSwipedLeft: () => handleNext(),
-    onSwipedRight: () => handlePrev(),
+    onSwipedLeft: () => handleScrollBy(isRTL ? "prev" : "next"),
+    onSwipedRight: () => handleScrollBy(isRTL ? "next" : "prev"),
     preventScrollOnSwipe: true,
     trackMouse: true,
   });
 
+  // Button animation variants
   const buttonVariants = {
-    hidden: { opacity: 0, x: -20 },
+    hidden: { opacity: 0, x: isRTL ? 20 : -20 },
     visible: { opacity: 1, x: 0 },
-    hover: { scale: 1.1, backgroundColor: "rgba(255,255,255,0.9)" },
+    hover: {
+      scale: 1.1,
+      backgroundColor: "rgba(255,255,255,0.9)",
+      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+    },
   };
 
   // Initialize scroll position and arrows
@@ -76,7 +73,7 @@ const ProductsSlider: React.FC<ProductsSliderProps> = ({ children }) => {
   }, []);
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full" dir="ltr">
       <div className="overflow-hidden">
         {/* Slider container */}
         <div {...swipeHandlers} className="relative w-full">
@@ -90,61 +87,49 @@ const ProductsSlider: React.FC<ProductsSliderProps> = ({ children }) => {
         </div>
 
         {/* Navigation arrows */}
-        {showLeftArrow && (
-          <motion.button
-            onClick={handlePrev}
-            className="absolute left-2 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white/80 shadow-sm hover:bg-white/90 md:flex"
-            aria-label="Previous categories"
-            variants={buttonVariants}
-            initial="hidden"
-            animate="visible"
-            whileHover="hover"
-            style={{ backdropFilter: "blur(4px)" }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-gray-700"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+        <AnimatePresence>
+          {showLeftArrow && (
+            <motion.button
+              onClick={() => handleScrollBy("prev")}
+              className={`left-4} absolute top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-lg backdrop-blur-sm transition-all hover:bg-white md:flex`}
+              aria-label={isRTL ? "Next" : "Previous"}
+              variants={buttonVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              whileHover="hover"
+              whileTap={{ scale: 0.95 }}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
+              <ChevronLeft
+                size={24}
+                className="text-gray-700"
+                strokeWidth={2.5}
               />
-            </svg>
-          </motion.button>
-        )}
+            </motion.button>
+          )}
+        </AnimatePresence>
 
-        {showRightArrow && (
-          <motion.button
-            onClick={handleNext}
-            className="absolute right-2 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white/80 shadow-sm hover:bg-white/90 md:flex"
-            aria-label="Next categories"
-            variants={buttonVariants}
-            initial="hidden"
-            animate="visible"
-            whileHover="hover"
-            style={{ backdropFilter: "blur(4px)" }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-gray-700"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+        <AnimatePresence>
+          {showRightArrow && (
+            <motion.button
+              onClick={() => handleScrollBy("next")}
+              className={`absolute right-4 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-lg backdrop-blur-sm transition-all hover:bg-white md:flex`}
+              aria-label={isRTL ? "Previous" : "Next"}
+              variants={buttonVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              whileHover="hover"
+              whileTap={{ scale: 0.95 }}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
+              <ChevronRight
+                size={24}
+                className="text-gray-700"
+                strokeWidth={2.5}
               />
-            </svg>
-          </motion.button>
-        )}
+            </motion.button>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Hide scrollbar styles */}

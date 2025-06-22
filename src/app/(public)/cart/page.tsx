@@ -349,11 +349,12 @@ export default function CartPage() {
 
                   <div className="mt-4 flex gap-2">
                     <QuantitySelector
-                      productId={item.id}
+                      productId={item?.id ?? ""}
                       initialQuantity={item.quantity}
                       min={1}
-                      max={item.stock}
+                      max={item?.stock || 99}
                       buttonSize="md"
+                      showLabel={false}
                     />
                     <button
                       onClick={() => handdleRemove(item.id)}

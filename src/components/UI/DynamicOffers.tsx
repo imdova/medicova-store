@@ -19,7 +19,7 @@ const DynamicOffers: React.FC<DynamicOffersProps> = ({
         <p
           className={`flex items-center justify-center gap-2 text-4xl font-bold uppercase ${locale === "ar" ? "flex-row-reverse" : ""} text-gray-600`}
         >
-          <span className="text-green-500">{category.title[locale]}</span>{" "}
+          <span className="text-primary">{category.title[locale]}</span>{" "}
           {locale === "ar" ? "عروض" : "Offers"}
         </p>
       </div>

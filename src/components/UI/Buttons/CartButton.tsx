@@ -5,6 +5,7 @@ import { ShoppingCart } from "lucide-react";
 import QuantitySelectorRemove from "@/components/Forms/formFields/QuantitySelectorwithRemove";
 import { useAppDispatch } from "@/store/hooks";
 import { removeItem } from "@/store/slices/cartSlice";
+import { LanguageType } from "@/util/translations";
 
 interface CartButtonProps {
   isInCart: boolean;
@@ -13,6 +14,7 @@ interface CartButtonProps {
   handleQuantityChange: (newQuantity: number) => void;
   maxStock?: number;
   productId: string;
+  locale?: LanguageType;
 }
 
 const CartButton = ({
@@ -22,6 +24,7 @@ const CartButton = ({
   handleQuantityChange,
   maxStock,
   productId,
+  locale,
 }: CartButtonProps) => {
   const [isHover, setIsHover] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -37,7 +40,9 @@ const CartButton = ({
 
   if (!isMounted) {
     return (
-      <button className="absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white text-sm font-medium text-gray-700">
+      <button
+        className={`absolute bottom-2 ${locale === "ar" ? "left-2" : "right-2"} flex h-8 w-8 items-center justify-center rounded-lg bg-white text-sm font-medium text-gray-700`}
+      >
         <ShoppingCart size={16} />
       </button>
     );
@@ -50,7 +55,9 @@ const CartButton = ({
     >
       {isInCart ? (
         isHover ? (
-          <div className="absolute bottom-2 right-2">
+          <div
+            className={`absolute bottom-2 ${locale === "ar" ? "left-2" : "right-2"}`}
+          >
             <QuantitySelectorRemove
               initialQuantity={quantity}
               onQuantityChange={handleQuantityChange}
@@ -61,7 +68,7 @@ const CartButton = ({
         ) : (
           <button
             onClick={addToCart}
-            className={`absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium transition duration-150 ${
+            className={`absolute bottom-2 ${locale === "ar" ? "left-2" : "right-2"} flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium transition duration-150 ${
               isInCart
                 ? "bg-light-primary text-white"
                 : "bg-white text-gray-700 hover:bg-light-primary hover:text-white"
@@ -78,7 +85,7 @@ const CartButton = ({
       ) : (
         <button
           onClick={addToCart}
-          className={`absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium transition duration-150 ${
+          className={`absolute bottom-2 ${locale === "ar" ? "left-2" : "right-2"} flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium transition duration-150 ${
             isInCart
               ? "bg-light-primary text-white"
               : "bg-white text-gray-700 hover:bg-light-primary hover:text-white"

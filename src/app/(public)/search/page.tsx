@@ -297,7 +297,7 @@ export default function CategoryPage({
           >
             <button
               onClick={() => setIsOpenDropdown(true)}
-              className="flex items-center gap-1 px-3 py-2"
+              className="flex items-center gap-1 p-2 text-sm"
             >
               {language === "ar" ? "ترتيب حسب" : "Sort by"}{" "}
               <ArrowDownUp size={15} />
@@ -305,7 +305,7 @@ export default function CategoryPage({
             <span className="px-1">|</span>
             <button
               onClick={() => setIsOpen(true)}
-              className="flex items-center gap-1 px-3 py-2"
+              className="flex items-center gap-1 p-2 text-sm"
             >
               {language === "ar" ? "تصفية" : "Filter"} <Filter size={15} />
             </button>
@@ -392,7 +392,7 @@ export default function CategoryPage({
                   )
                   .map((product) => (
                     <div key={product.id} className="w-full">
-                      <ListProductCard product={product} />
+                      <ListProductCard locale={language} product={product} />
                     </div>
                   ))}
               </div>

@@ -7,7 +7,6 @@ import NotFound from "@/app/not-found";
 import Image from "next/image";
 import ProductImagesSlider from "@/components/UI/sliders/ProductImagesSlider";
 import InfoCards from "@/components/UI/InfoCards";
-import { motion } from "framer-motion";
 import {
   Archive,
   Check,
@@ -45,6 +44,25 @@ import { useLanguage } from "@/contexts/LanguageContext";
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
+
+const translations = {
+  addToCart: {
+    en: "Add to Cart",
+    ar: "أضف إلى السلة",
+  },
+  updateCart: {
+    en: "Update Cart",
+    ar: "تحديث السلة",
+  },
+  outOfStock: {
+    en: "Out of Stock",
+    ar: "غير متوفر",
+  },
+  adding: {
+    en: "Adding...",
+    ar: "جارٍ الإضافة...",
+  },
+};
 
 const ProductPage = ({ params }: ProductPageProps) => {
   const { slug } = React.use(params);
@@ -407,55 +425,36 @@ const ProductPage = ({ params }: ProductPageProps) => {
               />
               <div className="mt-4 hidden gap-2 md:flex">
                 <QuantitySelector
-                  productId={cartProduct?.id ?? ""}
-                  initialQuantity={cartProduct?.quantity}
+                  productId={product?.id ?? ""}
+                  initialQuantity={quantity}
                   min={1}
-                  max={cartProduct?.stock}
+                  max={product?.stock || 99}
                   buttonSize="md"
+                  showLabel={false}
+                  className="flex-1"
                 />
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  disabled={loading}
+                <button
                   onClick={handleAddToCart}
-                  className={`flex w-full items-center justify-center gap-2 rounded-sm ${
+                  disabled={loading || !product?.stock}
+                  className={`ml-4 flex flex-1 items-center justify-center gap-2 rounded-sm px-4 py-3 text-xs font-medium text-white transition-colors ${
                     loading
                       ? "cursor-not-allowed bg-green-400"
-                      : "bg-green-600 hover:bg-green-700"
-                  } px-4 py-2 text-sm font-semibold uppercase text-white transition-all duration-300`}
+                      : "bg-primary hover:bg-green-800"
+                  } ${!product?.stock ? "cursor-not-allowed bg-gray-400" : ""}`}
                 >
                   {loading ? (
+                    translations.adding[language]
+                  ) : product?.stock ? (
                     <>
-                      <svg
-                        className="h-5 w-5 animate-spin text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8v8H4z"
-                        ></path>
-                      </svg>
-                      Adding...
+                      <ShoppingCart size={15} />
+                      {isInCart
+                        ? translations.updateCart[language]
+                        : translations.addToCart[language]}
                     </>
                   ) : (
-                    <>
-                      <ShoppingCart size={18} />
-                      {language === "ar" ? "اضف للعربة" : "Add To Cart"}
-                    </>
+                    translations.outOfStock[language]
                   )}
-                </motion.button>
+                </button>
               </div>
             </div>
           </div>
@@ -634,7 +633,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
                   {product.sizes && (
                     <div>
                       <div className="font-medium">
-                        {language === "ar" ? ":دليل المقاسات" : "SIZE GUIDE:"}
+                        {language === "ar" ? "دليل المقاسات" : "SIZE GUIDE:"}
                       </div>
                       <div className="mt-2 flex gap-2">
                         {product.sizes.map((size, index) => (
@@ -895,6 +894,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
           setQuantity={setQuantity}
           handleAddToCart={handleAddToCart}
           loading={loading}
+          locale={language}
         />
         <div className="relative z-[5000]">
           <Modal

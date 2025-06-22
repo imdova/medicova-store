@@ -13,20 +13,39 @@ import {
 } from "@/store/slices/cartSlice";
 import CartButton from "../Buttons/CartButton";
 import CustomAlert from "../CustomAlert";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { LanguageType } from "@/util/translations";
 
 //TODO translate List ProductCard
 
 interface ListCardProps {
   loading?: boolean;
   product: Product;
+  locale?: LanguageType;
 }
 
-const ListProductCard: React.FC<ListCardProps> = ({ loading, product }) => {
+const Text = {
+  alertMessages: {
+    en: {
+      addedToCart: "Added to cart",
+      alreadyInCart: "Product already in cart!",
+      deletedFromCart: "Deleted from cart",
+    },
+    ar: {
+      addedToCart: "تمت الإضافة إلى السلة",
+      alreadyInCart: "المنتج موجود بالفعل في السلة!",
+      deletedFromCart: "تم الحذف من السلة",
+    },
+  },
+};
+
+const ListProductCard: React.FC<ListCardProps> = ({
+  loading,
+  product,
+  locale = "en",
+}) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currentNudgeIndex, setCurrentNudgeIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const { language } = useLanguage();
   const [alert, setAlert] = useState<{
     message: string;
     type: "success" | "error" | "info";
@@ -57,7 +76,7 @@ const ListProductCard: React.FC<ListCardProps> = ({ loading, product }) => {
     }
   }, [cartProduct?.quantity]);
 
-  const nudgeCount = product.nudges ? product.nudges[language].length : 0;
+  const nudgeCount = product.nudges ? product.nudges[locale].length : 0;
 
   useEffect(() => {
     if (nudgeCount === 0) return;
@@ -81,7 +100,7 @@ const ListProductCard: React.FC<ListCardProps> = ({ loading, product }) => {
             title: product.title ?? "",
             image: product.images?.[0] ?? "/images/placeholder.jpg",
             description:
-              product.description[language] ?? "No description available",
+              product.description[locale] ?? "No description available",
             del_price: product.del_price,
             price: product.price ?? 0,
             shipping_fee: product.shipping_fee ?? 0,
@@ -94,9 +113,9 @@ const ListProductCard: React.FC<ListCardProps> = ({ loading, product }) => {
             weightKg: product.weightKg,
           }),
         );
-        showAlert("Added to cart", "success");
+        showAlert(Text.alertMessages[locale].addedToCart, "success");
       } else {
-        showAlert("Product Already in cart!", "info");
+        showAlert(Text.alertMessages[locale].alreadyInCart, "info");
       }
     },
     [dispatch, isInCart, product, quantity],
@@ -110,7 +129,7 @@ const ListProductCard: React.FC<ListCardProps> = ({ loading, product }) => {
       if (validatedQuantity === 0) {
         // If quantity is zero, remove item from cart
         dispatch(removeItem(product.id));
-        showAlert("Deleted from cart", "error");
+        showAlert(Text.alertMessages[locale].deletedFromCart, "error");
         setQuantity(0);
         return;
       }
@@ -148,7 +167,7 @@ const ListProductCard: React.FC<ListCardProps> = ({ loading, product }) => {
         />
       )}
 
-      <div className="group relative mx-auto flex w-full cursor-pointer overflow-hidden rounded-xl border border-gray-300 bg-white p-3 shadow-sm transition-shadow duration-200">
+      <div className="group relative mx-auto flex w-full cursor-pointer gap-3 overflow-hidden rounded-xl border border-gray-300 bg-white p-3 shadow-sm transition-shadow duration-200">
         {loading ? (
           <div className="flex h-40 w-full items-center justify-center">
             <LogoLoader className="w-[40px] animate-pulse text-gray-400" />
@@ -166,7 +185,7 @@ const ListProductCard: React.FC<ListCardProps> = ({ loading, product }) => {
                       product.images?.[currentImageIndex] ||
                       "/images/placeholder.jpg"
                     }
-                    alt={product.title[language] ?? "product tilte"}
+                    alt={product.title[locale] ?? "product tilte"}
                     className="h-[150px] w-36 rounded-lg object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
                     priority={currentImageIndex === 0}
                   />
@@ -210,7 +229,7 @@ const ListProductCard: React.FC<ListCardProps> = ({ loading, product }) => {
               <Link href={`/product-details/${product.id}`}>
                 <div className="block">
                   <h3 className="text-sm font-semibold text-gray-800">
-                    {product.title[language]}
+                    {product.title[locale]}
                   </h3>
                   {/* Nudges */}
                   <div className="relative mt-1 h-6 overflow-hidden">
@@ -220,7 +239,7 @@ const ListProductCard: React.FC<ListCardProps> = ({ loading, product }) => {
                         transform: `translateY(-${currentNudgeIndex * 24}px)`,
                       }}
                     >
-                      {product.nudges?.[language].map((nudge, index) => (
+                      {product.nudges?.[locale].map((nudge, index) => (
                         <div
                           key={index}
                           className="flex h-6 items-center text-xs text-gray-600"
@@ -238,11 +257,13 @@ const ListProductCard: React.FC<ListCardProps> = ({ loading, product }) => {
                 <div>
                   <div className="flex items-baseline gap-3 text-gray-900">
                     <span className="text-sm font-bold">
-                      EGP {product.price.toLocaleString()}
+                      {locale === "ar" ? "جنيه" : "EGP"}{" "}
+                      {product.price.toLocaleString()}
                     </span>
                     {product.del_price && (
                       <del className="text-xs text-gray-500">
-                        {product.del_price.toLocaleString()} EGP
+                        {locale === "ar" ? "جنيه" : "EGP"}{" "}
+                        {product.del_price.toLocaleString()}
                       </del>
                     )}
                   </div>
@@ -255,7 +276,7 @@ const ListProductCard: React.FC<ListCardProps> = ({ loading, product }) => {
                     {/* Shipping method */}
                     {product.shippingMethod && (
                       <div className="rounded bg-light-primary px-2 py-0.5 text-xs font-bold text-white">
-                        {product.shippingMethod[language]}
+                        {product.shippingMethod[locale]}
                       </div>
                     )}
                   </div>
@@ -268,6 +289,7 @@ const ListProductCard: React.FC<ListCardProps> = ({ loading, product }) => {
                   handleQuantityChange={handleQuantityChange}
                   maxStock={product.stock}
                   productId={product.id}
+                  locale={locale}
                 />
               </div>
             </div>

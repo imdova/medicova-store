@@ -285,9 +285,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ loading, product }) => {
                 </div>
               )}
               <div className="absolute bottom-2 left-2 rounded-md bg-white px-2">
-                <div className="flex items-center">
+                <div className="flex items-center gap-1">
                   <Star className="h-3 w-3 fill-light-primary text-light-primary" />
-                  <span className="ml-1 text-sm text-gray-500">
+                  <span className="text-sm text-gray-500">
                     {product.rating?.toFixed(1)}
                   </span>
                 </div>

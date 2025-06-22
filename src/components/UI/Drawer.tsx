@@ -2,6 +2,7 @@
 
 import { X } from "lucide-react";
 import IconButton from "./Buttons/IconButton";
+import { LanguageType } from "@/util/translations";
 
 interface DrawerProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface DrawerProps {
   hasOverlay?: boolean;
   position?: "left" | "right";
   mobile?: boolean;
+  locale?: LanguageType;
 }
 
 export const Drawer: React.FC<DrawerProps> = ({
@@ -25,6 +27,7 @@ export const Drawer: React.FC<DrawerProps> = ({
   hasOverlay = true,
   position = "left",
   mobile = true,
+  locale = "en",
 }) => {
   return (
     <div className={`relative z-[2000] ${mobile ? "lg:hidden" : ""} `}>
@@ -57,7 +60,11 @@ export const Drawer: React.FC<DrawerProps> = ({
               Icon={X}
             />
           )}
-          <div className="w-fit"> {logo}</div>
+          <div
+            className={`flex w-full ${locale === "ar" ? "justify-end" : "justify-start"} p-2`}
+          >
+            {logo}
+          </div>
         </div>
 
         <div className="p-2">{children}</div>

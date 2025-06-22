@@ -1605,6 +1605,7 @@ export const products: Product[] = [
     shipping_fee: 0,
     shippingMethod: { en: "express", ar: "سريع" },
     weightKg: 2,
+    stock: 6,
   },
   {
     id: "11",

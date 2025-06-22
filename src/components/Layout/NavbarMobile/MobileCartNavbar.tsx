@@ -4,14 +4,35 @@ import { ShoppingCart } from "lucide-react";
 import QuantitySelector from "@/components/Forms/formFields/QuantitySelector";
 import { Product } from "@/types/product";
 import { useAppSelector } from "@/store/hooks";
+import { LanguageType } from "@/util/translations";
 
 type MobileCartNavbarProps = {
   product: Product;
-
   quantity: number;
   setQuantity: (quantity: number) => void;
   handleAddToCart: () => void;
   loading: boolean;
+  locale?: LanguageType;
+};
+
+// Translations
+const translations = {
+  addToCart: {
+    en: "Add to Cart",
+    ar: "أضف إلى السلة",
+  },
+  updateCart: {
+    en: "Update Cart",
+    ar: "تحديث السلة",
+  },
+  outOfStock: {
+    en: "Out of Stock",
+    ar: "غير متوفر",
+  },
+  adding: {
+    en: "Adding...",
+    ar: "جارٍ الإضافة...",
+  },
 };
 
 const MobileCartNavbar: React.FC<MobileCartNavbarProps> = ({
@@ -19,13 +40,14 @@ const MobileCartNavbar: React.FC<MobileCartNavbarProps> = ({
   quantity,
   handleAddToCart,
   loading,
+  locale = "en", // default to English
 }) => {
   const { products: productData } = useAppSelector((state) => state.cart);
   const isInCart = productData.some((item) => item.id === product?.id);
 
   return (
     <div className="fixed bottom-16 left-0 right-0 z-50 block border-t bg-white shadow-lg md:hidden">
-      <div className="flex items-center justify-between p-4">
+      <div className="flex items-center justify-between gap-3 p-4">
         <QuantitySelector
           productId={product?.id ?? ""}
           initialQuantity={quantity}
@@ -46,14 +68,16 @@ const MobileCartNavbar: React.FC<MobileCartNavbarProps> = ({
           } ${!product?.stock ? "cursor-not-allowed bg-gray-400" : ""}`}
         >
           {loading ? (
-            "Adding..."
+            translations.adding[locale]
           ) : product?.stock ? (
             <>
               <ShoppingCart size={15} />
-              {isInCart ? "Update Cart" : "Add to Cart"}
+              {isInCart
+                ? translations.updateCart[locale]
+                : translations.addToCart[locale]}
             </>
           ) : (
-            "Out of Stock"
+            translations.outOfStock[locale]
           )}
         </button>
       </div>
