@@ -1,5 +1,5 @@
 import { useSession, signOut } from "next-auth/react";
-import { User, LogOut, ChevronDown, ChevronUp } from "lucide-react";
+import { User2, LogOut, ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -8,12 +8,8 @@ import AuthLogin from "../Modals/loginAuth";
 import { userType } from "@/types/next-auth";
 import { menuGroups } from "@/constants/menu";
 import { useLanguage } from "@/contexts/LanguageContext";
-
-interface UserData {
-  name: string;
-  email: string;
-  role: userType;
-}
+import { User } from "next-auth";
+import Image from "next/image";
 
 const AuthButton = () => {
   const { data: session } = useSession();
@@ -22,10 +18,12 @@ const AuthButton = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { language } = useLanguage();
 
-  const dummyUserData: UserData = {
+  const dummyUserData: User = {
+    id: session?.user.id ?? "0",
     name: session?.user?.name || "Demo User",
     email: session?.user?.email || "demo@example.com",
     role: (session?.user?.role as userType) || "user",
+    image: session?.user?.image || "/placholder.png",
   };
 
   const currentMenuGroups = menuGroups[dummyUserData.role];
@@ -55,10 +53,10 @@ const AuthButton = () => {
           aria-haspopup="true"
         >
           <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20">
-            <User size={14} />
+            <User2 size={14} />
           </div>
           <span className="hidden md:inline">
-            {dummyUserData.name.split(" ")[0]}
+            {dummyUserData?.name?.split(" ")[0]}
           </span>
           {isDropdownOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </motion.button>
@@ -74,9 +72,19 @@ const AuthButton = () => {
             >
               <div className="flex items-center gap-3 rounded-lg p-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-light-primary text-white">
-                  <span className="font-medium">
-                    {dummyUserData.name.charAt(0).toUpperCase()}
-                  </span>
+                  {dummyUserData?.image ? (
+                    <Image
+                      src={dummyUserData.image}
+                      width={150}
+                      height={150}
+                      alt={dummyUserData.name ?? "user"}
+                      className="rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="font-medium">
+                      {dummyUserData.name?.charAt(0).toUpperCase()}
+                    </span>
+                  )}
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-900">
@@ -151,17 +159,18 @@ const AuthButton = () => {
 
   return (
     <>
-      <motion.button
-        onClick={() => setIsModalOpen(true)}
+      <motion.a
+        // onClick={() => setIsModalOpen(true)}
+        href="/auth/signin"
         className="mx-2 flex items-center gap-2 border-x px-3 text-sm font-medium text-white backdrop-blur-sm transition-all"
       >
         <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20">
-          <User size={14} />
+          <User2 size={14} />
         </div>
         <span className="hidden md:inline">
           {language === "ar" ? "تسجيل الدخول" : "Log in"}
         </span>
-      </motion.button>
+      </motion.a>
 
       <Modal
         isOpen={isModalOpen}
