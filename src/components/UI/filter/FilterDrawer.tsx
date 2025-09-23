@@ -12,7 +12,7 @@ export const Filters = ({
   isOpen,
   onClose,
   filtersData,
-  locale,
+  locale = "en",
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -171,13 +171,13 @@ export const Filters = ({
               onClick={onClose}
               className="flex-1 rounded-md border border-gray-300 py-2 hover:bg-gray-50"
             >
-              {labels.cancel[locale]}
+              {labels.cancel[(locale = "en")]}
             </button>
             <button
               onClick={applyFilters}
               className="flex-1 rounded-md bg-green-600 py-2 text-white hover:bg-green-700"
             >
-              {labels.apply[locale]}
+              {labels.apply[(locale = "en")]}
             </button>
           </div>
         </div>

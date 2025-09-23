@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-export default {
+const config: Config = {
   content: ["./src/**/*.{js,ts,jsx,tsx}", "./app/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
@@ -17,15 +17,43 @@ export default {
         "primary-900": "var(--primary-900)",
         "primary-foreground": "var(--primary-foreground)",
         "primary-transparent": "var(--primary-transparent)",
-        "light-primary": "var(--light-primary)",
-        "light-primary-transparent": "var(--light-primary-transparent)",
-        secondary: "var(--text-secondary)",
+        secondary: "var(--secondary)",
+        "secondary-foreground": "var(--secondary-foreground)",
+        accent: "var(--accent)",
+        "accent-foreground": "var(--accent-foreground)",
+        muted: "var(--muted)",
+        "muted-foreground": "var(--muted-foreground)",
+        destructive: "var(--destructive)",
+        warning: "var(--warning)",
+        border: "var(--border)",
+        input: "var(--input)",
+        "input-ring": "var(--input-ring)",
+        ring: "var(--ring)",
+
+        // charts
+        "chart-1": "var(--chart-1)",
+        "chart-2": "var(--chart-2)",
+        "chart-3": "var(--chart-3)",
+        "chart-4": "var(--chart-4)",
+        "chart-5": "var(--chart-5)",
+
+        // sidebar
+        sidebar: "var(--sidebar)",
+        "sidebar-foreground": "var(--sidebar-foreground)",
+        "sidebar-primary": "var(--sidebar-primary)",
+        "sidebar-primary-foreground": "var(--sidebar-primary-foreground)",
+        "sidebar-accent": "var(--sidebar-accent)",
+        "sidebar-accent-foreground": "var(--sidebar-accent-foreground)",
+        "sidebar-border": "var(--sidebar-border)",
+        "sidebar-ring": "var(--sidebar-ring)",
       },
       animation: {
-        "spin-slow": "spin 3s linear infinite",
+        "spin-slow": "spinSlow 3s linear infinite",
         "spin-fast": "spin 500ms linear infinite",
       },
     },
   },
   plugins: [],
-} satisfies Config;
+};
+
+export default config;

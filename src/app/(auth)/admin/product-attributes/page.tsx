@@ -2,21 +2,27 @@
 import Link from "next/link";
 import { PencilIcon, Plus, TrashIcon } from "lucide-react";
 import DynamicTable from "@/components/UI/tables/DTable";
-import { useMemo, useState } from "react";
-import { products } from "@/constants/products";
-import { Product } from "@/types/product";
+import { useState } from "react";
+import { ProductAttribute } from "@/types/product";
 import { productFilters } from "@/constants/drawerFilter";
-import Image from "next/image";
 import { LanguageType } from "@/util/translations";
 import DynamicFilter from "@/components/UI/filter/DynamicFilter";
 import SearchInput from "@/components/Forms/formFields/SearchInput";
 import { DynamicFilterItem } from "@/types/filters";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-type Status = "active" | "pending" | "draft";
+type Status = "published" | "draft";
 
 // Translation dictionary
 const translations = {
   en: {
+    id: "ID",
+    name: "Name",
+    slug: "Slug",
+    sortOrder: "Sort Order",
+    createdAt: "Created At",
+    status: "Status",
+    operations: "Operations",
     productName: "Product Name",
     date: "Date",
     sku: "SKU",
@@ -26,7 +32,6 @@ const translations = {
     brand: "Brand",
     unitPrice: "Unit Price",
     totalPurchase: "Total Purchase",
-    status: "Status",
     searchPlaceholder: "Search",
     search: "Search",
     moreFilters: "More Filters",
@@ -58,6 +63,13 @@ const translations = {
     create: "Create",
   },
   ar: {
+    id: "المعرف",
+    name: "الاسم",
+    slug: "الرابط",
+    sortOrder: "ترتيب الفرز",
+    createdAt: "تاريخ الإنشاء",
+    status: "الحالة",
+    operations: "العمليات",
     productName: "اسم المنتج",
     date: "التاريخ",
     sku: "SKU",
@@ -67,14 +79,13 @@ const translations = {
     brand: "العلامة التجارية",
     unitPrice: "سعر الوحدة",
     totalPurchase: "إجمالي المشتريات",
-    status: "الحالة",
     searchPlaceholder: "بحث",
     search: "بحث",
     moreFilters: "المزيد من الفلاتر",
     download: "تحميل",
     allStatuses: "كل الحالات",
     active: "نشط",
-    pending: "قيد الانتظار",
+    pending: "نشر",
     draft: "مسودة",
     allStock: "كل المخزون",
     inStock: "متوفر",
@@ -100,91 +111,133 @@ const translations = {
   },
 };
 
+// Dummy data for product attributes
+const ProductAttributes: ProductAttribute[] = [
+  {
+    id: 1,
+    name: { en: "Color", ar: "اللون" },
+    slug: "color",
+    sortOrder: 1,
+    createdAt: "2024-01-15T10:30:00Z",
+    status: { en: "published", ar: "نشط" },
+  },
+  {
+    id: 2,
+    name: { en: "Size", ar: "المقاس" },
+    slug: "size",
+    sortOrder: 2,
+    createdAt: "2024-01-16T14:20:00Z",
+    status: { en: "published", ar: "نشط" },
+  },
+  {
+    id: 3,
+    name: { en: "Material", ar: "المادة" },
+    slug: "material",
+    sortOrder: 3,
+    createdAt: "2024-01-17T09:15:00Z",
+    status: { en: "published", ar: "نشر" },
+  },
+  {
+    id: 4,
+    name: { en: "Weight", ar: "الوزن" },
+    slug: "weight",
+    sortOrder: 4,
+    createdAt: "2024-01-18T16:45:00Z",
+    status: { en: "draft", ar: "مسودة" },
+  },
+  {
+    id: 5,
+    name: { en: "Brand", ar: "العلامة التجارية" },
+    slug: "brand",
+    sortOrder: 5,
+    createdAt: "2024-01-19T11:20:00Z",
+    status: { en: "published", ar: "نشط" },
+  },
+  {
+    id: 6,
+    name: { en: "Style", ar: "النمط" },
+    slug: "style",
+    sortOrder: 6,
+    createdAt: "2024-01-20T13:10:00Z",
+    status: { en: "published", ar: "نشط" },
+  },
+  {
+    id: 7,
+    name: { en: "Season", ar: "الموسم" },
+    slug: "season",
+    sortOrder: 7,
+    createdAt: "2024-01-21T15:30:00Z",
+    status: { en: "published", ar: "نشر" },
+  },
+  {
+    id: 8,
+    name: { en: "Gender", ar: "الجنس" },
+    slug: "gender",
+    sortOrder: 8,
+    createdAt: "2024-01-22T12:00:00Z",
+    status: { en: "draft", ar: "مسودة" },
+  },
+];
+
 const getColumns = (locale: LanguageType) => [
   {
-    key: "title",
-    header: translations[locale].productName,
-    sortable: true,
-    render: (item: Product) => (
-      <div className="flex gap-2">
-        <Image
-          className="w-10 rounded-md object-cover"
-          src={item.images?.[0] || "/images/placeholder.jpg"}
-          width={300}
-          height={300}
-          alt={item.title[locale]}
-        />
-        <Link
-          className="line-clamp-2 hover:underline"
-          href={`products/${item.id}`}
-        >
-          {item.title[locale]}
-        </Link>
-      </div>
-    ),
-  },
-  {
-    key: "date",
-    header: translations[locale].date,
-    sortable: true,
-    render: () => "15/5/2023",
-  },
-  {
     key: "id",
-    header: translations[locale].sku,
+    header: translations[locale].id,
     sortable: true,
-  },
-  {
-    key: "seller",
-    header: translations[locale].seller,
-    sortable: true,
-    render: () => "Brandona",
-  },
-  {
-    key: "category",
-    header: translations[locale].category,
-    sortable: true,
-    render: (item: Product) => (
-      <span>
-        {item.category?.title[locale] || translations[locale].medicalWear}
-      </span>
+    render: (item: ProductAttribute) => (
+      <span className="font-mono text-sm">#{item.id}</span>
     ),
   },
   {
-    key: "subcategory",
-    header: translations[locale].subCategory,
+    key: "name",
+    header: translations[locale].name,
     sortable: true,
-    render: () => translations[locale].scrubs,
+    render: (item: ProductAttribute) => (
+      <Link
+        className="font-medium text-primary hover:underline"
+        href={`/admin/products-attributes/edit/${item.id}`}
+      >
+        {item.name[locale]}
+      </Link>
+    ),
   },
   {
-    key: "brand",
-    header: translations[locale].brand,
+    key: "slug",
+    header: translations[locale].slug,
     sortable: true,
-    render: () => translations[locale].landeu,
+    render: (item: ProductAttribute) => (
+      <span className="text-sm text-gray-600">{item.slug}</span>
+    ),
   },
   {
-    key: "price",
-    header: translations[locale].unitPrice,
-    render: (item: Product) => `${item.price} EGP`,
+    key: "sortOrder",
+    header: translations[locale].sortOrder,
     sortable: true,
+    render: (item: ProductAttribute) => (
+      <span className="text-sm text-gray-600">{item.sortOrder}</span>
+    ),
   },
   {
-    key: "totalPurchase",
-    header: translations[locale].totalPurchase,
-    render: () => "160000 EGP",
+    key: "createdAt",
+    header: translations[locale].createdAt,
     sortable: true,
+    render: (item: ProductAttribute) => {
+      const date = new Date(item.createdAt);
+      return (
+        <span className="text-sm text-gray-600">
+          {date.toLocaleDateString(locale === "en" ? "en-US" : "ar-EG")}
+        </span>
+      );
+    },
   },
   {
     key: "status",
     header: translations[locale].status,
-    render: (item: Product) => {
+    render: (item: ProductAttribute) => {
       const statusColor =
-        item.status?.en === "active"
+        item.status?.en === "published"
           ? "bg-green-100 text-green-800"
-          : item.status?.en === "pending"
-            ? "bg-yellow-100 text-yellow-800"
-            : "bg-gray-100 text-gray-600";
-
+          : "bg-gray-100 text-gray-600";
       const statusText = item.status?.[locale] || translations[locale].unknown;
       const displayStatus =
         statusText.charAt(0).toUpperCase() + statusText.slice(1);
@@ -201,71 +254,48 @@ const getColumns = (locale: LanguageType) => [
   },
 ];
 
-export default function ProductListPanel({
-  locale = "en",
-}: {
-  locale: LanguageType;
-}) {
+export default function AttributesListPanel() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const t = translations[locale];
-  const isRTL = locale === "ar";
-  const currentPage = 1;
+  const { language } = useLanguage();
+  const t = translations[language];
+  const isRTL = language === "ar";
   const ITEMS_PER_PAGE = 6;
   const toggle = () => setIsOpen((prev) => !prev);
 
   const predefinedFilters: DynamicFilterItem[] = [
     {
-      id: "category",
-      label: { en: "Category", ar: "الفئة" },
-      type: "dropdown",
-      options: [
-        { id: "electronics", name: { en: "Electronics", ar: "إلكترونيات" } },
-        { id: "books", name: { en: "Books", ar: "كتب" } },
-        { id: "clothing", name: { en: "Clothing", ar: "ملابس" } },
-      ],
-      visible: true,
-    },
-    {
-      id: "priceRange",
-      label: { en: "Price Range", ar: "نطاق السعر" },
-      type: "number-range",
-      visible: true,
-    },
-    {
       id: "status",
       label: { en: "Status", ar: "الحالة" },
       type: "dropdown",
       options: [
-        { id: "active", name: { en: "Active", ar: "نشط" } },
-        { id: "inactive", name: { en: "Inactive", ar: "غير نشط" } },
-        { id: "pending", name: { en: "Pending", ar: "قيد الانتظار" } },
+        { id: "active", name: { en: "published", ar: "نشر" } },
+        { id: "draft", name: { en: "Draft", ar: "مسودة" } },
       ],
+      visible: true,
+    },
+    {
+      id: "dateRange",
+      label: { en: "Date Range", ar: "نطاق التاريخ" },
+      type: "date-range",
       visible: true,
     },
   ];
 
-  // Count products by status for the summary cards
-  const statusCounts = products.reduce(
-    (acc: Record<Status, number>, product) => {
+  // Count attributes by status for the summary cards
+  const statusCounts = ProductAttributes.reduce(
+    (acc: Record<Status, number>, attribute) => {
       if (
-        product.status?.en === "active" ||
-        product.status?.en === "pending" ||
-        product.status?.en === "draft"
+        attribute.status?.en === "published" ||
+        attribute.status?.en === "draft"
       ) {
-        const statusKey = product.status.en as Status;
+        const statusKey = attribute.status.en as Status;
         acc[statusKey] += 1;
       }
       return acc;
     },
-    { active: 0, pending: 0, draft: 0 },
+    { published: 0, draft: 0 },
   );
-
-  // handle pagination
-  const paginatedProducts = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    return products.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [products, currentPage]);
 
   return (
     <div className="relative space-y-6" dir={isRTL ? "rtl" : "ltr"}>
@@ -273,9 +303,9 @@ export default function ProductListPanel({
         t={t}
         isOpen={isOpen}
         onToggle={() => setIsOpen(false)}
-        locale={locale} // Set the current locale
-        isRTL={false} // Set based on locale
-        drawerFilters={productFilters} // Pass your main filter data
+        locale={language}
+        isRTL={isRTL}
+        drawerFilters={productFilters}
         showViewToggle={false}
         statusCounts={statusCounts}
         filtersOpen={filtersOpen}
@@ -284,7 +314,7 @@ export default function ProductListPanel({
         quickFiltersGridCols="grid-cols-1 md:grid-cols-2 lg:grid-cols-3 "
       />
 
-      {/* Products Table */}
+      {/* Attributes Table */}
       <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         <div className="mb-4 flex flex-col gap-2 sm:flex-row">
           <button
@@ -294,50 +324,36 @@ export default function ProductListPanel({
           >
             {t.filters}
           </button>
-          <SearchInput locale={locale} />
+          <SearchInput locale={language} />
           <Link
-            href={"#"}
+            href={`/admin/products-attributes/create`}
             className="flex items-center justify-center gap-1 rounded-md border border-gray-200 bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-auto"
           >
             <Plus size={15} /> {t.create}
           </Link>
         </div>
         <DynamicTable
-          data={paginatedProducts}
-          columns={getColumns(locale)}
+          data={ProductAttributes}
+          columns={getColumns(language)}
           pagination={true}
           itemsPerPage={ITEMS_PER_PAGE}
           selectable={true}
-          defaultSort={{ key: "title", direction: "asc" }}
-          actions={[
-            {
-              label: t.edit,
-              onClick: () => console.log("edited"),
-              className:
-                "bg-white text-gray-700 hover:text-blue-700 hover:bg-blue-50 ",
-              icon: <PencilIcon className="h-4 w-4" />,
-            },
-            {
-              label: t.delete,
-              onClick: () => console.log("Deleted"),
-              className:
-                "bg-white text-gray-700 hover:text-red-700 hover:bg-red-50 ",
-              icon: <TrashIcon className="h-4 w-4" />,
-            },
-          ]}
+          defaultSort={{ key: "name", direction: "asc" }}
           solidActions={[
             {
+              label: "Edit",
               onClick: () => console.log("edited"),
-              icon: <PencilIcon className="h-4 w-4" />,
+              icon: <PencilIcon className="h-3 w-3" />,
               color: "#2563eb",
             },
             {
+              label: "Delete",
               onClick: () => console.log("Deleted"),
               color: "#dc2626",
-              icon: <TrashIcon className="h-4 w-4" />,
+              icon: <TrashIcon className="h-3 w-3" />,
             },
           ]}
-          locale={locale}
+          locale={language}
         />
       </div>
     </div>

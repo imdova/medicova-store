@@ -1,6 +1,12 @@
 import { LanguageType } from "@/util/translations";
 import { MoreVertical } from "lucide-react";
 import React, { useState, useMemo, useRef, useEffect } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../Tooltip";
 
 export type alignType = "left" | "center" | "right";
 
@@ -32,6 +38,7 @@ type ActionSolidButton<T> = {
   className?: string;
   color?: string;
   icon?: React.ReactNode;
+  label?: string;
   hide?: (item: T) => boolean;
 };
 
@@ -328,18 +335,27 @@ const DynamicTable = <T extends object>({
     if (visibleActions.length === 0) return null;
 
     return (
-      <div className="relative flex items-center justify-end">
+      <div className="relative flex justify-end gap-2">
         {visibleActions.map((action, index) => {
           return (
-            <button
-              key={index}
-              onClick={() => action.onClick(item, index)}
-              style={{ color: action.color }}
-              className="mr-1 inline-flex items-center text-gray-500 focus:outline-none"
-              aria-label="Actions"
-            >
-              {action.icon && <span className="mr-2">{action.icon}</span>}
-            </button>
+            <TooltipProvider key={index}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    key={index}
+                    onClick={() => action.onClick(item, index)}
+                    style={{ color: action.color }}
+                    className="inline-flex items-center justify-center rounded-md border border-gray-200 p-2 text-gray-500 shadow-sm hover:bg-gray-100 focus:outline-none"
+                    aria-label={action.label}
+                  >
+                    {action.icon && <span>{action.icon}</span>}
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{action.label}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           );
         })}
       </div>
@@ -442,7 +458,7 @@ const DynamicTable = <T extends object>({
                   </div>
                 </th>
               ))}
-              {actions.length > 0 && (
+              {(actions.length || solidActions.length) > 0 && (
                 <th
                   scope="col"
                   className={`${cellClassName} ${locale === "ar" ? "text-left" : "text-right"} text-sm font-semibold`}
@@ -507,7 +523,7 @@ const DynamicTable = <T extends object>({
                         : String(item[column.key as keyof T])}
                     </td>
                   ))}
-                  {actions.length > 0 && (
+                  {(actions.length || solidActions.length) && (
                     <td
                       className={`${cellClassName} ${locale === "ar" ? "text-left" : "text-right"}`}
                       style={{ width: actionsColumnWidth }}

@@ -194,3 +194,29 @@ export interface Product {
   shippingMethod: shippingMethod;
   weightKg: number;
 }
+
+export type ProductTag = {
+  id: string;
+  name: LocalizedTitle;
+  createdAt: string;
+  status: LocalizedTitle;
+  slug: string;
+  description: LocalizedTitle;
+  meta_title: LocalizedTitle;
+  meta_description: LocalizedTitle;
+  noindex: "true" | "false";
+  image?: File;
+};
+
+// In your types/product.ts file
+export interface ProductAttribute {
+  id: number;
+  name: {
+    en: string;
+    ar: string;
+  };
+  slug: string;
+  sortOrder: number;
+  createdAt: string;
+  status?: LocalizedTitle;
+}

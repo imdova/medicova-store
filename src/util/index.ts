@@ -1,34 +1,37 @@
 import { destinationSurcharges } from "@/constants";
 import { ShippingOptions } from "@/types";
+import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: Parameters<typeof clsx>) {
+  return twMerge(clsx(...inputs));
+}
 
 export const isCurrentPage = (pathname: string, href: string): boolean => {
   if (!pathname || !href) return false;
 
-  // Normalize paths by removing trailing slashes (but keep "/" intact)
   const normalize = (path: string) =>
     path === "/" ? "/" : path.replace(/\/$/, "");
   const normalizedPathname = normalize(pathname);
   const normalizedHref = normalize(href);
 
-  // Exact match
+  // Exact match first
   if (normalizedPathname === normalizedHref) return true;
 
-  // Special handling: '/' should only match exact root, not every path
-  if (normalizedHref === "/") return false;
-
-  // Special handling for seller dashboard
-  if (normalizedHref === "/seller") {
-    return normalizedPathname === "/seller";
-  }
-  // Special handling for seller dashboard
+  // Special handling for admin dashboard - only match exact path
   if (normalizedHref === "/admin") {
-    return normalizedPathname === "/admin";
+    return normalizedPathname === "/admin"; // Remove the startsWith condition
   }
 
-  // Match nested routes (e.g., "/user/orders" startsWith "/user")
-  return normalizedPathname.startsWith(normalizedHref);
-};
+  // For other nested routes, match only direct children
+  if (normalizedPathname.startsWith(normalizedHref + "/")) {
+    // Additional check to ensure proper segment matching
+    const remainingPath = normalizedPathname.slice(normalizedHref.length);
+    return remainingPath.startsWith("/") && !remainingPath.includes("/../");
+  }
 
+  return false;
+};
 // Ex Data
 // "3 days"	Today + 3 days in ms
 // "5-7 days"	Today + 5 days in ms

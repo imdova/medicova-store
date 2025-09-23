@@ -209,6 +209,16 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
           icon: PackagePlus,
         },
         {
+          title: { en: "Products-tags", ar: "علامات المنتجات" },
+          href: "/admin/products-tags",
+          icon: PackagePlus,
+        },
+        {
+          title: { en: "Product Attributes", ar: "سمات المنت" },
+          href: "/admin/product-attributes",
+          icon: PackagePlus,
+        },
+        {
           title: { en: "Inventory", ar: "المخزون" },
           href: "/admin/inventory",
           icon: Layers3,

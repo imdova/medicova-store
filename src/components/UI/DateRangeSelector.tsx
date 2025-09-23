@@ -17,7 +17,7 @@ import {
 import { Calendar } from "lucide-react";
 import { LanguageType } from "@/util/translations";
 
-type DateRange = {
+export type DateRange = {
   startDate: Date | null;
   endDate: Date | null;
 };
