@@ -208,15 +208,29 @@ export type ProductTag = {
   image?: File;
 };
 
-// In your types/product.ts file
-export interface ProductAttribute {
-  id: number;
-  name: {
-    en: string;
-    ar: string;
-  };
+// Sub-type for each attribute option (e.g. Red, Small, Cotton)
+export type AttributeOption = {
+  id: string;
+  title: LocalizedTitle;
+  color: string | null;
+  image: string | null;
+  is_default: boolean;
+};
+
+export type ProductAttribute = {
+  id: string;
+  name: LocalizedTitle;
   slug: string;
   sortOrder: number;
   createdAt: string;
-  status?: LocalizedTitle;
-}
+  status: { en: "published" | "draft"; ar: string };
+
+  // Extra fields from dummyAttributesData
+  use_image_from_variation?: boolean;
+  display_layout?: "visual_swatch" | "dropdown" | "text_swatch";
+  searchable?: boolean;
+  comparable?: boolean;
+  use_in_product_listing?: boolean;
+  categories?: string[];
+  attributes?: AttributeOption[];
+};

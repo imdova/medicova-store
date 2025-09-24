@@ -168,7 +168,7 @@ const DynamicFilter = ({
           setQuery("endDate", endDate);
         }}
         formatString="MM/dd/yyyy"
-        className="w-full md:w-fit"
+        className="w-full"
         locale={locale}
       />
     );

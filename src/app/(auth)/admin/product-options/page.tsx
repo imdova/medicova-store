@@ -3,25 +3,28 @@ import Link from "next/link";
 import { PencilIcon, Plus, TrashIcon } from "lucide-react";
 import DynamicTable from "@/components/UI/tables/DTable";
 import { useState } from "react";
-import { ProductTag } from "@/types/product";
 import { productFilters } from "@/constants/drawerFilter";
 import { LanguageType } from "@/util/translations";
 import DynamicFilter from "@/components/UI/filter/DynamicFilter";
 import SearchInput from "@/components/Forms/formFields/SearchInput";
 import { DynamicFilterItem } from "@/types/filters";
-import { ProductTags } from "@/constants/productTags";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useRouter } from "next/navigation";
 
-type Status = "active" | "pending" | "draft";
+// Define ProductOption type
+type ProductOption = {
+  id: number;
+  name: { en: string; ar: string };
+  isRequired: boolean;
+  createdAt: string;
+};
 
 // Translation dictionary
 const translations = {
   en: {
     id: "ID",
     name: "Name",
+    isRequired: "Is Required?",
     createdAt: "Created At",
-    status: "Status",
     operations: "Operations",
     productName: "Product Name",
     date: "Date",
@@ -61,12 +64,16 @@ const translations = {
     showFilters: "Show Filters",
     filters: "Filters",
     create: "Create",
+    yes: "Yes",
+    no: "No",
+    required: "Required",
+    optional: "Optional",
   },
   ar: {
     id: "المعرف",
     name: "الاسم",
+    isRequired: "مطلوب؟",
     createdAt: "تاريخ الإنشاء",
-    status: "الحالة",
     operations: "العمليات",
     productName: "اسم المنتج",
     date: "التاريخ",
@@ -83,7 +90,7 @@ const translations = {
     download: "تحميل",
     allStatuses: "كل الحالات",
     active: "نشط",
-    pending: "قيد الانتظار",
+    pending: "نشر",
     draft: "مسودة",
     allStock: "كل المخزون",
     inStock: "متوفر",
@@ -106,88 +113,147 @@ const translations = {
     showFilters: "عرض الفلاتر",
     filters: "فلاتر",
     create: "انشاء",
+    yes: "نعم",
+    no: "لا",
+    required: "مطلوب",
+    optional: "اختياري",
   },
 };
 
-export default function TagsListPanel() {
+// Dummy data for product options
+const ProductOptions: ProductOption[] = [
+  {
+    id: 1,
+    name: { en: "Processor (CPU)", ar: "المعالج (CPU)" },
+    isRequired: true,
+    createdAt: "2024-01-15T10:30:00Z",
+  },
+  {
+    id: 2,
+    name: { en: "Graphics Card (GPU)", ar: "كرت الشاشة (GPU)" },
+    isRequired: true,
+    createdAt: "2024-01-16T14:20:00Z",
+  },
+  {
+    id: 3,
+    name: { en: "Memory (RAM)", ar: "الذاكرة (RAM)" },
+    isRequired: true,
+    createdAt: "2024-01-17T09:15:00Z",
+  },
+  {
+    id: 4,
+    name: { en: "Storage (HDD/SSD)", ar: "التخزين (HDD/SSD)" },
+    isRequired: true,
+    createdAt: "2024-01-18T16:45:00Z",
+  },
+  {
+    id: 5,
+    name: { en: "Motherboard", ar: "اللوحة الأم" },
+    isRequired: false,
+    createdAt: "2024-01-19T11:00:00Z",
+  },
+  {
+    id: 6,
+    name: { en: "Power Supply (PSU)", ar: "مزود الطاقة (PSU)" },
+    isRequired: false,
+    createdAt: "2024-01-20T13:30:00Z",
+  },
+  {
+    id: 7,
+    name: { en: "Cooling System", ar: "نظام التبريد" },
+    isRequired: false,
+    createdAt: "2024-01-21T15:20:00Z",
+  },
+  {
+    id: 8,
+    name: { en: "Operating System", ar: "نظام التشغيل" },
+    isRequired: false,
+    createdAt: "2024-01-22T12:10:00Z",
+  },
+];
+
+const getColumns = (locale: LanguageType) => [
+  {
+    key: "id",
+    header: translations[locale].id,
+    sortable: true,
+    render: (item: ProductOption) => (
+      <span className="font-mono text-sm">#{item.id}</span>
+    ),
+  },
+  {
+    key: "name",
+    header: translations[locale].name,
+    sortable: true,
+    render: (item: ProductOption) => (
+      <Link
+        className="font-medium text-primary hover:underline"
+        href={`/admin/product-options/edit/${item.id}`}
+      >
+        {item.name[locale]}
+      </Link>
+    ),
+  },
+  {
+    key: "isRequired",
+    header: translations[locale].isRequired,
+    sortable: true,
+    render: (item: ProductOption) => {
+      const isRequired = item.isRequired;
+      const bgColor = isRequired ? "bg-red-100" : "bg-green-100";
+      const textColor = isRequired ? "text-red-800" : "text-green-800";
+      const text = isRequired
+        ? translations[locale].yes
+        : translations[locale].no;
+      const badgeText = isRequired
+        ? translations[locale].required
+        : translations[locale].optional;
+
+      return (
+        <span
+          className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${bgColor} ${textColor}`}
+        >
+          {text} ({badgeText})
+        </span>
+      );
+    },
+  },
+  {
+    key: "createdAt",
+    header: translations[locale].createdAt,
+    sortable: true,
+    render: (item: ProductOption) => {
+      const date = new Date(item.createdAt);
+      return (
+        <span className="text-sm text-gray-600">
+          {date.toLocaleDateString(locale === "en" ? "en-US" : "ar-EG", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })}
+        </span>
+      );
+    },
+  },
+];
+
+export default function ProductOptionsListPanel() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const { language } = useLanguage();
   const t = translations[language];
   const isRTL = language === "ar";
   const ITEMS_PER_PAGE = 6;
-  const router = useRouter();
   const toggle = () => setIsOpen((prev) => !prev);
-
-  const getColumns = (locale: LanguageType) => [
-    {
-      key: "id",
-      header: translations[locale].id,
-      sortable: true,
-      render: (item: ProductTag) => (
-        <span className="font-mono text-sm">#{item.id}</span>
-      ),
-    },
-    {
-      key: "name",
-      header: translations[locale].name,
-      sortable: true,
-      render: (item: ProductTag) => (
-        <Link
-          className="font-medium text-primary hover:underline"
-          href={`/admin/products-tags/edit/${item.id}`}
-        >
-          {item.name[locale]}
-        </Link>
-      ),
-    },
-    {
-      key: "createdAt",
-      header: translations[locale].createdAt,
-      sortable: true,
-      render: (item: ProductTag) => {
-        const date = new Date(item.createdAt);
-        return (
-          <span className="text-sm text-gray-600">
-            {date.toLocaleDateString(locale === "en" ? "en-US" : "ar-EG")}
-          </span>
-        );
-      },
-    },
-    {
-      key: "status",
-      header: translations[locale].status,
-      render: (item: ProductTag) => {
-        const statusColor =
-          item.status?.en === "published"
-            ? "bg-green-100 text-green-800"
-            : "bg-gray-100 text-gray-600";
-
-        const statusText =
-          item.status?.[locale] || translations[locale].unknown;
-        const displayStatus =
-          statusText.charAt(0).toUpperCase() + statusText.slice(1);
-
-        return (
-          <span
-            className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${statusColor}`}
-          >
-            {displayStatus}
-          </span>
-        );
-      },
-      sortable: true,
-    },
-  ];
 
   const predefinedFilters: DynamicFilterItem[] = [
     {
-      id: "status",
-      label: { en: "Status", ar: "الحالة" },
+      id: "isRequired",
+      label: { en: "Required", ar: "مطلوب" },
       type: "dropdown",
       options: [
-        { id: "published", name: { en: "Active", ar: "نشر" } },
-        { id: "draft", name: { en: "Draft", ar: "مسودة" } },
+        { id: "true", name: { en: "Required", ar: "مطلوب" } },
+        { id: "false", name: { en: "Optional", ar: "اختياري" } },
       ],
       visible: true,
     },
@@ -199,16 +265,17 @@ export default function TagsListPanel() {
     },
   ];
 
-  // Count tags by status for the summary cards
-  const statusCounts = ProductTags.reduce(
-    (acc: Record<Status, number>, tag) => {
-      if (tag.status?.en === "published" || tag.status?.en === "draft") {
-        const statusKey = tag.status.en as Status;
-        acc[statusKey] += 1;
+  // Count options by required status for the summary cards
+  const requiredCounts = ProductOptions.reduce(
+    (acc: { required: number; optional: number }, option) => {
+      if (option.isRequired) {
+        acc.required += 1;
+      } else {
+        acc.optional += 1;
       }
       return acc;
     },
-    { active: 0, pending: 0, draft: 0 },
+    { required: 0, optional: 0 },
   );
 
   return (
@@ -221,14 +288,14 @@ export default function TagsListPanel() {
         isRTL={isRTL}
         drawerFilters={productFilters}
         showViewToggle={false}
-        statusCounts={statusCounts}
+        statusCounts={requiredCounts}
         filtersOpen={filtersOpen}
         setFiltersOpen={setFiltersOpen}
         filters={predefinedFilters}
-        quickFiltersGridCols="grid-cols-1 md:grid-cols-2 "
+        quickFiltersGridCols="grid-cols-1 md:grid-cols-2  "
       />
 
-      {/* Tags Table */}
+      {/* Product Options Table */}
       <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         <div className="mb-4 flex flex-col gap-2 sm:flex-row">
           <button
@@ -240,14 +307,14 @@ export default function TagsListPanel() {
           </button>
           <SearchInput locale={language} />
           <Link
-            href={`/admin/products-tags/create`}
+            href={`/admin/product-options/create`}
             className="flex items-center justify-center gap-1 rounded-md border border-gray-200 bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-auto"
           >
             <Plus size={15} /> {t.create}
           </Link>
         </div>
         <DynamicTable
-          data={ProductTags}
+          data={ProductOptions}
           columns={getColumns(language)}
           pagination={true}
           itemsPerPage={ITEMS_PER_PAGE}
@@ -256,8 +323,7 @@ export default function TagsListPanel() {
           solidActions={[
             {
               label: "Edit",
-              onClick: (item) =>
-                router.push(`/admin/products-tags/edit/${item.id}`),
+              onClick: () => console.log("edited"),
               icon: <PencilIcon className="h-3 w-3" />,
               color: "#2563eb",
             },

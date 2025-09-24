@@ -10,6 +10,7 @@ import DynamicFilter from "@/components/UI/filter/DynamicFilter";
 import SearchInput from "@/components/Forms/formFields/SearchInput";
 import { DynamicFilterItem } from "@/types/filters";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { ProductAttributes } from "@/constants/productsAttributes";
 
 type Status = "published" | "draft";
 
@@ -111,74 +112,6 @@ const translations = {
   },
 };
 
-// Dummy data for product attributes
-const ProductAttributes: ProductAttribute[] = [
-  {
-    id: 1,
-    name: { en: "Color", ar: "اللون" },
-    slug: "color",
-    sortOrder: 1,
-    createdAt: "2024-01-15T10:30:00Z",
-    status: { en: "published", ar: "نشط" },
-  },
-  {
-    id: 2,
-    name: { en: "Size", ar: "المقاس" },
-    slug: "size",
-    sortOrder: 2,
-    createdAt: "2024-01-16T14:20:00Z",
-    status: { en: "published", ar: "نشط" },
-  },
-  {
-    id: 3,
-    name: { en: "Material", ar: "المادة" },
-    slug: "material",
-    sortOrder: 3,
-    createdAt: "2024-01-17T09:15:00Z",
-    status: { en: "published", ar: "نشر" },
-  },
-  {
-    id: 4,
-    name: { en: "Weight", ar: "الوزن" },
-    slug: "weight",
-    sortOrder: 4,
-    createdAt: "2024-01-18T16:45:00Z",
-    status: { en: "draft", ar: "مسودة" },
-  },
-  {
-    id: 5,
-    name: { en: "Brand", ar: "العلامة التجارية" },
-    slug: "brand",
-    sortOrder: 5,
-    createdAt: "2024-01-19T11:20:00Z",
-    status: { en: "published", ar: "نشط" },
-  },
-  {
-    id: 6,
-    name: { en: "Style", ar: "النمط" },
-    slug: "style",
-    sortOrder: 6,
-    createdAt: "2024-01-20T13:10:00Z",
-    status: { en: "published", ar: "نشط" },
-  },
-  {
-    id: 7,
-    name: { en: "Season", ar: "الموسم" },
-    slug: "season",
-    sortOrder: 7,
-    createdAt: "2024-01-21T15:30:00Z",
-    status: { en: "published", ar: "نشر" },
-  },
-  {
-    id: 8,
-    name: { en: "Gender", ar: "الجنس" },
-    slug: "gender",
-    sortOrder: 8,
-    createdAt: "2024-01-22T12:00:00Z",
-    status: { en: "draft", ar: "مسودة" },
-  },
-];
-
 const getColumns = (locale: LanguageType) => [
   {
     key: "id",
@@ -195,7 +128,7 @@ const getColumns = (locale: LanguageType) => [
     render: (item: ProductAttribute) => (
       <Link
         className="font-medium text-primary hover:underline"
-        href={`/admin/products-attributes/edit/${item.id}`}
+        href={`/admin/product-attributes/edit/${item.id}`}
       >
         {item.name[locale]}
       </Link>
@@ -311,7 +244,7 @@ export default function AttributesListPanel() {
         filtersOpen={filtersOpen}
         setFiltersOpen={setFiltersOpen}
         filters={predefinedFilters}
-        quickFiltersGridCols="grid-cols-1 md:grid-cols-2 lg:grid-cols-3 "
+        quickFiltersGridCols="grid-cols-1 md:grid-cols-2"
       />
 
       {/* Attributes Table */}
@@ -326,7 +259,7 @@ export default function AttributesListPanel() {
           </button>
           <SearchInput locale={language} />
           <Link
-            href={`/admin/products-attributes/create`}
+            href={`/admin/product-attributes/create`}
             className="flex items-center justify-center gap-1 rounded-md border border-gray-200 bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-auto"
           >
             <Plus size={15} /> {t.create}
