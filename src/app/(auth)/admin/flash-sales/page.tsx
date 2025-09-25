@@ -3,57 +3,38 @@ import Link from "next/link";
 import { PencilIcon, Plus, TrashIcon } from "lucide-react";
 import DynamicTable from "@/components/UI/tables/DTable";
 import { useState } from "react";
-import { productFilters } from "@/constants/drawerFilter";
 import { LanguageType } from "@/util/translations";
 import DynamicFilter from "@/components/UI/filter/DynamicFilter";
 import SearchInput from "@/components/Forms/formFields/SearchInput";
 import { DynamicFilterItem } from "@/types/filters";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ProductOption } from "@/types/product";
-import { ProductOptions } from "@/constants/productOptions";
 import { useRouter } from "next/navigation";
+import { FlashSale } from "@/types/product";
+import { FlashSalesData } from "@/constants/flashSales";
 
 // Translation dictionary
 const translations = {
   en: {
-    title: "Product Options",
+    title: "Flash Sales",
     description:
-      "Define the available choices for this product such as size, color, or material",
+      "Manage time-limited promotional sales with special discounts and offers",
     id: "ID",
     name: "Name",
-    isRequired: "Is Required?",
+    endDate: "End Date",
     createdAt: "Created At",
+    status: "Status",
     operations: "Operations",
-    productName: "Product Name",
-    date: "Date",
-    sku: "SKU",
-    seller: "Seller",
-    category: "Category",
-    subCategory: "Sub Category",
-    brand: "Brand",
-    unitPrice: "Unit Price",
-    totalPurchase: "Total Purchase",
-    searchPlaceholder: "Search",
+    searchPlaceholder: "Search flash sales...",
     search: "Search",
     moreFilters: "More Filters",
     download: "Download",
     allStatuses: "All Statuses",
-    active: "Active",
-    pending: "Pending",
+    published: "Published",
+    upcoming: "Upcoming",
+    expired: "Expired",
     draft: "Draft",
-    allStock: "All Stock",
-    inStock: "In Stock",
-    outOfStock: "Out of Stock",
-    selectCategory: "Select Category",
-    medicalWear: "Medical Wear",
-    selectSubCategory: "Select Sub Category",
-    scrubs: "Scrubs",
-    allBrand: "All brand",
-    landeu: "Landeu",
-    allSellers: "All Sellers",
     reset: "Reset",
     showData: "Show Data",
-    unknown: "Unknown",
     delete: "Delete",
     edit: "Edit",
     quickFilters: "Quick Filters",
@@ -61,51 +42,35 @@ const translations = {
     hideFilters: "Hide Filters",
     showFilters: "Show Filters",
     filters: "Filters",
-    create: "Create",
-    yes: "Yes",
-    no: "No",
-    required: "Required",
-    optional: "Optional",
+    create: "Create ",
+    daysLeft: "days left",
+    hoursLeft: "hours left",
+    expiredAgo: "expired",
+    draftStatus: "Draft",
+    statusCounts: "Status Summary",
+    totalSales: "Total Flash Sales",
   },
   ar: {
-    title: "خيارات المنتج",
+    title: "التخفيضات السريعة",
     description:
-      "قم بتحديد الخيارات المتاحة لهذا المنتج مثل الحجم أو اللون أو الخامة.",
+      "إدارة التخفيضات الترويجية المحدودة الوقت مع خصومات وعروض خاصة",
     id: "المعرف",
     name: "الاسم",
-    isRequired: "مطلوب؟",
+    endDate: "تاريخ الانتهاء",
     createdAt: "تاريخ الإنشاء",
+    status: "الحالة",
     operations: "العمليات",
-    productName: "اسم المنتج",
-    date: "التاريخ",
-    sku: "SKU",
-    seller: "البائع",
-    category: "الفئة",
-    subCategory: "الفئة الفرعية",
-    brand: "العلامة التجارية",
-    unitPrice: "سعر الوحدة",
-    totalPurchase: "إجمالي المشتريات",
-    searchPlaceholder: "بحث",
+    searchPlaceholder: "ابحث في التخفيضات السريعة...",
     search: "بحث",
     moreFilters: "المزيد من الفلاتر",
     download: "تحميل",
     allStatuses: "كل الحالات",
-    active: "نشط",
-    pending: "نشر",
+    published: "نشر",
+    upcoming: "قادم",
+    expired: "منتهي",
     draft: "مسودة",
-    allStock: "كل المخزون",
-    inStock: "متوفر",
-    outOfStock: "غير متوفر",
-    selectCategory: "اختر الفئة",
-    medicalWear: "ملابس طبية",
-    selectSubCategory: "اختر الفئة الفرعية",
-    scrubs: "سكراب",
-    allBrand: "كل العلامات",
-    landeu: "لاندو",
-    allSellers: "كل البائعين",
     reset: "إعادة تعيين",
     showData: "عرض البيانات",
-    unknown: "غير معروف",
     delete: "حذف",
     edit: "تعديل",
     quickFilters: "الفلاتر السريعة",
@@ -113,11 +78,13 @@ const translations = {
     hideFilters: "إخفاء الفلاتر",
     showFilters: "عرض الفلاتر",
     filters: "فلاتر",
-    create: "انشاء",
-    yes: "نعم",
-    no: "لا",
-    required: "مطلوب",
-    optional: "اختياري",
+    create: "إنشاء",
+    daysLeft: "يوم متبقي",
+    hoursLeft: "ساعة متبقية",
+    expiredAgo: "منتهي منذ",
+    draftStatus: "مسودة",
+    statusCounts: "ملخص الحالة",
+    totalSales: "إجمالي التخفيضات السريعة",
   },
 };
 
@@ -126,7 +93,7 @@ const getColumns = (locale: LanguageType) => [
     key: "id",
     header: translations[locale].id,
     sortable: true,
-    render: (item: ProductOption) => (
+    render: (item: FlashSale) => (
       <span className="font-mono text-sm">#{item.id}</span>
     ),
   },
@@ -134,36 +101,32 @@ const getColumns = (locale: LanguageType) => [
     key: "name",
     header: translations[locale].name,
     sortable: true,
-    render: (item: ProductOption) => (
+    render: (item: FlashSale) => (
       <Link
         className="font-medium text-primary hover:underline"
-        href={`/admin/product-options/edit/${item.id}`}
+        href={`/admin/flash-sales/edit/${item.id}`}
       >
         {item.name[locale]}
       </Link>
     ),
   },
   {
-    key: "isRequired",
-    header: translations[locale].isRequired,
+    key: "endDate",
+    header: translations[locale].endDate,
     sortable: true,
-    render: (item: ProductOption) => {
-      const isRequired = item.isRequired;
-      const bgColor = isRequired ? "bg-red-100" : "bg-green-100";
-      const textColor = isRequired ? "text-red-800" : "text-green-800";
-      const text = isRequired
-        ? translations[locale].yes
-        : translations[locale].no;
-      const badgeText = isRequired
-        ? translations[locale].required
-        : translations[locale].optional;
+    render: (item: FlashSale) => {
+      const endDate = new Date(item.endDate);
 
       return (
-        <span
-          className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${bgColor} ${textColor}`}
-        >
-          {text} ({badgeText})
-        </span>
+        <div className="flex flex-col">
+          <span className="text-sm text-gray-600">
+            {endDate.toLocaleDateString(locale === "en" ? "en-US" : "ar-EG", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })}
+          </span>
+        </div>
       );
     },
   },
@@ -171,7 +134,7 @@ const getColumns = (locale: LanguageType) => [
     key: "createdAt",
     header: translations[locale].createdAt,
     sortable: true,
-    render: (item: ProductOption) => {
+    render: (item: FlashSale) => {
       const date = new Date(item.createdAt);
       return (
         <span className="text-sm text-gray-600">
@@ -184,9 +147,40 @@ const getColumns = (locale: LanguageType) => [
       );
     },
   },
+  {
+    key: "status",
+    header: translations[locale].status,
+    sortable: true,
+    render: (item: FlashSale) => {
+      const statusConfig = {
+        published: {
+          color: "bg-green-100 text-green-800",
+          text: translations[locale].published,
+        },
+        expired: {
+          color: "bg-red-100 text-red-800",
+          text: translations[locale].expired,
+        },
+        draft: {
+          color: "bg-gray-100 text-gray-800",
+          text: translations[locale].draft,
+        },
+      };
+
+      const config = statusConfig[item.status];
+
+      return (
+        <span
+          className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${config.color}`}
+        >
+          {config.text}
+        </span>
+      );
+    },
+  },
 ];
 
-export default function ProductOptionsListPanel() {
+export default function FlashSalesListPanel() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const { language } = useLanguage();
@@ -198,12 +192,14 @@ export default function ProductOptionsListPanel() {
 
   const predefinedFilters: DynamicFilterItem[] = [
     {
-      id: "isRequired",
-      label: { en: "Required", ar: "مطلوب" },
+      id: "status",
+      label: { en: "Status", ar: "الحالة" },
       type: "dropdown",
       options: [
-        { id: "true", name: { en: "Required", ar: "مطلوب" } },
-        { id: "false", name: { en: "Optional", ar: "اختياري" } },
+        { id: "active", name: { en: "Active", ar: "نشط" } },
+        { id: "upcoming", name: { en: "Upcoming", ar: "قادم" } },
+        { id: "expired", name: { en: "Expired", ar: "منتهي" } },
+        { id: "draft", name: { en: "Draft", ar: "مسودة" } },
       ],
       visible: true,
     },
@@ -215,17 +211,13 @@ export default function ProductOptionsListPanel() {
     },
   ];
 
-  // Count options by required status for the summary cards
-  const requiredCounts = ProductOptions.reduce(
-    (acc: { required: number; optional: number }, option) => {
-      if (option.isRequired) {
-        acc.required += 1;
-      } else {
-        acc.optional += 1;
-      }
+  // Count flash sales by status for the summary cards
+  const statusCounts = FlashSalesData.reduce(
+    (acc: { published: number; expired: number; draft: number }, sale) => {
+      acc[sale.status] += 1;
       return acc;
     },
-    { required: 0, optional: 0 },
+    { published: 0, expired: 0, draft: 0 },
   );
 
   return (
@@ -234,22 +226,23 @@ export default function ProductOptionsListPanel() {
         <h2 className="mb-1 text-2xl font-bold">{t.title}</h2>
         <p className="max-w-lg text-sm text-gray-600">{t.description}</p>
       </div>
+
       <DynamicFilter
         t={t}
         isOpen={isOpen}
         onToggle={() => setIsOpen(false)}
         locale={language}
         isRTL={isRTL}
-        drawerFilters={productFilters}
+        drawerFilters={[]} // You can add specific flash sale filters here if needed
         showViewToggle={false}
-        statusCounts={requiredCounts}
+        statusCounts={statusCounts}
         filtersOpen={filtersOpen}
         setFiltersOpen={setFiltersOpen}
         filters={predefinedFilters}
-        quickFiltersGridCols="grid-cols-1 md:grid-cols-2  "
+        quickFiltersGridCols="grid-cols-1 md:grid-cols-2"
       />
 
-      {/* Product Options Table */}
+      {/* Flash Sales Table */}
       <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         <div className="mb-4 flex flex-col gap-2 sm:flex-row">
           <button
@@ -261,24 +254,24 @@ export default function ProductOptionsListPanel() {
           </button>
           <SearchInput locale={language} />
           <Link
-            href={`/admin/product-options/create`}
+            href={`/admin/flash-sales/create`}
             className="flex items-center justify-center gap-1 rounded-md border border-gray-200 bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-auto"
           >
             <Plus size={15} /> {t.create}
           </Link>
         </div>
         <DynamicTable
-          data={ProductOptions}
+          data={FlashSalesData}
           columns={getColumns(language)}
           pagination={true}
           itemsPerPage={ITEMS_PER_PAGE}
           selectable={true}
-          defaultSort={{ key: "name", direction: "asc" }}
+          defaultSort={{ key: "endDate", direction: "asc" }}
           solidActions={[
             {
               label: "Edit",
               onClick: (item) =>
-                router.push(`/admin/product-options/edit/${item.id}`),
+                router.push(`/admin/flash-sales/edit/${item.id}`),
               icon: <PencilIcon className="h-3 w-3" />,
               color: "#2563eb",
             },

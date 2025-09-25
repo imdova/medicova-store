@@ -1,8 +1,10 @@
 import { SidebarGroup } from "@/types";
 import {
+  Album,
   Bell,
   Box,
   Building2,
+  Database,
   HandCoins,
   Heart,
   Layers3,
@@ -17,6 +19,7 @@ import {
   UserRoundPen,
   Users2,
   WalletCards,
+  Zap,
 } from "lucide-react";
 
 export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
@@ -211,22 +214,27 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
         {
           title: { en: "Products-tags", ar: "علامات المنتجات" },
           href: "/admin/products-tags",
-          icon: PackagePlus,
+          icon: Tags,
         },
         {
           title: { en: "Product Attributes", ar: "سمات المنت" },
           href: "/admin/product-attributes",
-          icon: PackagePlus,
+          icon: Album,
         },
         {
           title: { en: "Product options", ar: "خيارات المنتج" },
-          href: "/admin/product-attributes",
-          icon: PackagePlus,
+          href: "/admin/product-options",
+          icon: Database,
         },
         {
           title: { en: "Inventory", ar: "المخزون" },
           href: "/admin/inventory",
           icon: Layers3,
+        },
+        {
+          title: { en: "Flash Sales", ar: "العروض الفلاش" },
+          href: "/admin/flash-sales",
+          icon: Zap,
         },
         {
           title: {

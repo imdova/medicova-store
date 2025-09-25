@@ -523,7 +523,7 @@ const DynamicTable = <T extends object>({
                         : String(item[column.key as keyof T])}
                     </td>
                   ))}
-                  {(actions.length || solidActions.length) && (
+                  {actions.length > 0 || solidActions.length > 0 ? (
                     <td
                       className={`${cellClassName} ${locale === "ar" ? "text-left" : "text-right"}`}
                       style={{ width: actionsColumnWidth }}
@@ -533,7 +533,7 @@ const DynamicTable = <T extends object>({
                         {renderActions(item, rowIndex)}
                       </div>
                     </td>
-                  )}
+                  ) : null}
                 </tr>
               ))
             ) : (

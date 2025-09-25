@@ -234,3 +234,56 @@ export type ProductAttribute = {
   categories?: string[];
   attributes?: AttributeOption[];
 };
+
+// Define ProductOption type
+export type OptionValue = {
+  id: string;
+  label: LocalizedTitle;
+  price: string;
+  price_type: "fixed" | "percent";
+};
+
+export type ProductOption = {
+  id: string;
+  slug: string;
+  name: LocalizedTitle;
+  option_type: "dropdown" | "radio" | "checkbox" | "text";
+  isRequired: boolean;
+  createdAt: string;
+  option_values: OptionValue[];
+};
+
+// Type definition for Product Inventory
+export type ProductVariant = {
+  id: number;
+  image: string;
+  name: string;
+  sku: string;
+  storefrontManagement: string;
+  quantity: number;
+  hasVariants: false;
+  isVariant: true;
+  parentId: number;
+};
+
+export type ProductInventory = {
+  id: number;
+  image: string;
+  name: string;
+  sku: string;
+  storefrontManagement: string;
+  quantity: number;
+  hasVariants: boolean;
+  isVariant: boolean;
+  parentId: number | null;
+  variants?: ProductVariant[];
+};
+
+// Flash Sale type definition
+export interface FlashSale {
+  id: string;
+  name: { en: string; ar: string };
+  endDate: string;
+  createdAt: string;
+  status: "published" | "expired" | "draft";
+}

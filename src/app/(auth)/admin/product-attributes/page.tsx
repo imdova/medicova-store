@@ -17,6 +17,9 @@ type Status = "published" | "draft";
 // Translation dictionary
 const translations = {
   en: {
+    title: "Product Attributes",
+    description:
+      "Attributes describe key details of the product such as material, dimensions, or usage type. ",
     id: "ID",
     name: "Name",
     slug: "Slug",
@@ -64,6 +67,9 @@ const translations = {
     create: "Create",
   },
   ar: {
+    title: "خصائص المنتج",
+    description:
+      "تصف الخصائص التفاصيل الرئيسية للمنتج مثل الخامة أو الأبعاد أو نوع الاستخدام.",
     id: "المعرف",
     name: "الاسم",
     slug: "الرابط",
@@ -232,6 +238,10 @@ export default function AttributesListPanel() {
 
   return (
     <div className="relative space-y-6" dir={isRTL ? "rtl" : "ltr"}>
+      <div>
+        <h2 className="mb-1 text-2xl font-bold">{t.title}</h2>
+        <p className="max-w-lg text-sm text-gray-600">{t.description}</p>
+      </div>
       <DynamicFilter
         t={t}
         isOpen={isOpen}

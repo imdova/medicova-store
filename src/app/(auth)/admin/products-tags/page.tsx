@@ -18,6 +18,9 @@ type Status = "active" | "pending" | "draft";
 // Translation dictionary
 const translations = {
   en: {
+    title: "Product Tags",
+    description:
+      "Tags help categorize products and make them easier for customers to find You can add keywords such as Medical Wear",
     id: "ID",
     name: "Name",
     createdAt: "Created At",
@@ -63,6 +66,9 @@ const translations = {
     create: "Create",
   },
   ar: {
+    title: "علامات المنتج",
+    description:
+      "تساعد العلامات على تصنيف المنتجات وتسهيل العثور عليها على العملاء.",
     id: "المعرف",
     name: "الاسم",
     createdAt: "تاريخ الإنشاء",
@@ -213,6 +219,10 @@ export default function TagsListPanel() {
 
   return (
     <div className="relative space-y-6" dir={isRTL ? "rtl" : "ltr"}>
+      <div>
+        <h2 className="mb-1 text-2xl font-bold">{t.title}</h2>
+        <p className="max-w-lg text-sm text-gray-600">{t.description}</p>
+      </div>
       <DynamicFilter
         t={t}
         isOpen={isOpen}
