@@ -280,10 +280,34 @@ export type ProductInventory = {
 };
 
 // Flash Sale type definition
+export type ProductWithQuantity = Product & {
+  quantity: number;
+};
+
 export interface FlashSale {
   id: string;
+  slug?: string;
   name: { en: string; ar: string };
+  status: "published" | "draft" | "expired";
   endDate: string;
   createdAt: string;
-  status: "published" | "expired" | "draft";
+  products?: ProductWithQuantity[];
 }
+
+export type SpecificationGroup = {
+  id: string;
+  slug: string;
+  name: {
+    en: string;
+    ar: string;
+  };
+  description: {
+    en: string;
+    ar: string;
+  };
+  status: {
+    en: "published" | "draft";
+    ar: "منشور" | "مسودة";
+  };
+  createdAt: string;
+};

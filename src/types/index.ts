@@ -8,6 +8,18 @@ export interface BaseHeaderProps {
   pathname: string;
 }
 
+export type BadgeVariant =
+  | "success"
+  | "error"
+  | "warning"
+  | "info"
+  | "neutral"
+  | "complete"
+  | "missing-title"
+  | "missing-description"
+  | "premium"
+  | "needs-review";
+
 // Define the User type
 export type UserProps = {
   id: number;

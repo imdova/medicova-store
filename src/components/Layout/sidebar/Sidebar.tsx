@@ -114,6 +114,7 @@ const Sidebar: React.FC<AccountPageProps> = ({ user }) => {
                       {hasSubItems && isOpen && (
                         <ul className="ml-4 mt-1 space-y-1 border-l border-gray-100 pl-3">
                           {item.subItems?.map((subItem, subIndex) => {
+                            const Icon = subItem.icon;
                             const isCurrentSubPage = isCurrentPage(
                               pathname,
                               subItem.href,

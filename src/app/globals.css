@@ -82,3 +82,33 @@ body {
   font-family: var(--font-raleway, sans-serif);
   scroll-behavior: smooth;
 }
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scroll-bar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scroll-bar-hidden {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+.scroll-bar-minimal::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scroll-bar-minimal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scroll-bar-minimal::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+}
+
+.scroll-bar-minimal::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.4);
+}

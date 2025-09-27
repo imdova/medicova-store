@@ -5,15 +5,19 @@ import {
   Box,
   Building2,
   Database,
+  Folder,
   HandCoins,
   Heart,
   Layers3,
   LayoutDashboard,
+  LayoutList,
+  LayoutTemplate,
   MapPin,
   PackagePlus,
   PackageSearch,
   SendToBack,
   ShieldUser,
+  Table2,
   Tags,
   Undo2,
   UserRoundPen,
@@ -235,6 +239,28 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
           title: { en: "Flash Sales", ar: "العروض الفلاش" },
           href: "/admin/flash-sales",
           icon: Zap,
+        },
+        {
+          title: { en: "Product Specification", ar: "مواصفات المنت" },
+          href: "/admin/product-specification",
+          icon: LayoutTemplate,
+          subItems: [
+            {
+              title: { en: "Groups", ar: "المجموعات" },
+              href: "/admin/specification-groups",
+              icon: Folder,
+            },
+            {
+              title: { en: "Attributes", ar: "الصفات" },
+              href: "/admin/specification-attributes",
+              icon: LayoutList,
+            },
+            {
+              title: { en: "Tables", ar: "جداول" },
+              href: "/admin/specification-tables",
+              icon: Table2,
+            },
+          ],
         },
         {
           title: {

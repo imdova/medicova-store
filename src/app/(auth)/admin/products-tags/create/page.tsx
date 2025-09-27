@@ -381,16 +381,19 @@ export default function CreateTagPage() {
                 <CardHeader className="text-xl font-semibold">
                   {t.published}
                 </CardHeader>
-                <CardContent className="flex gap-2 p-2">
+                <CardContent className="flex flex-col gap-2 p-2 md:flex-row">
                   <Button
                     type="button"
                     variant="outline"
-                    className="flex items-center gap-2"
+                    className="flex flex-1 items-center gap-2"
                   >
                     <Save className="h-4 w-4" />
                     {t.save}
                   </Button>
-                  <Button type="submit" className="flex items-center gap-2">
+                  <Button
+                    type="submit"
+                    className="flex flex-1 items-center gap-2"
+                  >
                     {t.published}
                   </Button>
                 </CardContent>
