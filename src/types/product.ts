@@ -19,6 +19,10 @@ export type Seller = {
   status: LocalizedTitle;
 };
 
+// Types
+export type Status = "published" | "draft";
+export type FieldType = "text" | "number" | "boolean" | "select" | "textarea";
+
 export type methodType = {
   id: string;
   name: string;
@@ -311,3 +315,38 @@ export type SpecificationGroup = {
   };
   createdAt: string;
 };
+
+export interface SpecificationAttribute {
+  id: string;
+  name: {
+    en: string;
+    ar: string;
+  };
+  associatedGroup: SpecificationGroup;
+  fieldType: FieldType;
+  createdAt: string;
+  status: {
+    en: Status;
+    ar: string;
+  };
+  defaultValue?: string;
+}
+
+export interface SpecificationTable {
+  id: string;
+  name: {
+    en: string;
+    ar: string;
+  };
+  description: {
+    en: string;
+    ar: string;
+  };
+  assignedGroups: SpecificationGroup[];
+  createdAt: string;
+  status: {
+    en: Status;
+    ar: string;
+  };
+  groupOrder?: string[];
+}

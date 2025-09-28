@@ -385,13 +385,15 @@ export default function CreateAttributePage() {
               {/* Attributes List Section - Bilingual titles */}
               <Card className="p-4">
                 <div className="mb-4 flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">{t.attributes_list}</h3>
+                  <h3 className="font-semibold sm:text-lg">
+                    {t.attributes_list}
+                  </h3>
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
                     onClick={addAttribute}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 text-xs sm:text-sm"
                   >
                     <Plus className="h-4 w-4" />
                     {t.add_attribute}
@@ -465,7 +467,7 @@ export default function CreateAttributePage() {
                           />
                         </div>
                         {/* Color and Image - English only */}
-                        <div className="col-span-2 flex gap-3">
+                        <div className="flex gap-3 sm:col-span-2">
                           <div className="flex-1">
                             <label className="mb-2 block text-sm font-medium">
                               {t.color}

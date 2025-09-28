@@ -14,6 +14,8 @@ import {
   FilterOption,
 } from "@/types/filters";
 
+type TranslationValue = string | Record<string, string>;
+
 interface DynamicFilterProps {
   // Configuration props
   showSearch?: boolean;
@@ -38,7 +40,7 @@ interface DynamicFilterProps {
   onToggle?: (isOpen: boolean) => void;
 
   // Your existing props
-  t: Record<string, string>;
+  t: Record<string, TranslationValue>; // <-- FIXED
   locale: LanguageType;
   isRTL: boolean;
   drawerFilters: FilterDrawerGroup[];
@@ -275,7 +277,7 @@ const DynamicFilter = ({
             {collapsible && (
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-medium">
-                  {t.filters || "Filters"}
+                  {(t.filters as string) || "Filters"}
                 </h3>
                 <button
                   onClick={handleToggle}
@@ -357,10 +359,18 @@ const DynamicFilter = ({
                         onClick={resetFilters}
                         className="rounded border border-primary px-3 py-1.5 text-sm text-primary transition hover:bg-primary hover:text-white"
                       >
-                        {t.reset}
+                        {t.reset as string}
                       </button>
+                      {showMoreFilters && (
+                        <button
+                          onClick={() => setFiltersOpen(true)}
+                          className={`flex items-center justify-center rounded border border-primary p-2 text-sm text-primary transition hover:bg-primary hover:text-white`}
+                        >
+                          Show More filter
+                        </button>
+                      )}
                       <button className="rounded bg-secondary px-3 py-1.5 text-sm text-white transition hover:brightness-95">
-                        {t.showData}
+                        {t.showData as string}
                       </button>
                     </div>
                   </div>

@@ -286,7 +286,9 @@ export default function EditAttributePage() {
               {/* Attributes List Section - Bilingual titles */}
               <Card className="p-4">
                 <div className="mb-4 flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">{t.attributes_list}</h3>
+                  <h3 className="font-semibold sm:text-lg">
+                    {t.attributes_list}
+                  </h3>
                   <Button
                     type="button"
                     variant="outline"
@@ -300,7 +302,7 @@ export default function EditAttributePage() {
                         is_default: false,
                       });
                     }}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 text-xs sm:text-sm"
                   >
                     <Plus className="h-4 w-4" />
                     {t.add_attribute}
