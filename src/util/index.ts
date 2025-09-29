@@ -1,11 +1,48 @@
 import { destinationSurcharges } from "@/constants";
-import { ShippingOptions } from "@/types";
+import { MultilingualString, ShippingOptions } from "@/types";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: Parameters<typeof clsx>) {
   return twMerge(clsx(...inputs));
 }
+
+export function formatFullName(
+  firstName: MultilingualString,
+  lastName: MultilingualString,
+  language: "en" | "ar" = "en",
+): string {
+  const getValue = (val: MultilingualString): string => {
+    if (typeof val === "string") return val;
+    return val?.[language] || "";
+  };
+
+  const first = getValue(firstName);
+  const last = getValue(lastName);
+
+  // Handle RTL vs LTR order if needed
+  if (language === "ar") {
+    return `${last} ${first}`.trim(); // In Arabic, often last comes before first
+  }
+
+  return `${first} ${last}`.trim(); // English format
+}
+
+export const getTimeAgo = (dateString: Date | string) => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffInMs = now.getTime() - date.getTime();
+  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+  const diffInMonths = Math.floor(diffInDays / 30);
+
+  if (diffInMonths > 0) {
+    return `${diffInMonths} month${diffInMonths > 1 ? "s" : ""} ago`;
+  } else if (diffInDays > 0) {
+    return `${diffInDays} day${diffInDays > 1 ? "s" : ""} ago`;
+  } else {
+    return "Today";
+  }
+};
 
 export const isCurrentPage = (pathname: string, href: string): boolean => {
   if (!pathname || !href) return false;

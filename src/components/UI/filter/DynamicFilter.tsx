@@ -304,7 +304,7 @@ const DynamicFilter = ({
             )}
 
             {showStatusCards && visibleFilters.includes("status") && (
-              <div className="flex flex-col justify-between gap-4 md:flex-row">
+              <div className="flex flex-col flex-wrap justify-between gap-4 md:flex-row">
                 <div className="flex flex-col items-center gap-4 sm:flex-row">
                   {(
                     (

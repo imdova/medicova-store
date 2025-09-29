@@ -17,8 +17,10 @@ import {
   PackageSearch,
   SendToBack,
   ShieldUser,
+  Star,
   Table2,
   Tags,
+  Truck,
   Undo2,
   UserRoundPen,
   Users2,
@@ -261,6 +263,22 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
               icon: Table2,
             },
           ],
+        },
+        {
+          title: {
+            en: "Shipments",
+            ar: "الشحنات",
+          },
+          href: "/admin/shipments",
+          icon: Truck,
+        },
+        {
+          title: {
+            en: "Reviews",
+            ar: "المراجعات",
+          },
+          href: "/admin/reviews",
+          icon: Star,
         },
         {
           title: {

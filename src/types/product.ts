@@ -1,4 +1,5 @@
 import { Brand, LiquidSizeType, NumericSizeType, SizeType } from ".";
+import { Customer } from "./customers";
 import { LocalizedTitle } from "./language";
 
 export type Seller = {
@@ -301,14 +302,8 @@ export interface FlashSale {
 export type SpecificationGroup = {
   id: string;
   slug: string;
-  name: {
-    en: string;
-    ar: string;
-  };
-  description: {
-    en: string;
-    ar: string;
-  };
+  name: LocalizedTitle;
+  description: LocalizedTitle;
   status: {
     en: "published" | "draft";
     ar: "منشور" | "مسودة";
@@ -318,10 +313,7 @@ export type SpecificationGroup = {
 
 export interface SpecificationAttribute {
   id: string;
-  name: {
-    en: string;
-    ar: string;
-  };
+  name: LocalizedTitle;
   associatedGroup: SpecificationGroup;
   fieldType: FieldType;
   createdAt: string;
@@ -334,14 +326,8 @@ export interface SpecificationAttribute {
 
 export interface SpecificationTable {
   id: string;
-  name: {
-    en: string;
-    ar: string;
-  };
-  description: {
-    en: string;
-    ar: string;
-  };
+  name: LocalizedTitle;
+  description: LocalizedTitle;
   assignedGroups: SpecificationGroup[];
   createdAt: string;
   status: {
@@ -349,4 +335,70 @@ export interface SpecificationTable {
     ar: string;
   };
   groupOrder?: string[];
+}
+
+export interface History {
+  action: string;
+  timestamp: string;
+  by: string;
+}
+
+export interface Shipment {
+  id: string;
+  orderId: string;
+  customer: Customer;
+  products?: Product[];
+  shippingCompany?: LocalizedTitle;
+  trackingId?: string;
+  trackingLink?: string;
+  estimateDateShipped?: string;
+  note?: LocalizedTitle;
+  shippingStatus?: {
+    en:
+      | "approved"
+      | "pending"
+      | "processing"
+      | "shipped"
+      | "delivered"
+      | "cancelled"
+      | "returned";
+    ar: string;
+  };
+  shippingMethod?: string;
+  shippingFee?: number;
+  history?: History[];
+  shippingAmount: number;
+  status: {
+    en:
+      | "Approved"
+      | "Delivered"
+      | "Shipped"
+      | "Processing"
+      | "Pending"
+      | "Cancelled"
+      | "Returned";
+    ar: string;
+  };
+  codStatus: {
+    en: "Not available" | "Available" | "Pending" | "Paid" | "Refunded";
+    ar: string;
+  };
+  createdAt: string;
+}
+
+export interface ReviewType {
+  id: string;
+  product: Product;
+  user: Customer;
+  rating: number;
+  comment: string;
+  images: string[];
+  status: { en: "Published" | "Pending" | "Rejected"; ar: string };
+  createdAt: string;
+  replies?: {
+    id: string;
+    admin_name: string;
+    comment: string;
+    created_at: string;
+  }[];
 }

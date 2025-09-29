@@ -255,7 +255,7 @@ const DateRangeSelector = ({
   // Render a month calendar
   const renderCalendar = (
     date: Date | null,
-    onChange: (date: Date) => void,
+    onChange: (date: Date | null) => void,
     isStart: boolean,
   ) => {
     if (!date) date = new Date();
@@ -329,7 +329,7 @@ const DateRangeSelector = ({
         <div className="flex items-center gap-2">
           <div className="mb-2 flex items-center justify-between">
             <button
-              onClick={() => onChange(subMonths(date as Date, 1))}
+              onClick={() => onChange(subMonths(date ?? new Date(), 1))}
               className="rounded p-1 hover:bg-gray-100"
             >
               {isRTL ? ">" : "<"}
@@ -517,7 +517,11 @@ const DateRangeSelector = ({
                             ...prev,
                             startDate: date,
                           }));
-                          if (dateRange.endDate && date > dateRange.endDate) {
+                          if (
+                            date &&
+                            dateRange.endDate &&
+                            date > dateRange.endDate
+                          ) {
                             setDateRange((prev) => ({
                               ...prev,
                               endDate: date,
@@ -553,6 +557,7 @@ const DateRangeSelector = ({
                         (date) => {
                           setDateRange((prev) => ({ ...prev, endDate: date }));
                           if (
+                            date &&
                             dateRange.startDate &&
                             date < dateRange.startDate
                           ) {

@@ -369,7 +369,7 @@ const DynamicTable = <T extends object>({
       className={`relative flex flex-col rounded-md ${className}`}
       dir={tableDirection}
     >
-      <div className="grid grid-cols-1 overflow-x-auto">
+      <div className="scroll-bar-minimal grid grid-cols-1 overflow-x-auto">
         <table
           style={{ minWidth: minWidth }}
           className={`divide-y divide-gray-200`}

@@ -8,6 +8,8 @@ export interface BaseHeaderProps {
   pathname: string;
 }
 
+export type MultilingualString = string | { en: string; ar: string };
+
 export type BadgeVariant =
   | "success"
   | "error"
