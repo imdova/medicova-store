@@ -6,6 +6,7 @@ import {
   Building2,
   Database,
   Folder,
+  Group,
   HandCoins,
   Heart,
   Layers3,
@@ -218,7 +219,7 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
           icon: PackagePlus,
         },
         {
-          title: { en: "Products-tags", ar: "علامات المنتجات" },
+          title: { en: "Products Tags", ar: "علامات المنتجات" },
           href: "/admin/products-tags",
           icon: Tags,
         },
@@ -231,6 +232,11 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
           title: { en: "Product options", ar: "خيارات المنتج" },
           href: "/admin/product-options",
           icon: Database,
+        },
+        {
+          title: { en: "Product Collections", ar: "مجموعات المنتجات" },
+          href: "/admin/product-collections",
+          icon: Group,
         },
         {
           title: { en: "Inventory", ar: "المخزون" },
@@ -279,6 +285,14 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
           },
           href: "/admin/reviews",
           icon: Star,
+        },
+        {
+          title: {
+            en: "Vendors",
+            ar: "الباعة",
+          },
+          href: "/admin/vendors",
+          icon: Users2,
         },
         {
           title: {

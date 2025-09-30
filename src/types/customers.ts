@@ -64,3 +64,31 @@ export interface CustomerActivity {
   timestamp: string;
   metadata?: CustomerActivityMetadata;
 }
+
+// Types
+export type VendorType = {
+  id: string;
+  avatar: string;
+  name: string;
+  email: string;
+  storeName: string;
+  storePhone: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+  products: number;
+  totalRevenue: number;
+  balance: number;
+  totalEarnings: number;
+  totalOrders: number;
+  completedOrders: number;
+  pendingWithdrawals: number;
+  verified: boolean;
+  status: "active" | "inactive" | "suspended";
+  joinDate: string;
+  dateOfBirth: string;
+  vendorVerifiedAt: string;
+  totalSpent: number;
+};

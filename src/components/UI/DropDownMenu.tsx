@@ -3,7 +3,7 @@ import { ChevronDown, Check } from "lucide-react";
 import { LanguageType } from "@/util/translations";
 import { LocalizedTitle } from "@/types/language";
 
-interface DropdownOption {
+export interface DropdownOption {
   id: string;
   name: LocalizedTitle;
 }

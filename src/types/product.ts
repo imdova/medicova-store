@@ -402,3 +402,25 @@ export interface ReviewType {
     created_at: string;
   }[];
 }
+
+export interface ProductCollection {
+  id: string;
+  image: string;
+  name: {
+    en: string;
+    ar: string;
+  };
+  slug: string;
+  createdAt: string;
+  status: "published" | "draft";
+  description: {
+    en: string;
+    ar: string;
+  };
+  short_description: {
+    en: string;
+    ar: string;
+  };
+  is_featured: boolean;
+  products: Product[];
+}
