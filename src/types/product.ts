@@ -424,3 +424,30 @@ export interface ProductCollection {
   is_featured: boolean;
   products: Product[];
 }
+
+export type DiscountType = "fixed" | "percentage" | "shipping";
+export type DiscountStatus = "active" | "expired" | "scheduled";
+
+export interface Discount {
+  id: string;
+  couponCode: string;
+  type: "coupon" | "promotion";
+  value: number;
+  description?: string;
+  startDate: string;
+  endDate: string;
+  status: DiscountStatus;
+  store: string;
+  canUseWithPromotion: boolean;
+  isPromotion?: boolean;
+  usageLimit?: number;
+  usedCount?: number;
+  // merged extras
+  discountType: "fixed" | "percentage" | "shipping";
+  applyFor: "all_orders" | "specific_products" | "minimum_amount";
+  canUseWithFlashSale: boolean;
+  isUnlimited: boolean;
+  applyViaUrl: boolean;
+  displayAtCheckout: boolean;
+  neverExpired: boolean;
+}

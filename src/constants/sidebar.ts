@@ -1,6 +1,7 @@
 import { SidebarGroup } from "@/types";
 import {
   Album,
+  BadgePercent,
   Bell,
   Box,
   Building2,
@@ -293,6 +294,14 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
           },
           href: "/admin/vendors",
           icon: Users2,
+        },
+        {
+          title: {
+            en: "Discounts",
+            ar: "خصومات",
+          },
+          href: "/admin/discounts",
+          icon: BadgePercent,
         },
         {
           title: {
