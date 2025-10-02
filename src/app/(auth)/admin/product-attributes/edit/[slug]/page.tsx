@@ -372,14 +372,15 @@ export default function EditAttributePage() {
                             <FormLabel className="mb-2 block text-sm font-medium">
                               {t.color}
                             </FormLabel>
-                            <ColorPicker
-                              value={field.color || ""}
-                              onChange={(color) =>
-                                form.setValue(
-                                  `attributes.${index}.color`,
-                                  color,
-                                )
-                              }
+                            <FormField
+                              control={form.control}
+                              name={`attributes.${index}.color`}
+                              render={({ field }) => (
+                                <ColorPicker
+                                  value={field.value || ""}
+                                  onChange={(color) => field.onChange(color)}
+                                />
+                              )}
                             />
                           </div>
                           <div>

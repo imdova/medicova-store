@@ -264,7 +264,7 @@ export type ProductVariant = {
   image: string;
   name: string;
   sku: string;
-  storefrontManagement: string;
+  storefrontManagement: "out_stock" | "in_stock";
   quantity: number;
   hasVariants: false;
   isVariant: true;
@@ -276,7 +276,7 @@ export type ProductInventory = {
   image: string;
   name: string;
   sku: string;
-  storefrontManagement: string;
+  storefrontManagement: "out_stock" | "in_stock";
   quantity: number;
   hasVariants: boolean;
   isVariant: boolean;

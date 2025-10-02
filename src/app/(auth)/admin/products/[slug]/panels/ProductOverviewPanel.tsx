@@ -273,7 +273,7 @@ export default function ProductOverviewPanel({
             <div className="flex flex-col">
               <span className="text-sm text-secondary">{t.brand}</span>
               <span className="text-sm font-semibold">
-                {foundProduct?.brand?.title?.[locale] ?? t.noBrand}
+                {foundProduct?.brand?.name?.[locale] ?? t.noBrand}
               </span>
             </div>
             <div className="flex flex-col">

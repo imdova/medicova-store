@@ -229,7 +229,7 @@ export default function CheckoutPage() {
 
                           <div className="space-y-1 text-xs font-semibold md:text-sm">
                             <p className="text-gray-500">
-                              {item.brand?.title[language] ||
+                              {item.brand?.name[language] ||
                                 (language === "ar"
                                   ? "ماركة عامة"
                                   : "Generic Brand")}

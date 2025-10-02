@@ -19,6 +19,7 @@ interface DynamicButtonProps {
   disabled?: boolean;
   fullWidth?: boolean;
   onClick?: () => void;
+  type?: string;
 }
 
 const DynamicButton: React.FC<DynamicButtonProps> = ({

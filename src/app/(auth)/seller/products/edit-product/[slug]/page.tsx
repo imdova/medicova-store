@@ -571,7 +571,7 @@ const ProductEditPage = ({ params }: { params: Promise<{ slug: string }> }) => {
           </div>
           <div>
             <h2 className="font-semibold">
-              {product.brand?.title[language] || t.product}
+              {product.brand?.name[language] || t.product}
             </h2>
             <span className="text-sm">
               {product.category?.title[language] || t.category}

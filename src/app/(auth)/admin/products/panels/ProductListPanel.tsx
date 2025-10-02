@@ -296,7 +296,7 @@ export default function ProductListPanel({
           </button>
           <SearchInput locale={locale} />
           <Link
-            href={"#"}
+            href={"/admin/create-product"}
             className="flex items-center justify-center gap-1 rounded-md border border-gray-200 bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-auto"
           >
             <Plus size={15} /> {t.create}
@@ -338,6 +338,7 @@ export default function ProductListPanel({
             },
           ]}
           locale={locale}
+          minWidth={1300}
         />
       </div>
     </div>

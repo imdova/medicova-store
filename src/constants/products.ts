@@ -7,7 +7,7 @@ export const products: Product[] = [
     sku: "PSKU_165988_1749660138380",
     brand: {
       id: "1",
-      title: { en: "MediPro", ar: "ميديبرو" },
+      name: { en: "MediPro", ar: "ميديبرو" },
       url: "/MediPro",
       image: "/images/MediPro.jpg",
     },
@@ -168,7 +168,7 @@ export const products: Product[] = [
     id: "2",
     brand: {
       id: "2",
-      title: { en: "WhiteCoat", ar: "وايت كوت" },
+      name: { en: "WhiteCoat", ar: "وايت كوت" },
       url: "/WhiteCoat",
       image: "/images/WhiteCoat.jpg",
     },
@@ -326,7 +326,7 @@ export const products: Product[] = [
     id: "3",
     brand: {
       id: "3",
-      title: { en: "NurseMates", ar: "نيرس ميتس" },
+      name: { en: "NurseMates", ar: "نيرس ميتس" },
       url: "/NurseMates",
       image: "/images/NurseMates.jpg",
     },
@@ -486,7 +486,7 @@ export const products: Product[] = [
     id: "4",
     brand: {
       id: "4",
-      title: { en: "SurgiCap", ar: "سورجيكاب" },
+      name: { en: "SurgiCap", ar: "سورجيكاب" },
       url: "/SurgiCap",
       image: "/images/SurgiCap.jpg",
     },
@@ -652,7 +652,7 @@ export const products: Product[] = [
     id: "5",
     brand: {
       id: "5",
-      title: { en: "HealingHands", ar: "هيلينج هاندز" },
+      name: { en: "HealingHands", ar: "هيلينج هاندز" },
       url: "/HealingHands",
       image: "/images/HealingHands.jpg",
     },
@@ -812,7 +812,7 @@ export const products: Product[] = [
     id: "6",
     brand: {
       id: "6",
-      title: { en: "ScrubLife", ar: "سكراب لايف" },
+      name: { en: "ScrubLife", ar: "سكراب لايف" },
       url: "/ScrubLife",
       image: "/images/ScrubLife.jpg",
     },
@@ -981,7 +981,7 @@ export const products: Product[] = [
     id: "7",
     brand: {
       id: "7",
-      title: { en: "ORReady", ar: "أو آر ريدي" },
+      name: { en: "ORReady", ar: "أو آر ريدي" },
       url: "/ORReady",
       image: "/images/ORReady.jpg",
     },
@@ -1143,7 +1143,7 @@ export const products: Product[] = [
     id: "8",
     brand: {
       id: "8",
-      title: { en: "StethoStyle", ar: "ستيثو ستايل" },
+      name: { en: "StethoStyle", ar: "ستيثو ستايل" },
       url: "/StethoStyle",
       image: "/images/StethoStyle.jpg",
     },
@@ -1300,7 +1300,7 @@ export const products: Product[] = [
     id: "9",
     brand: {
       id: "9",
-      title: { en: "MediTech", ar: "ميديتك" },
+      name: { en: "MediTech", ar: "ميديتك" },
       url: "/MediTech",
       image: "/images/MediTech.jpg",
     },
@@ -1455,7 +1455,7 @@ export const products: Product[] = [
     id: "10",
     brand: {
       id: "10",
-      title: { en: "Clinique", ar: "كلينيك" },
+      name: { en: "Clinique", ar: "كلينيك" },
       url: "/Clinique",
       image: "/images/Clinique.jpg",
     },
@@ -1611,7 +1611,7 @@ export const products: Product[] = [
     id: "11",
     brand: {
       id: "11",
-      title: { en: "DermaSeal", ar: "ديرما سيل" },
+      name: { en: "DermaSeal", ar: "ديرما سيل" },
       url: "/DermaSeal",
       image: "/images/DermaSeal.jpg",
     },

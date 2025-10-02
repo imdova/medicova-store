@@ -147,9 +147,10 @@ export interface CategoryType {
 // Brand type
 export interface Brand {
   id: string;
-  title: LocalizedTitle;
-  url: string;
+  name: LocalizedTitle;
+  url?: string;
   image: string;
+  hasStore?: boolean;
 }
 
 export interface MultiCategory extends CategoryType {

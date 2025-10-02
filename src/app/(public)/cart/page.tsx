@@ -285,7 +285,7 @@ export default function CartPage() {
                       <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-center">
                         <div>
                           <span className="text-xs text-secondary">
-                            {item.brand?.title[language]}
+                            {item.brand?.name[language]}
                           </span>
                           <h2 className="text-sm font-semibold text-gray-700">
                             {item.title[language]}
@@ -325,7 +325,7 @@ export default function CartPage() {
                         )}
                         {item.shippingMethod?.[language] && (
                           <div className="flex items-center text-xs font-semibold">
-                            <span className="rounded bg-light-primary px-2 py-1 text-white">
+                            <span className="bg-light-primary rounded px-2 py-1 text-white">
                               {item.shippingMethod?.[language]}
                             </span>
                           </div>

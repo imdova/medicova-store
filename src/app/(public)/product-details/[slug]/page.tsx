@@ -403,7 +403,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
                 href={product.brand?.url ?? "#"}
                 className="mb-3 text-xl font-semibold text-secondary"
               >
-                {product.brand?.title[language]}
+                {product.brand?.name[language]}
               </Link>
               <h1 className="text-2xl font-bold text-gray-800">
                 {product.title[language]}
@@ -467,7 +467,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
                     href={product.brand?.url ?? "#"}
                     className="mb-3 text-xl font-semibold text-secondary"
                   >
-                    {product.brand?.title[language]}
+                    {product.brand?.name[language]}
                   </Link>
                   <h1 className="text-2xl font-bold text-gray-800">
                     {product.title[language]}
@@ -518,7 +518,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
                   {product.del_price && (
                     <p className="flex items-center gap-2 text-xs">
                       {language === "ar" ? "خصم:" : "Saving:"}{" "}
-                      <span className="flex items-center gap-1 text-xs font-semibold text-light-primary">
+                      <span className="text-light-primary flex items-center gap-1 text-xs font-semibold">
                         <span className="text-sm">
                           {product.del_price - product.price}
                         </span>
@@ -561,7 +561,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
                   <div className="flex items-center gap-2">
                     {product.shippingMethod && (
                       <div className="flex items-center text-xs font-semibold">
-                        <span className="rounded bg-light-primary px-2 py-1 text-white">
+                        <span className="bg-light-primary rounded px-2 py-1 text-white">
                           {product.shippingMethod[language]}
                         </span>
                       </div>
@@ -857,7 +857,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
         <div className="mt-6 rounded-lg bg-white shadow-sm">
           <h2 className="mb-2 text-2xl font-bold text-gray-600">
             {language === "ar" ? "المزيد من" : "More from"}{" "}
-            {product.brand?.title[language]}
+            {product.brand?.name[language]}
           </h2>
           <ProductsSlider>
             {products.map((product) => (

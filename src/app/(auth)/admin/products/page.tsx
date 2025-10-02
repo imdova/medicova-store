@@ -1,10 +1,10 @@
 "use client";
-import { TabWithIcon } from "@/components/UI/TabWithIcon";
-import { Eye, List, Plus } from "lucide-react";
-import Link from "next/link";
+
+import { Eye, List } from "lucide-react";
 import OverviewPanel from "./panels/OverviewPanel";
 import ProductListPanel from "./panels/ProductListPanel";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/UI/Tabs";
 
 const t = {
   en: {
@@ -21,33 +21,30 @@ const t = {
 
 export default function ProductsPage() {
   const { language } = useLanguage();
-  const tabs = [
-    {
-      label: t[language].overview,
-      icon: Eye,
-      content: <OverviewPanel locale={language} />,
-    },
-    {
-      label: t[language].list,
-      icon: List,
-      content: <ProductListPanel locale={language} />,
-    },
-  ];
 
   return (
-    <main>
-      <TabWithIcon
-        leftbutton={
-          <Link
-            className="flex w-full items-center justify-center gap-1 rounded-md bg-green-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-green-700 lg:w-fit"
-            href="/create-product"
-          >
-            <Plus size={15} />
-            {t[language].add}
-          </Link>
-        }
-        tabs={tabs}
-      />
+    <main className="flex gap-4">
+      {/* Tabs */}
+      <Tabs defaultValue="overview" className="w-full flex-1">
+        <TabsList>
+          <TabsTrigger value="overview">
+            <Eye className="size-4" />
+            {t[language].overview}
+          </TabsTrigger>
+          <TabsTrigger value="list">
+            <List className="size-4" />
+            {t[language].list}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview">
+          <OverviewPanel locale={language} />
+        </TabsContent>
+
+        <TabsContent value="list">
+          <ProductListPanel locale={language} />
+        </TabsContent>
+      </Tabs>
     </main>
   );
 }

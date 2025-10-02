@@ -23,7 +23,7 @@ import {
 import { Button } from "@/components/UI/button";
 import { Input } from "@/components/UI/input";
 import { mockProductInventory } from "@/constants/inventory";
-import { ProductInventory } from "@/types/product";
+import { ProductInventory, ProductVariant } from "@/types/product";
 import Image from "next/image";
 
 type EditFormState = {
@@ -38,13 +38,13 @@ const flattenInventoryData = (
   data: ProductInventory[],
   expandedItems: Set<number>,
 ) => {
-  const flattened: ProductInventory[] = [];
+  const flattened: (ProductInventory | ProductVariant)[] = [];
 
   data.forEach((item) => {
     flattened.push(item);
 
     if (item.hasVariants && expandedItems.has(item.id)) {
-      item.variants?.forEach((variant: ProductInventory) => {
+      item.variants?.forEach((variant) => {
         flattened.push(variant);
       });
     }
@@ -79,8 +79,8 @@ const translations = {
     lowStock: "Low Stock",
     inStock: "In Stock",
     manageInventory: "Manage Inventory",
-    allow_index: "Yes",
-    no_index: "No",
+    in_stock: "In Stock",
+    out_stock: "Out of Stock",
     noindex: "Select storefront management",
     name: "Enter quantity",
     save: "Save",
@@ -112,8 +112,8 @@ const translations = {
     lowStock: "منخفض المخزون",
     inStock: "متوفر",
     manageInventory: "إدارة المخزون",
-    allow_index: "نعم",
-    no_index: "لا",
+    in_stock: "متوفر",
+    out_stock: "غير متوفر",
     noindex: "اختر إدارة المتجر",
     name: "أدخل الكمية",
     save: "حفظ",
@@ -147,8 +147,8 @@ export default function ProductInventoryListPanel() {
 
   const getColumns = (locale: LanguageType) => [
     {
-      key: "image",
-      header: translations[locale].image,
+      key: "Products",
+      header: translations[locale].products,
       sortable: false,
       render: (item: ProductInventory) => (
         <div className="flex items-center gap-2">
@@ -184,23 +184,16 @@ export default function ProductInventoryListPanel() {
               <span className="text-xs text-gray-400">IMG</span>
             )}
           </div>
-        </div>
-      ),
-    },
-    {
-      key: "products",
-      header: translations[locale].products,
-      sortable: true,
-      render: (item: ProductInventory) => (
-        <div className="min-w-0 flex-1">
-          <Link
-            className="block font-medium text-primary hover:underline"
-            href={`/admin/products/edit/${item.id}`}
-          >
-            {item.name}
-          </Link>
-          <div className="mt-1 text-xs text-gray-500">
-            {translations[locale].sku}: {item.sku}
+          <div className="min-w-0 flex-1">
+            <Link
+              className="block font-medium text-primary hover:underline"
+              href={`/admin/products/edit/${item.id}`}
+            >
+              {item.name}
+            </Link>
+            <div className="mt-1 text-xs text-gray-500">
+              {translations[locale].sku}: {item.sku}
+            </div>
           </div>
         </div>
       ),
@@ -228,8 +221,8 @@ export default function ProductInventoryListPanel() {
             <SelectValue placeholder={t.noindex} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="false">{t.allow_index}</SelectItem>
-            <SelectItem value="true">{t.no_index}</SelectItem>
+            <SelectItem value="out_stock">{t.out_stock}</SelectItem>
+            <SelectItem value="in_stock">{t.inStock}</SelectItem>
           </SelectContent>
         </Select>
       ),
@@ -296,6 +289,7 @@ export default function ProductInventoryListPanel() {
   // Count inventory by stock status
   const stockCounts = mockProductInventory.reduce(
     (acc: { inStock: number; lowStock: number; outOfStock: number }, item) => {
+      // Count main item
       if (item.quantity === 0) {
         acc.outOfStock += 1;
       } else if (item.quantity < 10) {
@@ -304,8 +298,8 @@ export default function ProductInventoryListPanel() {
         acc.inStock += 1;
       }
 
-      // Count variants too
-      item.variants?.forEach((variant: ProductInventory) => {
+      // Count variants too (variants are ProductVariant, not ProductInventory)
+      item.variants?.forEach((variant) => {
         if (variant.quantity === 0) {
           acc.outOfStock += 1;
         } else if (variant.quantity < 10) {
