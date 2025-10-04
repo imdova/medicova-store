@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { X, Upload, Calendar } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { Button } from "@/components/UI/button";
 import { Input } from "@/components/UI/input";
 import {
@@ -29,6 +29,7 @@ import { Textarea } from "@/components/UI/textarea";
 import { products } from "@/constants/products";
 import { dummyCustomers } from "@/constants/customers";
 import { formatFullName } from "@/util";
+import { ImageUploader, UploadedImage } from "@/components/UI/ImageUploader";
 
 // ---------------- Schema & Types ----------------
 const messages = {
@@ -109,15 +110,15 @@ const ratingOptions = [
   { value: 5, label: { en: "5 Stars", ar: "5 نجمات" }, stars: "⭐⭐⭐⭐⭐" },
 ];
 
-// ---------------- Component ----------------
+// ---------------- Main Component ----------------
 export default function CreateReviewPage() {
   const { language } = useLanguage();
   const params = useParams();
   const productSlug = params.slug as string;
 
   const [selectedCustomer, setSelectedCustomer] = useState<string>("");
-  const [images, setImages] = useState<string[]>([]);
-  const [isDragging, setIsDragging] = useState(false);
+  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+  const [customerImages, setCustomerImages] = useState<UploadedImage[]>([]);
 
   const form = useForm<ReviewFormData>({
     resolver: zodResolver(reviewSchema),
@@ -129,7 +130,7 @@ export default function CreateReviewPage() {
       rating: 5,
       comment: "",
       status: "published",
-      created_at: new Date().toISOString().split("T")[0], // Set today's date as default
+      created_at: new Date().toISOString().split("T")[0],
     },
   });
 
@@ -146,6 +147,7 @@ export default function CreateReviewPage() {
   // Handle customer selection
   const handleCustomerSelect = (customerId: string) => {
     setSelectedCustomer(customerId);
+
     const customer = dummyCustomers.find((c) => c.id === customerId);
     if (customer) {
       form.setValue("customer_id", customer.id);
@@ -154,6 +156,9 @@ export default function CreateReviewPage() {
         formatFullName(customer.firstName, customer.lastName, language),
       );
       form.setValue("customer_email", customer.email);
+
+      // clear manual image if any
+      setCustomerImages([]);
     } else {
       form.setValue("customer_id", "");
       form.setValue("customer_name", "");
@@ -161,49 +166,31 @@ export default function CreateReviewPage() {
     }
   };
 
-  const handleImageUpload = (files: FileList) => {
-    const newImages = Array.from(files).map((file) =>
-      URL.createObjectURL(file),
-    );
-    setImages((prev) => [...prev, ...newImages]);
-  };
-
-  const handleFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      handleImageUpload(files);
-    }
-  };
-
-  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setIsDragging(false);
-    const files = event.dataTransfer.files;
-    if (files) {
-      handleImageUpload(files);
-    }
-  };
-
-  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setIsDragging(false);
-  };
-
-  const removeImage = (index: number) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
-  };
-
   const onSubmit = async (data: ReviewFormData) => {
     try {
       console.log("Review Data:", data);
-      console.log("Images:", images);
+      console.log("Uploaded Images:", uploadedImages);
+      console.log("Customer Image:", customerImages);
+
+      // Create FormData for file upload
+      const formData = new FormData();
+      formData.append("reviewData", JSON.stringify(data));
+
+      // Attach review images
+      uploadedImages.forEach((image) => {
+        formData.append("review_images", image.file);
+      });
+
+      // Attach manual customer image (if provided)
+      if (customerImages.length > 0) {
+        formData.append("customer_image", customerImages[0].file);
+      }
+
+      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // Handle successful submission
+      console.log("Review submitted successfully!");
     } catch (error) {
       console.error("Submission failed", error);
     }
@@ -236,11 +223,9 @@ export default function CreateReviewPage() {
       saveExit: "Save & Exit",
       created_at: "Created At",
       images: "Images",
-      add_images: "Click here to add more images",
-      drag_drop: "Drag & drop images here or click to browse",
-      remove: "Remove",
       rating: "Rating",
       select_rating: "Select rating",
+      customer_image: "Customer Image",
     },
     ar: {
       title: "إنشاء تقييم",
@@ -268,11 +253,9 @@ export default function CreateReviewPage() {
       saveExit: "حفظ وخروج",
       created_at: "تاريخ الإنشاء",
       images: "الصور",
-      add_images: "انقر هنا لإضافة المزيد من الصور",
-      drag_drop: "اسحب وأفلت الصور هنا أو انقر للتصفح",
-      remove: "إزالة",
       rating: "التقييم",
       select_rating: "اختر التقييم",
+      customer_image: "صورة العميل",
     },
   }[language];
 
@@ -357,6 +340,23 @@ export default function CreateReviewPage() {
                   <h4 className="mb-4 text-lg font-semibold">
                     {t.or_enter_manually}
                   </h4>
+                  <FormLabel className="text-base">
+                    {t.customer_image} *
+                  </FormLabel>
+                  <ImageUploader
+                    images={customerImages}
+                    onImagesChange={setCustomerImages}
+                    maxFiles={1}
+                    maxSize={10}
+                    language={language}
+                  />
+                  {selectedCustomer && (
+                    <p className="mt-2 text-xs text-gray-500">
+                      {language === "ar"
+                        ? "تم اختيار عميل من القائمة — لا يمكن تحميل صورة يدوياً."
+                        : "Existing customer selected — manual upload is disabled."}
+                    </p>
+                  )}
 
                   <div className="grid grid-cols-1 gap-4">
                     <FormField
@@ -375,7 +375,6 @@ export default function CreateReviewPage() {
                       )}
                     />
 
-                    {/* Email Field - English Only */}
                     <FormField
                       control={form.control}
                       name="customer_email"
@@ -445,7 +444,7 @@ export default function CreateReviewPage() {
                     </div>
                   </div>
 
-                  {/* Comment - Bilingual */}
+                  {/* Comment */}
                   <div className="space-y-4">
                     <FormField
                       control={form.control}
@@ -470,70 +469,19 @@ export default function CreateReviewPage() {
                 </div>
               </Card>
 
-              {/* Images Section */}
+              {/* Enhanced Images Section */}
               <Card className="p-6">
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold">{t.images}</h3>
                 </div>
 
-                {/* Drag & Drop Area */}
-                <div
-                  className={`cursor-pointer rounded-lg border-2 border-dashed p-8 text-center transition-colors ${
-                    isDragging
-                      ? "border-blue-400 bg-blue-50"
-                      : "border-gray-300 hover:border-gray-400"
-                  }`}
-                  onDrop={handleDrop}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onClick={() => document.getElementById("file-input")?.click()}
-                >
-                  <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                  <p className="mt-2 text-sm font-medium text-gray-900">
-                    {t.drag_drop}
-                  </p>
-                  <p className="mt-1 text-xs text-gray-500">
-                    PNG, JPG, GIF up to 10MB
-                  </p>
-                  <input
-                    id="file-input"
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={handleFileInput}
-                    className="hidden"
-                  />
-                </div>
-
-                {/* Image Preview Grid */}
-                {images.length > 0 && (
-                  <div className="mt-6">
-                    <h4 className="mb-3 text-sm font-medium">
-                      Uploaded Images ({images.length})
-                    </h4>
-                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                      {images.map((image, index) => (
-                        <div key={index} className="group relative">
-                          <img
-                            src={image}
-                            alt={`Review image ${index + 1}`}
-                            className="h-24 w-full rounded-lg object-cover"
-                          />
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeImage(index);
-                            }}
-                            className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white opacity-0 transition-opacity group-hover:opacity-100"
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <ImageUploader
+                  images={uploadedImages}
+                  onImagesChange={setUploadedImages}
+                  maxFiles={10}
+                  maxSize={10}
+                  language={language}
+                />
               </Card>
             </div>
 
@@ -581,7 +529,7 @@ export default function CreateReviewPage() {
                 />
               </Card>
 
-              {/* Created At - Date Input */}
+              {/* Created At */}
               <Card className="p-4">
                 <FormField
                   control={form.control}

@@ -231,28 +231,35 @@ export default function ProductInventoryListPanel() {
       key: "quantity",
       header: translations[locale].quantity,
       sortable: true,
-      render: (item: ProductInventory) => (
-        <div className="flex items-center gap-2">
-          <Input
-            placeholder={t.name}
-            value={editForm[item.id]?.quantity ?? item.quantity}
-            onChange={(e) =>
-              setEditForm((prev) => ({
-                ...prev,
-                [item.id]: {
-                  ...(prev[item.id] || {
-                    storefrontManagement: item.storefrontManagement,
-                    quantity: item.quantity,
-                  }),
-                  quantity: parseInt(e.target.value) || 0,
-                },
-              }))
-            }
-            type="number"
-            className="w-20"
-          />
-        </div>
-      ),
+      render: (item: ProductInventory) => {
+        const isOutStock =
+          (editForm[item.id]?.storefrontManagement ??
+            item.storefrontManagement) === "out_stock";
+
+        return (
+          <div className="flex items-center gap-2">
+            <Input
+              placeholder={t.name}
+              value={editForm[item.id]?.quantity ?? item.quantity}
+              onChange={(e) =>
+                setEditForm((prev) => ({
+                  ...prev,
+                  [item.id]: {
+                    ...(prev[item.id] || {
+                      storefrontManagement: item.storefrontManagement,
+                      quantity: item.quantity,
+                    }),
+                    quantity: parseInt(e.target.value) || 0,
+                  },
+                }))
+              }
+              type="number"
+              className="w-20"
+              disabled={isOutStock} // 🔒 disable if out of stock
+            />
+          </div>
+        );
+      },
     },
   ];
 

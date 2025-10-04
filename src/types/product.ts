@@ -444,10 +444,18 @@ export interface Discount {
   usedCount?: number;
   // merged extras
   discountType: "fixed" | "percentage" | "shipping";
-  applyFor: "all_orders" | "specific_products" | "minimum_amount";
+  applyFor:
+    | "all_orders"
+    | "specific_products"
+    | "specific_categories"
+    | "minimum_amount";
   canUseWithFlashSale: boolean;
   isUnlimited: boolean;
   applyViaUrl: boolean;
   displayAtCheckout: boolean;
   neverExpired: boolean;
+  // New fields for conditional apply_for
+  minimumAmount?: number;
+  selectedProducts?: string[];
+  selectedCategories?: string[];
 }

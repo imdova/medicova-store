@@ -27,25 +27,96 @@ import { Card, CardContent } from "@/components/UI/card";
 import { Switch } from "@/components/UI/switch";
 import { dummyDiscounts } from "@/constants/discounts";
 import { Discount } from "@/types/product";
+import { Checkbox } from "@/components/UI/Check-Box";
 
 // ---------------- Schema & Types ----------------
-const discountSchema = z.object({
-  type: z.enum(["coupon", "promotion"]),
-  coupon_code: z.string().min(1, "Coupon code is required"),
-  discount_type: z.enum(["fixed", "percentage", "shipping"]),
-  value: z.number().min(0.01, "Discount value is required"),
-  apply_for: z.enum(["all_orders", "specific_products", "minimum_amount"]),
-  start_date: z.string().min(1, "Start date is required"),
-  end_date: z.string().min(1, "End date is required"),
-  can_use_with_promotion: z.boolean(),
-  can_use_with_flash_sale: z.boolean(),
-  is_unlimited: z.boolean(),
-  apply_via_url: z.boolean(),
-  display_at_checkout: z.boolean(),
-  never_expired: z.boolean(),
-});
+const discountSchema = z
+  .object({
+    type: z.enum(["coupon", "promotion"]),
+    coupon_code: z.string().min(1, "Coupon code is required"),
+    discount_type: z.enum(["fixed", "percentage", "shipping"]),
+    value: z.number().min(0.01, "Discount value is required"),
+    apply_for: z.enum([
+      "all_orders",
+      "specific_products",
+      "specific_categories",
+      "minimum_amount",
+    ]),
+    start_date: z.string().min(1, "Start date is required"),
+    end_date: z.string().min(1, "End date is required"),
+    can_use_with_promotion: z.boolean(),
+    can_use_with_flash_sale: z.boolean(),
+    is_unlimited: z.boolean(),
+    apply_via_url: z.boolean(),
+    display_at_checkout: z.boolean(),
+    never_expired: z.boolean(),
+    minimum_amount: z.number().min(0).optional(),
+    selected_products: z.array(z.string()).optional(),
+    selected_categories: z.array(z.string()).optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.apply_for === "minimum_amount") {
+        return data.minimum_amount !== undefined && data.minimum_amount > 0;
+      }
+      return true;
+    },
+    {
+      message: "Minimum amount is required",
+      path: ["minimum_amount"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.apply_for === "specific_products") {
+        return data.selected_products && data.selected_products.length > 0;
+      }
+      return true;
+    },
+    {
+      message: "At least one product must be selected",
+      path: ["selected_products"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.apply_for === "specific_categories") {
+        return data.selected_categories && data.selected_categories.length > 0;
+      }
+      return true;
+    },
+    {
+      message: "At least one category must be selected",
+      path: ["selected_categories"],
+    },
+  );
 
 type DiscountFormData = z.infer<typeof discountSchema>;
+
+// Mock data for products and categories
+const mockProducts = [
+  {
+    id: "1",
+    title: { en: "Wireless Bluetooth Headphones", ar: "سماعات بلوتوث لاسلكية" },
+  },
+  { id: "2", title: { en: "Smart Watch Series 5", ar: "ساعة ذكية السلسلة 5" } },
+  { id: "3", title: { en: "Laptop Backpack", ar: "حقيبة كمبيوتر محمول" } },
+  { id: "4", title: { en: "USB-C Charging Cable", ar: "كابل شحن USB-C" } },
+  { id: "5", title: { en: "Wireless Mouse", ar: "ماوس لاسلكي" } },
+  {
+    id: "6",
+    title: { en: "Mechanical Keyboard", ar: "لوحة مفاتيح ميكانيكية" },
+  },
+];
+
+const medicalCategories = [
+  { id: "1", title: { en: "Electronics", ar: "إلكترونيات" } },
+  { id: "2", title: { en: "Fashion", ar: "موضة" } },
+  { id: "3", title: { en: "Home & Kitchen", ar: "المنزل والمطبخ" } },
+  { id: "4", title: { en: "Sports", ar: "رياضة" } },
+  { id: "5", title: { en: "Beauty", ar: "جمال" } },
+  { id: "6", title: { en: "Toys", ar: "ألعاب" } },
+];
 
 // ---------------- Component ----------------
 export default function EditDiscountPage() {
@@ -55,6 +126,8 @@ export default function EditDiscountPage() {
 
   const [discount, setDiscount] = useState<Discount | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const form = useForm<DiscountFormData>({
     resolver: zodResolver(discountSchema),
@@ -72,8 +145,14 @@ export default function EditDiscountPage() {
       apply_via_url: false,
       display_at_checkout: false,
       never_expired: false,
+      minimum_amount: 0,
+      selected_products: [],
+      selected_categories: [],
     },
   });
+
+  const applyFor = form.watch("apply_for");
+  const discountType = form.watch("discount_type");
 
   // Load existing discount and map -> form
   useEffect(() => {
@@ -81,7 +160,8 @@ export default function EditDiscountPage() {
     if (found) {
       setDiscount(found);
 
-      form.reset({
+      // Map the discount data to form values
+      const formData = {
         type: found.type,
         coupon_code: found.couponCode,
         discount_type: found.discountType,
@@ -95,10 +175,29 @@ export default function EditDiscountPage() {
         apply_via_url: found.applyViaUrl,
         display_at_checkout: found.displayAtCheckout,
         never_expired: found.neverExpired,
-      });
+        minimum_amount: found.minimumAmount || 0,
+        selected_products: found.selectedProducts || [],
+        selected_categories: found.selectedCategories || [],
+      };
+
+      form.reset(formData);
+
+      // Set selected products and categories for UI
+      if (found.selectedProducts) {
+        setSelectedProducts(found.selectedProducts);
+      }
+      if (found.selectedCategories) {
+        setSelectedCategories(found.selectedCategories);
+      }
     }
     setIsLoading(false);
   }, [slug, form]);
+
+  useEffect(() => {
+    // Update form values when selections change
+    form.setValue("selected_products", selectedProducts);
+    form.setValue("selected_categories", selectedCategories);
+  }, [selectedProducts, selectedCategories, form]);
 
   const onSubmit = async (data: DiscountFormData) => {
     // map back to Discount type
@@ -117,10 +216,30 @@ export default function EditDiscountPage() {
       applyViaUrl: data.apply_via_url,
       displayAtCheckout: data.display_at_checkout,
       neverExpired: data.never_expired,
+      minimumAmount: data.minimum_amount,
+      selectedProducts: data.selected_products,
+      selectedCategories: data.selected_categories,
     };
 
-    console.log("Mapped Discount:", updated);
+    console.log("Updated Discount:", updated);
     await new Promise((res) => setTimeout(res, 1000));
+    // Handle successful update
+  };
+
+  const handleProductSelect = (productId: string) => {
+    setSelectedProducts((prev) =>
+      prev.includes(productId)
+        ? prev.filter((id) => id !== productId)
+        : [...prev, productId],
+    );
+  };
+
+  const handleCategorySelect = (categoryId: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(categoryId)
+        ? prev.filter((id) => id !== categoryId)
+        : [...prev, categoryId],
+    );
   };
 
   const t = {
@@ -154,6 +273,7 @@ export default function EditDiscountPage() {
       apply_for: "apply for",
       all_orders: "All orders",
       specific_products: "Specific products",
+      specific_categories: "Specific categories",
       minimum_amount: "Minimum amount",
       fixed_amount: "Fixed amount",
       percentage: "Percentage",
@@ -163,6 +283,14 @@ export default function EditDiscountPage() {
       no: "No",
       loading: "Loading discount...",
       not_found: "Discount not found",
+      select_products: "Select Products",
+      select_categories: "Select Categories",
+      selected_items: "Selected items",
+      search_placeholder: "Search...",
+      minimum_amount_label: "Minimum Order Amount",
+      minimum_amount_description:
+        "Set the minimum order amount required to apply this discount",
+      enter_minimum_amount: "Enter minimum amount",
     },
     ar: {
       title: "تعديل الخصم",
@@ -194,6 +322,7 @@ export default function EditDiscountPage() {
       apply_for: "يطبق على",
       all_orders: "جميع الطلبات",
       specific_products: "منتجات محددة",
+      specific_categories: "فئات محددة",
       minimum_amount: "حد أدنى للمبلغ",
       fixed_amount: "مبلغ ثابت",
       percentage: "نسبة مئوية",
@@ -203,11 +332,19 @@ export default function EditDiscountPage() {
       no: "لا",
       loading: "جاري تحميل الخصم...",
       not_found: "الخصم غير موجود",
+      select_products: "اختر المنتجات",
+      select_categories: "اختر الفئات",
+      selected_items: "العناصر المختارة",
+      search_placeholder: "بحث...",
+      minimum_amount_label: "الحد الأدنى لمبلغ الطلب",
+      minimum_amount_description:
+        "حدد الحد الأدنى لمبلغ الطلب المطلوب لتطبيق هذا الخصم",
+      enter_minimum_amount: "أدخل الحد الأدنى للمبلغ",
     },
   }[language];
 
-  if (isLoading) return <div>Loading…</div>;
-  if (!discount) return <div>Not found</div>;
+  if (isLoading) return <div>{t.loading}</div>;
+  if (!discount) return <div>{t.not_found}</div>;
 
   return (
     <div>
@@ -387,15 +524,8 @@ export default function EditDiscountPage() {
                           {t.discount}
                         </FormLabel>
                         <Select
-                          onValueChange={(
-                            value: "fixed" | "percentage" | "shipping",
-                          ) => {
-                            field.onChange(value);
-                            setDiscount((prev) =>
-                              prev ? { ...prev, discountType: value } : null,
-                            );
-                          }}
-                          defaultValue={field.value}
+                          onValueChange={field.onChange}
+                          value={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
@@ -435,9 +565,9 @@ export default function EditDiscountPage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-base">
-                          {discount.discountType === "fixed" && "$"}
-                          {discount.discountType === "percentage" && "%"}
-                          {discount.discountType === "shipping" && "$"}
+                          {discountType === "fixed" && "$"}
+                          {discountType === "percentage" && "%"}
+                          {discountType === "shipping" && "$"}
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -448,11 +578,7 @@ export default function EditDiscountPage() {
                               field.onChange(parseFloat(e.target.value))
                             }
                             min="0"
-                            step={
-                              discount.discountType === "percentage"
-                                ? "1"
-                                : "0.01"
-                            }
+                            step={discountType === "percentage" ? "1" : "0.01"}
                           />
                         </FormControl>
                         <FormMessage />
@@ -471,7 +597,7 @@ export default function EditDiscountPage() {
                         </FormLabel>
                         <Select
                           onValueChange={field.onChange}
-                          defaultValue={field.value}
+                          value={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
@@ -485,6 +611,9 @@ export default function EditDiscountPage() {
                             <SelectItem value="specific_products">
                               {t.specific_products}
                             </SelectItem>
+                            <SelectItem value="specific_categories">
+                              {t.specific_categories}
+                            </SelectItem>
                             <SelectItem value="minimum_amount">
                               {t.minimum_amount}
                             </SelectItem>
@@ -494,6 +623,130 @@ export default function EditDiscountPage() {
                       </FormItem>
                     )}
                   />
+                </div>
+
+                {/* Conditional Fields Based on Apply For Selection */}
+                <div className="mt-4 space-y-4">
+                  {/* Specific Products Dropdown */}
+                  {applyFor === "specific_products" && (
+                    <div className="space-y-3">
+                      <FormLabel className="text-base font-medium">
+                        {t.select_products} *
+                      </FormLabel>
+                      <div className="space-y-2">
+                        <div className="max-h-40 overflow-y-auto rounded-md border border-gray-200 p-2">
+                          {mockProducts.map((product) => (
+                            <div
+                              key={product.id}
+                              className="flex items-center space-x-2 rounded p-2 hover:bg-gray-50"
+                            >
+                              <Checkbox
+                                id={`product-${product.id}`}
+                                checked={selectedProducts.includes(product.id)}
+                                onCheckedChange={() =>
+                                  handleProductSelect(product.id)
+                                }
+                              />
+                              <label
+                                htmlFor={`product-${product.id}`}
+                                className="flex-1 cursor-pointer text-sm font-medium text-gray-700"
+                              >
+                                {product.title[language]}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                        {selectedProducts.length > 0 && (
+                          <div className="text-sm text-gray-600">
+                            {t.selected_items}: {selectedProducts.length}
+                          </div>
+                        )}
+                        {form.formState.errors.selected_products && (
+                          <p className="text-sm text-red-600">
+                            {form.formState.errors.selected_products.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Specific Categories Dropdown */}
+                  {applyFor === "specific_categories" && (
+                    <div className="space-y-3">
+                      <FormLabel className="text-base font-medium">
+                        {t.select_categories} *
+                      </FormLabel>
+                      <div className="space-y-2">
+                        <div className="max-h-40 overflow-y-auto rounded-md border border-gray-200 p-2">
+                          {medicalCategories.map((category) => (
+                            <div
+                              key={category.id}
+                              className="flex items-center space-x-2 rounded p-2 hover:bg-gray-50"
+                            >
+                              <Checkbox
+                                id={`category-${category.id}`}
+                                checked={selectedCategories.includes(
+                                  category.id,
+                                )}
+                                onCheckedChange={() =>
+                                  handleCategorySelect(category.id)
+                                }
+                              />
+                              <label
+                                htmlFor={`category-${category.id}`}
+                                className="flex-1 cursor-pointer text-sm font-medium text-gray-700"
+                              >
+                                {category.title[language]}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                        {selectedCategories.length > 0 && (
+                          <div className="text-sm text-gray-600">
+                            {t.selected_items}: {selectedCategories.length}
+                          </div>
+                        )}
+                        {form.formState.errors.selected_categories && (
+                          <p className="text-sm text-red-600">
+                            {form.formState.errors.selected_categories.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Minimum Amount Input */}
+                  {applyFor === "minimum_amount" && (
+                    <div className="space-y-3">
+                      <FormLabel className="text-base font-medium">
+                        {t.minimum_amount_label} *
+                      </FormLabel>
+                      <p className="text-sm text-gray-600">
+                        {t.minimum_amount_description}
+                      </p>
+                      <FormField
+                        control={form.control}
+                        name="minimum_amount"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder={t.enter_minimum_amount}
+                                {...field}
+                                onChange={(e) =>
+                                  field.onChange(parseFloat(e.target.value))
+                                }
+                                min="0"
+                                step="0.01"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  )}
                 </div>
               </Card>
             </div>

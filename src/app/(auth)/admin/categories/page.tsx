@@ -12,16 +12,16 @@ import { useLanguage } from "@/contexts/LanguageContext";
 // --- Type Definitions ---
 
 type FormData = {
-  name: string;
+  name_en: string;
+  name_ar: string;
   parentCategory: string; // Used for sub-categories
   priority: number;
   logo: FileList | null;
 };
 
 type BrandFormData = {
-  name: string;
-  // The 'category' field was removed as it was not used in the form.
-  // If you intend to link brands to categories, you'll need to add a form field for it.
+  name_en: string;
+  name_ar: string;
   priority: number;
   logo: FileList | null;
 };
@@ -34,7 +34,7 @@ type Category = {
   products: number;
   orders: number;
   totalSales: LocalizedTitle;
-  status: "active" | "inactive"; // Redundant if isActive is used for toggle
+  status: "active" | "inactive";
   isActive: boolean;
 };
 
@@ -46,7 +46,7 @@ type SubCategory = {
   products: number;
   orders: number;
   totalSales: LocalizedTitle;
-  status: "active" | "inactive"; // Redundant if isActive is used for toggle
+  status: "active" | "inactive";
   isActive: boolean;
 };
 
@@ -58,9 +58,10 @@ type Brand = {
   products: number;
   orders: number;
   totalSales: LocalizedTitle;
-  status: "active" | "inactive"; // Redundant if isActive is used for toggle
+  status: "active" | "inactive";
   isActive: boolean;
 };
+
 type TranslationValue = string | { [key: string]: TranslationValue };
 
 // --- Translations ---
@@ -100,6 +101,10 @@ const translations: Record<"en" | "ar", TranslationValue> = {
     brandImage: "Brand Image",
     requiredField: "This field is required",
     chooseParent: "Choose Parent Category",
+    nameEn: "Name (English)",
+    nameAr: "Name (Arabic)",
+    nameEnPlaceholder: "Enter name in English",
+    nameArPlaceholder: "Enter name in Arabic",
   },
   ar: {
     categories: "الفئات",
@@ -136,6 +141,10 @@ const translations: Record<"en" | "ar", TranslationValue> = {
     brandImage: "صورة العلامة التجارية",
     requiredField: "هذا الحقل مطلوب",
     chooseParent: "اختر الفئة الرئيسية",
+    nameEn: "الاسم (الإنجليزية)",
+    nameAr: "الاسم (العربية)",
+    nameEnPlaceholder: "أدخل الاسم بالإنجليزية",
+    nameArPlaceholder: "أدخل الاسم بالعربية",
   },
 };
 
@@ -331,7 +340,6 @@ const CategoryBrandSetup = () => {
           console.log(
             `Category ID: ${item.id}, Status changed to: ${newStatus ? "Active" : "Inactive"}`,
           );
-          // Here you would typically update the status in your state or backend
           setCategories((prevCategories) =>
             prevCategories.map((cat) =>
               cat.id === item.id
@@ -392,7 +400,6 @@ const CategoryBrandSetup = () => {
           console.log(
             `SubCategory ID: ${item.id}, Status changed to: ${newStatus ? "Active" : "Inactive"}`,
           );
-          // Here you would typically update the status in your state or backend
           setSubCategories((prevSubCategories) =>
             prevSubCategories.map((subCat) =>
               subCat.id === item.id
@@ -461,7 +468,6 @@ const CategoryBrandSetup = () => {
           console.log(
             `Brand ID: ${item.id}, Status changed to: ${newStatus ? "Active" : "Inactive"}`,
           );
-          // Here you would typically update the status in your state or backend
           setBrands((prevBrands) =>
             prevBrands.map((brand) =>
               brand.id === item.id
@@ -504,20 +510,18 @@ const CategoryBrandSetup = () => {
     handleSubmit: handleBrandSubmit,
     reset: resetBrandForm,
     formState: { errors: brandErrors },
-  } = useForm<BrandFormData>(); // Correctly using BrandFormData
+  } = useForm<BrandFormData>();
 
   // --- Form Submission Handlers ---
   const onSubmitCategory = (data: FormData) => {
     console.log("Category submitted:", data);
-    // In a real application, you'd send this data to an API
-    // For now, let's simulate adding it to the list
     const newCategory: Category = {
-      id: String(categories.length + 1), // Simple ID generation
+      id: String(categories.length + 1),
       image:
         data.logo && data.logo.length > 0
           ? URL.createObjectURL(data.logo[0])
           : "/images/placeholder.jpg",
-      name: { en: data.name, ar: data.name }, // Assuming English name for Arabic for simplicity
+      name: { en: data.name_en, ar: data.name_ar },
       date: new Date().toLocaleDateString("en-GB"),
       products: 0,
       orders: 0,
@@ -531,12 +535,10 @@ const CategoryBrandSetup = () => {
 
   const onSubmitSubCategory = (data: FormData) => {
     console.log("Sub Category submitted:", data);
-    // In a real application, you'd send this data to an API
-    // For now, let's simulate adding it to the list
     const parentCat = categories.find((cat) => cat.id === data.parentCategory);
     const newSubCategory: SubCategory = {
-      id: String(subCategories.length + 1), // Simple ID generation
-      name: { en: data.name, ar: data.name },
+      id: String(subCategories.length + 1),
+      name: { en: data.name_en, ar: data.name_ar },
       parentCategory: parentCat
         ? parentCat.name
         : { en: "Unknown", ar: "غير معروف" },
@@ -553,15 +555,13 @@ const CategoryBrandSetup = () => {
 
   const onSubmitBrand = (data: BrandFormData) => {
     console.log("Brand submitted:", data);
-    // In a real application, you'd send this data to an API
-    // For now, let's simulate adding it to the list
     const newBrand: Brand = {
-      id: String(brands.length + 1), // Simple ID generation
+      id: String(brands.length + 1),
       logo:
         data.logo && data.logo.length > 0
           ? URL.createObjectURL(data.logo[0])
           : "/images/placeholder.jpg",
-      name: { en: data.name, ar: data.name },
+      name: { en: data.name_en, ar: data.name_ar },
       date: new Date().toLocaleDateString("en-GB"),
       products: 0,
       orders: 0,
@@ -636,24 +636,51 @@ const CategoryBrandSetup = () => {
                   <div className="md:col-span-3">
                     <div className="mb-4">
                       <label className="mb-1 block text-sm font-medium text-gray-700">
-                        {getTranslation("categoryName", locale)}* (
-                        {locale === "en" ? "EN" : "AR"})
+                        {getTranslation("nameEn", locale)}*
                       </label>
                       <input
                         type="text"
                         className={`w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none ${
-                          categoryErrors.name
+                          categoryErrors.name_en
                             ? "border-red-500"
                             : "border-gray-300"
                         }`}
-                        placeholder={getTranslation("categoryName", locale)}
-                        {...registerCategory("name", {
+                        placeholder={getTranslation(
+                          "nameEnPlaceholder",
+                          locale,
+                        )}
+                        {...registerCategory("name_en", {
                           required: getTranslation("requiredField", locale),
                         })}
                       />
-                      {categoryErrors.name && (
+                      {categoryErrors.name_en && (
                         <p className="mt-1 text-xs text-red-600">
-                          {categoryErrors.name.message}
+                          {categoryErrors.name_en.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="mb-4">
+                      <label className="mb-1 block text-sm font-medium text-gray-700">
+                        {getTranslation("nameAr", locale)}*
+                      </label>
+                      <input
+                        type="text"
+                        className={`w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none ${
+                          categoryErrors.name_ar
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        }`}
+                        placeholder={getTranslation(
+                          "nameArPlaceholder",
+                          locale,
+                        )}
+                        {...registerCategory("name_ar", {
+                          required: getTranslation("requiredField", locale),
+                        })}
+                      />
+                      {categoryErrors.name_ar && (
+                        <p className="mt-1 text-xs text-red-600">
+                          {categoryErrors.name_ar.message}
                         </p>
                       )}
                     </div>
@@ -669,7 +696,6 @@ const CategoryBrandSetup = () => {
                           valueAsNumber: true,
                         })}
                       />
-                      {/* You might want to add error handling for priority as well */}
                     </div>
                   </div>
 
@@ -679,7 +705,7 @@ const CategoryBrandSetup = () => {
                       register={registerCategory}
                       errors={categoryErrors}
                       label={getTranslation("categoryLogo", locale)}
-                      required={true} // Marked as true for required image
+                      required={true}
                       aspectRatio="1:1"
                       maxSizeMB={2}
                       locale={locale}
@@ -742,7 +768,7 @@ const CategoryBrandSetup = () => {
                     </div>
                     <button
                       onClick={handleSearch}
-                      className="rounded-e-md bg-light-primary px-3 py-1.5 text-sm text-white hover:brightness-90"
+                      className="rounded-e-md bg-primary px-3 py-1.5 text-sm text-white hover:brightness-90"
                     >
                       {getTranslation("search", locale)}
                     </button>
@@ -816,39 +842,65 @@ const CategoryBrandSetup = () => {
             </div>
             <div className="p-3">
               <form onSubmit={handleSubCategorySubmit(onSubmitSubCategory)}>
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   <div>
                     <label className="mb-1 block text-sm font-medium text-gray-700">
-                      {getTranslation("subCategoryName", locale)}* (
-                      {locale === "en" ? "EN" : "AR"})
+                      {getTranslation("nameEn", locale)}*
                     </label>
                     <input
                       type="text"
                       className={`w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none ${
-                        subCategoryErrors.name
+                        subCategoryErrors.name_en
                           ? "border-red-500"
                           : "border-gray-300"
                       }`}
-                      placeholder={getTranslation("subCategoryName", locale)}
-                      {...registerSubCategory("name", {
+                      placeholder={getTranslation("nameEnPlaceholder", locale)}
+                      {...registerSubCategory("name_en", {
                         required: getTranslation("requiredField", locale),
                       })}
                     />
-                    {subCategoryErrors.name && (
+                    {subCategoryErrors.name_en && (
                       <p className="mt-1 text-sm text-red-600">
-                        {subCategoryErrors.name.message}
+                        {subCategoryErrors.name_en.message}
                       </p>
                     )}
                   </div>
 
                   <div>
                     <label className="mb-1 block text-sm font-medium text-gray-700">
-                      {getTranslation("parentCategory", locale)}
+                      {getTranslation("nameAr", locale)}*
+                    </label>
+                    <input
+                      type="text"
+                      className={`w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none ${
+                        subCategoryErrors.name_ar
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      }`}
+                      placeholder={getTranslation("nameArPlaceholder", locale)}
+                      {...registerSubCategory("name_ar", {
+                        required: getTranslation("requiredField", locale),
+                      })}
+                    />
+                    {subCategoryErrors.name_ar && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {subCategoryErrors.name_ar.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-gray-700">
+                      {getTranslation("parentCategory", locale)}*
                     </label>
                     <select
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none"
+                      className={`w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none ${
+                        subCategoryErrors.parentCategory
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      }`}
                       {...registerSubCategory("parentCategory", {
-                        required: getTranslation("requiredField", locale), // Make parent category required for sub-categories
+                        required: getTranslation("requiredField", locale),
                       })}
                     >
                       <option value="">
@@ -865,21 +917,6 @@ const CategoryBrandSetup = () => {
                         {subCategoryErrors.parentCategory.message}
                       </p>
                     )}
-                  </div>
-
-                  <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">
-                      {getTranslation("priority", locale)}
-                    </label>
-                    <input
-                      type="number"
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-none"
-                      placeholder={getTranslation("priority", locale)}
-                      {...registerSubCategory("priority", {
-                        valueAsNumber: true,
-                      })}
-                    />
-                    {/* You might want to add error handling for priority as well */}
                   </div>
                 </div>
 
@@ -938,7 +975,7 @@ const CategoryBrandSetup = () => {
                     </div>
                     <button
                       onClick={handleSearch}
-                      className="rounded-e-md bg-light-primary px-3 py-1.5 text-sm text-white hover:brightness-90"
+                      className="rounded-e-md bg-primary px-3 py-1.5 text-sm text-white hover:brightness-90"
                     >
                       {getTranslation("search", locale)}
                     </button>
@@ -1017,24 +1054,51 @@ const CategoryBrandSetup = () => {
                   <div className="md:col-span-3">
                     <div className="mb-4">
                       <label className="mb-1 block text-sm font-medium text-gray-700">
-                        {getTranslation("brandName", locale)}* (
-                        {locale === "en" ? "EN" : "AR"})
+                        {getTranslation("nameEn", locale)}*
                       </label>
                       <input
                         type="text"
                         className={`w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none ${
-                          brandErrors.name
+                          brandErrors.name_en
                             ? "border-red-500"
                             : "border-gray-300"
                         }`}
-                        placeholder={getTranslation("brandName", locale)}
-                        {...registerBrand("name", {
+                        placeholder={getTranslation(
+                          "nameEnPlaceholder",
+                          locale,
+                        )}
+                        {...registerBrand("name_en", {
                           required: getTranslation("requiredField", locale),
                         })}
                       />
-                      {brandErrors.name && (
+                      {brandErrors.name_en && (
                         <p className="mt-1 text-sm text-red-600">
-                          {brandErrors.name.message}
+                          {brandErrors.name_en.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="mb-4">
+                      <label className="mb-1 block text-sm font-medium text-gray-700">
+                        {getTranslation("nameAr", locale)}*
+                      </label>
+                      <input
+                        type="text"
+                        className={`w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none ${
+                          brandErrors.name_ar
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        }`}
+                        placeholder={getTranslation(
+                          "nameArPlaceholder",
+                          locale,
+                        )}
+                        {...registerBrand("name_ar", {
+                          required: getTranslation("requiredField", locale),
+                        })}
+                      />
+                      {brandErrors.name_ar && (
+                        <p className="mt-1 text-sm text-red-600">
+                          {brandErrors.name_ar.message}
                         </p>
                       )}
                     </div>
@@ -1050,7 +1114,6 @@ const CategoryBrandSetup = () => {
                           valueAsNumber: true,
                         })}
                       />
-                      {/* You might want to add error handling for priority as well */}
                     </div>
                   </div>
 
@@ -1060,7 +1123,7 @@ const CategoryBrandSetup = () => {
                       register={registerBrand}
                       errors={brandErrors}
                       label={getTranslation("brandLogo", locale)}
-                      required={true} // Marked as true for required image
+                      required={true}
                       aspectRatio="1:1"
                       maxSizeMB={2}
                       locale={locale}
@@ -1123,7 +1186,7 @@ const CategoryBrandSetup = () => {
                     </div>
                     <button
                       onClick={handleSearch}
-                      className="rounded-e-md bg-light-primary px-3 py-1.5 text-sm text-white hover:brightness-90"
+                      className="rounded-e-md bg-primary px-3 py-1.5 text-sm text-white hover:brightness-90"
                     >
                       {getTranslation("search", locale)}
                     </button>

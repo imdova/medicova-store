@@ -63,7 +63,9 @@ const Modal: React.FC<ModalProps> = ({
           aria-labelledby="modal-headline"
         >
           {/* Modal content */}
-          <div className="px-4 py-5 sm:p-6">{children}</div>
+          <div className="scroll-bar-minimal max-h-[600px] overflow-y-auto px-4 py-5 sm:p-6">
+            {children}
+          </div>
           <button onClick={onClose} className="absolute right-3 top-3">
             <X size={15} />
           </button>

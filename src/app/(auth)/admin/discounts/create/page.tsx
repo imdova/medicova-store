@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/UI/button";
 import { Input } from "@/components/UI/input";
 import {
@@ -24,6 +24,9 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Card, CardContent } from "@/components/UI/card";
 import { Switch } from "@/components/UI/switch";
+import { products } from "@/constants/products";
+import { medicalCategories } from "@/constants/categouries";
+import { Checkbox } from "@/components/UI/Check-Box";
 
 // ---------------- Schema & Types ----------------
 const messages = {
@@ -43,23 +46,80 @@ const messages = {
     en: "End date is required",
     ar: "تاريخ الانتهاء مطلوب",
   },
+  minimum_amount_required: {
+    en: "Minimum amount is required",
+    ar: "المبلغ الأدنى مطلوب",
+  },
+  products_required: {
+    en: "At least one product must be selected",
+    ar: "يجب اختيار منتج واحد على الأقل",
+  },
+  categories_required: {
+    en: "At least one category must be selected",
+    ar: "يجب اختيار فئة واحدة على الأقل",
+  },
 };
 
-const discountSchema = z.object({
-  type: z.enum(["coupon", "promotion"]),
-  coupon_code: z.string().min(1, messages.coupon_code_required.en),
-  discount_type: z.enum(["fixed", "percentage", "shipping"]),
-  value: z.number().min(0.01, messages.value_required.en),
-  apply_for: z.enum(["all_orders", "specific_products", "minimum_amount"]),
-  start_date: z.string().min(1, messages.start_date_required.en),
-  end_date: z.string().min(1, messages.end_date_required.en),
-  can_use_with_promotion: z.boolean(),
-  can_use_with_flash_sale: z.boolean(),
-  is_unlimited: z.boolean(),
-  apply_via_url: z.boolean(),
-  display_at_checkout: z.boolean(),
-  never_expired: z.boolean(),
-});
+const discountSchema = z
+  .object({
+    type: z.enum(["coupon", "promotion"]),
+    coupon_code: z.string().min(1, messages.coupon_code_required.en),
+    discount_type: z.enum(["fixed", "percentage", "shipping"]),
+    value: z.number().min(0.01, messages.value_required.en),
+    apply_for: z.enum([
+      "all_orders",
+      "specific_products",
+      "specific_categories",
+      "minimum_amount",
+    ]),
+    start_date: z.string().min(1, messages.start_date_required.en),
+    end_date: z.string().min(1, messages.end_date_required.en),
+    can_use_with_promotion: z.boolean(),
+    can_use_with_flash_sale: z.boolean(),
+    is_unlimited: z.boolean(),
+    apply_via_url: z.boolean(),
+    display_at_checkout: z.boolean(),
+    never_expired: z.boolean(),
+    minimum_amount: z.number().min(0).optional(),
+    selected_products: z.array(z.string()).optional(),
+    selected_categories: z.array(z.string()).optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.apply_for === "minimum_amount") {
+        return data.minimum_amount !== undefined && data.minimum_amount > 0;
+      }
+      return true;
+    },
+    {
+      message: messages.minimum_amount_required.en,
+      path: ["minimum_amount"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.apply_for === "specific_products") {
+        return data.selected_products && data.selected_products.length > 0;
+      }
+      return true;
+    },
+    {
+      message: messages.products_required.en,
+      path: ["selected_products"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.apply_for === "specific_categories") {
+        return data.selected_categories && data.selected_categories.length > 0;
+      }
+      return true;
+    },
+    {
+      message: messages.categories_required.en,
+      path: ["selected_categories"],
+    },
+  );
 
 type DiscountFormData = z.infer<typeof discountSchema>;
 
@@ -69,6 +129,8 @@ export default function CreateDiscountPage() {
   const [discountType, setDiscountType] = useState<
     "fixed" | "percentage" | "shipping"
   >("fixed");
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const form = useForm<DiscountFormData>({
     resolver: zodResolver(discountSchema),
@@ -86,8 +148,19 @@ export default function CreateDiscountPage() {
       apply_via_url: false,
       display_at_checkout: false,
       never_expired: false,
+      minimum_amount: 0,
+      selected_products: [],
+      selected_categories: [],
     },
   });
+
+  const applyFor = form.watch("apply_for");
+
+  useEffect(() => {
+    // Update form values when selections change
+    form.setValue("selected_products", selectedProducts);
+    form.setValue("selected_categories", selectedCategories);
+  }, [selectedProducts, selectedCategories, form]);
 
   const onSubmit = async (data: DiscountFormData) => {
     try {
@@ -97,6 +170,22 @@ export default function CreateDiscountPage() {
     } catch (error) {
       console.error("Submission failed", error);
     }
+  };
+
+  const handleProductSelect = (productId: string) => {
+    setSelectedProducts((prev) =>
+      prev.includes(productId)
+        ? prev.filter((id) => id !== productId)
+        : [...prev, productId],
+    );
+  };
+
+  const handleCategorySelect = (categoryId: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(categoryId)
+        ? prev.filter((id) => id !== categoryId)
+        : [...prev, categoryId],
+    );
   };
 
   const t = {
@@ -128,6 +217,7 @@ export default function CreateDiscountPage() {
       apply_for: "apply for",
       all_orders: "All orders",
       specific_products: "Specific products",
+      specific_categories: "Specific categories",
       minimum_amount: "Minimum amount",
       fixed_amount: "Fixed amount",
       percentage: "Percentage",
@@ -135,6 +225,14 @@ export default function CreateDiscountPage() {
       required: "Required",
       yes: "Yes",
       no: "No",
+      select_products: "Select Products",
+      select_categories: "Select Categories",
+      selected_items: "Selected items",
+      search_placeholder: "Search...",
+      minimum_amount_label: "Minimum Order Amount",
+      minimum_amount_description:
+        "Set the minimum order amount required to apply this discount",
+      enter_minimum_amount: "Enter minimum amount",
     },
     ar: {
       title: "إنشاء خصم",
@@ -164,6 +262,7 @@ export default function CreateDiscountPage() {
       apply_for: "يطبق على",
       all_orders: "جميع الطلبات",
       specific_products: "منتجات محددة",
+      specific_categories: "فئات محددة",
       minimum_amount: "حد أدنى للمبلغ",
       fixed_amount: "مبلغ ثابت",
       percentage: "نسبة مئوية",
@@ -171,6 +270,14 @@ export default function CreateDiscountPage() {
       required: "مطلوب",
       yes: "نعم",
       no: "لا",
+      select_products: "اختر المنتجات",
+      select_categories: "اختر الفئات",
+      selected_items: "العناصر المختارة",
+      search_placeholder: "بحث...",
+      minimum_amount_label: "الحد الأدنى لمبلغ الطلب",
+      minimum_amount_description:
+        "حدد الحد الأدنى لمبلغ الطلب المطلوب لتطبيق هذا الخصم",
+      enter_minimum_amount: "أدخل الحد الأدنى للمبلغ",
     },
   }[language];
 
@@ -432,6 +539,9 @@ export default function CreateDiscountPage() {
                             <SelectItem value="specific_products">
                               {t.specific_products}
                             </SelectItem>
+                            <SelectItem value="specific_categories">
+                              {t.specific_categories}
+                            </SelectItem>
                             <SelectItem value="minimum_amount">
                               {t.minimum_amount}
                             </SelectItem>
@@ -441,6 +551,129 @@ export default function CreateDiscountPage() {
                       </FormItem>
                     )}
                   />
+                </div>
+
+                {/* Conditional Fields Based on Apply For Selection */}
+                <div className="mt-4 space-y-4">
+                  {/* Specific Products Dropdown */}
+                  {applyFor === "specific_products" && (
+                    <div className="space-y-3">
+                      <FormLabel className="text-base font-medium">
+                        {t.select_products} *
+                      </FormLabel>
+                      <div className="space-y-2">
+                        <div className="max-h-40 overflow-y-auto rounded-md border border-gray-200 p-2">
+                          {products.map((product) => (
+                            <div
+                              key={product.id}
+                              className="flex items-center space-x-2 rounded p-2 hover:bg-gray-50"
+                            >
+                              <Checkbox
+                                id={`product-${product.id}`}
+                                checked={selectedProducts.includes(product.id)}
+                                onCheckedChange={() =>
+                                  handleProductSelect(product.id)
+                                }
+                              />
+                              <label
+                                htmlFor={`product-${product.id}`}
+                                className="flex-1 cursor-pointer text-sm font-medium text-gray-700"
+                              >
+                                {product.title[language]}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                        {selectedProducts.length > 0 && (
+                          <div className="text-sm text-gray-600">
+                            {t.selected_items}: {selectedProducts.length}
+                          </div>
+                        )}
+                        {form.formState.errors.selected_products && (
+                          <p className="text-sm text-red-600">
+                            {form.formState.errors.selected_products.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Specific Categories Dropdown */}
+                  {applyFor === "specific_categories" && (
+                    <div className="space-y-3">
+                      <FormLabel className="text-base font-medium">
+                        {t.select_categories} *
+                      </FormLabel>
+                      <div className="space-y-2">
+                        <div className="max-h-40 overflow-y-auto rounded-md border border-gray-200 p-2">
+                          {medicalCategories.map((category) => (
+                            <div
+                              key={category.id}
+                              className="flex items-center space-x-2 rounded p-2 hover:bg-gray-50"
+                            >
+                              <Checkbox
+                                id={`category-${category.id}`}
+                                checked={selectedCategories.includes(
+                                  category.id,
+                                )}
+                                onCheckedChange={() =>
+                                  handleCategorySelect(category.id)
+                                }
+                              />
+                              <label
+                                htmlFor={`category-${category.id}`}
+                                className="flex-1 cursor-pointer text-sm font-medium text-gray-700"
+                              >
+                                {category.title[language]}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                        {selectedCategories.length > 0 && (
+                          <div className="text-sm text-gray-600">
+                            {t.selected_items}: {selectedCategories.length}
+                          </div>
+                        )}
+                        {form.formState.errors.selected_categories && (
+                          <p className="text-sm text-red-600">
+                            {form.formState.errors.selected_categories.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Minimum Amount Input */}
+                  {applyFor === "minimum_amount" && (
+                    <div className="space-y-3">
+                      <FormLabel className="text-base font-medium">
+                        {t.minimum_amount_label} *
+                      </FormLabel>
+                      <p className="text-sm text-gray-600">
+                        {t.minimum_amount_description}
+                      </p>
+                      <FormField
+                        name="minimum_amount"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder={t.enter_minimum_amount}
+                                {...field}
+                                onChange={(e) =>
+                                  field.onChange(parseFloat(e.target.value))
+                                }
+                                min="0"
+                                step="0.01"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  )}
                 </div>
               </Card>
             </div>

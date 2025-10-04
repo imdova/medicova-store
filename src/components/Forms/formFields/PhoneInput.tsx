@@ -263,7 +263,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
                 <input
                   {...field}
                   type="tel"
-                  className={`block w-full rounded-r-md border border-gray-300 px-3 py-2 focus:outline-none ${
+                  className={`block w-full rounded-r-md border border-gray-300 px-3 py-2 text-sm focus:outline-none ${
                     isRTL ? "rounded-l-md rounded-r-none" : ""
                   }`}
                   placeholder={t.placeholder}
@@ -273,7 +273,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
                 <div className="relative" ref={dropdownRef}>
                   <button
                     type="button"
-                    className={`inline-flex h-full items-center justify-center gap-1 ${locale === "ar" ? "rounded-r-md" : "rounded-l-md"} border border-gray-300 bg-gray-50 px-2 py-2 text-gray-700 hover:bg-gray-100 focus:outline-none ${
+                    className={`inline-flex h-full items-center justify-center gap-1 text-sm ${locale === "ar" ? "rounded-r-md" : "rounded-l-md"} border border-gray-300 bg-gray-50 px-2 py-2 text-gray-700 hover:bg-gray-100 focus:outline-none ${
                       isRTL ? "flex-row-reverse" : ""
                     }`}
                     onClick={() => setIsOpen(!isOpen)}

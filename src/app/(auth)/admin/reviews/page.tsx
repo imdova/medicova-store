@@ -13,6 +13,7 @@ import { productFilters } from "@/constants/drawerFilter";
 import Image from "next/image";
 import { ReviewType } from "@/types/product";
 import { dummyReviews } from "@/constants/reviews";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/UI/Tabs";
 
 // Translation dictionary
 const translations = {
@@ -61,6 +62,14 @@ const translations = {
       poor: "Poor",
       terrible: "Terrible",
     },
+    // New translations for tabs
+    allReviews: "All Reviews",
+    manualReviews: "Manual Reviews",
+    systemReviews: "System Reviews",
+    reviewType: "Review Type",
+    manual: "Manual",
+    system: "System",
+    filterByType: "Filter by Review Type",
   },
   ar: {
     title: "إدارة التقييمات",
@@ -107,8 +116,21 @@ const translations = {
       poor: "ضعيف",
       terrible: "سيء",
     },
+    // New translations for tabs
+    allReviews: "كل التقييمات",
+    manualReviews: "التقييمات اليدوية",
+    systemReviews: "التقييمات التلقائية",
+    reviewType: "نوع التقييم",
+    manual: "يدوي",
+    system: "تلقائي",
+    filterByType: "تصفية حسب نوع التقييم",
   },
 };
+
+// Extend ReviewType to include reviewType
+interface ExtendedReviewType extends ReviewType {
+  reviewType: "manual" | "system";
+}
 
 export default function ReviewsListPanel() {
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -119,13 +141,34 @@ export default function ReviewsListPanel() {
   const ITEMS_PER_PAGE = 6;
   const router = useRouter();
   const toggle = () => setIsOpen((prev) => !prev);
+  const [activeTab, setActiveTab] = useState<string>("all");
+
+  // Add reviewType to dummy data (in real app, this would come from your API)
+  const extendedReviews: ExtendedReviewType[] = dummyReviews.map(
+    (review, index) => ({
+      ...review,
+      reviewType: index % 3 === 0 ? "system" : "manual", // Mix of manual and system reviews
+    }),
+  );
+
+  // Filter reviews based on active tab
+  const filteredReviews = extendedReviews.filter((review) => {
+    switch (activeTab) {
+      case "manual":
+        return review.reviewType === "manual";
+      case "system":
+        return review.reviewType === "system";
+      default:
+        return true; // "all" tab
+    }
+  });
 
   const getColumns = (locale: LanguageType) => [
     {
       key: "id",
       header: translations[locale].id,
       sortable: true,
-      render: (item: ReviewType) => (
+      render: (item: ExtendedReviewType) => (
         <span className="font-mono text-sm">#{item.id}</span>
       ),
     },
@@ -133,7 +176,7 @@ export default function ReviewsListPanel() {
       key: "product",
       header: translations[locale].product,
       sortable: true,
-      render: (item: ReviewType) => (
+      render: (item: ExtendedReviewType) => (
         <Link
           className="flex items-center gap-2 font-medium text-primary hover:underline"
           href={`/admin/products/edit/${item.product.id}`}
@@ -149,7 +192,7 @@ export default function ReviewsListPanel() {
       key: "user",
       header: translations[locale].user,
       sortable: true,
-      render: (item: ReviewType) => (
+      render: (item: ExtendedReviewType) => (
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             {item.user.avatar && (
@@ -170,10 +213,34 @@ export default function ReviewsListPanel() {
       ),
     },
     {
+      key: "reviewType",
+      header: translations[locale].reviewType,
+      sortable: true,
+      render: (item: ExtendedReviewType) => {
+        const typeColors = {
+          manual: "bg-blue-100 text-blue-800",
+          system: "bg-purple-100 text-purple-800",
+        };
+
+        const typeText = {
+          manual: { en: "Manual", ar: "يدوي" },
+          system: { en: "System", ar: "تلقائي" },
+        };
+
+        return (
+          <span
+            className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${typeColors[item.reviewType]}`}
+          >
+            {typeText[item.reviewType][language]}
+          </span>
+        );
+      },
+    },
+    {
       key: "rating",
       header: translations[locale].rating,
       sortable: true,
-      render: (item: ReviewType) => (
+      render: (item: ExtendedReviewType) => (
         <div className="flex items-center gap-1">
           <div className="flex">
             {[1, 2, 3, 4, 5].map((star) => (
@@ -193,7 +260,7 @@ export default function ReviewsListPanel() {
     {
       key: "comment",
       header: translations[locale].comment,
-      render: (item: ReviewType) => (
+      render: (item: ExtendedReviewType) => (
         <div className="max-w-[200px]">
           <p className="line-clamp-2 text-sm text-gray-600">{item.comment}</p>
         </div>
@@ -202,7 +269,7 @@ export default function ReviewsListPanel() {
     {
       key: "images",
       header: translations[locale].images,
-      render: (item: ReviewType) => (
+      render: (item: ExtendedReviewType) => (
         <div className="flex gap-1">
           {item.product.images.slice(0, 3).map((image, index) => (
             <div
@@ -231,7 +298,7 @@ export default function ReviewsListPanel() {
     {
       key: "status",
       header: translations[locale].status,
-      render: (item: ReviewType) => {
+      render: (item: ExtendedReviewType) => {
         const statusColors: Record<
           "Published" | "Pending" | "Rejected",
           string
@@ -256,7 +323,7 @@ export default function ReviewsListPanel() {
       key: "createdAt",
       header: translations[locale].createdAt,
       sortable: true,
-      render: (item: ReviewType) => {
+      render: (item: ExtendedReviewType) => {
         const date = new Date(item.createdAt);
         return (
           <span className="text-sm text-gray-600">
@@ -272,6 +339,16 @@ export default function ReviewsListPanel() {
   ];
 
   const predefinedFilters: DynamicFilterItem[] = [
+    {
+      id: "reviewType",
+      label: { en: "Review Type", ar: "نوع التقييم" },
+      type: "dropdown",
+      options: [
+        { id: "manual", name: { en: "Manual", ar: "يدوي" } },
+        { id: "system", name: { en: "System", ar: "تلقائي" } },
+      ],
+      visible: true,
+    },
     {
       id: "status",
       label: { en: "Status", ar: "حالة التقييم" },
@@ -314,13 +391,22 @@ export default function ReviewsListPanel() {
     },
   ];
 
-  // Count reviews by status for the summary cards
-  const statusCounts = dummyReviews.reduce(
+  // Count reviews by status and type for the summary cards
+  const statusCounts = extendedReviews.reduce(
     (acc: Record<string, number>, review) => {
       acc[review.status[language]] = (acc[review.status[language]] || 0) + 1;
       return acc;
     },
     {},
+  );
+
+  // Count reviews by type
+  const reviewTypeCounts = extendedReviews.reduce(
+    (acc: Record<string, number>, review) => {
+      acc[review.reviewType] = (acc[review.reviewType] || 0) + 1;
+      return acc;
+    },
+    { manual: 0, system: 0 },
   );
 
   return (
@@ -348,25 +434,80 @@ export default function ReviewsListPanel() {
 
       {/* Reviews Table */}
       <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-        <div className="mb-4 flex flex-col gap-2 sm:flex-row">
-          <button
-            type="button"
-            onClick={toggle}
-            className="rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm"
-          >
-            {t.filters}
-          </button>
-          <SearchInput locale={language} />
-          <Link
-            href={`/admin/reviews/create`}
-            className="flex items-center justify-center gap-1 rounded-md border border-gray-200 bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-auto"
-          >
-            <Plus size={15} /> {t.create}
-          </Link>
+        <div className="mb-4 flex flex-col gap-4">
+          {/* Filter Controls Row */}
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <button
+              type="button"
+              onClick={toggle}
+              className="rounded-md border border-gray-200 px-3 py-2 text-sm shadow-sm"
+            >
+              {t.filters}
+            </button>
+            <SearchInput locale={language} />
+            <Link
+              href={`/admin/reviews/create`}
+              className="flex items-center justify-center gap-1 rounded-md border border-gray-200 bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-auto"
+            >
+              <Plus size={15} /> {t.create}
+            </Link>
+          </div>
+
+          {/* Tabs for Review Type Filtering */}
+          <div>
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="w-full"
+            >
+              <TabsList className="w-full max-w-md grid-cols-3">
+                <TabsTrigger value="all" className="flex items-center gap-2">
+                  {t.allReviews}
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-100 text-xs font-medium">
+                    {extendedReviews.length}
+                  </span>
+                </TabsTrigger>
+                <TabsTrigger value="manual" className="flex items-center gap-2">
+                  {t.manualReviews}
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-100 text-xs font-medium">
+                    {reviewTypeCounts.manual}
+                  </span>
+                </TabsTrigger>
+                <TabsTrigger value="system" className="flex items-center gap-2">
+                  {t.systemReviews}
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-100 text-xs font-medium">
+                    {reviewTypeCounts.system}
+                  </span>
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="all" className="mt-4">
+                <p className="text-sm text-gray-600">
+                  {t.filterByType}: <strong>{t.allReviews}</strong> (
+                  {extendedReviews.length}{" "}
+                  {language === "en" ? "reviews" : "تقييم"})
+                </p>
+              </TabsContent>
+              <TabsContent value="manual" className="mt-4">
+                <p className="text-sm text-gray-600">
+                  {t.filterByType}: <strong>{t.manualReviews}</strong> (
+                  {reviewTypeCounts.manual}{" "}
+                  {language === "en" ? "reviews" : "تقييم"})
+                </p>
+              </TabsContent>
+              <TabsContent value="system" className="mt-4">
+                <p className="text-sm text-gray-600">
+                  {t.filterByType}: <strong>{t.systemReviews}</strong> (
+                  {reviewTypeCounts.system}{" "}
+                  {language === "en" ? "reviews" : "تقييم"})
+                </p>
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
 
         <DynamicTable
-          data={dummyReviews}
+          data={filteredReviews}
           columns={getColumns(language)}
           pagination={true}
           itemsPerPage={ITEMS_PER_PAGE}
@@ -387,7 +528,7 @@ export default function ReviewsListPanel() {
             },
           ]}
           locale={language}
-          minWidth={1200}
+          minWidth={1300}
         />
       </div>
     </div>

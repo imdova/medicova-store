@@ -25,6 +25,7 @@ import Image from "next/image";
 import Dropdown, { DropdownOption } from "@/components/UI/DropDownMenu";
 import { VendorType } from "@/types/customers";
 import { dummyVendors } from "@/constants/vendors";
+import AddVendorModal from "../components/AddVendorModal";
 
 // Translation dictionary
 const translations = {
@@ -79,6 +80,7 @@ export default function VendorsListPanel() {
   const [isOpen, setIsOpen] = useState(false);
   const { language } = useLanguage();
   const [selectedExport, setSelectedExport] = useState<string | number>("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const t = translations[language];
   const isRTL = language === "ar";
   const ITEMS_PER_PAGE = 6;
@@ -348,12 +350,12 @@ export default function VendorsListPanel() {
               locale={language}
               className="max-w-xs"
             />
-            <Link
-              href={`/admin/vendors/create`}
+            <button
               className="flex flex-shrink-0 items-center justify-center gap-1 rounded-md border border-gray-200 bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm"
+              onClick={() => setIsModalOpen(true)}
             >
               <Plus size={15} /> {t.create}
-            </Link>
+            </button>
           </div>
         </div>
 
@@ -388,6 +390,11 @@ export default function VendorsListPanel() {
           minWidth={1200}
         />
       </div>
+      <AddVendorModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        locale={language}
+      />
     </div>
   );
 }
