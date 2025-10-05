@@ -262,3 +262,44 @@ export type City = {
   code: string;
   name: LocalizedTitle;
 };
+
+export interface Plan {
+  id: string;
+  key: string; // e.g., "basic-plan"
+  name: {
+    en: string;
+    ar: string;
+  };
+  description: {
+    en: string;
+    ar: string;
+  };
+  duration: string;
+  currency: string;
+  price: string;
+  discountedPrice: string;
+  vat: string;
+  vatDescription: {
+    en: string;
+    ar: string;
+  };
+  status: boolean;
+  totalSubscriptions: number;
+  customers: number;
+  revenue: number;
+  createdAt: string;
+}
+
+export type Feature = {
+  id: string;
+  name: {
+    en: string;
+    ar: string;
+  };
+  tag: {
+    en: string;
+    ar: string;
+  };
+  included: boolean;
+  value?: string;
+};

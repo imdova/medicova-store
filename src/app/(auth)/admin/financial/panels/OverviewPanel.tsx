@@ -296,7 +296,7 @@ const TopTabs = ({ locale }: { locale: LanguageType }) => {
           ))}
         </div>
       </div>
-      <div className="max-h-[320px] overflow-y-auto">
+      <div className="scroll-bar-minimal max-h-[320px] overflow-y-auto">
         {/* Table Content */}
         {renderTable()}
       </div>

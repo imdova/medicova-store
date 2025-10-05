@@ -44,7 +44,7 @@ interface DynamicFilterProps {
   locale: LanguageType;
   isRTL: boolean;
   drawerFilters: FilterDrawerGroup[];
-  statusCounts: Record<string, number>;
+  statusCounts?: Record<string, number>;
   filtersOpen: boolean;
 
   // Your existing handlers
@@ -323,7 +323,7 @@ const DynamicFilter = ({
                       }`}
                     >
                       <h3 className="text-xs font-medium">
-                        {option.name[locale]} ({statusCounts[option.id] || 0})
+                        {option.name[locale]} ({statusCounts?.[option.id] || 0})
                       </h3>
                     </button>
                   ))}

@@ -336,16 +336,6 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
           href: "/admin/profile",
           icon: UserRoundPen,
         },
-        {
-          title: { en: "Addresses", ar: "العناوين" },
-          href: "/admin/addresses",
-          icon: MapPin,
-        },
-        {
-          title: { en: "Payments", ar: "المدفوعات" },
-          href: "/admin/payments",
-          icon: WalletCards,
-        },
       ],
     },
     {
