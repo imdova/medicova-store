@@ -3,6 +3,7 @@ import { LucideIcon } from "lucide-react";
 import { StaticImageData } from "next/image";
 import { LocalizedTitle } from "./language";
 import { shippingMethod } from "./product";
+import { ReactNode } from "react";
 
 export interface BaseHeaderProps {
   pathname: string;
@@ -302,4 +303,49 @@ export type Feature = {
   };
   included: boolean;
   value?: string;
+};
+
+export interface ExportConfig {
+  id: string;
+  title: LocalizedTitle;
+  description: LocalizedTitle;
+  totalCount: number;
+  columns: string[];
+  statuses: string[];
+  icon: ReactNode;
+  completed: boolean;
+}
+
+export type ImportRule = {
+  column: string;
+  rule: string;
+};
+
+export type ImportConfig = {
+  /** Unique ID used for routing or logic */
+  id: string;
+
+  /** Title (can come from translations) */
+  title: LocalizedTitle;
+
+  /** Description text shown in list view */
+  description?: LocalizedTitle;
+
+  /** Type of operation */
+  type: "import" | "export";
+
+  /** Icon component */
+  icon: ReactNode;
+
+  /** Whether this import is active/completed */
+  completed?: boolean;
+
+  /** Optional table columns for import preview */
+  columns?: string[];
+
+  /** Optional example data */
+  exampleData?: Record<string, string | number>[];
+
+  /** Optional validation rules */
+  rules?: ImportRule[];
 };

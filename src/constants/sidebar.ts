@@ -17,6 +17,7 @@ import {
   MapPin,
   PackagePlus,
   PackageSearch,
+  PanelTop,
   SendToBack,
   ShieldUser,
   Star,
@@ -310,6 +311,22 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
           },
           href: "/admin/categories",
           icon: Tags,
+        },
+        {
+          title: {
+            en: "Export/Import",
+            ar: "التصنيفات والعلامات التجارية",
+          },
+          href: "/admin/data-synchronize",
+          icon: PackagePlus,
+        },
+        {
+          title: {
+            en: "Pages",
+            ar: "الصفحات",
+          },
+          href: "/admin/pages",
+          icon: PanelTop,
         },
       ],
     },

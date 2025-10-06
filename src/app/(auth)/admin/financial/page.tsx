@@ -1,11 +1,12 @@
 "use client";
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/UI/Tabs"; // adjust path if needed
-import { CircleDollarSign, TextSearch } from "lucide-react";
+import { CircleDollarSign, TextSearch, Wallet } from "lucide-react";
 import OverviewPanel from "./panels/OverviewPanel";
 import TransactionsListPanel from "./panels/TransactionsListPanel";
 import { useLanguage } from "@/contexts/LanguageContext";
 import PlansListPanel from "./panels/PlansListPanel";
+import WithdrawalsListPanel from "./panels/WithdrawalsListPanel";
 
 export default function FinancialPage() {
   const { language } = useLanguage();
@@ -22,6 +23,12 @@ export default function FinancialPage() {
       label: "Transactions History",
       icon: CircleDollarSign,
       content: <TransactionsListPanel />,
+    },
+    {
+      value: "withdrawals",
+      label: "Withdrawals",
+      icon: Wallet,
+      content: <WithdrawalsListPanel />,
     },
     {
       value: "plans",
