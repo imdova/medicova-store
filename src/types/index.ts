@@ -349,3 +349,62 @@ export type ImportConfig = {
   /** Optional validation rules */
   rules?: ImportRule[];
 };
+
+// ✅ PageType Definition (Final Unified)
+export type PageType = {
+  id: string;
+  name: {
+    en: string;
+    ar: string;
+  };
+  description: {
+    en: string;
+    ar: string;
+  };
+  content: {
+    en: string;
+    ar: string;
+  };
+  template:
+    | "home"
+    | "about"
+    | "contact"
+    | "services"
+    | "blog"
+    | "custom"
+    | "without-layout";
+  breadcrumb_style: "start" | "center" | "end";
+  breadcrumb_background: string;
+  status: "draft" | "published" | "archived";
+  featured_image: string;
+  faqs: {
+    question: {
+      en: string;
+      ar: string;
+    };
+    answer: {
+      en: string;
+      ar: string;
+    };
+  }[];
+  seo: {
+    meta_title: {
+      en: string;
+      ar: string;
+    };
+    meta_description: {
+      en: string;
+      ar: string;
+    };
+    meta_image: string;
+  };
+  languages: string[];
+  availableLanguages: {
+    code: string;
+    name: string;
+  }[];
+  createdAt: string;
+  lastModified: string;
+  author: string;
+  page_type?: "static" | "custom" | "system"; // 🔹 optional classification
+};

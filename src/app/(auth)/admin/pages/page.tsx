@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { TrashIcon, EyeIcon, Plus, Edit } from "lucide-react";
+import { TrashIcon, Plus, Edit } from "lucide-react";
 import DynamicTable from "@/components/UI/tables/DTable";
 import { useState } from "react";
 import { LanguageType } from "@/util/translations";
@@ -10,6 +10,8 @@ import { DynamicFilterItem } from "@/types/filters";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useRouter } from "next/navigation";
 import { productFilters } from "@/constants/drawerFilter";
+import { PageType } from "@/types";
+import { dummyPages } from "@/constants/pages";
 
 // Translation dictionary
 const translations = {
@@ -101,183 +103,6 @@ const translations = {
   },
 };
 
-// Page interface
-interface PageType {
-  id: string;
-  name: {
-    en: string;
-    ar: string;
-  };
-  template: string;
-  createdAt: string;
-  status: {
-    en: string;
-    ar: string;
-  };
-  slug: {
-    en: string;
-    ar: string;
-  };
-  lastModified?: string;
-  author?: string;
-}
-
-// Dummy data for pages
-const dummyPages: PageType[] = [
-  {
-    id: "1",
-    name: {
-      en: "Home Page",
-      ar: "الصفحة الرئيسية",
-    },
-    template: "home",
-    createdAt: "2024-01-15T10:30:00Z",
-    status: {
-      en: "Published",
-      ar: "منشور",
-    },
-    slug: {
-      en: "home",
-      ar: "الرئيسية",
-    },
-    lastModified: "2024-03-20T14:25:00Z",
-    author: "Admin User",
-  },
-  {
-    id: "2",
-    name: {
-      en: "About Us",
-      ar: "من نحن",
-    },
-    template: "about",
-    createdAt: "2024-01-20T09:15:00Z",
-    status: {
-      en: "Published",
-      ar: "منشور",
-    },
-    slug: {
-      en: "about",
-      ar: "من-نحن",
-    },
-    lastModified: "2024-02-28T11:45:00Z",
-    author: "Admin User",
-  },
-  {
-    id: "3",
-    name: {
-      en: "Contact Information",
-      ar: "معلومات الاتصال",
-    },
-    template: "contact",
-    createdAt: "2024-02-01T16:20:00Z",
-    status: {
-      en: "Published",
-      ar: "منشور",
-    },
-    slug: {
-      en: "contact",
-      ar: "اتصل-بنا",
-    },
-    lastModified: "2024-03-15T13:30:00Z",
-    author: "Content Manager",
-  },
-  {
-    id: "4",
-    name: {
-      en: "Our Services",
-      ar: "خدماتنا",
-    },
-    template: "services",
-    createdAt: "2024-02-10T14:00:00Z",
-    status: {
-      en: "Draft",
-      ar: "مسودة",
-    },
-    slug: {
-      en: "services",
-      ar: "خدماتنا",
-    },
-    lastModified: "2024-03-18T10:15:00Z",
-    author: "Service Manager",
-  },
-  {
-    id: "5",
-    name: {
-      en: "Company Blog",
-      ar: "مدونة الشركة",
-    },
-    template: "blog",
-    createdAt: "2024-02-15T11:45:00Z",
-    status: {
-      en: "Published",
-      ar: "منشور",
-    },
-    slug: {
-      en: "blog",
-      ar: "المدونة",
-    },
-    lastModified: "2024-03-22T08:30:00Z",
-    author: "Content Manager",
-  },
-  {
-    id: "6",
-    name: {
-      en: "Privacy Policy",
-      ar: "سياسة الخصوصية",
-    },
-    template: "custom",
-    createdAt: "2024-03-01T12:00:00Z",
-    status: {
-      en: "Published",
-      ar: "منشور",
-    },
-    slug: {
-      en: "privacy-policy",
-      ar: "سياسة-الخصوصية",
-    },
-    lastModified: "2024-03-01T12:00:00Z",
-    author: "Admin User",
-  },
-  {
-    id: "7",
-    name: {
-      en: "Terms of Service",
-      ar: "شروط الخدمة",
-    },
-    template: "custom",
-    createdAt: "2024-03-05T15:30:00Z",
-    status: {
-      en: "Draft",
-      ar: "مسودة",
-    },
-    slug: {
-      en: "terms-of-service",
-      ar: "شروط-الخدمة",
-    },
-    lastModified: "2024-03-19T09:45:00Z",
-    author: "Legal Team",
-  },
-  {
-    id: "8",
-    name: {
-      en: "FAQ Section",
-      ar: "قسم الأسئلة الشائعة",
-    },
-    template: "custom",
-    createdAt: "2024-03-10T13:20:00Z",
-    status: {
-      en: "Archived",
-      ar: "مؤرشف",
-    },
-    slug: {
-      en: "faq",
-      ar: "الاسئلة-الشائعة",
-    },
-    lastModified: "2024-03-25T16:10:00Z",
-    author: "Support Team",
-  },
-];
-
 export default function PagesListPanel() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -302,10 +127,13 @@ export default function PagesListPanel() {
       header: translations[locale].name,
       sortable: true,
       render: (item: PageType) => (
-        <div className="space-y-1">
+        <Link
+          href={`/admin/pages/edit/${item.id}`}
+          className="space-y-1 hover:underline"
+        >
           <div className="font-medium text-gray-900">{item.name[locale]}</div>
-          <div className="text-xs text-gray-500">/{item.slug[locale]}</div>
-        </div>
+          <div className="text-xs text-gray-500">/{item.id}</div>
+        </Link>
       ),
     },
     {
@@ -367,17 +195,17 @@ export default function PagesListPanel() {
       header: translations[locale].status,
       render: (item: PageType) => {
         const statusColors: Record<string, string> = {
-          Published: "bg-green-100 text-green-800",
-          Draft: "bg-yellow-100 text-yellow-800",
-          Archived: "bg-gray-100 text-gray-800",
+          published: "bg-green-100 text-green-800",
+          draft: "bg-yellow-100 text-yellow-800",
+          archived: "bg-gray-100 text-gray-800",
         };
 
-        const statusEn = item.status.en as "Published" | "Draft" | "Archived";
+        const statusEn = item.status as "published" | "draft" | "archived";
         return (
           <span
-            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColors[statusEn]}`}
+            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${statusColors[statusEn]}`}
           >
-            {item.status[locale]}
+            {item.status}
           </span>
         );
       },
@@ -435,7 +263,7 @@ export default function PagesListPanel() {
   // Count pages by status for the summary cards
   const statusCounts = dummyPages.reduce(
     (acc: Record<string, number>, page) => {
-      acc[page.status[language]] = (acc[page.status[language]] || 0) + 1;
+      acc[page.status] = (acc[page.status] || 0) + 1;
       return acc;
     },
     {},
@@ -500,13 +328,7 @@ export default function PagesListPanel() {
               icon: <Edit className="h-3 w-3" />,
               color: "#059669",
             },
-            {
-              label: "Preview",
-              onClick: (item) =>
-                window.open(`/${language}/${item.slug[language]}`, "_blank"),
-              icon: <EyeIcon className="h-3 w-3" />,
-              color: "#2563eb",
-            },
+
             {
               label: "Delete",
               onClick: (item) => console.log(`Delete page: ${item.id}`),
