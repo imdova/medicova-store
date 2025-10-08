@@ -348,6 +348,7 @@ interface TextEditorProps {
   language?: "en" | "ar";
   showEditor?: boolean;
   onToggleEditor?: (visible: boolean) => void;
+  forPage?: boolean;
 }
 
 export default function TextEditor({
@@ -356,6 +357,7 @@ export default function TextEditor({
   language = "en",
   showEditor = true,
   onToggleEditor,
+  forPage = false,
 }: TextEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<"visual" | "html">("visual");
@@ -708,7 +710,7 @@ export default function TextEditor({
           {/* Media & Blocks */}
           <div className="flex items-center gap-2 border-l pl-2">
             <MediaDialog onInsertMedia={insertImage} />
-            <UIBlocksDialog onInsertBlock={insertBlock} />
+            {forPage && <UIBlocksDialog onInsertBlock={insertBlock} />}
           </div>
         </div>
       </div>

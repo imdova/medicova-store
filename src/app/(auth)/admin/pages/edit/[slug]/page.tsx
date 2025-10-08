@@ -22,11 +22,13 @@ import {
 } from "@/components/UI/select";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Card } from "@/components/UI/card";
-import TextEditor from "@/components/UI/CustomTextEditor";
 import { dummyPages } from "@/constants/pages";
 import Loading from "@/app/loading";
 import NotFound from "@/app/not-found";
-import { BilingualInput } from "@/components/PageEditor/BilingualInput";
+import {
+  BilingualInput,
+  BilingualTextEditor,
+} from "@/components/PageEditor/BilingualInput";
 import ImageUpload from "@/components/PageEditor/ImageUpload";
 import { useParams } from "next/navigation";
 import { FAQManager } from "@/components/PageEditor/FAQManager";
@@ -46,9 +48,6 @@ export default function EditPage() {
   const { language } = useLanguage();
   const params = useParams();
   const slug = params.slug as string;
-
-  const [editorContent, setEditorContent] = useState({ en: "", ar: "" });
-
   const [activeEditorLang, setActiveEditorLang] = useState<"en" | "ar">(
     language,
   );
@@ -84,15 +83,6 @@ export default function EditPage() {
 
       // Reset the form with dummy data
       form.reset(dummyPage);
-
-      // ✅ Fix: set editor content as an object, not just a string
-      if (dummyPage) {
-        setEditorContent({
-          en: dummyPage.content.en ?? "",
-          ar: dummyPage.content.ar ?? "",
-        });
-      }
-
       setIsLoading(false);
     };
 
@@ -125,18 +115,6 @@ export default function EditPage() {
   const handleBreadcrumbBackgroundChange = (imageUrl: string) => {
     form.setValue("breadcrumb_background", imageUrl);
   };
-
-  const handleContentChange = (value: string) => {
-    setEditorContent((prev) => ({
-      ...prev,
-      [activeEditorLang]: value,
-    }));
-    form.setValue("content", {
-      ...editorContent,
-      [activeEditorLang]: value,
-    });
-  };
-
   const t = {
     en: {
       title: "Edit Page",
@@ -358,24 +336,18 @@ export default function EditPage() {
                       </Button>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <Button type="button" variant="outline" size="sm">
-                      {t.add_media}
-                    </Button>
-                    <Button type="button" variant="outline" size="sm">
-                      {t.ui_blocks}
-                    </Button>
-                  </div>
                 </div>
                 <FormField
                   name="content"
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <TextEditor
-                          value={editorContent[activeEditorLang] || ""}
-                          onChange={handleContentChange}
-                          language={activeEditorLang}
+                        <BilingualTextEditor
+                          value={field.value}
+                          onChange={field.onChange}
+                          language={language}
+                          required
+                          forPage={true}
                         />
                       </FormControl>
                       <FormMessage />

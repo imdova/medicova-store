@@ -1,6 +1,7 @@
 // ---------------- Image Uploader Component ----------------
 
 import { RotateCw, Upload, X, ZoomIn } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 
 export interface UploadedImage {
@@ -230,7 +231,9 @@ export const ImageUploader = ({
               {images.map((image) => (
                 <div key={image.id} className="group relative">
                   <div className="aspect-square overflow-hidden rounded-lg border">
-                    <img
+                    <Image
+                      width={300}
+                      height={300}
                       src={image.preview}
                       alt={`Uploaded image ${image.name}`}
                       className="h-full w-full object-cover transition-transform group-hover:scale-105"
@@ -285,7 +288,9 @@ export const ImageUploader = ({
         <div className="fixed inset-0 z-50 !mt-0 flex items-center justify-center bg-black bg-opacity-75 p-4">
           <div className="relative max-h-full max-w-full">
             {/* Image with rotation */}
-            <img
+            <Image
+              width={300}
+              height={300}
               src={selectedImage.preview}
               alt="Preview"
               className="max-h-[80vh] max-w-full object-contain"

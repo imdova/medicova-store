@@ -408,3 +408,51 @@ export type PageType = {
   author: string;
   page_type?: "static" | "custom" | "system"; // 🔹 optional classification
 };
+
+export interface Testimonial {
+  id: string;
+  slug: string;
+  image: string;
+  name: {
+    en: string;
+    ar: string;
+  };
+  title: {
+    en: string;
+    ar: string;
+  };
+  description: {
+    en: string;
+    ar: string;
+  };
+  content: {
+    en: string;
+    ar: string;
+  };
+  createdAt: string;
+  status: {
+    en: "published" | "draft";
+    ar: "نشر" | "مسودة";
+  };
+}
+
+export interface FAQ {
+  id: string;
+  question: {
+    en: string;
+    ar: string;
+  };
+  category: {
+    en: string;
+    ar: string;
+  };
+  answer: {
+    en: string;
+    ar: string;
+  };
+  createdAt: string;
+  status: {
+    en: "published" | "draft";
+    ar: "منشور" | "مسودة";
+  };
+}

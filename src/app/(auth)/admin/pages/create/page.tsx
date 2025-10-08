@@ -256,6 +256,7 @@ export default function CreatePage() {
                           onChange={field.onChange}
                           language={language}
                           required
+                          forPage={true}
                         />
                       </FormControl>
                       <FormMessage />

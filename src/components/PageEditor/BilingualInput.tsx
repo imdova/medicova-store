@@ -17,11 +17,13 @@ export function BilingualTextEditor({
   onChange,
   language,
   required = false,
+  forPage = false,
 }: {
   value?: BilingualText;
   onChange: (value: BilingualText) => void;
   language: "en" | "ar";
   required?: boolean;
+  forPage?: boolean;
 }) {
   const [activeLang, setActiveLang] = useState<"en" | "ar">(language);
 
@@ -83,6 +85,7 @@ export function BilingualTextEditor({
           value={value[activeLang] || ""}
           onChange={(content) => handleValueChange(activeLang, content)}
           language={activeLang}
+          forPage={forPage}
         />
       </div>
 

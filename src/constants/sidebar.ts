@@ -15,6 +15,7 @@ import {
   LayoutList,
   LayoutTemplate,
   MapPin,
+  MessageCircleQuestion,
   PackagePlus,
   PackageSearch,
   PanelTop,
@@ -327,6 +328,22 @@ export const sidebarGroups: { [key: string]: SidebarGroup[] } = {
           },
           href: "/admin/pages",
           icon: PanelTop,
+        },
+        {
+          title: {
+            en: "Testimonials",
+            ar: "الشهادات",
+          },
+          href: "/admin/testimonials",
+          icon: Star,
+        },
+        {
+          title: {
+            en: "FAQs",
+            ar: "الأسئلة الشائعة",
+          },
+          href: "/admin/faqs",
+          icon: MessageCircleQuestion,
         },
       ],
     },
